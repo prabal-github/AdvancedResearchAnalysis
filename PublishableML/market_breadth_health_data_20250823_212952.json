@@ -1,0 +1,21 @@
+[
+  {
+    "Analysis_Date":"2025-08-23",
+    "Market_Breadth_Score":0.5710001127,
+    "Breadth_Rating":"Neutral Breadth",
+    "Advance_Decline_Health":0.4930585595,
+    "New_Highs_Lows_Distribution":0.598,
+    "Sector_Participation":0.6802956895,
+    "Volume_Weighted_Breadth":0.4968227129,
+    "Momentum_Breadth_Quality":0.63,
+    "advance_percentage":14.0,
+    "decline_percentage":84.0,
+    "volume_advance_ratio":14.1552773304,
+    "large_cap_advance_ratio":14.0,
+    "new_highs_20d":5,
+    "new_lows_20d":4,
+    "new_highs_52w":4,
+    "new_lows_52w":0,
+    "total_stocks":50
+  }
+]

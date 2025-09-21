@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI Risk Management Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-container {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            margin: 20px;
+            padding: 30px;
+        }
+        
+        .card {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-header {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .alert {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .badge {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .badge-high { background-color: #dc3545; }
+        .badge-medium { background-color: #ffc107; color: #000; }
+        .badge-low { background-color: #28a745; }
+        
+        .risk-score {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .risk-meter {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(90deg, #28a745 0%, #ffc107 50%, #dc3545 100%);
+            border-radius: 10px;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        .risk-indicator {
+            position: absolute;
+            top: -5px;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #333;
+            transition: left 0.5s ease;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner-border {
+            color: #667eea;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .heatmap-cell {
+            padding: 10px;
+            margin: 2px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            min-width: 80px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .heatmap-high { background-color: rgba(220, 53, 69, 0.8); }
+        .heatmap-medium { background-color: rgba(255, 193, 7, 0.8); }
+        .heatmap-low { background-color: rgba(40, 167, 69, 0.8); }
+        
+        .advisor-chat {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .chat-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-message {
+            background: rgba(102, 126, 234, 0.3);
+            margin-left: 20px;
+        }
+        
+        .ai-message {
+            background: rgba(118, 75, 162, 0.3);
+            margin-right: 20px;
+        }
+        
+        .title {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="dashboard-container">
+            <h1 class="title">
+                <i class="fas fa-shield-alt"></i>
+                Agentic AI Risk Management Dashboard
+            </h1>
+            
+            <!-- Agent Status Row -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-robot"></i> AI Agents Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="agentStatus">
+                                <!-- Agent status will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Metrics Row -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x mb-3"></i>
+                            <div class="metric-value" id="overallRiskScore">7.2</div>
+                            <div class="metric-label">Overall Risk Score</div>
+                            <div class="risk-meter">
+                                <div class="risk-indicator" id="riskIndicator"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <div class="metric-value" id="alertCount">3</div>
+                            <div class="metric-label">Active Alerts</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-2x mb-3"></i>
+                            <div class="metric-value" id="complianceScore">95%</div>
+                            <div class="metric-label">Compliance Score</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <i class="fas fa-balance-scale fa-2x mb-3"></i>
+                            <div class="metric-value" id="portfolioValue">₹5.0L</div>
+                            <div class="metric-label">Portfolio Value</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controls Row -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cogs"></i> Risk Management Controls</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="runComprehensiveAnalysis()">
+                                        <i class="fas fa-search"></i> Full Analysis
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="runStressTest()">
+                                        <i class="fas fa-vial"></i> Stress Test
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="checkCompliance()">
+                                        <i class="fas fa-clipboard-check"></i> Compliance
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="getRebalancingSuggestions()">
+                                        <i class="fas fa-balance-scale"></i> Rebalance
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="refreshData()">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="exportReport()">
+                                        <i class="fas fa-download"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Row -->
+            <div class="row">
+                <!-- Risk Alerts Column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Risk Alerts</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="riskAlerts">
+                                <!-- Risk alerts will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advisor Copilot Column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-robot"></i> AI Advisor Copilot</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="advisor-chat" id="advisorChat">
+                                <div class="chat-message ai-message">
+                                    <strong>AI Advisor:</strong> Hello! I'm your AI risk management advisor. Ask me anything about your portfolio risk, market conditions, or investment strategies.
+                                </div>
+                            </div>
+                            <div class="input-group mt-3">
+                                <input type="text" class="form-control" id="advisorQuery" placeholder="Ask your advisor..." style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                                <button class="btn btn-primary" onclick="queryAdvisor()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Row -->
+            <div class="row mt-4">
+                <!-- Risk Heatmap -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-fire"></i> Risk Heatmap</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="riskHeatmap">
+                                <!-- Risk heatmap will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Portfolio Allocation Chart -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-pie"></i> Portfolio Allocation</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="allocationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analysis Results Row -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-bar"></i> Latest Analysis Results</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="analysisResults">
+                                <p class="text-center"><em>Run an analysis to see results here...</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">AI agents are analyzing your portfolio...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let allocationChart = null;
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAgentStatus();
+            loadRiskAlerts();
+            loadRiskHeatmap();
+            initializeAllocationChart();
+            updateRiskIndicator(7.2);
+        });
+        
+        // Load agent status
+        function loadAgentStatus() {
+            fetch('/api/vs_terminal_AClass/risk_management/agent_status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayAgentStatus(data.agent_status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading agent status:', error);
+                    displayMockAgentStatus();
+                });
+        }
+        
+        function displayAgentStatus(agentStatus) {
+            const container = document.getElementById('agentStatus');
+            container.innerHTML = '';
+            
+            Object.keys(agentStatus).forEach(agentName => {
+                const agent = agentStatus[agentName];
+                const col = document.createElement('div');
+                col.className = 'col-md-2';
+                
+                col.innerHTML = `
+                    <div class="agent-status">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <strong>${agentName.replace('_', ' ').toUpperCase()}</strong><br>
+                            <small>${agent.status}</small>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(col);
+            });
+        }
+        
+        function displayMockAgentStatus() {
+            const mockAgents = [
+                'Risk Monitoring', 'Scenario Simulation', 'Compliance Check', 
+                'Advisor Copilot', 'Trade Execution', 'Market Analysis'
+            ];
+            
+            const container = document.getElementById('agentStatus');
+            container.innerHTML = '';
+            
+            mockAgents.forEach(agentName => {
+                const col = document.createElement('div');
+                col.className = 'col-md-2';
+                
+                col.innerHTML = `
+                    <div class="agent-status">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <strong>${agentName}</strong><br>
+                            <small>ACTIVE</small>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(col);
+            });
+        }
+        
+        // Load risk alerts
+        function loadRiskAlerts() {
+            fetch('/api/vs_terminal_AClass/risk_management/risk_alerts')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayRiskAlerts(data.alerts);
+                        document.getElementById('alertCount').textContent = data.alerts.length;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading risk alerts:', error);
+                    displayMockRiskAlerts();
+                });
+        }
+        
+        function displayRiskAlerts(alerts) {
+            const container = document.getElementById('riskAlerts');
+            container.innerHTML = '';
+            
+            if (alerts.length === 0) {
+                container.innerHTML = '<p class="text-center"><em>No active risk alerts</em></p>';
+                return;
+            }
+            
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert mb-2';
+                
+                const severityClass = alert.severity.toLowerCase();
+                const badgeClass = `badge-${severityClass}`;
+                
+                alertDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${alert.risk_type.replace('_', ' ')}</strong>
+                            <span class="badge ${badgeClass} ms-2">${alert.severity}</span>
+                            <p class="mb-1 mt-2">${alert.description}</p>
+                            <small><strong>Recommendation:</strong> ${alert.recommendation}</small>
+                        </div>
+                        <small>${new Date(alert.created_at).toLocaleString()}</small>
+                    </div>
+                `;
+                
+                container.appendChild(alertDiv);
+            });
+        }
+        
+        function displayMockRiskAlerts() {
+            const mockAlerts = [
+                {
+                    risk_type: 'CONCENTRATION_RISK',
+                    severity: 'MEDIUM',
+                    description: 'High concentration in banking sector (35%)',
+                    recommendation: 'Consider diversifying into other sectors',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    risk_type: 'VOLATILITY_RISK',
+                    severity: 'HIGH',
+                    description: 'Market volatility increased (VIX: 28.5)',
+                    recommendation: 'Consider hedging strategies',
+                    created_at: new Date().toISOString()
+                }
+            ];
+            
+            displayRiskAlerts(mockAlerts);
+            document.getElementById('alertCount').textContent = mockAlerts.length;
+        }
+        
+        // Load risk heatmap
+        function loadRiskHeatmap() {
+            fetch('/api/vs_terminal_AClass/risk_management/risk_heatmap')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayRiskHeatmap(data.heatmap_data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading risk heatmap:', error);
+                    displayMockRiskHeatmap();
+                });
+        }
+        
+        function displayRiskHeatmap(heatmapData) {
+            const container = document.getElementById('riskHeatmap');
+            container.innerHTML = '<h6>Sector Risk Levels</h6>';
+            
+            const heatmapDiv = document.createElement('div');
+            heatmapDiv.className = 'd-flex flex-wrap justify-content-center';
+            
+            heatmapData.sectors.forEach(sector => {
+                const cell = document.createElement('div');
+                const riskClass = sector.risk_level.toLowerCase();
+                cell.className = `heatmap-cell heatmap-${riskClass}`;
+                
+                cell.innerHTML = `
+                    <div>${sector.name}</div>
+                    <small>${sector.exposure}%</small>
+                    <small>Risk: ${sector.risk_score.toFixed(1)}</small>
+                `;
+                
+                heatmapDiv.appendChild(cell);
+            });
+            
+            container.appendChild(heatmapDiv);
+        }
+        
+        function displayMockRiskHeatmap() {
+            const mockHeatmap = {
+                sectors: [
+                    {name: 'Banking', risk_level: 'MEDIUM', exposure: 35, risk_score: 6.8},
+                    {name: 'IT', risk_level: 'LOW', exposure: 40, risk_score: 4.2},
+                    {name: 'Energy', risk_level: 'HIGH', exposure: 15, risk_score: 8.1},
+                    {name: 'Pharma', risk_level: 'MEDIUM', exposure: 10, risk_score: 6.5}
+                ]
+            };
+            
+            displayRiskHeatmap(mockHeatmap);
+        }
+        
+        // Initialize allocation chart
+        function initializeAllocationChart() {
+            const ctx = document.getElementById('allocationChart').getContext('2d');
+            
+            allocationChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Banking', 'IT', 'Energy', 'Pharma', 'Cash'],
+                    datasets: [{
+                        data: [35, 40, 15, 8, 2],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 0.8)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update risk indicator
+        function updateRiskIndicator(score) {
+            const indicator = document.getElementById('riskIndicator');
+            const position = (score / 10) * 100;
+            indicator.style.left = `calc(${position}% - 15px)`;
+            
+            document.getElementById('overallRiskScore').textContent = score.toFixed(1);
+        }
+        
+        // Risk management actions
+        function runComprehensiveAnalysis() {
+            showLoading(true);
+            
+            const requestData = {
+                investor_id: 'current_user',
+                risk_tolerance: 'Moderate',
+                portfolio_value: 500000
+            };
+            
+            fetch('/api/vs_terminal_AClass/risk_management/comprehensive_analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                if (data.success) {
+                    displayAnalysisResults(data.data);
+                    if (data.data.overall_risk_score) {
+                        updateRiskIndicator(data.data.overall_risk_score);
+                    }
+                } else {
+                    alert('Error running analysis: ' + data.error);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('Error:', error);
+                alert('Error running comprehensive analysis');
+            });
+        }
+        
+        function runStressTest() {
+            showLoading(true);
+            
+            const requestData = {
+                investor_id: 'current_user',
+                scenario_type: 'all',
+                risk_tolerance: 'Moderate'
+            };
+            
+            fetch('/api/vs_terminal_AClass/risk_management/stress_test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                if (data.success) {
+                    displayStressTestResults(data.stress_test_results);
+                } else {
+                    alert('Error running stress test: ' + data.error);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('Error:', error);
+                alert('Error running stress test');
+            });
+        }
+        
+        function checkCompliance() {
+            showLoading(true);
+            
+            const requestData = {
+                investor_id: 'current_user',
+                risk_tolerance: 'Moderate'
+            };
+            
+            fetch('/api/vs_terminal_AClass/risk_management/compliance_check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                if (data.success) {
+                    displayComplianceResults(data.compliance_results);
+                } else {
+                    alert('Error checking compliance: ' + data.error);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('Error:', error);
+                alert('Error checking compliance');
+            });
+        }
+        
+        function getRebalancingSuggestions() {
+            showLoading(true);
+            
+            const requestData = {
+                investor_id: 'current_user',
+                risk_tolerance: 'Moderate'
+            };
+            
+            fetch('/api/vs_terminal_AClass/risk_management/rebalancing_suggestions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                if (data.success) {
+                    displayRebalancingResults(data.rebalancing_suggestions);
+                } else {
+                    alert('Error getting rebalancing suggestions: ' + data.error);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('Error:', error);
+                alert('Error getting rebalancing suggestions');
+            });
+        }
+        
+        function queryAdvisor() {
+            const query = document.getElementById('advisorQuery').value.trim();
+            if (!query) return;
+            
+            // Add user message to chat
+            addChatMessage(query, 'user');
+            document.getElementById('advisorQuery').value = '';
+            
+            const requestData = {
+                query: query,
+                investor_id: 'current_user',
+                risk_tolerance: 'Moderate'
+            };
+            
+            fetch('/api/vs_terminal_AClass/risk_management/advisor_query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.guidance) {
+                    addChatMessage(data.guidance.guidance || data.response, 'ai');
+                } else if (data.status === 'success' && data.response) {
+                    addChatMessage(data.response, 'ai');
+                } else {
+                    addChatMessage('Sorry, I encountered an error processing your query.', 'ai');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addChatMessage('Sorry, I encountered an error processing your query.', 'ai');
+            });
+        }
+        
+        function addChatMessage(message, type) {
+            const chatContainer = document.getElementById('advisorChat');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}-message`;
+            
+            const sender = type === 'user' ? 'You' : 'AI Advisor';
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function refreshData() {
+            loadAgentStatus();
+            loadRiskAlerts();
+            loadRiskHeatmap();
+            
+            fetch('/api/vs_terminal_AClass/risk_management/portfolio_risk_score')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateRiskIndicator(data.risk_score.overall_score);
+                    }
+                })
+                .catch(error => console.error('Error refreshing risk score:', error));
+        }
+        
+        function exportReport() {
+            // Mock export functionality
+            alert('Risk management report exported successfully! (This is a demo)');
+        }
+        
+        function showLoading(show) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = show ? 'block' : 'none';
+        }
+        
+        // Display functions for analysis results
+        function displayAnalysisResults(results) {
+            const container = document.getElementById('analysisResults');
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Risk Alerts: ${results.risk_alerts ? results.risk_alerts.length : 0}</h6>
+                        <p>Overall Risk Score: ${results.overall_risk_score || 'N/A'}/10</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Compliance Status</h6>
+                        <p>${results.compliance?.report?.overall_status || 'Unknown'}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Executive Summary</h6>
+                        <p>${results.executive_summary?.summary || 'Analysis completed successfully'}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayStressTestResults(results) {
+            const container = document.getElementById('analysisResults');
+            let html = '<h6>Stress Test Results</h6><div class="row">';
+            
+            Object.keys(results).forEach(scenario => {
+                const result = results[scenario];
+                html += `
+                    <div class="col-md-6 mb-3">
+                        <strong>${result.scenario || scenario}</strong><br>
+                        <small>Impact: ${result.projected_impact || result.projected_loss || 'N/A'}</small><br>
+                        <small>Recovery: ${result.recovery_time_estimate || 'N/A'}</small>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function displayComplianceResults(results) {
+            const container = document.getElementById('analysisResults');
+            container.innerHTML = `
+                <h6>Compliance Check Results</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Position Limits:</strong> ${results.position_limits?.status || 'Unknown'}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Sector Limits:</strong> ${results.sector_limits?.status || 'Unknown'}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Regulatory:</strong> ${results.regulatory?.status || 'Unknown'}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayRebalancingResults(results) {
+            const container = document.getElementById('analysisResults');
+            container.innerHTML = `
+                <h6>Portfolio Rebalancing Suggestions</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Suggested Trades:</strong> ${results.suggested_trades?.length || 0}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Estimated Costs:</strong> ₹${results.estimated_costs?.total_costs?.toLocaleString() || 'N/A'}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Handle Enter key in advisor query
+        document.getElementById('advisorQuery').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                queryAdvisor();
+            }
+        });
+    </script>
+</body>
+</html>

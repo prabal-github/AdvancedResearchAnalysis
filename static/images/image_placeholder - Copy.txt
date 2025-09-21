@@ -1,0 +1,2 @@
+# Placeholder file for image.png (company logo)
+# This should be replaced with actual company logo image

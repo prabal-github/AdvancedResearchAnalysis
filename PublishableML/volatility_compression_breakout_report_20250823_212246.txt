@@ -1,0 +1,29 @@
+Volatility Compression Breakout Probability Analysis Report
+=======================================================
+Generated: 2025-08-23 21:22:46
+
+Model Components:
+-----------------
+Compression Intensity: 25.0%
+Historical Patterns: 25.0%
+Volume Volatility Divergence: 20.0%
+Technical Setup: 15.0%
+Microstructure: 15.0%
+
+Top 15 Highest Breakout Probabilities:
+--------------------------------------
+ 1. TATASTEEL.NS    | Prob: 139726.333 | Up      | Very High Probability | Sector: Basic Materials
+ 2. COALINDIA.NS    | Prob: 34611.221 | Up      | Very High Probability | Sector: Energy
+ 3. BAJFINANCE.NS   | Prob: 22593.167 | Up      | Very High Probability | Sector: Financial Services
+ 4. HCLTECH.NS      | Prob: 17341.649 | Neutral | Very High Probability | Sector: Technology
+ 5. SBIN.NS         | Prob: 16441.796 | Up      | Very High Probability | Sector: Financial Services
+ 6. HDFCLIFE.NS     | Prob: 15848.491 | Up      | Very High Probability | Sector: Financial Services
+ 7. HEROMOTOCO.NS   | Prob: 15597.553 | Up      | Very High Probability | Sector: Consumer Cyclical
+ 8. HINDUNILVR.NS   | Prob: 13891.464 | Up      | Very High Probability | Sector: Consumer Defensive
+ 9. ASIANPAINT.NS   | Prob: 12337.289 | Neutral | Very High Probability | Sector: Basic Materials
+10. TATAMOTORS.NS   | Prob: 12287.505 | Up      | Very High Probability | Sector: Consumer Cyclical
+11. DRREDDY.NS      | Prob: 9684.389 | Up      | Very High Probability | Sector: Healthcare
+12. M&M.NS          | Prob: 9622.053 | Up      | Very High Probability | Sector: Consumer Cyclical
+13. TECHM.NS        | Prob: 9264.339 | Up      | Very High Probability | Sector: Technology
+14. AXISBANK.NS     | Prob: 8000.545 | Down    | Very High Probability | Sector: Financial Services
+15. TRENT.NS        | Prob: 7626.759 | Up      | Very High Probability | Sector: Consumer Cyclical

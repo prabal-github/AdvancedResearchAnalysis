@@ -1,0 +1,29 @@
+Long-Term Earnings Revision Momentum Analysis Report
+=======================================================
+Generated: 2025-08-23 19:24:14
+
+Model Components:
+-----------------
+Earnings Trend: 30.0%
+Revision Magnitude: 25.0%
+Analyst Consensus: 20.0%
+Surprise Consistency: 15.0%
+Forward Momentum: 10.0%
+
+Top 15 Stocks by Earnings Momentum Score:
+------------------------------------------
+ 1. RELIANCE.NS     | Score: 0.600 | Rating: Positive     | Sector: Energy
+ 2. ICICIBANK.NS    | Score: 0.586 | Rating: Neutral      | Sector: Financial Services
+ 3. TATASTEEL.NS    | Score: 0.564 | Rating: Neutral      | Sector: Basic Materials
+ 4. BPCL.NS         | Score: 0.562 | Rating: Neutral      | Sector: Energy
+ 5. M&M.NS          | Score: 0.562 | Rating: Neutral      | Sector: Consumer Cyclical
+ 6. LT.NS           | Score: 0.561 | Rating: Neutral      | Sector: Industrials
+ 7. HINDALCO.NS     | Score: 0.559 | Rating: Neutral      | Sector: Basic Materials
+ 8. HEROMOTOCO.NS   | Score: 0.557 | Rating: Neutral      | Sector: Consumer Cyclical
+ 9. JSWSTEEL.NS     | Score: 0.555 | Rating: Neutral      | Sector: Basic Materials
+10. SBIN.NS         | Score: 0.554 | Rating: Neutral      | Sector: Financial Services
+11. TECHM.NS        | Score: 0.553 | Rating: Neutral      | Sector: Technology
+12. BAJFINANCE.NS   | Score: 0.552 | Rating: Neutral      | Sector: Financial Services
+13. BHARTIARTL.NS   | Score: 0.551 | Rating: Neutral      | Sector: Communication Services
+14. HDFCBANK.NS     | Score: 0.551 | Rating: Neutral      | Sector: Financial Services
+15. TITAN.NS        | Score: 0.545 | Rating: Neutral      | Sector: Consumer Cyclical

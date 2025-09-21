@@ -1,0 +1,30 @@
+flask
+flask_sqlalchemy
+flask-cors
+python-dotenv
+yfinance
+requests
+pandas
+numpy
+textblob
+plotly
+websockets
+flask-socketio
+psycopg2-binary
+Flask-Migrate
+# Calendar Integration
+google-api-python-client
+google-auth
+google-auth-oauthlib
+# Plagiarism Detection Dependencies
+scikit-learn
+# Enhanced AI with Claude API
+anthropic
+# Payments
+razorpay
+PyJWT
+# Optional advanced dependencies for better plagiarism detection
+# transformers
+# torch
+# Note: Uncomment the above lines if you want to use BERT-based embeddings
+# These require significant disk space and memory

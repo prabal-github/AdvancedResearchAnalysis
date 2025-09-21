@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}Enhanced Events Analytics (Newsletter Edition){% endblock %}
+{% block content %}
+<div class="container-fluid py-3">
+  <h4>Enhanced Events Analytics - Newsletter Edition</h4>
+  <p class="text-muted">Admin-only view with newsletter export.</p>
+  <div class="mb-3">
+    <button id="generateNewsletterBtn" class="btn btn-primary btn-sm">📰 Generate Newsletter HTML</button>
+    <select id="newsletterTheme" class="form-select form-select-sm d-inline-block" style="width:auto;">
+      <option value="light" selected>Light Theme</option>
+      <option value="dark">Dark Theme</option>
+      <option value="brand">Brand (Blue/Gold)</option>
+    </select>
+    <div class="form-check form-check-inline ms-2">
+      <input class="form-check-input" type="checkbox" id="includeSparklines" checked>
+      <label class="form-check-label" for="includeSparklines" style="font-size:0.8rem;">Sparklines</label>
+    </div>
+    <a id="downloadNewsletterLink" class="btn btn-outline-secondary btn-sm d-none" download="events_news_newsletter.html">Download Ready</a>
+  </div>
+  <iframe id="newsletterPreview" style="width:100%;min-height:400px;border:1px solid #ccc;border-radius:6px;"></iframe>
+  <hr/>
+  <div>
+    {% include 'enhanced_events_analytics.html' %}
+  </div>
+</div>
+<script>
+(async function(){
+  async function fetchData(){
+    const resp = await fetch('/api/proxy/events_news');
+    return resp.ok ? resp.json() : {items:[], predictions:[]};
+  }
+  function escapeHtml(s){return s.replace(/[&<>"] /g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',' ':' '})[c]||c)}
+  function buildNewsletter(data, opts={}){
+    const ts = new Date().toISOString();
+    const logo = `
+      <div style='text-align:center;margin-bottom:18px;'>
+        <img src='https://predictram.com/images/logo2x.png' alt='PredictRAM Logo' style='max-height:70px;width:auto;' />
+        <div style='font-size:12px;margin-top:6px;font-weight:600;letter-spacing:0.4px;color:#222;'>PredictRAM - Params Data Provider Pvt Ltd<br/>SEBI Reg Research Analyst INH000022400</div>
+      </div>`;
+    // Helper to render model score bars
+  function renderModelBars(list){
+      if(!list || !list.length) return '-';
+      return list.map(m=>{
+        const pct = Math.min(100, m.score * 60); // scale factor
+        const reasons = (m.reasons||[]).join(', ');
+        return `<div style='margin-bottom:3px;'>
+            <span style='font-weight:600;font-size:12px;'>${m.model}</span>
+            <span style='display:inline-block;background:#e5e9f4;margin:0 6px 0 6px;vertical-align:middle;border-radius:3px;overflow:hidden;width:120px;height:8px;'>
+              <span style='display:block;height:100%;width:${pct}%;background:#272bab;'></span>
+            </span>
+            <span style='font-size:11px;color:#555;'>${m.score}</span>
+            ${reasons?`<span style='font-size:10px;color:#888;' title='${reasons.replace(/'/g,"&apos;")}'>&#9432;</span>`:''}
+          </div>`;
+      }).join('');
+    }
+
+    const events = (data.items||[]).slice(0,25).map(e=>{
+      const models = renderModelBars(e.matched_models_details||[]);
+      return `<tr><td style='padding:6px;border:1px solid #ddd;'><strong>${escapeHtml(e.title||'Untitled')}</strong><br/><small>${escapeHtml(e.published_at||'')}</small><br/><em>${escapeHtml(e.summary||'')}</em></td><td style='padding:6px;border:1px solid #ddd;'>${models}</td></tr>`;
+    }).join('');
+    const preds = (data.predictions||[]).map(p=>{
+      const probPct = (p.probability*100).toFixed(1);
+      const models = renderModelBars(p.matched_models_details||[]);
+      // probability bar
+      const probBar = `<div style='display:inline-block;background:#eceff5;border-radius:4px;overflow:hidden;width:110px;height:10px;vertical-align:middle;margin-left:6px;'>
+        <span style='display:block;height:100%;width:${probPct}%;background:${p.probability>=0.7?'#b30000':p.probability>=0.4?'#bb7a00':'#0a6b2d'};'></span></div>`;
+      return `<tr><td style='padding:6px;border:1px solid #ddd;'><strong>${escapeHtml(p.title||'Upcoming Event')}</strong><br/><small>${escapeHtml(p.scheduled_time||'')}</small></td><td style='padding:6px;border:1px solid #ddd;'>${probPct}% ${probBar}</td><td style='padding:6px;border:1px solid #ddd;'>${models}</td></tr>`;
+    }).join('');
+
+    // Aggregate model scores across all items & predictions
+    const aggregate = {};
+    (data.items||[]).forEach(it=> (it.matched_models_details||[]).forEach(m=>{
+      if(!aggregate[m.model]) aggregate[m.model] = {scoreSum:0,count:0,max:0};
+      aggregate[m.model].scoreSum += m.score; aggregate[m.model].count +=1; aggregate[m.model].max = Math.max(aggregate[m.model].max, m.score);
+    }));
+    (data.predictions||[]).forEach(it=> (it.matched_models_details||[]).forEach(m=>{
+      if(!aggregate[m.model]) aggregate[m.model] = {scoreSum:0,count:0,max:0};
+      aggregate[m.model].scoreSum += m.score; aggregate[m.model].count +=1; aggregate[m.model].max = Math.max(aggregate[m.model].max, m.score);
+    }));
+    // Build per-model score arrays for sparkline (raw scores list)
+    const aggRows = Object.entries(aggregate).map(([model,obj])=>{
+      const avg = obj.scoreSum/obj.count;
+      return {model, avg, max: obj.max, count: obj.count};
+    }).sort((a,b)=> b.avg - a.avg).slice(0,8);
+    function sparkline(values, color){
+      if(!values.length) return '';
+      const w=80,h=16; const maxV=Math.max(...values); const minV=Math.min(...values);
+      const pts = values.map((v,i)=>{
+        const x = (i/(values.length-1))*w;
+        const norm = maxV===minV?0.5:(v-minV)/(maxV-minV);
+        const y = h - (norm * (h-2)) -1;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      return `<svg width='${w}' height='${h}' viewBox='0 0 ${w} ${h}' xmlns='http://www.w3.org/2000/svg'>
+        <polyline fill='none' stroke='${color}' stroke-width='1.5' points='${pts}' stroke-linejoin='round' stroke-linecap='round' />
+      </svg>`;
+    }
+    // collect arrays per model again (need exact scores)
+    const modelScores = {};
+    (data.items||[]).forEach(it=> (it.matched_models_details||[]).forEach(m=>{
+      (modelScores[m.model]||(modelScores[m.model]=[])).push(m.score);
+    }));
+    (data.predictions||[]).forEach(it=> (it.matched_models_details||[]).forEach(m=>{
+      (modelScores[m.model]||(modelScores[m.model]=[])).push(m.score);
+    }));
+    const summary = aggRows.map(r=>{
+      const pct = Math.min(100, r.avg*60);
+      const spark = opts.includeSparklines ? sparkline(modelScores[r.model]||[], opts.colors.accent) : '';
+      return `<div style='display:flex;align-items:center;margin:4px 0;'>
+        <div style='flex:0 0 190px;font-size:12px;font-weight:600;'>${r.model}</div>
+        <div style='flex:1;display:flex;align-items:center;gap:6px;'>
+          <div style='background:#e5e9f4;height:10px;border-radius:4px;overflow:hidden;position:relative;flex:1;'>
+            <span style='display:block;height:100%;width:${pct}%;background:${opts.colors.primary};'></span>
+            <span style='position:absolute;left:4px;top:-1px;font-size:9px;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.4);'>avg ${r.avg.toFixed(2)}</span>
+          </div>
+          <div>${spark}</div>
+        </div>
+        <div style='flex:0 0 48px;font-size:11px;text-align:right;color:#555;'>n=${r.count}</div>
+      </div>`;
+    }).join('');
+
+    // Theme palettes
+    const themes = {
+      light: {bg:'#ffffff', text:'#222', primary:'#272bab', accent:'#5f5b00', panel:'#f0f2f8'},
+      dark: {bg:'#10131a', text:'#e6e8ef', primary:'#4c60ff', accent:'#ffb400', panel:'#1f2430'},
+      brand: {bg:'#ffffff', text:'#1c2142', primary:'#272bab', accent:'#bfa500', panel:'#eef1fb'}
+    };
+    const activeTheme = themes[opts.theme] || themes.light;
+  return `<!DOCTYPE html><html><head><meta charset='utf-8'/><title>Market Events Newsletter</title>
+      <style>
+    @page { size: A4 portrait; margin:14mm; }
+    body { font-family: 'Segoe UI',Arial,sans-serif; line-height:1.45; color:${activeTheme.text}; background:${activeTheme.bg}; -webkit-print-color-adjust:exact; print-color-adjust:exact; margin:0; }
+        .a4-page { max-width:794px; margin:0 auto; padding:0 4mm 10mm; box-sizing:border-box; }
+    h2 { margin:4px 0 12px; font-size:22px; letter-spacing:0.5px; }
+    h3 { font-size:16px; margin:26px 0 8px; background:${activeTheme.primary}; color:#fff; padding:8px 12px; border-radius:4px; }
+        table { width:100%; border-collapse:collapse; page-break-inside:auto; }
+        tr { page-break-inside:avoid; page-break-after:auto; }
+    th { text-align:left; background:${activeTheme.panel}; font-weight:600; }
+    th, td { font-size:13px; padding:6px 6px; border:1px solid #d0d4dd; vertical-align:top; }
+        .footer { margin-top:28px; font-size:11px; color:#555; text-align:center; }
+        .meta { text-align:center; font-size:11px; color:#666; margin-top:-4px; margin-bottom:10px; }
+        .disclaimer { font-size:10px; line-height:1.3; margin-top:14px; color:#666; }
+    .prob-high { color:#b30000; font-weight:600; }
+    .prob-med { color:#bb7a00; }
+    .prob-low { color:#0a6b2d; }
+      </style>
+    </head>
+    <body><div class='a4-page'>${logo}
+      <h2 style='text-align:center;'>Market Events & Models Newsletter</h2>
+      <div class='meta'>Generated ${ts}</div>
+  <h3>Model Match Summary</h3>
+  ${summary || '<p style="font-size:12px;">No model matches available.</p>'}
+  <h3>Latest News & Events</h3>
+      <table>${events || '<tr><td>No events</td></tr>'}</table>
+      <h3>Upcoming Predicted Events</h3>
+      <table><tr><th>Event</th><th>Probability</th><th>Matched Models</th></tr>${preds || '<tr><td colspan=3>No predictions</td></tr>'}</table>
+      <div class='footer'>Confidential - Internal Use Only.</div>
+      <div class='disclaimer'>The information contained herein is for informational purposes only and is not investment advice. Probabilities are model outputs and subject to change without notice.</div>
+    </div></body></html>`;
+  }
+  document.getElementById('generateNewsletterBtn').addEventListener('click', async ()=>{
+    const data = await fetchData();
+    const html = buildNewsletter(data, {
+      theme: document.getElementById('newsletterTheme').value,
+      includeSparklines: document.getElementById('includeSparklines').checked,
+      colors: { primary:'#272bab', accent:'#5f5b00' }
+    });
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.getElementById('downloadNewsletterLink');
+    a.href = url; a.classList.remove('d-none');
+    const iframe = document.getElementById('newsletterPreview');
+    iframe.src = url;
+  });
+})();
+</script>
+{% endblock %}

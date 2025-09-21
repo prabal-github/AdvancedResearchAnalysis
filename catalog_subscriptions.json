@@ -1,0 +1,7 @@
+{
+  "agents": [],
+  "models": [
+    "regime_classifier",
+    "volatility_garch"
+  ]
+}

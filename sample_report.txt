@@ -1,0 +1,28 @@
+Sample Research Report for Testing Ticker Extraction
+
+APPLE INC (AAPL) - Strong Buy Recommendation
+
+Executive Summary:
+Apple Inc shows strong fundamentals with robust iPhone sales. The company's ecosystem continues to drive revenue growth. We recommend a BUY rating with a target price of $200.
+
+Key Points:
+- iPhone 15 sales exceeded expectations
+- Services revenue growing at 15% YoY
+- Strong cash position of $165B
+- MICROSOFT partnership announced
+- NVIDIA chips powering new AI features
+
+Technical Analysis:
+AAPL is currently trading near support levels. MSFT and GOOGL are also showing similar patterns. The broader tech sector including AMZN and TSLA remain bullish.
+
+Price Targets:
+- AAPL: $200 (12-month target)
+- MSFT: $380 (Strong fundamentals)
+- GOOGL: $145 (Advertising recovery)
+
+Risk Factors:
+China demand remains uncertain. Competition from Samsung and other Android manufacturers. Regulatory pressures in EU markets.
+
+Recommendation: BUY
+Analyst: John Smith
+Date: 2025-01-11

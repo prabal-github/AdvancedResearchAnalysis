@@ -1,0 +1,566 @@
+{
+  "stock_recommendations": [
+    {
+      "symbol": "ABB.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 5131.9,
+      "target_price": 5131.9,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:31"
+    },
+    {
+      "symbol": "ADANIENSOL.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 794.15,
+      "target_price": 794.15,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:33"
+    },
+    {
+      "symbol": "ADANIENT.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 2311.6,
+      "target_price": 2311.6,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:35"
+    },
+    {
+      "symbol": "ADANIGREEN.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 943.7,
+      "target_price": 943.7,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:37"
+    },
+    {
+      "symbol": "ADANIPORTS.NS",
+      "recommendation": "HOLD",
+      "confidence": 57.5,
+      "current_price": 1380.9,
+      "target_price": 1380.9,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:40"
+    },
+    {
+      "symbol": "ADANIPOWER.NS",
+      "recommendation": "HOLD",
+      "confidence": 52.5,
+      "current_price": 643.65,
+      "target_price": 643.65,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:42"
+    },
+    {
+      "symbol": "ATGL.NS",
+      "recommendation": "SELL",
+      "confidence": 62.5,
+      "current_price": 594.6,
+      "target_price": 547.03,
+      "potential_return": -8.00033636057855,
+      "analysis_time": "20:35:44"
+    },
+    {
+      "symbol": "AMBUJACEM.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 567.6,
+      "target_price": 567.6,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:46"
+    },
+    {
+      "symbol": "APOLLOHOSP.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 7825.5,
+      "target_price": 7825.5,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:48"
+    },
+    {
+      "symbol": "ASIANPAINT.NS",
+      "recommendation": "HOLD",
+      "confidence": 55.0,
+      "current_price": 2537.3,
+      "target_price": 2537.3,
+      "potential_return": 0.0,
+      "analysis_time": "20:35:51"
+    }
+  ],
+  "btst_opportunities": [
+    {
+      "symbol": "ADANIENSOL.NS",
+      "btst_score": 50,
+      "recommendation": "STRONG BUY",
+      "risk_level": "MEDIUM",
+      "expected_return": 0,
+      "analysis_time": "20:35:54"
+    },
+    {
+      "symbol": "ADANIGREEN.NS",
+      "btst_score": 35,
+      "recommendation": "BUY",
+      "risk_level": "MEDIUM",
+      "expected_return": 0,
+      "analysis_time": "20:35:58"
+    },
+    {
+      "symbol": "ADANIPORTS.NS",
+      "btst_score": 50,
+      "recommendation": "STRONG BUY",
+      "risk_level": "MEDIUM",
+      "expected_return": 0,
+      "analysis_time": "20:36:00"
+    }
+  ],
+  "options_strategies": [
+    {
+      "symbol": "ABB.NS",
+      "strategy": "Iron Butterfly",
+      "confidence": 55,
+      "max_profit": 0,
+      "max_loss": 0,
+      "breakeven": 0,
+      "risk_reward_ratio": 0,
+      "analysis_time": "20:36:01"
+    },
+    {
+      "symbol": "ADANIENSOL.NS",
+      "strategy": "Straddle",
+      "confidence": 70,
+      "max_profit": 0,
+      "max_loss": 0,
+      "breakeven": 0,
+      "risk_reward_ratio": 0,
+      "analysis_time": "20:36:03"
+    },
+    {
+      "symbol": "ADANIENT.NS",
+      "strategy": "Iron Butterfly",
+      "confidence": 55,
+      "max_profit": 0,
+      "max_loss": 0,
+      "breakeven": 0,
+      "risk_reward_ratio": 0,
+      "analysis_time": "20:36:05"
+    },
+    {
+      "symbol": "ADANIGREEN.NS",
+      "strategy": "Iron Butterfly",
+      "confidence": 55,
+      "max_profit": 0,
+      "max_loss": 0,
+      "breakeven": 0,
+      "risk_reward_ratio": 0,
+      "analysis_time": "20:36:07"
+    },
+    {
+      "symbol": "ADANIPORTS.NS",
+      "strategy": "Straddle",
+      "confidence": 70,
+      "max_profit": 0,
+      "max_loss": 0,
+      "breakeven": 0,
+      "risk_reward_ratio": 0,
+      "analysis_time": "20:36:09"
+    }
+  ],
+  "sector_analysis": {
+    "Banking": {
+      "avg_change_percent": -0.07,
+      "strength_score": 14.3,
+      "recommendation": "POSITIVE",
+      "top_performers": [
+        {
+          "symbol": "KOTAKBANK.NS",
+          "change_percent": 0.53,
+          "volume_ratio": 3.174779
+        },
+        {
+          "symbol": "ICICIBANK.NS",
+          "change_percent": 0.07,
+          "volume_ratio": 6.470578
+        },
+        {
+          "symbol": "SBIN.NS",
+          "change_percent": 0.01,
+          "volume_ratio": 4.565917
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "INDUSINDBK.NS",
+          "change_percent": -0.61,
+          "volume_ratio": 1.34698
+        },
+        {
+          "symbol": "AXISBANK.NS",
+          "change_percent": -0.31,
+          "volume_ratio": 4.310238
+        },
+        {
+          "symbol": "HDFCBANK.NS",
+          "change_percent": -0.09,
+          "volume_ratio": 13.984713
+        }
+      ]
+    },
+    "IT": {
+      "avg_change_percent": 2.48,
+      "strength_score": 54.8,
+      "recommendation": "BULLISH",
+      "top_performers": [
+        {
+          "symbol": "INFY.NS",
+          "change_percent": 4.98,
+          "volume_ratio": 13.071603
+        },
+        {
+          "symbol": "WIPRO.NS",
+          "change_percent": 2.73,
+          "volume_ratio": 12.834879
+        },
+        {
+          "symbol": "TECHM.NS",
+          "change_percent": 2.57,
+          "volume_ratio": 1.74952
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "TCS.NS",
+          "change_percent": 1.01,
+          "volume_ratio": 2.488989
+        },
+        {
+          "symbol": "HCLTECH.NS",
+          "change_percent": 1.72,
+          "volume_ratio": 2.906554
+        },
+        {
+          "symbol": "LTIM.NS",
+          "change_percent": 1.9,
+          "volume_ratio": 0.17781
+        }
+      ]
+    },
+    "Auto": {
+      "avg_change_percent": 0.02,
+      "strength_score": 12.2,
+      "recommendation": "POSITIVE",
+      "top_performers": [
+        {
+          "symbol": "EICHERMOT.NS",
+          "change_percent": 0.87,
+          "volume_ratio": 0.983273
+        },
+        {
+          "symbol": "MARUTI.NS",
+          "change_percent": 0.7,
+          "volume_ratio": 0.605846
+        },
+        {
+          "symbol": "HEROMOTOCO.NS",
+          "change_percent": -0.36,
+          "volume_ratio": 0.608374
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "TATAMOTORS.NS",
+          "change_percent": -0.55,
+          "volume_ratio": 9.405839
+        },
+        {
+          "symbol": "BAJAJ-AUTO.NS",
+          "change_percent": -0.54,
+          "volume_ratio": 0.505476
+        },
+        {
+          "symbol": "HEROMOTOCO.NS",
+          "change_percent": -0.36,
+          "volume_ratio": 0.608374
+        }
+      ]
+    },
+    "Pharma": {
+      "avg_change_percent": 1.05,
+      "strength_score": 33.0,
+      "recommendation": "BULLISH",
+      "top_performers": [
+        {
+          "symbol": "DRREDDY.NS",
+          "change_percent": 3.25,
+          "volume_ratio": 1.643617
+        },
+        {
+          "symbol": "SUNPHARMA.NS",
+          "change_percent": 0.68,
+          "volume_ratio": 1.709251
+        },
+        {
+          "symbol": "CIPLA.NS",
+          "change_percent": 0.67,
+          "volume_ratio": 0.788227
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "DIVISLAB.NS",
+          "change_percent": -0.41,
+          "volume_ratio": 0.254557
+        },
+        {
+          "symbol": "CIPLA.NS",
+          "change_percent": 0.67,
+          "volume_ratio": 0.788227
+        },
+        {
+          "symbol": "SUNPHARMA.NS",
+          "change_percent": 0.68,
+          "volume_ratio": 1.709251
+        }
+      ]
+    },
+    "FMCG": {
+      "avg_change_percent": 0.8,
+      "strength_score": 38.0,
+      "recommendation": "BULLISH",
+      "top_performers": [
+        {
+          "symbol": "NESTLEIND.NS",
+          "change_percent": 1.22,
+          "volume_ratio": 1.295603
+        },
+        {
+          "symbol": "TATACONSUM.NS",
+          "change_percent": 0.87,
+          "volume_ratio": 0.77913
+        },
+        {
+          "symbol": "HINDUNILVR.NS",
+          "change_percent": 0.69,
+          "volume_ratio": 1.610954
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "BRITANNIA.NS",
+          "change_percent": 0.44,
+          "volume_ratio": 0.216446
+        },
+        {
+          "symbol": "HINDUNILVR.NS",
+          "change_percent": 0.69,
+          "volume_ratio": 1.610954
+        },
+        {
+          "symbol": "TATACONSUM.NS",
+          "change_percent": 0.87,
+          "volume_ratio": 0.77913
+        }
+      ]
+    },
+    "Energy": {
+      "avg_change_percent": -0.36,
+      "strength_score": 3.9,
+      "recommendation": "NEUTRAL",
+      "top_performers": [
+        {
+          "symbol": "IOC.NS",
+          "change_percent": 0.03,
+          "volume_ratio": 3.635809
+        },
+        {
+          "symbol": "RELIANCE.NS",
+          "change_percent": -0.17,
+          "volume_ratio": 9.753126
+        },
+        {
+          "symbol": "ONGC.NS",
+          "change_percent": -0.52,
+          "volume_ratio": 11.665103
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "BPCL.NS",
+          "change_percent": -0.79,
+          "volume_ratio": 6.476153
+        },
+        {
+          "symbol": "ONGC.NS",
+          "change_percent": -0.52,
+          "volume_ratio": 11.665103
+        },
+        {
+          "symbol": "RELIANCE.NS",
+          "change_percent": -0.17,
+          "volume_ratio": 9.753126
+        }
+      ]
+    },
+    "Metals": {
+      "avg_change_percent": 0.18,
+      "strength_score": 25.8,
+      "recommendation": "BULLISH",
+      "top_performers": [
+        {
+          "symbol": "HINDALCO.NS",
+          "change_percent": 0.56,
+          "volume_ratio": 3.392861
+        },
+        {
+          "symbol": "JSWSTEEL.NS",
+          "change_percent": 0.28,
+          "volume_ratio": 1.058354
+        },
+        {
+          "symbol": "COALINDIA.NS",
+          "change_percent": 0.23,
+          "volume_ratio": 4.376347
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "VEDL.NS",
+          "change_percent": -0.37,
+          "volume_ratio": 6.379341
+        },
+        {
+          "symbol": "TATASTEEL.NS",
+          "change_percent": 0.2,
+          "volume_ratio": 14.026683
+        },
+        {
+          "symbol": "COALINDIA.NS",
+          "change_percent": 0.23,
+          "volume_ratio": 4.376347
+        }
+      ]
+    }
+  },
+  "summary_stats": {
+    "total_stocks_analyzed": 10,
+    "total_btst_opportunities": 3,
+    "total_options_strategies": 5,
+    "sectors_analyzed": 7,
+    "buy_recommendations": 0,
+    "sell_recommendations": 1,
+    "hold_recommendations": 9,
+    "avg_confidence": 55.75,
+    "avg_potential_return": -8.0,
+    "strong_buy_btst": 2,
+    "buy_btst": 1,
+    "avg_btst_score": 45.0,
+    "popular_strategies": {
+      "Iron Butterfly": 3,
+      "Straddle": 2
+    },
+    "avg_options_confidence": 61.0
+  },
+  "performance_metrics": {
+    "top_potential_returns": [],
+    "high_confidence_picks": [
+      {
+        "symbol": "ATGL.NS",
+        "recommendation": "SELL",
+        "confidence": 62.5,
+        "current_price": 594.6,
+        "target_price": 547.03,
+        "potential_return": -8.00033636057855,
+        "analysis_time": "20:35:44"
+      },
+      {
+        "symbol": "ADANIPORTS.NS",
+        "recommendation": "HOLD",
+        "confidence": 57.5,
+        "current_price": 1380.9,
+        "target_price": 1380.9,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:40"
+      },
+      {
+        "symbol": "ABB.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 5131.9,
+        "target_price": 5131.9,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:31"
+      },
+      {
+        "symbol": "ADANIENSOL.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 794.15,
+        "target_price": 794.15,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:33"
+      },
+      {
+        "symbol": "ADANIENT.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 2311.6,
+        "target_price": 2311.6,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:35"
+      },
+      {
+        "symbol": "ADANIGREEN.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 943.7,
+        "target_price": 943.7,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:37"
+      },
+      {
+        "symbol": "AMBUJACEM.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 567.6,
+        "target_price": 567.6,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:46"
+      },
+      {
+        "symbol": "APOLLOHOSP.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 7825.5,
+        "target_price": 7825.5,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:48"
+      },
+      {
+        "symbol": "ASIANPAINT.NS",
+        "recommendation": "HOLD",
+        "confidence": 55.0,
+        "current_price": 2537.3,
+        "target_price": 2537.3,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:51"
+      },
+      {
+        "symbol": "ADANIPOWER.NS",
+        "recommendation": "HOLD",
+        "confidence": 52.5,
+        "current_price": 643.65,
+        "target_price": 643.65,
+        "potential_return": 0.0,
+        "analysis_time": "20:35:42"
+      }
+    ],
+    "buy_recommendations_list": [],
+    "sell_recommendations_list": [
+      "ATGL.NS"
+    ]
+  },
+  "timestamp": "2025-09-09 20:35:27"
+}

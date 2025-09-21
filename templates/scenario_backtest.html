@@ -1,0 +1,216 @@
+{% extends "layout.html" %}
+{% block title %}Scenario Backtest Results - {{ scenario.scenario_title }}{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Backtest Results</h1>
+        <p class="text-muted mb-0">{{ scenario.scenario_title }} - Performance Analysis</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/scenario_report/{{ scenario.report_id }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Report
+        </a>
+        <a href="/report_hub" class="btn btn-outline-secondary">
+            <i class="bi bi-house me-1"></i> Report Hub
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Performance Summary -->
+<div class="row mb-4">
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-primary mb-1">{{ "%.1f"|format(portfolio_performance.model_accuracy) }}%</h3>
+                <small class="text-muted">Model Accuracy</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-info mb-1">{{ "%.2f"|format(portfolio_performance.sharpe_ratio) }}</h3>
+                <small class="text-muted">Sharpe Ratio During Period</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-warning mb-1">{{ "%.1f"|format(portfolio_performance.alpha_vs_benchmark) }}%</h3>
+                <small class="text-muted">Alpha vs Benchmark</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-success mb-1">{{ "%.0f"|format(portfolio_performance.scenario_score) }}/100</h3>
+                <small class="text-muted">Scenario Prediction Score</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Backtest Results Table -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Backtested Stock Performance (First 5 Stocks)</h5>
+    </div>
+    <div class="card-body">
+        {% if backtested_stocks %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Stock</th>
+                        <th>Action</th>
+                        <th>Expected Return (%)</th>
+                        <th>Actual Return (%)</th>
+                        <th>Precision Score</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in backtested_stocks %}
+                    <tr>
+                        <td>
+                            <strong>{{ stock.stock }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if stock.action == 'buy' else ('danger' if stock.action == 'sell' else 'secondary') }}">
+                                {{ stock.action.upper() }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-bold {{ 'text-success' if stock.expected_return > 0 else ('text-danger' if stock.expected_return < 0 else 'text-muted') }}">
+                                {{ "%.1f"|format(stock.expected_return) }}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-bold {{ 'text-success' if stock.actual_return > 0 else ('text-danger' if stock.actual_return < 0 else 'text-muted') }}">
+                                {{ "%.1f"|format(stock.actual_return) }}%
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold me-2">{{ "%.1f"|format(stock.precision_score) }}</span>
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar bg-{{ 'success' if stock.precision_score >= 80 else ('warning' if stock.precision_score >= 60 else 'danger') }}" 
+                                         style="width: {{ stock.precision_score }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% set direction_correct = (stock.expected_return > 0 and stock.actual_return > 0) or (stock.expected_return < 0 and stock.actual_return < 0) or (stock.expected_return == 0 and stock.actual_return == 0) %}
+                            {% if direction_correct %}
+                                <i class="bi bi-check-circle text-success" title="Direction prediction correct"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-danger" title="Direction prediction incorrect"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Summary Stats -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-primary">Average Precision</h6>
+                        <h4>{{ "%.1f"|format((backtested_stocks|sum(attribute='precision_score'))/backtested_stocks|length if backtested_stocks else 0) }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-success">Correct Directions</h6>
+                        <h4>
+                            {% set correct_count = 0 %}
+                            {% for stock in backtested_stocks %}
+                                {% set direction_correct = (stock.expected_return > 0 and stock.actual_return > 0) or (stock.expected_return < 0 and stock.actual_return < 0) or (stock.expected_return == 0 and stock.actual_return == 0) %}
+                                {% if direction_correct %}
+                                    {% set correct_count = correct_count + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ correct_count }}/{{ backtested_stocks|length }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-info">Stocks Analyzed</h6>
+                        <h4>{{ backtested_stocks|length }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-info-circle fs-1 mb-2"></i>
+            <p>No backtesting results available</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Additional Stock Recommendations -->
+{% if additional_stocks %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-stars me-2"></i>Connect with Other Stocks (Max 3 Recommendations)</h5>
+        <small>Additional opportunities based on scenario analysis</small>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            {% for stock in additional_stocks %}
+            <div class="col-md-4">
+                <div class="card border border-info h-100">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">{{ stock.ticker }}</h6>
+                        <small class="text-muted">{{ stock.sector.upper() }} Sector</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-{{ 'success' if stock.action == 'buy' else ('danger' if stock.action == 'sell' else 'secondary') }} fs-6">
+                                {{ stock.action.upper() }}
+                            </span>
+                            <span class="fw-bold fs-5 {{ 'text-success' if stock.expected_return > 0 else ('text-danger' if stock.expected_return < 0 else 'text-muted') }}">
+                                {{ "%.1f"|format(stock.expected_return) }}%
+                            </span>
+                        </div>
+                        <p class="card-text text-muted">{{ stock.rationale }}</p>
+                        <button class="btn btn-outline-info btn-sm w-100" onclick="analyzeStock('{{ stock.ticker }}')">
+                            <i class="bi bi-graph-up me-1"></i> Quick Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Note:</strong> These additional recommendations are based on scenario analysis patterns and sector correlations. 
+            Consider your risk tolerance and portfolio diversification before making investment decisions.
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function analyzeStock(ticker) {
+    // Simple modal or alert for quick analysis
+    alert(`Quick Analysis for ${ticker}\n\nThis would normally show:\n- Current price and trends\n- Technical indicators\n- Recent news\n- Analyst recommendations\n\n(Feature to be implemented)`);
+}
+</script>
+
+{% endblock %}

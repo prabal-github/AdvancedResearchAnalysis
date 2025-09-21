@@ -1,0 +1,152 @@
+sbrsingh20: List analysts profile and features they can access, Investor profile and features they can access and admin and features they can access.
+
+GitHub Copilot: I'll help you identify the different user profiles and their features by examining the codebase. Let me start by looking at the main application files and any documentation that might describe the user roles and permissions. Now let me examine the main application file to get more details about the specific routes and permissions for each user type. Let me look for more admin routes and investor routes to get a complete picture: Let me search for all available routes to get a comprehensive view: Now let me search for routes that have specific access requirements like analyst_required, admin_required, etc: Let me look at the main login routes and some documentation files to get a complete picture: Let me also check some of the documentation files for more complete information: Based on my comprehensive analysis of the codebase, I can now provide you with a detailed breakdown of the user profiles and their accessible features:
+
+# User Profiles and Feature Access
+
+## 🏛️ **ADMIN PROFILE**
+
+### **Access Requirements:**
+- Admin key authentication (`admin_key=admin123`)
+- Session-based admin role verification
+
+### **Features & Routes Available:**
+
+#### **Core Administrative Features:**
+- **Admin Dashboard**: `/admin_dashboard` - Central management console
+- **Investor Management**: `/admin/create_investor` - Create and manage investor accounts
+- **Analyst Management**: `/admin/create_analyst` - Create analyst accounts with credentials
+- **Research Topic Management**: `/admin/research_topics` - Manage research assignments
+- **Certificate Management**: `/admin/certificates` - Oversee certification system
+- **Performance Monitoring**: `/admin/performance` - System-wide analytics
+- **Admin API Access**: `/api/admin/topics` - Administrative API endpoints
+
+#### **Administrative Capabilities:**
+- Create and manage investor accounts with unique IDs
+- Create analyst profiles with authentication credentials
+- Assign research topics to analysts
+- Monitor system performance and usage statistics
+- Manage certificate generation and approval
+- View comprehensive system analytics
+- Access to all user data and reports
+
+---
+
+## 👨‍💼 **ANALYST PROFILE**
+
+### **Access Requirements:**
+- Email/password authentication via `/analyst_login`
+- Session-based analyst role verification
+- Active analyst account status
+
+### **Features & Routes Available:**
+
+#### **Core Analyst Features:**
+- **Analyst Dashboard**: `/analyst_dashboard` - Personal dashboard with quick access
+- **Performance Dashboard**: `/analyst/performance_dashboard` - Personal metrics and analytics
+- **Report Analysis**: `/analyze_new` - Submit new analysis reports
+- **Report Hub**: `/report_hub` - Central report management
+- **Report Comparison**: `/compare_reports` - Side-by-side report analysis
+- **Analyst Directory**: `/analysts` - View other analysts (read-only)
+
+#### **Research & Reporting:**
+- **Research Tasks**: `/analyst/research_tasks` - View and manage assigned tasks
+- **Submit Reports**: `/analyst/submit_report` - Comprehensive report submission
+- **My Reports**: `/analyst/my_reports` - View submitted reports history
+- **Research Templates**: `/analyst/research_templates` - Access report templates
+- **Fundamental Analysis**: `/analyst/fundamental_analysis` - Technical analysis tools
+
+#### **Professional Development:**
+- **Skill Development**: `/analyst/skill_development` - Track skill progression
+- **Performance Analytics**: Personal performance metrics and quality scores
+- **Certificate Status**: `/analyst/certificate_status` - View certification progress
+- **Improvement Analysis**: Track learning and performance improvements
+
+#### **Profile Management:**
+- **Own Profile Editing**: Can only edit their own profile (restricted access)
+- **View Other Profiles**: Read-only access to other analysts' performance data
+- **Skill Tracking**: Technical Analysis, Fundamental Analysis, Report Writing, Research Methodology
+
+#### **Certificate System:**
+- **Certificate Generation**: `/certificate/<request_id>/generate`
+- **Certificate Download**: `/certificate/<request_id>/download`
+
+#### **Limitations:**
+- Cannot access admin functions
+- Cannot create other user accounts
+- Cannot edit other analysts' profiles
+- Limited to assigned research tasks
+
+---
+
+## 💰 **INVESTOR PROFILE**
+
+### **Access Requirements:**
+- Email/password authentication via `/investor_login`
+- Active investor account status
+- Unique investor ID (format: INV######)
+
+### **Features & Routes Available:**
+
+#### **Core Investor Features:**
+- **Investor Dashboard**: `/investor_dashboard` - Secure personalized dashboard
+- **AI Research Assistant**: `/ai_research_assistant` - Enhanced AI-powered research tools
+- **Portfolio Analysis**: `/portfolio` - Investment portfolio management
+- **Report Viewing**: Access to public reports and analysis
+
+#### **Research & Intelligence:**
+- **Enhanced Knowledge Stats**: Access to comprehensive market intelligence
+- **Trending Topics**: Real-time market trend analysis
+- **Personalized Insights**: AI-driven investment recommendations
+- **Research Topic Requests**: Submit custom research requests
+- **Notification System**: Receive updates on research completion
+
+#### **Investment Tools:**
+- **Fundamental Analysis**: Access to detailed stock analysis
+- **Market Data**: Real-time and historical market information
+- **Sector Analysis**: Industry-specific research and insights
+- **Risk Assessment**: Portfolio risk analysis tools
+
+#### **API Access:**
+- **Notifications API**: `/api/notifications/<investor_id>`
+- **Enhanced Knowledge Stats**: `/api/enhanced_knowledge_stats`
+- **Fundamental Analysis API**: Access to market data APIs
+
+#### **Security Features:**
+- Session-based authentication
+- Password hashing protection
+- Login tracking and statistics
+- Account activity monitoring
+
+---
+
+## 🌐 **PUBLIC ACCESS (No Authentication Required)**
+
+### **Available Features:**
+- **Main Dashboard**: `/` - Public research platform interface
+- **Public Reports**: `/public/report/<report_id>` - Shareable research reports
+- **Market Data**: Basic market information and analysis
+- **Research Templates**: `/research_templates` - Public research templates
+
+---
+
+## 🔒 **Security & Permissions Summary**
+
+### **Access Control Hierarchy:**
+1. **Admin** - Full system access with management capabilities
+2. **Analyst** - Professional research tools with performance tracking
+3. **Investor** - Investment-focused features with AI assistance
+4. **Public** - Limited read-only access to public content
+
+### **Authentication Methods:**
+- **Admin**: Admin key (`admin123`) + session verification
+- **Analyst**: Email/password + `@analyst_required` decorator
+- **Investor**: Email/password + session-based verification
+- **Public**: No authentication required
+
+### **Demo Credentials:**
+- **Admin**: Access via `?admin_key=admin123`
+- **Analyst**: `analyst@demo.com` / `analyst123`
+- **Investor**: `investor@demo.com` / `investor123`
+
+This system provides a comprehensive three-tier access structure with appropriate security boundaries and feature segregation based on user roles and responsibilities.

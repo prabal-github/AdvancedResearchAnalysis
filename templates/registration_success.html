@@ -1,0 +1,344 @@
+{% extends "layout.html" %}
+
+{% block title %}Registration Successful - Research Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    .success-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .success-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 3rem 2rem;
+    }
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-30px);
+        }
+        60% {
+            transform: translateY(-15px);
+        }
+    }
+    .analyst-id-display {
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: 'Courier New', monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+    .next-steps {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    .step-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-left: 5px solid #28a745;
+        text-align: left;
+    }
+    .status-checker {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        color: white;
+    }
+    .btn-check-status {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid white;
+        color: white;
+        border-radius: 25px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-check-status:hover {
+        background: white;
+        color: #667eea;
+        transform: translateY(-2px);
+    }
+    .status-result {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 10px;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="card success-card">
+        <!-- Success Header -->
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h1 class="mb-0">Registration Successful!</h1>
+            <p class="mb-0 mt-2 opacity-75">Welcome to our Research Platform</p>
+            
+            <div class="analyst-id-display">
+                <div class="small opacity-75 mb-1">Your Analyst ID</div>
+                <div>{{ analyst_id }}</div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <h4 class="text-center mb-4">
+                    <i class="bi bi-list-check me-2"></i>
+                    What Happens Next?
+                </h4>
+                
+                <div class="step-item">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3 mt-1">
+                            <i class="bi bi-1-circle-fill fs-4 text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Account Review</h6>
+                            <p class="mb-0 text-muted">Our admin team will review your registration and verify your credentials.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3 mt-1">
+                            <i class="bi bi-2-circle-fill fs-4 text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Email Notification</h6>
+                            <p class="mb-0 text-muted">You'll receive an email confirmation once your account is approved.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3 mt-1">
+                            <i class="bi bi-3-circle-fill fs-4 text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Start Analyzing</h6>
+                            <p class="mb-0 text-muted">Once approved, you can log in and start accepting research assignments.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Checker -->
+            <div class="status-checker">
+                <h5 class="text-center mb-3">
+                    <i class="bi bi-search me-2"></i>
+                    Check Your Status
+                </h5>
+                <p class="text-center mb-3 opacity-75">
+                    You can check if your account has been approved at any time
+                </p>
+                <div class="text-center">
+                    <button class="btn btn-check-status" onclick="checkStatus()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        Check Status Now
+                    </button>
+                </div>
+                
+                <div id="statusResult" class="status-result">
+                    <!-- Status will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="alert alert-info">
+                <h6>
+                    <i class="bi bi-info-circle me-2"></i>
+                    Important Information
+                </h6>
+                <ul class="mb-0">
+                    <li><strong>Save your Analyst ID:</strong> {{ analyst_id }} - You'll need this for reference</li>
+                    <li><strong>Processing Time:</strong> Account approval typically takes 1-2 business days</li>
+                    <li><strong>Contact:</strong> If you have questions, email us at support@researchplatform.com</li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <a href="/analyst_login" class="btn btn-outline-primary me-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Try Login
+                </a>
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-2"></i>
+                    Go to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-question-circle me-2"></i>
+                Frequently Asked Questions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                            How long does approval take?
+                        </button>
+                    </h2>
+                    <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Account approval typically takes 1-2 business days. Our team reviews each application to ensure quality and expertise.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                            What if my application is rejected?
+                        </button>
+                    </h2>
+                    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            If your application doesn't meet our criteria, we'll send you feedback on how to improve and reapply.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                            Can I start working immediately?
+                        </button>
+                    </h2>
+                    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You must wait for account approval before accessing research assignments. This ensures quality control and platform security.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function checkStatus() {
+    const analystId = '{{ analyst_id }}';
+    const resultDiv = document.getElementById('statusResult');
+    const button = document.querySelector('.btn-check-status');
+    
+    // Show loading state
+    button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Checking...';
+    button.disabled = true;
+    
+    fetch(`/check_registration_status/${analystId}`)
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.style.display = 'block';
+            
+            if (data.found) {
+                if (data.is_active) {
+                    resultDiv.className = 'status-result bg-success text-white';
+                    resultDiv.innerHTML = `
+                        <div class="text-center">
+                            <i class="bi bi-check-circle-fill fs-4 mb-2"></i>
+                            <h6>Account Approved!</h6>
+                            <p class="mb-2">Welcome, ${data.name}! Your account is now active.</p>
+                            <a href="/analyst_login" class="btn btn-light btn-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Login Now
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.className = 'status-result bg-warning text-dark';
+                    resultDiv.innerHTML = `
+                        <div class="text-center">
+                            <i class="bi bi-clock-fill fs-4 mb-2"></i>
+                            <h6>Pending Review</h6>
+                            <p class="mb-0">Your application is still under review. Please check back later.</p>
+                            <small>Registered: ${data.created_at}</small>
+                        </div>
+                    `;
+                }
+            } else {
+                resultDiv.className = 'status-result bg-danger text-white';
+                resultDiv.innerHTML = `
+                    <div class="text-center">
+                        <i class="bi bi-x-circle-fill fs-4 mb-2"></i>
+                        <h6>Not Found</h6>
+                        <p class="mb-0">Could not find registration with this ID.</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'status-result bg-danger text-white';
+            resultDiv.innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 mb-2"></i>
+                    <h6>Error</h6>
+                    <p class="mb-0">Could not check status. Please try again later.</p>
+                </div>
+            `;
+        })
+        .finally(() => {
+            // Reset button
+            button.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Check Status Now';
+            button.disabled = false;
+        });
+}
+
+// Auto-copy analyst ID to clipboard when clicked
+document.querySelector('.analyst-id-display').addEventListener('click', function() {
+    const analystId = '{{ analyst_id }}';
+    navigator.clipboard.writeText(analystId).then(function() {
+        // Show temporary tooltip
+        const tooltip = document.createElement('div');
+        tooltip.textContent = 'Copied!';
+        tooltip.style.cssText = 'position: absolute; background: #333; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 1000;';
+        document.body.appendChild(tooltip);
+        
+        setTimeout(() => {
+            document.body.removeChild(tooltip);
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}

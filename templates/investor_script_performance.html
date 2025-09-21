@@ -1,0 +1,240 @@
+{% extends 'layout.html' %}
+{% block title %}Script Performance - {{ script_name }}{% endblock %}
+{% block content %}
+<div class="container-fluid py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Performance Dashboard: <span class="text-primary">{{ script_name }}</span></h2>
+    <div>
+      <a class="btn btn-outline-secondary me-2" href="{{ url_for('investor_script_detail', script_name=script_name) }}">Back to Detail</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('investor_script_results') }}">All Scripts</a>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100 border-start border-4 {{ 'border-success' if (weekly_return or 0) > 0 else 'border-danger' if weekly_return is not none else 'border-secondary' }}">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase mb-1">Weekly Return</h6>
+          <h3 class="mb-0">{% if weekly_return is not none %}{{ '%.2f'|format(weekly_return) }}%{% else %}<span class="text-muted">N/A</span>{% endif %}</h3>
+          <small class="text-muted">Last 7 days average</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100 border-start border-4 {{ 'border-success' if (monthly_return or 0) > 0 else 'border-danger' if monthly_return is not none else 'border-secondary' }}">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase mb-1">Monthly Return</h6>
+            <h3 class="mb-0">{% if monthly_return is not none %}{{ '%.2f'|format(monthly_return) }}%{% else %}<span class="text-muted">N/A</span>{% endif %}</h3>
+          <small class="text-muted">Last 30 days average</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100 border-start border-4 {{ 'border-success' if (yearly_return or 0) > 0 else 'border-danger' if yearly_return is not none else 'border-secondary' }}">
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase mb-1">Yearly Return</h6>
+          <h3 class="mb-0">{% if yearly_return is not none %}{{ '%.2f'|format(yearly_return) }}%{% else %}<span class="text-muted">N/A</span>{% endif %}</h3>
+          <small class="text-muted">Last 365 days average</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Summary & Insights -->
+  <div class="row g-3 mb-4">
+    <div class="col-lg-5">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light d-flex align-items-center">
+          <i class="bi bi-robot text-primary me-2"></i>
+          <strong>Claude AI Summary</strong>
+        </div>
+        <div class="card-body">
+          {% if ai_analysis and ai_analysis.summary %}
+            <p class="mb-2">{{ ai_analysis.summary }}</p>
+            <div class="small text-muted">{{ ai_analysis.detailed_analysis }}</div>
+          {% else %}
+            <p class="text-muted mb-0">No AI summary available.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light d-flex align-items-center">
+          <i class="bi bi-lightbulb text-warning me-2"></i>
+          <strong>AI Insights</strong>
+        </div>
+        <div class="card-body">
+          <div class="row g-2">
+            {% if ai_analysis and ai_analysis.insights %}
+              {% for ins in ai_analysis.insights %}
+                <div class="col-md-6">
+                  <div class="border rounded p-2 h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-1">
+                      <span class="badge bg-primary me-2">{{ loop.index }}</span>
+                      <strong class="flex-grow-1">{{ ins.title or 'Insight' }}</strong>
+                    </div>
+                    <div class="small text-muted" style="white-space: pre-wrap">{{ ins.description or ins }}</div>
+                    {% if ins.recommendation %}
+                      <div class="mt-1"><span class="badge bg-success">{{ ins.recommendation }}</span></div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="col-12 text-muted">No categorized insights available.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strategy Breakdown & Sector -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light"><strong>Strategy Analysis</strong></div>
+        <div class="card-body">
+          <canvas id="strategyChart" height="200"></canvas>
+          <ul class="mt-3 list-unstyled small">
+            {% for k,v in strategy_breakdown.items() %}
+              <li><span class="badge bg-secondary me-1">{{ k }}</span> {{ v }} signals</li>
+            {% endfor %}
+            {% if strategy_breakdown|length == 0 %}
+              <li class="text-muted">No strategy signals found.</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light d-flex align-items-center">
+          <strong>Stock Breakdown</strong>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="table table-sm table-striped align-middle mb-0" id="stockTable">
+            <thead class="table-light">
+              <tr>
+                <th>Symbol</th>
+                <th>Total Return %</th>
+                <th>Avg Return %</th>
+                <th>Recs</th>
+                <th>Success</th>
+                <th>Fail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in stock_rows %}
+                <tr class="{% if (r.total_return or 0) > 0 %}table-success{% elif (r.total_return or 0) < 0 %}table-danger{% endif %}">
+                  <td>{{ r.symbol }}</td>
+                  <td>{% if r.total_return is not none %}{{ '%.2f'|format(r.total_return) }}{% else %}-{% endif %}</td>
+                  <td>{% if r.avg_return is not none %}{{ '%.2f'|format(r.avg_return) }}{% else %}-{% endif %}</td>
+                  <td>{{ r.recommendation_count }}</td>
+                  <td>{{ r.successes }}</td>
+                  <td>{{ r.failures }}</td>
+                </tr>
+              {% endfor %}
+              {% if stock_rows|length == 0 %}
+                <tr><td colspan="6" class="text-muted">No stock performance data.</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest JSON Result Analysis -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light d-flex align-items-center">
+      <i class="bi bi-file-code text-info me-2"></i>
+      <strong>Latest JSON Result Analysis</strong>
+    </div>
+    <div class="card-body">
+      {% if latest_json_analysis %}
+        {% if json_ai_summary %}
+          <div class="alert alert-info py-2 mb-3"><i class="bi bi-robot me-2"></i>{{ json_ai_summary }}</div>
+          <div class="d-flex gap-3 mb-3 flex-wrap">
+            {% if json_top_stock %}
+              <div class="card border-success flex-grow-1" style="min-width:220px">
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <strong class="text-success">Top Stock</strong>
+                    <span class="badge bg-success">{{ '%.2f'|format(json_top_stock.metric) }}</span>
+                  </div>
+                  <div class="small mt-1">{{ json_top_stock.symbol }}</div>
+                </div>
+              </div>
+            {% endif %}
+            {% if json_worst_stock %}
+              <div class="card border-danger flex-grow-1" style="min-width:220px">
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <strong class="text-danger">Worst Stock</strong>
+                    <span class="badge bg-danger">{{ '%.2f'|format(json_worst_stock.metric) }}</span>
+                  </div>
+                  <div class="small mt-1">{{ json_worst_stock.symbol }}</div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <h6 class="text-muted">Raw JSON</h6>
+            <pre class="small bg-dark text-light p-3 rounded" style="max-height:420px;overflow:auto">{{ latest_json_analysis }}</pre>
+          </div>
+          <div class="col-lg-6">
+            <h6 class="text-muted">Parsed Table</h6>
+            {% if latest_json_table and latest_json_columns %}
+              <div class="table-responsive" style="max-height:420px;overflow:auto">
+                <table class="table table-sm table-striped table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      {% for col in latest_json_columns %}<th>{{ col }}</th>{% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in latest_json_table %}
+                      <tr>
+                        {% for cell in row %}
+                          <td>{% if cell is mapping %}{{ cell|tojson }}{% else %}{{ cell }}{% endif %}</td>
+                        {% endfor %}
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-muted mb-0">No tabular structure detected in JSON (looked for 'stocks', 'data', or 'results' arrays).</p>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">No JSON output available in the most recent execution.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    (function(){
+      const ctx = document.getElementById('strategyChart');
+      if(ctx && window.Chart){
+  const labels = JSON.parse('{{ strategy_breakdown.keys()|list|tojson|safe }}');
+  const values = JSON.parse('{{ strategy_breakdown.values()|list|tojson|safe }}');
+  const safeLabels = Array.isArray(labels) ? labels : [];
+  const safeValues = Array.isArray(values) ? values : [];
+  const chartData = { labels: safeLabels, datasets: [{ label: 'Signals', data: safeValues, backgroundColor: ['#0d6efd','#198754','#dc3545','#fd7e14','#6f42c1','#20c997'] }] };
+  new Chart(ctx, { type:'doughnut', data: chartData, options:{responsive:true, plugins:{legend:{position:'bottom'}}}});
+      }
+    })();
+  </script>
+{% endblock %}

@@ -1,0 +1,40 @@
+Investor Messaging & Notification Features (WhatsApp / Telegram)
+
+- Link WhatsApp number (OTP verify)
+- Link Telegram via bot start token
+- Manage connected messaging channels list
+- Set primary notification channel (app / email / WhatsApp / Telegram)
+- Price / symbol watchlist threshold alerts
+- Portfolio daily / weekly performance summary
+- Real-time trade / recommendation update alerts
+- Analyst new report published notification
+- Session booking confirmation / reminder / status change (requested, confirmed, cancelled, completed)
+- Upcoming session 1h / 10m reminders
+- Recording link availability alert (after session)
+- Payment / invoice / subscription renewal notices
+- Low balance / credit usage warnings
+- Support ticket created / replied / closed updates
+- Security alerts (new device, password change, failed logins)
+- Corporate actions (dividends, splits) alerts for held symbols
+- Market open / close summary digest (optional)
+- Watchlist news headline summaries
+- AI research assistant answer delivery (long responses)
+- Strategy backtest completion notification
+- Code execution / sandbox job status (started, finished, failed)
+- Data export / report generation ready notice
+- Certification / learning module progress milestones
+- Referral program referral added / reward earned alerts
+- Custom keyword trigger alerts (e.g., "Fed", "earnings")
+- Risk limit / stop trigger notifications
+- Quiet hours scheduling (do-not-disturb)
+- Per-channel on/off toggles & frequency control
+- Escalation fallback (Telegram if WhatsApp undelivered)
+- Command queries via Telegram (/portfolio, /watchlist, /sessions, /reports)
+- Inline quick actions (Confirm / Cancel session)
+- Unsubscribe / pause all notifications command
+- Daily combined digest instead of real-time (optional mode)
+- Message archive access (last N alerts)
+- Multi-language notification preference
+- Test notification send feature
+- Delete / revoke channel connection
+- Consent & compliance log for messaging opt-in

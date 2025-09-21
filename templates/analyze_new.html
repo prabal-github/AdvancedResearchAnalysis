@@ -1,0 +1,216 @@
+{% extends "layout.html" %}
+{% block title %}Analyze New Report{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Analyze New Report</h1>
+        <p class="text-muted mb-0">Submit research report for comprehensive quality analysis</p>
+    </div>
+    <div>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>Report Submission</h5>
+            </div>
+            <div class="card-body">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label for="analyst" class="form-label">Analyst Name</label>
+                        <input type="text" class="form-control" id="analyst" name="analyst" value="{{ default_analyst_name or '' }}" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="topic" class="form-label">Report Topic</label>
+                <input type="text" class="form-control" id="topic" name="topic" 
+                    placeholder="e.g., Q3 Earnings Analysis, Market Outlook, Stock Research" 
+                    maxlength="500" value="{{ prefill_topic or '' }}">
+                            <div class="form-text">Brief description of the report topic</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="subHeading" class="form-label">Sub-Heading</label>
+                            <input type="text" class="form-control" id="subHeading" name="subHeading" 
+                                   placeholder="e.g., Strong Growth Despite Market Volatility" 
+                                   maxlength="1000">
+                            <div class="form-text">Descriptive sub-heading for the report</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="reportText" class="form-label">Research Report Text</label>
+                        <textarea class="form-control" id="reportText" name="reportText" rows="15" 
+                                  placeholder="Paste your research report here. Include stock tickers in square brackets like [RELIANCE.NS] for Indian stocks..." required>{{ prefill_text or '' }}</textarea>
+                        <div class="form-text">
+                            <strong>Tip:</strong> Use square brackets for Indian stock tickers (e.g., [RELIANCE.NS], [TCS.NS]) for automatic analysis.
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                            <i class="bi bi-cpu me-2"></i>Analyze Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Analysis Features</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Quality Score Assessment</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>SEBI Compliance Check</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Plagiarism Detection</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>AI Content Detection</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Technical Analysis</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Risk Assessment</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Improvement Tracking</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Tips for Better Analysis</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0 small">
+                    <li class="mb-2">• Include stock tickers in [TICKER.NS] format</li>
+                    <li class="mb-2">• Add price targets and timelines</li>
+                    <li class="mb-2">• Include risk disclosures</li>
+                    <li class="mb-2">• Mention data sources</li>
+                    <li class="mb-2">• Add SEBI registration details</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis Progress Modal -->
+<div class="modal fade" id="analysisModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Analyzing Report...</h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p id="analysisStatus">Initializing analysis...</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%" id="progressBar"></div>
+                </div>
+                <div id="analysisSteps">
+                    <div class="text-start">
+                        <div class="mb-2" id="step1">⏳ Extracting tickers and market data...</div>
+                        <div class="mb-2" id="step2">⏳ Running quality analysis...</div>
+                        <div class="mb-2" id="step3">⏳ Checking plagiarism...</div>
+                        <div class="mb-2" id="step4">⏳ Detecting AI content...</div>
+                        <div class="mb-2" id="step5">⏳ Analyzing improvements...</div>
+                        <div class="mb-2" id="step6">⏳ Generating final report...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const analyst = document.getElementById('analyst').value;
+    const reportText = document.getElementById('reportText').value;
+    const topic = document.getElementById('topic').value;
+    const subHeading = document.getElementById('subHeading').value;
+    
+    if (!analyst || !reportText) {
+        alert('Please fill in all required fields (Analyst Name and Report Text)');
+        return;
+    }
+    
+    // Show analysis modal
+    const modal = new bootstrap.Modal(document.getElementById('analysisModal'));
+    modal.show();
+    
+    // Simulate progress updates
+    let progress = 0;
+    const progressBar = document.getElementById('progressBar');
+    const statusText = document.getElementById('analysisStatus');
+    
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        progressBar.style.width = progress + '%';
+        
+        // Update step status
+        if (progress > 15) updateStep('step1', '✅ Tickers extracted and market data fetched');
+        if (progress > 30) updateStep('step2', '✅ Quality analysis completed');
+        if (progress > 45) updateStep('step3', '✅ Plagiarism check completed');
+        if (progress > 60) updateStep('step4', '✅ AI detection completed');
+        if (progress > 75) updateStep('step5', '✅ Improvement analysis completed');
+        if (progress > 85) updateStep('step6', '✅ Final report generated');
+        
+    }, 500);
+    
+    // Submit to backend
+    fetch('/analyze', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            text: reportText,
+            analyst: analyst,
+            topic: topic,
+            sub_heading: subHeading
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        statusText.textContent = 'Analysis completed!';
+        
+        setTimeout(() => {
+            modal.hide();
+            if (data.report_id) {
+                window.location.href = `/report/${data.report_id}`;
+            } else {
+                alert('Analysis completed but no report ID returned');
+            }
+        }, 1000);
+    })
+    .catch(error => {
+        clearInterval(progressInterval);
+        modal.hide();
+        console.error('Error:', error);
+        alert('Analysis failed. Please try again.');
+    });
+});
+
+function updateStep(stepId, text) {
+    const step = document.getElementById(stepId);
+    if (step && !step.textContent.includes('✅')) {
+        step.textContent = text;
+        step.classList.add('text-success');
+    }
+}
+</script>
+
+{% endblock %}

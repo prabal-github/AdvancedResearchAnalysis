@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}Performance Analytics Test{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Performance Analytics Test</h1>
+    
+    <div class="alert alert-info">
+        <h4>Analytics Data Test</h4>
+        <p><strong>Analyst Name:</strong> {{ analytics.overview.analyst_name }}</p>
+        <p><strong>Overall Score:</strong> {{ analytics.overview.overall_score }}%</p>
+        <p><strong>Status:</strong> {{ analytics.overview.status }}</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Performance Metrics</h5>
+                </div>
+                <div class="card-body">
+                    {% if analytics.performance_metrics %}
+                        {% for metric, value in analytics.performance_metrics.items() %}
+                        <div class="d-flex justify-content-between">
+                            <span>{{ metric.replace('_', ' ').title() }}:</span>
+                            <span>{{ value }}%</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Performance metrics not available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>AI Insights</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Strengths:</h6>
+                    {% if analytics.ai_insights and analytics.ai_insights.strengths %}
+                        <ul>
+                            {% for strength in analytics.ai_insights.strengths %}
+                            <li>{{ strength }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">AI insights not available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="/analyst/certificate_status" class="btn btn-primary">Back to Certificates</a>
+    </div>
+</div>
+{% endblock %}

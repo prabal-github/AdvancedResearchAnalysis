@@ -1,0 +1,50 @@
+{
+  "name": "Research QA Investment Platform",
+  "short_name": "ResearchQA",
+  "description": "Professional Investment Research Platform with AI-Powered Analytics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Go to main dashboard",
+      "url": "/dashboard"
+    },
+    {
+      "name": "Portfolio",
+      "short_name": "Portfolio",
+      "description": "View portfolio analysis",
+      "url": "/portfolio"
+    },
+    {
+      "name": "Research",
+      "short_name": "Research",
+      "description": "Access research reports",
+      "url": "/research"
+    },
+    {
+      "name": "AI Assistant",
+      "short_name": "AI",
+      "description": "Open AI Research Assistant",
+      "url": "/ai_research_assistant"
+    }
+  ],
+  "categories": ["finance", "business", "productivity"],
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

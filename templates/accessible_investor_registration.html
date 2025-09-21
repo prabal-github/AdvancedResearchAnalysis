@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Registration - Research Quality App</title>
+    <meta name="description" content="Create your investor account to access personalized investment research, portfolio analysis, and financial insights.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Styles */
+        :root {
+            /* High contrast color scheme */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --success-green: #155724;
+            --error-red: #721c24;
+            --warning-orange: #856404;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --background-light: #f8f9fa;
+            --border-color: #ced4da;
+            --focus-outline: #0066cc;
+        }
+        
+        /* Base accessibility styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding: 1rem 0;
+        }
+        
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Main container */
+        .registration-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Header styling */
+        .registration-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .registration-header h1 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .registration-header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+        
+        .progress {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background-color: var(--primary-blue);
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        /* Fieldset styling */
+        fieldset {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--background-light);
+        }
+        
+        legend {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            padding: 0 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .required-indicator {
+            color: var(--error-red);
+            font-weight: bold;
+            margin-left: 0.25rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+            outline: none;
+        }
+        
+        .form-control:invalid, .form-select:invalid {
+            border-color: var(--error-red);
+        }
+        
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: var(--error-red);
+            background-image: none;
+        }
+        
+        .form-control.is-valid, .form-select.is-valid {
+            border-color: var(--success-green);
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+        
+        .strength-meter {
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .strength-meter-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .strength-weak { background-color: var(--error-red); width: 25%; }
+        .strength-fair { background-color: var(--warning-orange); width: 50%; }
+        .strength-good { background-color: #ffc107; width: 75%; }
+        .strength-strong { background-color: var(--success-green); width: 100%; }
+        
+        .strength-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* Checkbox and radio styling */
+        .form-check {
+            margin-bottom: 1rem;
+        }
+        
+        .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.125rem;
+            margin-right: 0.75rem;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+        }
+        
+        .form-check-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .form-check-label {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        
+        /* Error and help text */
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: block;
+            font-weight: 500;
+        }
+        
+        .form-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+        
+        .success-message {
+            color: var(--success-green);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: block;
+            font-weight: 500;
+        }
+        
+        /* Button styling */
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid var(--primary-blue);
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+            background-color: white;
+            border: 2px solid var(--border-color);
+        }
+        
+        .btn-outline-secondary:hover:not(:disabled) {
+            background-color: var(--background-light);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+        
+        /* Alert styling */
+        .alert {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            color: var(--success-green);
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: var(--error-red);
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        /* Navigation links */
+        .nav-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .nav-links a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+            background-color: rgba(0, 86, 179, 0.1);
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        .sr-only-focusable:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            padding: inherit !important;
+            margin: inherit !important;
+            overflow: visible !important;
+            clip: auto !important;
+            white-space: normal !important;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #0000ff;
+                --primary-blue-dark: #0000cc;
+                --text-primary: #000000;
+                --border-color: #000000;
+            }
+            
+            .form-control, .form-select, .btn, .alert, fieldset {
+                border-width: 3px;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link sr-only-focusable">Skip to main content</a>
+    
+    <!-- ARIA live regions -->
+    <div id="announcement-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    <div id="error-region" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+    
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <main id="main-content" class="registration-container" role="main">
+                    <!-- Header -->
+                    <header class="registration-header">
+                        <div class="mb-3" aria-hidden="true">
+                            <i class="fas fa-user-plus fa-3x text-primary" role="img" aria-label="New user registration icon"></i>
+                        </div>
+                        <h1 id="page-title">Create Your Investor Account</h1>
+                        <p class="subtitle">Join our platform to access personalized investment research and portfolio analysis</p>
+                    </header>
+                    
+                    <!-- Progress Indicator -->
+                    <div class="progress-container" role="region" aria-labelledby="progress-label">
+                        <div id="progress-label" class="sr-only">Registration progress</div>
+                        <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-describedby="progress-text">
+                            <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">Step 1 of 3: Personal Information</div>
+                    </div>
+                    
+                    <!-- Registration Form -->
+                    <form id="registrationForm" 
+                          method="POST" 
+                          novalidate 
+                          aria-labelledby="page-title"
+                          aria-describedby="form-instructions">
+                        
+                        <div id="form-instructions" class="sr-only">
+                            Complete all three sections to create your investor account. Required fields are marked with an asterisk.
+                        </div>
+                        
+                        <!-- Step 1: Personal Information -->
+                        <fieldset id="step-1" aria-labelledby="step-1-legend">
+                            <legend id="step-1-legend">
+                                <i class="fas fa-user me-2" aria-hidden="true"></i>
+                                Personal Information
+                            </legend>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="first-name" class="form-label">
+                                        First Name
+                                        <span class="required-indicator" aria-label="required">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="first-name" 
+                                           name="first_name" 
+                                           required 
+                                           autocomplete="given-name"
+                                           aria-describedby="first-name-help first-name-error"
+                                           aria-invalid="false">
+                                    <div id="first-name-help" class="form-text">Enter your legal first name</div>
+                                    <div id="first-name-error" class="error-message" role="alert" aria-live="polite"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="last-name" class="form-label">
+                                        Last Name
+                                        <span class="required-indicator" aria-label="required">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="last-name" 
+                                           name="last_name" 
+                                           required 
+                                           autocomplete="family-name"
+                                           aria-describedby="last-name-help last-name-error"
+                                           aria-invalid="false">
+                                    <div id="last-name-help" class="form-text">Enter your legal last name</div>
+                                    <div id="last-name-error" class="error-message" role="alert" aria-live="polite"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    Email Address
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required 
+                                       autocomplete="email"
+                                       aria-describedby="email-help email-error"
+                                       aria-invalid="false">
+                                <div id="email-help" class="form-text">We'll use this email for account notifications and login</div>
+                                <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">
+                                    Phone Number
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="phone" 
+                                       name="phone" 
+                                       required 
+                                       autocomplete="tel"
+                                       aria-describedby="phone-help phone-error"
+                                       aria-invalid="false">
+                                <div id="phone-help" class="form-text">Include country code (e.g., +1 555-123-4567)</div>
+                                <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                        </fieldset>
+                        
+                        <!-- Step 2: Account Security -->
+                        <fieldset id="step-2" aria-labelledby="step-2-legend" style="display: none;">
+                            <legend id="step-2-legend">
+                                <i class="fas fa-shield-alt me-2" aria-hidden="true"></i>
+                                Account Security
+                            </legend>
+                            
+                            <div class="form-group">
+                                <label for="password" class="form-label">
+                                    Password
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required 
+                                       autocomplete="new-password"
+                                       aria-describedby="password-help password-error password-strength"
+                                       aria-invalid="false">
+                                <div id="password-help" class="form-text">
+                                    Password must be at least 8 characters with uppercase, lowercase, number, and special character
+                                </div>
+                                <div id="password-strength" class="password-strength">
+                                    <div class="strength-meter">
+                                        <div class="strength-meter-fill" id="strength-fill"></div>
+                                    </div>
+                                    <div class="strength-text" id="strength-text" aria-live="polite"></div>
+                                </div>
+                                <div id="password-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirm-password" class="form-label">
+                                    Confirm Password
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm-password" 
+                                       name="confirm_password" 
+                                       required 
+                                       autocomplete="new-password"
+                                       aria-describedby="confirm-password-help confirm-password-error"
+                                       aria-invalid="false">
+                                <div id="confirm-password-help" class="form-text">Re-enter your password to confirm</div>
+                                <div id="confirm-password-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="security-question" class="form-label">
+                                    Security Question
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <select class="form-select" 
+                                        id="security-question" 
+                                        name="security_question" 
+                                        required
+                                        aria-describedby="security-question-help security-question-error"
+                                        aria-invalid="false">
+                                    <option value="">Choose a security question</option>
+                                    <option value="mother-maiden">What is your mother's maiden name?</option>
+                                    <option value="first-pet">What was the name of your first pet?</option>
+                                    <option value="first-school">What was the name of your first school?</option>
+                                    <option value="childhood-friend">What is the name of your childhood best friend?</option>
+                                    <option value="birth-city">In which city were you born?</option>
+                                </select>
+                                <div id="security-question-help" class="form-text">Choose a question you'll remember the answer to</div>
+                                <div id="security-question-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="security-answer" class="form-label">
+                                    Security Answer
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="security-answer" 
+                                       name="security_answer" 
+                                       required 
+                                       aria-describedby="security-answer-help security-answer-error"
+                                       aria-invalid="false">
+                                <div id="security-answer-help" class="form-text">This will help recover your account if you forget your password</div>
+                                <div id="security-answer-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                        </fieldset>
+                        
+                        <!-- Step 3: Investment Profile -->
+                        <fieldset id="step-3" aria-labelledby="step-3-legend" style="display: none;">
+                            <legend id="step-3-legend">
+                                <i class="fas fa-chart-pie me-2" aria-hidden="true"></i>
+                                Investment Profile
+                            </legend>
+                            
+                            <div class="form-group">
+                                <label for="experience-level" class="form-label">
+                                    Investment Experience Level
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <select class="form-select" 
+                                        id="experience-level" 
+                                        name="experience_level" 
+                                        required
+                                        aria-describedby="experience-help experience-error"
+                                        aria-invalid="false">
+                                    <option value="">Select your experience level</option>
+                                    <option value="beginner">Beginner (0-1 years)</option>
+                                    <option value="intermediate">Intermediate (2-5 years)</option>
+                                    <option value="advanced">Advanced (6-10 years)</option>
+                                    <option value="expert">Expert (10+ years)</option>
+                                </select>
+                                <div id="experience-help" class="form-text">This helps us provide appropriate investment recommendations</div>
+                                <div id="experience-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="risk-tolerance" class="form-label">
+                                    Risk Tolerance
+                                    <span class="required-indicator" aria-label="required">*</span>
+                                </label>
+                                <select class="form-select" 
+                                        id="risk-tolerance" 
+                                        name="risk_tolerance" 
+                                        required
+                                        aria-describedby="risk-help risk-error"
+                                        aria-invalid="false">
+                                    <option value="">Select your risk tolerance</option>
+                                    <option value="conservative">Conservative - Prefer stable, low-risk investments</option>
+                                    <option value="moderate">Moderate - Balance of risk and stability</option>
+                                    <option value="aggressive">Aggressive - Willing to take higher risks for potential returns</option>
+                                </select>
+                                <div id="risk-help" class="form-text">This affects the type of investment opportunities we'll show you</div>
+                                <div id="risk-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <fieldset class="border-0 p-0">
+                                    <legend class="form-label h6">
+                                        Investment Interests
+                                        <span class="required-indicator" aria-label="at least one required">*</span>
+                                    </legend>
+                                    <div id="interests-help" class="form-text mb-3">Select all areas that interest you (at least one required)</div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="stocks" 
+                                               name="interests" 
+                                               value="stocks"
+                                               aria-describedby="interests-error">
+                                        <label class="form-check-label" for="stocks">Stocks & Equities</label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="bonds" 
+                                               name="interests" 
+                                               value="bonds">
+                                        <label class="form-check-label" for="bonds">Bonds & Fixed Income</label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="mutual-funds" 
+                                               name="interests" 
+                                               value="mutual-funds">
+                                        <label class="form-check-label" for="mutual-funds">Mutual Funds</label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="etfs" 
+                                               name="interests" 
+                                               value="etfs">
+                                        <label class="form-check-label" for="etfs">ETFs</label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="crypto" 
+                                               name="interests" 
+                                               value="crypto">
+                                        <label class="form-check-label" for="crypto">Cryptocurrency</label>
+                                    </div>
+                                    
+                                    <div id="interests-error" class="error-message" role="alert" aria-live="polite"></div>
+                                </fieldset>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="terms" 
+                                           name="terms" 
+                                           required
+                                           aria-describedby="terms-error">
+                                    <label class="form-check-label" for="terms">
+                                        I agree to the <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> 
+                                        and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+                                        <span class="required-indicator" aria-label="required">*</span>
+                                    </label>
+                                </div>
+                                <div id="terms-error" class="error-message" role="alert" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="newsletter" 
+                                           name="newsletter"
+                                           aria-describedby="newsletter-help">
+                                    <label class="form-check-label" for="newsletter">
+                                        Subscribe to our investment newsletter and market updates
+                                    </label>
+                                </div>
+                                <div id="newsletter-help" class="form-text">You can unsubscribe at any time</div>
+                            </div>
+                        </fieldset>
+                        
+                        <!-- Navigation Buttons -->
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between">
+                                <button type="button" 
+                                        id="prev-btn" 
+                                        class="btn btn-outline-secondary"
+                                        style="display: none;"
+                                        aria-describedby="prev-help">
+                                    <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>
+                                    Previous
+                                </button>
+                                <div id="prev-help" class="sr-only">Go back to the previous step</div>
+                                
+                                <button type="button" 
+                                        id="next-btn" 
+                                        class="btn btn-primary ms-auto"
+                                        aria-describedby="next-help">
+                                    Next
+                                    <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i>
+                                </button>
+                                <div id="next-help" class="sr-only">Continue to the next step</div>
+                                
+                                <button type="submit" 
+                                        id="submit-btn" 
+                                        class="btn btn-primary ms-auto"
+                                        style="display: none;"
+                                        aria-describedby="submit-help">
+                                    <span id="submit-text">
+                                        <i class="fas fa-user-check me-2" aria-hidden="true"></i>
+                                        Create Account
+                                    </span>
+                                    <span id="submit-spinner" class="d-none" aria-hidden="true">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        Creating Account...
+                                    </span>
+                                </button>
+                                <div id="submit-help" class="sr-only">Submit the form to create your investor account</div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Navigation Links -->
+                    <nav class="nav-links" aria-label="Additional options">
+                        <a href="{{ url_for('investor_login') }}" aria-describedby="login-desc">
+                            <i class="fas fa-sign-in-alt me-1" aria-hidden="true"></i>
+                            Already have an account? Sign In
+                        </a>
+                        <div id="login-desc" class="sr-only">Go to the login page if you already have an account</div>
+                        
+                        <a href="{{ url_for('dashboard') }}" aria-describedby="back-desc">
+                            <i class="fas fa-arrow-left me-1" aria-hidden="true"></i>
+                            Back to Main Dashboard
+                        </a>
+                        <div id="back-desc" class="sr-only">Return to the main application dashboard</div>
+                    </nav>
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant Multi-Step Registration Form
+        (function() {
+            'use strict';
+            
+            // Form elements
+            const form = document.getElementById('registrationForm');
+            const steps = [
+                document.getElementById('step-1'),
+                document.getElementById('step-2'),
+                document.getElementById('step-3')
+            ];
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const announcementRegion = document.getElementById('announcement-region');
+            const errorRegion = document.getElementById('error-region');
+            
+            let currentStep = 0;
+            const stepTitles = [
+                'Personal Information',
+                'Account Security',
+                'Investment Profile'
+            ];
+            
+            // Password strength checker
+            const passwordField = document.getElementById('password');
+            const strengthFill = document.getElementById('strength-fill');
+            const strengthText = document.getElementById('strength-text');
+            
+            // Validation messages
+            const validationMessages = {
+                required: 'This field is required.',
+                email: 'Please enter a valid email address.',
+                phone: 'Please enter a valid phone number.',
+                passwordWeak: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.',
+                passwordMismatch: 'Passwords do not match.',
+                interests: 'Please select at least one investment interest.',
+                terms: 'You must agree to the terms and conditions.'
+            };
+            
+            // Announce message to screen readers
+            function announce(message, isError = false) {
+                const region = isError ? errorRegion : announcementRegion;
+                region.textContent = message;
+                setTimeout(() => region.textContent = '', 5000);
+            }
+            
+            // Update progress indicator
+            function updateProgress() {
+                const progress = ((currentStep + 1) / steps.length) * 100;
+                progressBar.style.width = progress + '%';
+                progressBar.setAttribute('aria-valuenow', progress);
+                progressText.textContent = `Step ${currentStep + 1} of ${steps.length}: ${stepTitles[currentStep]}`;
+                
+                announce(`Now on step ${currentStep + 1} of ${steps.length}: ${stepTitles[currentStep]}`);
+            }
+            
+            // Show specific step
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.style.display = index === stepIndex ? 'block' : 'none';
+                });
+                
+                // Update navigation buttons
+                prevBtn.style.display = stepIndex > 0 ? 'inline-block' : 'none';
+                nextBtn.style.display = stepIndex < steps.length - 1 ? 'inline-block' : 'none';
+                submitBtn.style.display = stepIndex === steps.length - 1 ? 'inline-block' : 'none';
+                
+                currentStep = stepIndex;
+                updateProgress();
+                
+                // Focus first input in the step
+                const firstInput = steps[stepIndex].querySelector('input, select');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+            
+            // Validate field
+            function validateField(field) {
+                const fieldName = field.name;
+                const errorElement = document.getElementById(`${field.id}-error`);
+                
+                // Clear previous error
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+                field.classList.remove('is-invalid', 'is-valid');
+                field.setAttribute('aria-invalid', 'false');
+                
+                let isValid = true;
+                let message = '';
+                
+                // Required field validation
+                if (field.hasAttribute('required') && !field.value.trim()) {
+                    message = validationMessages.required;
+                    isValid = false;
+                } else {
+                    // Specific field validation
+                    switch (field.type) {
+                        case 'email':
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (field.value && !emailRegex.test(field.value)) {
+                                message = validationMessages.email;
+                                isValid = false;
+                            }
+                            break;
+                        case 'tel':
+                            const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+                            if (field.value && !phoneRegex.test(field.value)) {
+                                message = validationMessages.phone;
+                                isValid = false;
+                            }
+                            break;
+                        case 'password':
+                            if (field.id === 'password') {
+                                const strength = checkPasswordStrength(field.value);
+                                if (field.value && strength.score < 3) {
+                                    message = validationMessages.passwordWeak;
+                                    isValid = false;
+                                }
+                            } else if (field.id === 'confirm-password') {
+                                const password = document.getElementById('password').value;
+                                if (field.value && field.value !== password) {
+                                    message = validationMessages.passwordMismatch;
+                                    isValid = false;
+                                }
+                            }
+                            break;
+                    }
+                }
+                
+                // Show error or success
+                if (!isValid && message) {
+                    if (errorElement) {
+                        errorElement.textContent = message;
+                    }
+                    field.classList.add('is-invalid');
+                    field.setAttribute('aria-invalid', 'true');
+                } else if (field.value.trim()) {
+                    field.classList.add('is-valid');
+                }
+                
+                return isValid;
+            }
+            
+            // Check password strength
+            function checkPasswordStrength(password) {
+                let score = 0;
+                let feedback = [];
+                
+                if (password.length >= 8) score++;
+                if (/[a-z]/.test(password)) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/\d/.test(password)) score++;
+                if (/[^a-zA-Z\d]/.test(password)) score++;
+                
+                const strengths = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+                const classes = ['', 'strength-weak', 'strength-fair', 'strength-good', 'strength-strong'];
+                
+                return {
+                    score: score,
+                    text: strengths[score] || 'Very Weak',
+                    class: classes[score] || ''
+                };
+            }
+            
+            // Update password strength indicator
+            passwordField.addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                strengthFill.className = 'strength-meter-fill ' + strength.class;
+                strengthText.textContent = `Password strength: ${strength.text}`;
+                strengthText.className = 'strength-text text-' + 
+                    (strength.score < 2 ? 'danger' : strength.score < 4 ? 'warning' : 'success');
+            });
+            
+            // Validate current step
+            function validateCurrentStep() {
+                const currentStepElement = steps[currentStep];
+                const fields = currentStepElement.querySelectorAll('input, select');
+                let isValid = true;
+                
+                fields.forEach(field => {
+                    if (!validateField(field)) {
+                        isValid = false;
+                    }
+                });
+                
+                // Special validation for investment interests
+                if (currentStep === 2) {
+                    const interests = currentStepElement.querySelectorAll('input[name="interests"]:checked');
+                    const interestsError = document.getElementById('interests-error');
+                    
+                    if (interests.length === 0) {
+                        interestsError.textContent = validationMessages.interests;
+                        isValid = false;
+                    } else {
+                        interestsError.textContent = '';
+                    }
+                    
+                    // Terms validation
+                    const terms = document.getElementById('terms');
+                    const termsError = document.getElementById('terms-error');
+                    
+                    if (!terms.checked) {
+                        termsError.textContent = validationMessages.terms;
+                        isValid = false;
+                    } else {
+                        termsError.textContent = '';
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            // Add real-time validation
+            form.addEventListener('blur', function(e) {
+                if (e.target.matches('input, select')) {
+                    validateField(e.target);
+                }
+            }, true);
+            
+            // Clear errors on input
+            form.addEventListener('input', function(e) {
+                if (e.target.classList.contains('is-invalid')) {
+                    const errorElement = document.getElementById(`${e.target.id}-error`);
+                    if (errorElement) {
+                        errorElement.textContent = '';
+                    }
+                    e.target.classList.remove('is-invalid');
+                    e.target.setAttribute('aria-invalid', 'false');
+                }
+            });
+            
+            // Navigation handlers
+            nextBtn.addEventListener('click', function() {
+                if (validateCurrentStep()) {
+                    if (currentStep < steps.length - 1) {
+                        showStep(currentStep + 1);
+                    }
+                } else {
+                    const firstInvalid = steps[currentStep].querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        announce('Please correct the errors before continuing.', true);
+                    }
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    showStep(currentStep - 1);
+                }
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateCurrentStep()) {
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        announce('Please correct all errors before submitting.', true);
+                    }
+                    return;
+                }
+                
+                // Show loading state
+                const submitText = document.getElementById('submit-text');
+                const submitSpinner = document.getElementById('submit-spinner');
+                
+                submitText.classList.add('d-none');
+                submitSpinner.classList.remove('d-none');
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-busy', 'true');
+                
+                announce('Creating your account, please wait...');
+                
+                // Simulate form submission
+                setTimeout(() => {
+                    announce('Account created successfully! Redirecting to login page...');
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("investor_login") }}';
+                    }, 2000);
+                }, 2000);
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    // Close any alerts or modals
+                    const alerts = document.querySelectorAll('.alert .btn-close');
+                    alerts.forEach(btn => btn.click());
+                }
+            });
+            
+            // Initialize
+            showStep(0);
+            document.getElementById('first-name').focus();
+            
+        })();
+    </script>
+</body>
+</html>

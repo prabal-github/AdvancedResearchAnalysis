@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VS Investor Terminal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root { --bg:#1e1e1e; --sidebar:#252526; --panel:#1e1e1e; --border:#333; --accent:#0e639c; --accent-hover:#1177bb; --text:#d4d4d4; --muted:#9e9e9e; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; height:100%; background:var(--bg); color:var(--text); font-family:Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif; }
+body { display:flex; flex-direction:column; }
+.vs-frame { flex:1; display:grid; grid-template-columns:40px 270px minmax(0,1fr) 370px; grid-template-rows:1fr 24px; height:100%; width:100%; overflow:hidden; }
+.activity-bar { background:#333; display:flex; flex-direction:column; align-items:center; padding:4px 0; gap:2px; border-right:1px solid var(--border); }
+.activity-bar button { background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; width:32px; height:32px; padding:0; display:flex; justify-content:center; align-items:center; position:relative; border-radius:4px; margin:2px 0; transition: all 0.2s ease; }
+.activity-bar button.active, .activity-bar button:hover { color:var(--text); background:#404040; }
+.activity-bar button.active::before { content:""; position:absolute; left:0; top:2px; bottom:2px; width:2px; background:#007acc; border-radius:0 2px 2px 0; }
+.sidebar { background:var(--sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:auto; }
+.sidebar-section { padding:12px 14px 8px; border-bottom:1px solid var(--border); }
+.sidebar-section h4 { margin:0 0 8px; font-size:12px; font-weight:600; letter-spacing:.5px; color:var(--muted); }
+.model-list, .file-list { list-style:none; margin:0; padding:0; max-height:180px; overflow:auto; font-size:13px; }
+.model-list li, .file-list li { padding:6px 8px; border-radius:4px; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.model-list li:hover, .file-list li:hover { background:#2d2d2d; }
+.model-list li.selected { background:#094771; color:#fff; }
+.model-list li i, .file-list li i { color:#ce9178; }
+select, textarea, input { width:100%; background:#2d2d2d; border:1px solid #444; color:var(--text); padding:6px 8px; border-radius:4px; font-size:13px; }
+select:focus, textarea:focus, input:focus { outline:1px solid #555; }
+.main { display:flex; flex-direction:column; min-width:0; position:relative; min-height:0; }
+.dashboard-wrapper { position:relative; border-bottom:1px solid var(--border); min-width:0; height:60%; min-height:120px; overflow:auto; padding:16px; }
+.resize-handle { height:6px; background:linear-gradient(to bottom,#2a2a2a,#232323); border-top:1px solid #2c2c2c; border-bottom:1px solid #1a1a1a; cursor:row-resize; position:relative; }
+.resize-handle::after { content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:60px; height:2px; background:#444; border-radius:2px; }
+.refresh-button { position:absolute; top:10px; right:16px; background:var(--accent); border:none; color:#fff; padding:6px 14px; border-radius:4px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; }
+.refresh-button:hover { background:var(--accent-hover); }
+.lower-panels { display:flex; flex-direction:column; flex:1 1 0; min-height:0; overflow:hidden; }
+.tab-bar { display:flex; background:#252526; border-bottom:1px solid var(--border); }
+.tab-bar button { background:none; border:none; color:var(--muted); padding:6px 14px; cursor:pointer; font-size:12px; }
+.tab-bar button.active, .tab-bar button:hover { color:var(--text); background:#1e1e1e; }
+.tab-content { flex:1 1 0; display:none; overflow:auto; padding:12px 16px; font-size:13px; min-width:0; }
+.tab-content.active { display:block; }
+pre.output { white-space:pre-wrap; margin:0; font-family:Consolas,monospace; line-height:1.35; max-height:100%; overflow:auto; }
+.right-panel { background:var(--panel); border-left:1px solid var(--border); display:flex; flex-direction:column; position:relative; min-height:0; overflow:hidden; }
+.panel-header { padding:10px 14px; font-size:13px; font-weight:600; letter-spacing:.5px; background:#252526; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.analytics-history { flex:1 1 0; overflow-y:auto; overflow-x:hidden; padding:12px 14px; display:flex; flex-direction:column; gap:10px; font-size:13px; scroll-behavior:auto; min-height:0; }
+.analytics-input-area { border-top:1px solid var(--border); padding:10px; display:flex; flex-direction:column; gap:6px; flex:0 0 auto; flex-shrink:0; }
+.analytics-input-row { display:flex; gap:8px; }
+.analytics-input-row textarea { flex:1; height:70px; resize:vertical; }
+.primary-btn { background:var(--accent); border:none; color:#fff; padding:8px 16px; font-size:13px; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+.primary-btn:hover { background:var(--accent-hover); }
+.status-bar { grid-column:1 / span 4; background:#007acc; color:#fff; font-size:12px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; }
+.status-bar span { opacity:.9; }
+.badge { background:#444; padding:2px 6px; border-radius:4px; font-size:11px; margin-left:6px; }
+.secondary-btn { background:#2d2d2d; border:1px solid #444; color:var(--text); padding:6px 10px; font-size:12px; border-radius:4px; cursor:pointer; }
+.secondary-btn:hover { background:#333; }
+
+/* Investment-specific styles */
+.portfolio-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:16px; }
+.metric-card { background:#2d2d2d; border:1px solid #444; border-radius:6px; padding:12px; text-align:center; }
+.metric-value { font-size:18px; font-weight:bold; margin:4px 0; }
+.metric-change { font-size:12px; }
+.positive { color:#4ade80; }
+.negative { color:#f87171; }
+.table-container { background:#2d2d2d; border:1px solid #444; border-radius:6px; overflow:hidden; }
+.table-container table { width:100%; margin:0; border-collapse:collapse; }
+.table-container th { background:#404040; padding:8px 12px; text-align:left; font-weight:600; border-bottom:1px solid #555; }
+.table-container td { padding:8px 12px; border-bottom:1px solid #333; }
+.table-container tr:hover { background:#333; }
+.loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid #444; border-top:2px solid var(--accent); border-radius:50%; animation:spin 1s linear infinite; }
+@keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+
+/* Message styles for analytics chat */
+.msg { padding:10px 12px; border-radius:6px; max-width:100%; line-height:1.4; white-space:pre-wrap; }
+.msg.user { background:#2d2d2d; align-self:flex-end; }
+.msg.ai { background:#1f2933; border:1px solid #2f3b44; }
+.msg.system { background:#333; font-style:italic; }
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .vs-frame { grid-template-columns: 36px 240px minmax(0,1fr) 300px; }
+}
+@media (max-width: 1024px) {
+    .vs-frame { grid-template-columns: 32px 200px minmax(0,1fr) 280px; }
+    .activity-bar { padding: 3px 0; gap: 1px; }
+    .activity-bar button { font-size: 14px; width: 28px; height: 28px; }
+}
+@media (max-width: 768px) {
+    .vs-frame { grid-template-columns: 1fr; grid-template-rows: auto 1fr 24px; }
+    .activity-bar { flex-direction: row; justify-content: space-between; align-items: center; padding: 8px 12px; gap: 8px; height: 48px; }
+}
+</style>
+</head>
+<body>
+<div class="vs-frame">
+    <div class="activity-bar">
+        <!-- Logo/Brand at top -->
+        <div class="activity-bar-logo" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; margin-bottom:4px; border-bottom:1px solid #404040; color:#007acc; font-weight:bold; font-size:12px;">
+            VS
+        </div>
+        <div style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; color:#888; line-height:1; margin-bottom:8px; text-align:center; max-height:120px; overflow:hidden;">
+            Investor
+        </div>
+        
+        <!-- Main navigation buttons -->
+        <button class="active" title="Portfolio"><i class="fa fa-chart-pie"></i></button>
+        <button title="Analytics"><i class="fa fa-chart-line"></i></button>
+        <button title="Orders"><i class="fa fa-shopping-cart"></i></button>
+        <button title="News"><i class="fa fa-newspaper"></i></button>
+        <button title="Reports"><i class="fa fa-file-alt"></i></button>
+        
+        <!-- Spacer to push mobile controls to bottom -->
+        <div style="flex:1;"></div>
+    </div>
+    
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h4 style="display:flex; align-items:center; gap:6px;">
+                <span style="background:#fff; padding:4px; border-radius:6px; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.4);">
+                    <img src="https://predictram.com/images/logo2x.png" alt="PR" style="width:26px; height:26px; object-fit:contain;" />
+                </span>
+                <span style="font-weight:600; font-size:12px;">PORTFOLIO</span>
+            </h4>
+            <div id="portfolioSummary" style="margin-top:8px;">
+                <div style="background:#2d2d2d; padding:8px; border-radius:4px; margin-bottom:8px;">
+                    <div style="font-size:11px; color:var(--muted);">Total Value</div>
+                    <div id="totalValue" style="font-size:16px; font-weight:bold; color:#4ade80;">₹5,42,387</div>
+                    <div style="font-size:10px; color:#4ade80;">+2.35% Today</div>
+                </div>
+                <div style="background:#2d2d2d; padding:8px; border-radius:4px;">
+                    <div style="font-size:11px; color:var(--muted);">P&L Today</div>
+                    <div id="todayPnl" style="font-size:16px; font-weight:bold; color:#4ade80;">+₹12,450</div>
+                    <div style="font-size:10px; color:#4ade80;">+1.24%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4>ANALYTICS TOOLS</h4>
+            <ul class="model-list" id="analyticsList">
+                <li onclick="selectAnalytics('portfolio')" class="selected"><i class="fa fa-chart-pie"></i>Portfolio Analysis</li>
+                <li onclick="selectAnalytics('performance')"><i class="fa fa-chart-line"></i>Performance Metrics</li>
+                <li onclick="selectAnalytics('risk')"><i class="fa fa-shield-alt"></i>Risk Assessment</li>
+                <li onclick="selectAnalytics('allocation')"><i class="fa fa-balance-scale"></i>Asset Allocation</li>
+                <li onclick="selectAnalytics('trends')"><i class="fa fa-trending-up"></i>Market Trends</li>
+            </ul>
+            <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="secondary-btn" style="flex:1;" onclick="runAnalysis()" title="Run selected analysis">Analyze</button>
+                <button class="secondary-btn" style="flex:1;" onclick="exportData()" title="Export analysis data">Export</button>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4>QUICK ACTIONS</h4>
+            <ul class="file-list">
+                <li onclick="refreshPortfolio()"><i class="fa fa-sync"></i>Refresh Data</li>
+                <li onclick="viewRecommendations()"><i class="fa fa-star"></i>AI Recommendations</li>
+                <li onclick="marketNews()"><i class="fa fa-newspaper"></i>Market News</li>
+                <li onclick="generateReport()"><i class="fa fa-file-pdf"></i>Generate Report</li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4>MARKET STATUS</h4>
+            <div style="font-size:12px; padding:8px; background:#2d2d2d; border-radius:4px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span>NSE</span>
+                    <span style="color:#4ade80;">OPEN</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span>BSE</span>
+                    <span style="color:#4ade80;">OPEN</span>
+                </div>
+                <div style="font-size:10px; color:var(--muted); margin-top:8px;">
+                    Last updated: <span id="lastUpdate">10:45 AM</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <main class="main">
+        <div class="dashboard-wrapper">
+            <button class="refresh-button" onclick="refreshAll()">
+                <i class="fa fa-sync"></i> Refresh
+            </button>
+            
+            <div id="portfolio-dashboard">
+                <h3 style="margin:0 0 16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa fa-chart-pie" style="color:var(--accent);"></i>
+                    Portfolio Overview
+                </h3>
+                
+                <div class="portfolio-grid">
+                    <div class="metric-card">
+                        <div style="font-size:12px; color:var(--muted);">Total Investment</div>
+                        <div class="metric-value">₹5,00,000</div>
+                        <div class="metric-change positive">Initial Capital</div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:12px; color:var(--muted);">Current Value</div>
+                        <div class="metric-value" id="currentValue">₹5,42,387</div>
+                        <div class="metric-change positive">+8.48% Total</div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:12px; color:var(--muted);">Day's P&L</div>
+                        <div class="metric-value positive">+₹12,450</div>
+                        <div class="metric-change positive">+2.35%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:12px; color:var(--muted);">Active Positions</div>
+                        <div class="metric-value">8</div>
+                        <div class="metric-change">Holdings</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <h4 style="margin:0 0 12px;">Top Holdings</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Qty</th>
+                                    <th>Current Price</th>
+                                    <th>P&L</th>
+                                    <th>% Change</th>
+                                </tr>
+                            </thead>
+                            <tbody id="holdingsTable">
+                                <tr>
+                                    <td><strong>RELIANCE</strong></td>
+                                    <td>100</td>
+                                    <td>₹2,456.75</td>
+                                    <td class="positive">+₹5,670</td>
+                                    <td class="positive">+2.41%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>TCS</strong></td>
+                                    <td>50</td>
+                                    <td>₹3,542.20</td>
+                                    <td class="positive">+₹3,420</td>
+                                    <td class="positive">+2.01%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>INFY</strong></td>
+                                    <td>75</td>
+                                    <td>₹1,678.90</td>
+                                    <td class="positive">+₹2,890</td>
+                                    <td class="positive">+1.87%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HDFCBANK</strong></td>
+                                    <td>60</td>
+                                    <td>₹1,542.60</td>
+                                    <td class="negative">-₹890</td>
+                                    <td class="negative">-0.58%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin:0 0 12px;">Recent Transactions</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Symbol</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <tr>
+                                    <td>Today</td>
+                                    <td style="color:#4ade80;">BUY</td>
+                                    <td>RELIANCE</td>
+                                    <td>25</td>
+                                    <td>₹2,445.60</td>
+                                </tr>
+                                <tr>
+                                    <td>Yesterday</td>
+                                    <td style="color:#f87171;">SELL</td>
+                                    <td>ICICIBANK</td>
+                                    <td>50</td>
+                                    <td>₹943.20</td>
+                                </tr>
+                                <tr>
+                                    <td>2 days ago</td>
+                                    <td style="color:#4ade80;">BUY</td>
+                                    <td>TCS</td>
+                                    <td>25</td>
+                                    <td>₹3,498.50</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resize-handle"></div>
+        
+        <div class="lower-panels">
+            <div class="tab-bar">
+                <button class="active" onclick="showTab('analytics')">Analytics Results</button>
+                <button onclick="showTab('recommendations')">AI Recommendations</button>
+                <button onclick="showTab('news')">Market News</button>
+                <button onclick="showTab('reports')">Reports</button>
+            </div>
+            
+            <div id="analyticsTab" class="tab-content active">
+                <h5 style="margin:0 0 12px;">Portfolio Analytics</h5>
+                <pre class="output" id="analyticsOutput">📊 Portfolio Performance Analysis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📈 Performance Metrics:
+• Total Return: +8.48% (₹42,387)
+• Annualized Return: +12.6%
+• Sharpe Ratio: 1.34
+• Maximum Drawdown: -3.2%
+
+🎯 Asset Allocation:
+• Large Cap: 65% (₹3,52,551)
+• Mid Cap: 25% (₹1,35,597)
+• Small Cap: 10% (₹54,239)
+
+⚖️ Risk Assessment:
+• Portfolio Beta: 1.02
+• Volatility: 14.8%
+• Risk Grade: Moderate
+
+🔍 Top Performers (Today):
+1. RELIANCE: +2.41% (₹5,670)
+2. TCS: +2.01% (₹3,420)
+3. INFY: +1.87% (₹2,890)
+
+💡 AI Insights:
+• Your portfolio shows strong momentum with technology stocks leading gains
+• Consider rebalancing if large-cap allocation exceeds 70%
+• Current market conditions favor your growth-oriented strategy</pre>
+            </div>
+            
+            <div id="recommendationsTab" class="tab-content">
+                <h5 style="margin:0 0 12px;">AI-Powered Recommendations</h5>
+                <pre class="output">🤖 AI Investment Recommendations
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 Position Suggestions:
+• RELIANCE: HOLD (Target: ₹2,580) - Strong fundamentals
+• TCS: BUY (Target: ₹3,750) - Digital transformation beneficiary
+• BHARTIARTL: BUY (Target: ₹1,850) - 5G rollout catalyst
+
+⚠️ Risk Alerts:
+• Banking sector showing weakness - Monitor HDFCBANK closely
+• Consider partial profit booking in IT stocks at current levels
+
+📊 Sector Recommendations:
+• Overweight: Technology (AI/Digital)
+• Neutral: Energy, Telecom
+• Underweight: Banking, Pharma
+
+🎲 Portfolio Optimization:
+• Suggested allocation: 60% Large Cap, 30% Mid Cap, 10% Small Cap
+• Add defensive stocks for better risk-adjusted returns
+• Consider SIP in diversified equity funds</pre>
+            </div>
+            
+            <div id="newsTab" class="tab-content">
+                <h5 style="margin:0 0 12px;">Market News & Updates</h5>
+                <pre class="output">📰 Latest Market News
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🕐 10:45 AM - Market Update:
+• Sensex: 73,456 (+1.2%) | Nifty: 22,347 (+1.1%)
+• FII Activity: Net buying of ₹2,340 crores
+• VIX: 13.2% (Low volatility environment)
+
+📈 Sector Performance:
+• IT: +2.1% (Best performer)
+• Energy: +1.8%
+• Banking: -0.5% (Lagging)
+
+🏛️ Policy Updates:
+• RBI maintains repo rate at 6.5%
+• Government announces infrastructure spending boost
+• New listing regulations for tech companies
+
+🌍 Global Cues:
+• US markets closed higher overnight
+• Asian markets trading mixed
+• Crude oil steady at $85/barrel
+
+💼 Corporate News:
+• TCS announces large deal wins worth $1.5B
+• Reliance reports strong Q4 results
+• HDFC Bank revises loan growth guidance</pre>
+            </div>
+            
+            <div id="reportsTab" class="tab-content">
+                <h5 style="margin:0 0 12px;">Investment Reports</h5>
+                <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                    <button class="secondary-btn" onclick="generateDailyReport()">Daily Report</button>
+                    <button class="secondary-btn" onclick="generateMonthlyReport()">Monthly Report</button>
+                    <button class="secondary-btn" onclick="generateTaxReport()">Tax Report</button>
+                    <button class="secondary-btn" onclick="exportPDF()">Export PDF</button>
+                </div>
+                <pre class="output" id="reportOutput">📋 Daily Portfolio Report - {{ current_date }}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Portfolio Summary:
+• Opening Value: ₹5,29,937
+• Closing Value: ₹5,42,387
+• Day's Gain: +₹12,450 (+2.35%)
+
+Top Gainers:
+1. RELIANCE: +₹5,670 (+2.41%)
+2. TCS: +₹3,420 (+2.01%)
+3. INFY: +₹2,890 (+1.87%)
+
+Top Losers:
+1. HDFCBANK: -₹890 (-0.58%)
+
+Trading Activity:
+• Orders Executed: 2
+• Total Turnover: ₹61,140
+• Brokerage: ₹245
+
+Risk Metrics:
+• Portfolio Beta: 1.02
+• Value at Risk (1-day, 95%): ₹8,450
+• Concentration Risk: Low
+
+Generated at: 3:30 PM IST</pre>
+            </div>
+        </div>
+    </main>
+    
+    <div class="right-panel">
+        <div class="panel-header">
+            <span>📊 Analytics Chat</span>
+            <div>
+                <button class="secondary-btn" style="padding:2px 6px; font-size:11px;" onclick="clearAnalyticsChat()">Clear</button>
+            </div>
+        </div>
+        
+        <div class="analytics-history" id="analyticsHistory">
+            <div class="msg ai">
+                <div style="font-size:11px; color:var(--muted); margin-bottom:4px;">AI Assistant</div>
+                <div>Welcome to your VS Investor Terminal! I can help you analyze your portfolio, get market insights, and answer investment questions. Try asking me about your portfolio performance or market trends.</div>
+            </div>
+            
+            <div class="msg system">
+                <div style="font-size:11px; color:var(--muted); margin-bottom:4px;">System</div>
+                <div>🎯 Portfolio loaded successfully<br>📊 8 positions analyzed<br>💰 Total value: ₹5,42,387<br>📈 Today's P&L: +₹12,450 (+2.35%)</div>
+            </div>
+        </div>
+        
+        <div class="analytics-input-area">
+            <div class="analytics-input-row">
+                <textarea id="analyticsInput" placeholder="Ask about your portfolio, market analysis, or investment strategies..."></textarea>
+                <button class="primary-btn" onclick="sendAnalyticsQuery()">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                <button class="secondary-btn" style="font-size:11px; padding:4px 8px;" onclick="quickQuery('portfolio performance')">Portfolio Performance</button>
+                <button class="secondary-btn" style="font-size:11px; padding:4px 8px;" onclick="quickQuery('risk analysis')">Risk Analysis</button>
+                <button class="secondary-btn" style="font-size:11px; padding:4px 8px;" onclick="quickQuery('market outlook')">Market Outlook</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-bar">
+        <span>🔹 VS Investor Terminal v2.1 🔹 Connected to Market Data 🔹 Portfolio: 8 positions</span>
+        <span>Last Update: <span id="statusLastUpdate">10:45 AM</span> 🟢 Market Open</span>
+    </div>
+</div>
+
+<script>
+// Tab switching functionality
+function showTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-bar button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab and mark button as active
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Analytics tools selection
+function selectAnalytics(type) {
+    // Remove selected class from all items
+    document.querySelectorAll('.model-list li').forEach(item => {
+        item.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked item
+    event.target.classList.add('selected');
+    
+    console.log('Selected analytics:', type);
+}
+
+// Main functions
+function refreshAll() {
+    console.log('Refreshing all data...');
+    loadPortfolioData();
+    updateMarketStatus();
+    refreshAnalytics();
+}
+
+function loadPortfolioData() {
+    // Simulate loading portfolio data
+    const holdings = [
+        { symbol: 'RELIANCE', qty: 100, price: 2456.75, pnl: 5670, change: 2.41 },
+        { symbol: 'TCS', qty: 50, price: 3542.20, pnl: 3420, change: 2.01 },
+        { symbol: 'INFY', qty: 75, price: 1678.90, pnl: 2890, change: 1.87 },
+        { symbol: 'HDFCBANK', qty: 60, price: 1542.60, pnl: -890, change: -0.58 }
+    ];
+    
+    const tbody = document.getElementById('holdingsTable');
+    tbody.innerHTML = holdings.map(stock => `
+        <tr>
+            <td><strong>${stock.symbol}</strong></td>
+            <td>${stock.qty}</td>
+            <td>₹${stock.price.toLocaleString()}</td>
+            <td class="${stock.pnl > 0 ? 'positive' : 'negative'}">${stock.pnl > 0 ? '+' : ''}₹${stock.pnl.toLocaleString()}</td>
+            <td class="${stock.change > 0 ? 'positive' : 'negative'}">${stock.change > 0 ? '+' : ''}${stock.change}%</td>
+        </tr>
+    `).join('');
+}
+
+function updateMarketStatus() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-IN', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Asia/Kolkata'
+    });
+    
+    document.getElementById('lastUpdate').textContent = timeStr;
+    document.getElementById('statusLastUpdate').textContent = timeStr;
+}
+
+function refreshAnalytics() {
+    const output = document.getElementById('analyticsOutput');
+    const timestamp = new Date().toLocaleString('en-IN');
+    
+    // Add updated timestamp to analytics
+    const currentText = output.textContent;
+    const lines = currentText.split('\n');
+    lines[lines.length - 1] = `Last updated: ${timestamp}`;
+    output.textContent = lines.join('\n');
+}
+
+// Quick action functions
+function refreshPortfolio() {
+    console.log('Refreshing portfolio...');
+    loadPortfolioData();
+    addAnalyticsMessage('system', 'Portfolio data refreshed successfully');
+}
+
+function viewRecommendations() {
+    showTab('recommendations');
+    addAnalyticsMessage('system', 'Switched to AI Recommendations tab');
+}
+
+function marketNews() {
+    showTab('news');
+    addAnalyticsMessage('system', 'Switched to Market News tab');
+}
+
+function generateReport() {
+    showTab('reports');
+    addAnalyticsMessage('system', 'Switched to Reports tab');
+}
+
+// Analysis functions
+function runAnalysis() {
+    const selected = document.querySelector('.model-list li.selected');
+    if (selected) {
+        const analysisType = selected.textContent.trim();
+        addAnalyticsMessage('user', `Run ${analysisType}`);
+        
+        setTimeout(() => {
+            addAnalyticsMessage('ai', `📊 ${analysisType} completed successfully!\n\nKey insights:\n• Analysis shows positive trends\n• Risk levels are within acceptable range\n• Recommended actions updated in dashboard`);
+        }, 1500);
+    }
+}
+
+function exportData() {
+    addAnalyticsMessage('system', 'Portfolio data exported to CSV successfully');
+}
+
+// Analytics chat functions
+function sendAnalyticsQuery() {
+    const input = document.getElementById('analyticsInput');
+    const query = input.value.trim();
+    
+    if (query) {
+        addAnalyticsMessage('user', query);
+        input.value = '';
+        
+        // Simulate AI response
+        setTimeout(() => {
+            generateAIResponse(query);
+        }, 1000);
+    }
+}
+
+function quickQuery(query) {
+    document.getElementById('analyticsInput').value = query;
+    sendAnalyticsQuery();
+}
+
+function generateAIResponse(query) {
+    const responses = {
+        'portfolio performance': `📈 Portfolio Performance Analysis:
+
+Your portfolio is performing well with a total return of +8.48% (₹42,387).
+
+Key highlights:
+• Annualized return: 12.6%
+• Sharpe ratio: 1.34 (excellent risk-adjusted returns)
+• Technology stocks are your top performers
+• Maximum drawdown: -3.2% (low risk)
+
+Recommendation: Continue with current strategy, consider partial profit booking in IT stocks.`,
+
+        'risk analysis': `⚖️ Risk Assessment Report:
+
+Your portfolio risk profile is MODERATE:
+
+• Portfolio Beta: 1.02 (market-neutral)
+• Volatility: 14.8% (below market average)
+• VaR (1-day, 95%): ₹8,450
+• Concentration risk: Low
+
+Risk factors:
+• High allocation to IT sector (monitor for rotation)
+• Banking exposure needs attention
+
+Recommendation: Add defensive sectors for better diversification.`,
+
+        'market outlook': `🌍 Market Outlook Analysis:
+
+Current market conditions:
+• Trend: Bullish with selective rotation
+• VIX: 13.2% (low volatility)
+• FII activity: Positive (₹2,340 crore buying)
+
+Sector outlook:
+• IT: Positive (AI/digital transformation)
+• Energy: Neutral (crude oil stability)
+• Banking: Cautious (margin pressures)
+
+Investment strategy: Stay invested with focus on quality growth stocks.`
+    };
+    
+    const response = responses[query.toLowerCase()] || `I understand you're asking about "${query}". Let me analyze your portfolio data and market conditions to provide you with relevant insights.
+
+Based on current market data:
+• Your portfolio is well-positioned for current market conditions
+• Consider the recent trends in your top holdings
+• Monitor sector rotation opportunities
+
+Would you like me to elaborate on any specific aspect?`;
+    
+    addAnalyticsMessage('ai', response);
+}
+
+function addAnalyticsMessage(type, content) {
+    const history = document.getElementById('analyticsHistory');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `msg ${type}`;
+    
+    if (type !== 'user') {
+        const timestamp = new Date().toLocaleTimeString('en-IN', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        messageDiv.innerHTML = `
+            <div style="font-size:11px; color:var(--muted); margin-bottom:4px;">${type === 'ai' ? 'AI Assistant' : 'System'} - ${timestamp}</div>
+            <div>${content}</div>
+        `;
+    } else {
+        messageDiv.innerHTML = content;
+    }
+    
+    history.appendChild(messageDiv);
+    history.scrollTop = history.scrollHeight;
+}
+
+function clearAnalyticsChat() {
+    const history = document.getElementById('analyticsHistory');
+    history.innerHTML = `
+        <div class="msg ai">
+            <div style="font-size:11px; color:var(--muted); margin-bottom:4px;">AI Assistant</div>
+            <div>Chat cleared. How can I help you with your portfolio analysis?</div>
+        </div>
+    `;
+}
+
+// Report generation functions
+function generateDailyReport() {
+    addAnalyticsMessage('system', 'Generating daily portfolio report...');
+    setTimeout(() => {
+        document.getElementById('reportOutput').textContent = `📋 Daily Portfolio Report - ${new Date().toLocaleDateString('en-IN')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Portfolio Summary:
+• Opening Value: ₹5,29,937
+• Closing Value: ₹5,42,387
+• Day's Gain: +₹12,450 (+2.35%)
+
+Top Gainers:
+1. RELIANCE: +₹5,670 (+2.41%)
+2. TCS: +₹3,420 (+2.01%)
+3. INFY: +₹2,890 (+1.87%)
+
+Top Losers:
+1. HDFCBANK: -₹890 (-0.58%)
+
+Generated at: ${new Date().toLocaleTimeString('en-IN')}`;
+        addAnalyticsMessage('ai', 'Daily report generated successfully! Check the Reports tab.');
+    }, 2000);
+}
+
+function generateMonthlyReport() {
+    addAnalyticsMessage('system', 'Generating monthly portfolio report...');
+    // Implementation for monthly report
+}
+
+function generateTaxReport() {
+    addAnalyticsMessage('system', 'Generating tax report...');
+    // Implementation for tax report
+}
+
+function exportPDF() {
+    addAnalyticsMessage('system', 'Exporting report as PDF...');
+    // Implementation for PDF export
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('VS Investor Terminal loaded');
+    loadPortfolioData();
+    updateMarketStatus();
+    
+    // Auto-update market status every minute
+    setInterval(updateMarketStatus, 60000);
+    
+    // Add welcome message
+    setTimeout(() => {
+        addAnalyticsMessage('ai', 'Welcome to VS Investor Terminal! Your portfolio is loaded and ready for analysis. Ask me anything about your investments!');
+    }, 1000);
+});
+
+// Handle Enter key in analytics input
+document.getElementById('analyticsInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendAnalyticsQuery();
+    }
+});
+</script>
+</body>
+</html>

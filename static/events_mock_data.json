@@ -1,0 +1,100 @@
+{
+  "items": [
+    {
+      "source": "Economic Event",
+      "source_code": "sensibull",
+      "id": "mock_event_1",
+      "title": "RBI Monetary Policy Meeting",
+      "description": "Reserve Bank of India announces key policy rates and monetary stance",
+      "category": "monetary_policy",
+      "published_at": "2025-08-27T05:15:00.000000",
+      "url": "",
+      "geo": "India",
+      "impact": "high",
+      "preview_models": [
+        {
+          "model": "Market Regime Classifier",
+          "alpha": true,
+          "risk": true,
+          "why": "Policy decisions affect market regimes"
+        }
+      ]
+    },
+    {
+      "source": "Economic Event",
+      "source_code": "sensibull",
+      "id": "mock_event_2",
+      "title": "NSE Market Opening",
+      "description": "National Stock Exchange opens for regular trading session",
+      "category": "trading",
+      "published_at": "2025-08-27T03:15:00.000000",
+      "url": "",
+      "geo": "India",
+      "impact": "medium",
+      "preview_models": [
+        {
+          "model": "Market Opening Momentum",
+          "alpha": true,
+          "risk": false,
+          "why": "Opening patterns drive early session trends"
+        }
+      ]
+    },
+    {
+      "source": "Economic Event",
+      "source_code": "sensibull",
+      "id": "mock_event_3",
+      "title": "GDP Growth Data Release",
+      "description": "Quarterly GDP growth figures to be announced by Ministry of Statistics",
+      "category": "economic_data",
+      "published_at": "2025-08-28T03:15:00.000000",
+      "url": "",
+      "geo": "India",
+      "impact": "high",
+      "preview_models": [
+        {
+          "model": "Macro Nowcast",
+          "alpha": true,
+          "risk": true,
+          "why": "GDP data affects growth expectations"
+        }
+      ]
+    },
+    {
+      "source": "News Event",
+      "source_code": "upstox",
+      "id": "mock_news_1",
+      "title": "Sensex Rises 200 Points on Positive Global Cues",
+      "description": "Indian benchmark indices opened higher following overnight gains in US markets",
+      "category": "market_news",
+      "published_at": "2025-08-27T02:45:00.000000",
+      "url": ""
+    },
+    {
+      "source": "News Event",
+      "source_code": "upstox",
+      "id": "mock_news_2",
+      "title": "IT Sector Shows Strong Performance Amid Tech Rally",
+      "description": "Major IT companies report better-than-expected quarterly results",
+      "category": "sector_news",
+      "published_at": "2025-08-27T02:15:00.000000",
+      "url": ""
+    },
+    {
+      "source": "News Event",
+      "source_code": "upstox",
+      "id": "mock_news_3",
+      "title": "Foreign Institutional Investors Turn Net Buyers",
+      "description": "FIIs invest Rs 2,500 crore in Indian equities amid improved sentiment",
+      "category": "market_flow",
+      "published_at": "2025-08-27T01:15:00.000000",
+      "url": ""
+    }
+  ],
+  "counts": {
+    "events": 3,
+    "news": 3
+  },
+  "status": "success",
+  "source": "static_mock_data"
+}

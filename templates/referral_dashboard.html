@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Dashboard - PredictRAM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .referral-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .credit-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .share-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .share-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        .share-btn.telegram {
+            background: #0088cc;
+            color: white;
+        }
+        .share-btn.copy {
+            background: #6c757d;
+            color: white;
+        }
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .feature-cost {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line"></i> PredictRAM
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">
+                    <i class="fas fa-users"></i> Referral Dashboard
+                    <small class="text-muted">- {{ user_type.title() }}</small>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Referral Card -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="referral-card">
+                    <h3><i class="fas fa-gift"></i> 
+                        {% if user_type == 'analyst' %}
+                        Refer Investors & Analysts - Earn Credits!
+                        {% else %}
+                        Refer Investors & Earn Credits!
+                        {% endif %}
+                    </h3>
+                    <p class="mb-3">
+                        {% if user_type == 'analyst' %}
+                        As an analyst, you can refer both <strong>investors</strong> and <strong>other analysts</strong>. Earn {{ config.credits_per_referral }} credits for each successful referral.
+                        {% else %}
+                        As an investor, you can refer other <strong>investors</strong>. Earn {{ config.credits_per_referral }} credits for each successful investor referral.
+                        {% endif %}
+                    </p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Your Unique Referral Code:</strong></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="referralCode" value="{{ referral_code }}" readonly>
+                            <button class="btn btn-light" type="button" onclick="copyCode()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <small class="text-white-50">This code is unique to your email ID and works for all registration types you can refer</small>
+                    </div>
+
+                    <!-- Investor Referral Link -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong><i class="fas fa-chart-line"></i> Investor Referral Link:</strong></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="investorReferralLink" value="{{ referral_links.investor }}" readonly>
+                            <button class="btn btn-light" type="button" onclick="copyInvestorLink()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <small class="text-white-50">Share this link to refer new investors</small>
+                    </div>
+
+                    {% if user_type == 'analyst' %}
+                    <!-- Analyst Referral Link (only for analysts) -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong><i class="fas fa-user-tie"></i> Analyst Referral Link:</strong></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="analystReferralLink" value="{{ referral_links.analyst }}" readonly>
+                            <button class="btn btn-light" type="button" onclick="copyAnalystLink()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <small class="text-white-50">Share this link to refer other analysts</small>
+                    </div>
+                    {% else %}
+                    <!-- Note for investors -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> <strong>Note:</strong> As an investor, you can only refer other investors. Analysts have the privilege to refer both investors and analysts.
+                    </div>
+                    {% endif %}
+
+                    <div class="share-buttons">
+                        <a href="#" class="share-btn whatsapp" onclick="shareWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="#" class="share-btn telegram" onclick="shareTelegram()">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </a>
+                        <button class="share-btn copy" onclick="copyInvestorLink()">
+                            <i class="fas fa-link"></i> Copy Investor Link
+                        </button>
+                        {% if user_type == 'analyst' %}
+                        <button class="share-btn copy" onclick="copyAnalystLink()">
+                            <i class="fas fa-user-tie"></i> Copy Analyst Link
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-coins"></i> Your Credits</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <div class="stat-number">{{ user_credits.available_credits }}</div>
+                            <div class="text-muted">Available Credits</div>
+                        </div>
+                        
+                        <div class="credit-badge">
+                            <small><i class="fas fa-gift"></i> Referral: {{ user_credits.referral_credits }}</small>
+                        </div>
+                        <div class="credit-badge">
+                            <small><i class="fas fa-star"></i> Bonus: {{ user_credits.bonus_credits }}</small>
+                        </div>
+                        <div class="credit-badge">
+                            <small><i class="fas fa-minus-circle"></i> Used: {{ user_credits.used_credits }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_referrals }}</div>
+                <div class="text-muted">Total Referrals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ confirmed_referrals }}</div>
+                <div class="text-muted">Confirmed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ user_credits.referral_credits }}</div>
+                <div class="text-muted">Credits Earned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ config.credits_per_referral }}</div>
+                <div class="text-muted">Per Referral</div>
+            </div>
+        </div>
+
+        <!-- Feature Costs -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-star"></i> Feature Costs</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for feature, cost in config.min_credits_for_features.items() %}
+                        <div class="feature-cost">
+                            <span>{{ feature.replace('_', ' ').title() }}</span>
+                            <span class="badge bg-primary">{{ cost }} credits</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history"></i> Recent Referrals</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_referrals %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for referral in recent_referrals %}
+                                    <tr>
+                                        <td>{{ referral.referee_id }}</td>
+                                        <td>{{ referral.referee_type.title() }}</td>
+                                        <td>{{ referral.created_at.strftime('%m/%d') }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if referral.status == 'confirmed' %}success{% else %}warning{% endif %}">
+                                                {{ referral.status.title() }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No referrals yet. Start sharing your link!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credit Transactions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-receipt"></i> Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_transactions %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in recent_transactions %}
+                                    <tr>
+                                        <td>{{ transaction.created_at.strftime('%m/%d/%Y %H:%M') }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if transaction.transaction_type == 'earned' %}success{% elif transaction.transaction_type == 'used' %}danger{% else %}info{% endif %}">
+                                                {{ transaction.transaction_type.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'used' %}-{% else %}+{% endif %}{{ transaction.amount }}
+                                        </td>
+                                        <td>{{ transaction.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No transactions yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyCode() {
+            const codeInput = document.getElementById('referralCode');
+            codeInput.select();
+            codeInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(codeInput.value);
+            
+            // Show feedback
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function copyLink() {
+            // This function is kept for backward compatibility
+            copyInvestorLink();
+        }
+
+        function copyInvestorLink() {
+            const linkInput = document.getElementById('investorReferralLink');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(linkInput.value);
+            
+            // Show feedback
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function copyAnalystLink() {
+            const linkInput = document.getElementById('analystReferralLink');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(linkInput.value);
+            
+            // Show feedback
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function shareWhatsApp() {
+            const investorLink = document.getElementById('investorReferralLink').value;
+            const message = encodeURIComponent(`🚀 Join PredictRAM and get 50 bonus credits! Use my referral link: ${investorLink}`);
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        }
+
+        function shareTelegram() {
+            const investorLink = document.getElementById('investorReferralLink').value;
+            const message = encodeURIComponent(`🚀 Join PredictRAM and get 50 bonus credits! Use my referral link: ${investorLink}`);
+            window.open(`https://t.me/share/url?url=${investorLink}&text=${message}`, '_blank');
+        }
+
+        // Auto-refresh credits every 30 seconds
+        setInterval(() => {
+            fetch(`/api/referral/stats?user_id={{ user_id }}&user_type={{ user_type }}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update credit displays if changed
+                    const currentCredits = parseInt(document.querySelector('.stat-number').textContent);
+                    if (data.credits.available !== currentCredits) {
+                        location.reload(); // Simple refresh if credits changed
+                    }
+                })
+                .catch(console.error);
+        }, 30000);
+    </script>
+</body>
+</html>

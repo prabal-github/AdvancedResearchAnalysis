@@ -1,0 +1,344 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% include 'partials/_brand_header.html' %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-2">
+                                <i class="bi bi-robot me-2"></i>AI Research Assistant
+                            </h2>
+                            <p class="card-text mb-0">
+                                Ask any investment question and get instant answers from our comprehensive research database.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="text-end me-3">
+                                    <small class="opacity-75">Powered by</small><br>
+                                    <strong>Advanced AI Analytics</strong>
+                                </div>
+                                <i class="bi bi-cpu-fill" style="font-size: 2.5rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Chat Interface -->
+        <div class="col-lg-8">
+            <!-- Query Input -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-chat-dots me-2"></i>Ask Your Investment Question
+                    </h5>
+                    <form id="aiQueryForm">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <textarea class="form-control" id="queryInput" rows="3" 
+                                         placeholder="Ask anything about stocks, sectors, companies, market trends...
+Examples:
+• What's the outlook for RELIANCE.NS?
+• How is the IT sector performing?
+• Should I invest in HDFC Bank?
+• What are the risks in pharma stocks?"></textarea>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-start">
+                                <button type="submit" class="btn btn-primary btn-lg w-100" id="askButton">
+                                    <i class="bi bi-send me-2"></i>Ask AI
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- AI Response Area -->
+            <div id="responseArea" class="d-none">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-robot me-2"></i>AI Analysis Response
+                            <span id="confidenceScore" class="badge bg-success ms-2"></span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="aiResponse" class="mb-3"></div>
+                        <div id="researchNeeded" class="alert alert-info d-none">
+                            <h6><i class="bi bi-info-circle me-2"></i>Research Requested</h6>
+                            <p class="mb-0">I've identified areas that need additional research and have automatically requested our analyst team to prepare detailed analysis for you.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="d-none">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5>Analyzing your query...</h5>
+                        <p class="text-muted">Searching through our research database and generating insights</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Queries -->
+            {% if recent_queries %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Your Recent Queries
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for query in recent_queries %}
+                    <div class="query-item border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ query.query_text[:100] }}...</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>{{ query.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                    <span class="ms-3">
+                                        <i class="bi bi-graph-up me-1"></i>Coverage: {{ (query.knowledge_coverage_score * 100)|round }}%
+                                    </span>
+                                </small>
+                            </div>
+                            <div>
+                                {% if query.status == 'answered' %}
+                                    <span class="badge bg-success">Answered</span>
+                                {% elif query.status == 'requires_research' %}
+                                    <span class="badge bg-warning">Research Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Knowledge Coverage Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="bi bi-database me-2"></i>Knowledge Base Coverage
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 text-center">
+                            <div class="metric-box p-3 rounded bg-primary bg-opacity-10">
+                                <h4 class="text-primary mb-1">{{ coverage_stats.total_reports }}</h4>
+                                <small class="text-muted">Research Reports</small>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="metric-box p-3 rounded bg-info bg-opacity-10">
+                                <h4 class="text-info mb-1">{{ coverage_stats.total_knowledge_entries }}</h4>
+                                <small class="text-muted">Knowledge Entries</small>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="metric-box p-3 rounded bg-success bg-opacity-10">
+                                <h4 class="text-success mb-1">{{ coverage_stats.recent_queries }}</h4>
+                                <small class="text-muted">Recent Queries</small>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="metric-box p-3 rounded bg-warning bg-opacity-10">
+                                <h4 class="text-warning mb-1">{{ coverage_stats.pending_research }}</h4>
+                                <small class="text-muted">Research Pending</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Research -->
+            {% if pending_research %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="bi bi-hourglass-split me-2"></i>Your Research Requests
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% for research in pending_research %}
+                    <div class="research-item border-bottom pb-2 mb-2">
+                        <h6 class="mb-1 small">{{ research.title }}</h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                {% if research.assigned_analyst %}
+                                    Analyst: {{ research.assigned_analyst }}
+                                {% else %}
+                                    Awaiting assignment
+                                {% endif %}
+                            </small>
+                            <span class="badge bg-{{ 'info' if research.status == 'assigned' else 'warning' }}">
+                                {{ research.status.replace('_', ' ').title() }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Completed Research -->
+            {% if completed_research %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="bi bi-check-circle me-2"></i>Completed Research
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% for research in completed_research %}
+                    <div class="research-item border-bottom pb-2 mb-2">
+                        <h6 class="mb-1 small">{{ research.title }}</h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">By {{ research.assigned_analyst }}</small>
+                            <a href="/report/{{ research.submitted_report_id }}" class="btn btn-sm btn-outline-primary">
+                                View Report
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Notifications -->
+            {% if notifications %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="bi bi-bell me-2"></i>Recent Notifications
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% for notification in notifications %}
+                    <div class="notification-item border-bottom pb-2 mb-2">
+                        <h6 class="mb-1 small">{{ notification.title }}</h6>
+                        <p class="mb-1 text-muted small">{{ notification.message[:80] }}...</p>
+                        <small class="text-muted">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.metric-box {
+    transition: transform 0.2s;
+}
+.metric-box:hover {
+    transform: translateY(-2px);
+}
+.query-item:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.research-item:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.notification-item:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+#aiResponse {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('aiQueryForm');
+    const queryInput = document.getElementById('queryInput');
+    const askButton = document.getElementById('askButton');
+    const responseArea = document.getElementById('responseArea');
+    const loadingState = document.getElementById('loadingState');
+    const aiResponse = document.getElementById('aiResponse');
+    const confidenceScore = document.getElementById('confidenceScore');
+    const researchNeeded = document.getElementById('researchNeeded');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const query = queryInput.value.trim();
+        if (!query) return;
+
+        // Show loading state
+        responseArea.classList.add('d-none');
+        loadingState.classList.remove('d-none');
+        askButton.disabled = true;
+
+        try {
+            const response = await fetch('/api/ai_query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Show response
+                aiResponse.textContent = data.response;
+                confidenceScore.textContent = Math.round(data.confidence * 100) + '% Confidence';
+                confidenceScore.className = `badge ms-2 ${data.confidence > 0.7 ? 'bg-success' : data.confidence > 0.4 ? 'bg-warning' : 'bg-danger'}`;
+                
+                // Show research needed alert if applicable
+                if (data.research_needed) {
+                    researchNeeded.classList.remove('d-none');
+                } else {
+                    researchNeeded.classList.add('d-none');
+                }
+
+                // Show response area
+                loadingState.classList.add('d-none');
+                responseArea.classList.remove('d-none');
+
+                // Clear input
+                queryInput.value = '';
+            } else {
+                alert('Error: ' + data.error);
+                loadingState.classList.add('d-none');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while processing your query.');
+            loadingState.classList.add('d-none');
+        }
+
+        askButton.disabled = false;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1773 @@
+{% extends "layout.html" %}
+{% block title %}Investor Dashboard - Research QA{% endblock %}
+{% block header %}
+{% include 'partials/_dashboard_header.html' %}
+<style>
+/* Design Tokens */
+:root { --tok-surface:#ffffff; --tok-surface-alt:#f8fafc; --tok-border:#e2e8f0; --tok-border-soft:#eef2f6; --tok-primary:#2563eb; --tok-primary-rgb:37,99,235; --tok-primary-soft:#eff6ff; --tok-success:#16a34a; --tok-warning:#f59e0b; --tok-danger:#dc2626; --tok-info:#0ea5e9; --tok-radius-sm:.375rem; --tok-radius-md:.75rem; --tok-radius-lg:1.1rem; --tok-shadow-sm:0 1px 2px rgba(0,0,0,.05); --tok-shadow-md:0 4px 12px -3px rgba(0,0,0,.15); --tok-skeleton-a:#f1f5f9; --tok-skeleton-b:#e2e8f0; }
+[data-bs-theme='dark'] :root, [data-bs-theme='dark'] body { --tok-surface:#0f172a; --tok-surface-alt:#1e293b; --tok-border:#1e293b; --tok-border-soft:#24324a; --tok-skeleton-a:#1e293b; --tok-skeleton-b:#334155; }
+/* Skeleton */
+.skeleton-bar { height:16px; border-radius:6px; background:linear-gradient(90deg,var(--tok-skeleton-a) 25%,var(--tok-skeleton-b) 50%,var(--tok-skeleton-a) 75%); background-size:400% 100%; animation:sk-shimmer 1.2s ease-in-out infinite; }
+.skeleton-bar.lg { height:22px; }
+@keyframes sk-shimmer {0%{background-position:0 0;}100%{background-position:-200% 0;}}
+/* Density */
+body.density-compact .card-body { padding:.75rem .85rem !important; }
+body.density-compact table td, body.density-compact table th { padding:.35rem .5rem !important; font-size:.75rem; }
+body.density-compact .btn { padding:.4rem .55rem; font-size:.7rem; }
+body.density-compact h1.h3.dashboard-title { font-size:1rem; }
+.dashboard-header .dashboard-title { background: linear-gradient(90deg,#6d28d9,#2563eb); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight:700; letter-spacing:.5px; }
+/* Unified Blue Button Theme */
+.primary-cta { background: linear-gradient(135deg,#1d4ed8,#2563eb); box-shadow:0 4px 12px -2px rgba(37,99,235,.45); }
+.primary-cta:hover { filter:brightness(1.07); box-shadow:0 6px 16px -3px rgba(37,99,235,.55); }
+.btn-soft { background: linear-gradient(145deg,#eff6ff,#ffffff); color:#1e3a8a; border:1px solid #bfdbfe; }
+.btn-soft:hover { background: linear-gradient(145deg,#e0f0ff,#ffffff); color:#1d4ed8; }
+[data-bs-theme='dark'] .btn-soft { background: linear-gradient(145deg,#1e293b,#0f172a); border-color:#334155; color:#93c5fd; }
+[data-bs-theme='dark'] .btn-soft:hover { background: linear-gradient(145deg,#223049,#162033); color:#bfdbfe; }
+[data-bs-theme='dark'] .primary-cta { box-shadow:0 4px 14px -2px rgba(59,130,246,.5); }
+[data-bs-theme='dark'] .dashboard-header .dashboard-title { filter: drop-shadow(0 2px 4px rgba(0,0,0,.4)); }
+/* Investor Dashboard Header Enhancements */
+.header-gradient { background: #ffffff !important; box-shadow: 0 1px 0 rgba(0,0,0,.06); }
+.header-gradient .container { background: transparent !important; }
+.dashboard-header { background: #ffffff; }
+.dashboard-header { position: relative; }
+.dashboard-header .action-bar-scroll { overflow-x: auto; scrollbar-width: thin; -ms-overflow-style: none; padding-bottom: .25rem; }
+.dashboard-header .action-bar-scroll::-webkit-scrollbar { height: 6px; }
+.dashboard-header .action-bar-scroll::-webkit-scrollbar-track { background: transparent; }
+.dashboard-header .action-bar-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 10px; }
+.dashboard-header .action-bar-scroll .btn { white-space: nowrap; transition: box-shadow .18s ease, background-color .18s ease, transform .18s; }
+.dashboard-header .action-bar-scroll .btn:hover { box-shadow: 0 4px 10px -2px rgba(0,0,0,.22); transform: translateY(-1px); }
+.dashboard-header .action-bar-scroll .btn:active { transform: translateY(0); box-shadow: 0 2px 5px -1px rgba(0,0,0,.25); }
+
+/* Unified base look for all header buttons (even outline) */
+.dashboard-header .action-bar-scroll .btn,
+.dashboard-header .dropdown-menu .dropdown-item { position: relative; }
+.dashboard-header .action-bar-scroll .btn:not(.btn-success):not(.btn-primary):not(.btn-warning):not(.btn-dark) {
+    background: linear-gradient(145deg, var(--bs-light,#f4f6f8), var(--bs-white,#ffffff));
+    border: 1px solid rgba(0,0,0,.06);
+    color: var(--bs-body-color,#111827);
+}
+/* Outline variants get soft fill */
+.dashboard-header .action-bar-scroll .btn-outline-primary,
+.dashboard-header .action-bar-scroll .btn-outline-info { background: linear-gradient(145deg,#eef6ff,#ffffff); border-color: #cfe5ff; }
+.dashboard-header .action-bar-scroll .btn-outline-info { background: linear-gradient(145deg,#eef9ff,#ffffff); border-color: #cfeefe; }
+
+/* Primary action emphasis */
+.dashboard-header .action-bar-scroll .btn-success { background: linear-gradient(135deg,#16a34a,#22c55e); border: none; color:#fff; box-shadow: 0 4px 12px -2px rgba(34,197,94,.4); }
+.dashboard-header .action-bar-scroll .btn-primary { background: linear-gradient(135deg,#2563eb,#3b82f6); border: none; color:#fff; box-shadow: 0 4px 12px -2px rgba(37,99,235,.4); }
+.dashboard-header .action-bar-scroll .btn-dark { background: linear-gradient(135deg,#111827,#1f2937); border: none; color:#fff; box-shadow: 0 4px 12px -2px rgba(0,0,0,.5); }
+.dashboard-header .action-bar-scroll .btn-warning { background: linear-gradient(135deg,#f59e0b,#fbbf24); border: none; color:#111; box-shadow: 0 4px 12px -2px rgba(245,158,11,.4); }
+
+/* Hover brighten */
+.dashboard-header .action-bar-scroll .btn-success:hover { filter: brightness(1.05); }
+.dashboard-header .action-bar-scroll .btn-primary:hover { filter: brightness(1.06); }
+.dashboard-header .action-bar-scroll .btn-dark:hover { filter: brightness(1.12); }
+.dashboard-header .action-bar-scroll .btn-warning:hover { filter: brightness(1.05); }
+
+/* Focus ring refinement */
+.dashboard-header .action-bar-scroll .btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(59,130,246,.25); }
+
+/* Compact heights & consistent vertical rhythm */
+.dashboard-header .action-bar-scroll .btn { line-height: 1.2; padding: .55rem .9rem; }
+@media (min-width: 1400px) { .dashboard-header .action-bar-scroll .btn { padding: .6rem 1rem; } }
+
+/* Dark theme adjustments */
+[data-bs-theme='dark'] .dashboard-header .action-bar-scroll .btn:not(.btn-success):not(.btn-primary):not(.btn-warning):not(.btn-dark) {
+    background: linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.08);
+    color: #e2e8f0;
+}
+[data-bs-theme='dark'] .dashboard-header .action-bar-scroll .btn-outline-primary { background: linear-gradient(145deg,#1d3a63,#1b2942); border-color:#335a91; color:#dbeafe; }
+[data-bs-theme='dark'] .dashboard-header .action-bar-scroll .btn-outline-info { background: linear-gradient(145deg,#0b4252,#082f3b); border-color:#116979; color:#cffafe; }
+[data-bs-theme='dark'] .dashboard-header .action-bar-wrapper.is-stuck { background: rgba(15,23,42,.85) !important; border-color: rgba(255,255,255,.08); }
+
+/* Mobile dropdown items visual alignment */
+.dashboard-header .dropdown-menu .dropdown-item { border-radius: .5rem; }
+.dashboard-header .dropdown-menu .dropdown-item:active { background: linear-gradient(135deg,#2563eb,#3b82f6); color:#fff; }
+.action-bar-wrapper { position: relative; }
+.action-bar-wrapper:after { content:""; position:absolute; top:0; right:0; width:48px; height:100%; pointer-events:none; background: linear-gradient(to left, var(--bs-body-bg,#fff), rgba(255,255,255,0)); }
+/* Optional sticky variant: add class 'sticky-actions' to .dashboard-header (not enabled by default) */
+.dashboard-header.sticky-actions .action-bar-wrapper { position: sticky; top: 72px; z-index: 30; background: rgba(var(--bs-body-bg-rgb,255,255,255),0.85); padding-top:.35rem; padding-bottom:.35rem; margin-top:.5rem; transition: box-shadow .25s ease, backdrop-filter .25s ease, background-color .25s ease; }
+.dashboard-header.sticky-actions .action-bar-wrapper.is-stuck { backdrop-filter: blur(6px); box-shadow: 0 4px 14px -2px rgba(0,0,0,.12); border: 1px solid var(--bs-border-color,#e5e7eb); border-radius: .75rem; }
+.dashboard-header.sticky-actions .action-bar-scroll .btn { font-weight: 500; }
+@media (max-width: 768px) {
+  .dashboard-header h1 { font-size: 1.15rem; }
+  .dashboard-header .action-bar-scroll .btn { font-size: .78rem; padding: .35rem .6rem; }
+}
+
+/* Investor Dashboard Improvements */
+.investor-dashboard-improvements {
+  /* Better spacing and alignment */
+  --dashboard-spacing: 1.5rem;
+  --card-padding: 1.25rem;
+}
+
+/* Improved typography and spacing */
+.container-fluid {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Card improvements */
+.card {
+  border-radius: var(--tok-radius-lg);
+  border: 1px solid var(--tok-border-soft);
+}
+
+.card-header {
+  border-bottom: 1px solid var(--tok-border-soft);
+  background: var(--tok-surface-alt) !important;
+  border-radius: var(--tok-radius-lg) var(--tok-radius-lg) 0 0;
+}
+
+.card-body {
+  padding: var(--card-padding);
+}
+
+/* Typography improvements */
+h1.dashboard-title {
+  font-size: 1.75rem !important;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+h5.card-title, .card-header h5 {
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  color: var(--bs-dark);
+}
+
+.table {
+  font-size: 0.9rem;
+}
+
+.table th {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bs-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Button improvements */
+.btn {
+  font-weight: 500;
+  border-radius: var(--tok-radius-md);
+  transition: all 0.2s ease;
+}
+
+.d-grid .btn {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+/* Quick Actions specific styling */
+.card .d-grid gap-2 {
+  gap: 0.75rem !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 992px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  h1.dashboard-title {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .card-body {
+    padding: 0.875rem;
+  }
+  
+  h1.dashboard-title {
+    font-size: 1.35rem !important;
+  }
+  
+  h5.card-title, .card-header h5 {
+    font-size: 1rem !important;
+  }
+}
+</style>
+</style>
+<script>
+// Sticky action bar activation & visual state
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('.dashboard-header');
+    if(!header) return;
+    // Enable sticky behavior (CSS already defines .sticky-actions)
+    header.classList.add('sticky-actions');
+    const bar = header.querySelector('.action-bar-wrapper');
+    if(!bar) return;
+    let lastPinned = false;
+    function evaluate(){
+        const top = bar.getBoundingClientRect().top;
+        // When bar reaches near the navbar area, mark as stuck
+        const pinned = top <= 80; // threshold ~ below main nav
+        if(pinned !== lastPinned){
+            bar.classList.toggle('is-stuck', pinned);
+            lastPinned = pinned;
+        }
+    }
+    window.addEventListener('scroll', evaluate, {passive:true});
+        evaluate();
+        if(localStorage.getItem('density')==='compact'){ document.body.classList.add('density-compact'); }
+});
+// Namespace
+window.Dashboard = window.Dashboard || {};
+window.Dashboard.toggleDensity = function(){
+    document.body.classList.toggle('density-compact');
+    if(document.body.classList.contains('density-compact')){ localStorage.setItem('density','compact'); } else { localStorage.removeItem('density'); }
+};
+
+// Manual compliance refresh (uses pollCompliance directly)
+window.Dashboard.manualComplianceRefresh = async function(){
+    const icon = document.getElementById('complianceRefreshIcon');
+    if(icon){ icon.classList.add('spin'); }
+    await window.Dashboard.pollCompliance();
+    if(icon){ setTimeout(()=>icon.classList.remove('spin'), 600); }
+};
+
+// If dedicated API exists provide incremental update
+window.Dashboard.pollCompliance = async function(){
+    try {
+        const r = await fetch('/api/compliance/realtime');
+        if(!r.ok) return;
+        const data = await r.json();
+        if(!data || !data.overall_compliance) return;
+        const circ = 2 * Math.PI * 60;
+        const percent = data.overall_compliance;
+        const circle = document.getElementById('radialCompliance');
+        if(circle){
+            const offset = circ - (percent/100 * circ);
+            circle.style.strokeDashoffset = offset.toFixed(2);
+        }
+        const txt = document.getElementById('radialComplianceText');
+        if(txt){ txt.textContent = percent.toFixed(1)+'%'; }
+        const rep = document.getElementById('complianceReports');
+        if(rep){ rep.textContent = `${data.compliant_reports}/${data.total_reports}`; }
+        const bar = document.getElementById('complianceReportsBar');
+        if(bar){
+            const repPct = (data.total_reports? (data.compliant_reports/data.total_reports*100):0);
+            bar.style.width = repPct.toFixed(1)+'%';
+        }
+        const trendIcon = document.getElementById('complianceTrendIcon');
+        const trendText = document.getElementById('complianceTrendText');
+        if(trendText){ trendText.textContent = data.compliance_trend; }
+        if(trendIcon){
+            let icon='➡️';
+            if(data.compliance_trend==='Improving') icon='📈';
+            else if(data.compliance_trend==='Declining') icon='📉';
+            trendIcon.textContent = icon;
+        }
+        const avg = document.getElementById('avgComplianceScore');
+        if(avg && data.avg_compliance_score!==undefined){ avg.textContent = 'Avg Score: '+(data.avg_compliance_score*100).toFixed(1)+'%'; }
+        const vioCount = document.getElementById('violationsCount');
+        if(vioCount){ vioCount.textContent = (data.major_violations||[]).length; vioCount.className = 'badge bg-'+((data.major_violations||[]).length===0?'success':'danger'); }
+        const vioList = document.getElementById('violationsList');
+        if(vioList){
+            if(data.major_violations && data.major_violations.length){
+                vioList.innerHTML = '<div class="small text-danger">High severity issues detected</div>';
+            } else {
+                vioList.innerHTML = '<div class="small text-success">No major violations</div>';
+            }
+        }
+        const ts = document.getElementById('complianceLastUpdated');
+        if(ts){ ts.textContent = 'Updated ' + new Date().toLocaleTimeString(); }
+    } catch(err){ console.warn('Compliance poll failed', err); }
+};
+
+// Start polling every 45s if API available
+setTimeout(()=>{ window.Dashboard.pollCompliance(); }, 2000);
+setInterval(()=>{ window.Dashboard.pollCompliance(); }, 45000);
+</script>
+{% endblock %}
+{% block content %}
+
+<!-- Enhanced Dashboard Navigation Tabs -->
+<div class="container-fluid px-3">
+    <ul class="nav nav-tabs nav-fill mb-4" id="dashboardTabs" role="tablist" style="border: none;">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-semibold" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab" style="border-radius: 12px 12px 0 0; border: 2px solid #e9ecef; border-bottom: none; color: #495057;">
+                <i class="bi bi-speedometer2 me-2"></i>Overview
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio-pane" type="button" role="tab" style="border-radius: 12px 12px 0 0; border: 2px solid #e9ecef; border-bottom: none; color: #495057;">
+                <i class="bi bi-briefcase-fill me-2"></i>Real-time Portfolio
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="dashboardTabContent">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="overview-pane" role="tabpanel" aria-labelledby="overview-tab">
+
+{% if investor and (not risk_profile or not risk_profile.completed) %}
+<div class="alert alert-warning d-flex justify-content-between align-items-center">
+    <div>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Complete your risk profiling to personalize recommendations.
+    </div>
+    <a class="btn btn-sm btn-outline-dark" href="{{ url_for('investor_risk_profile') }}">
+        <i class="bi bi-shield-check me-1"></i>Start
+    </a>
+  
+</div>
+{% elif risk_profile %}
+<div class="alert alert-info d-flex justify-content-between align-items-center">
+    <div>
+        <i class="bi bi-shield-check me-2"></i>
+        Risk Profile: <strong>{{ risk_profile.category }}</strong>
+        <span class="badge bg-secondary ms-2">Score {{ risk_profile.score }}</span>
+    </div>
+    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('investor_risk_profile') }}">Update</a>
+</div>
+{% endif %}
+
+<!-- Report Submission Form -->
+<div id="reportFormDiv" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>Analyze New Research Report
+        </h5>
+    </div>
+    <div class="card-body">
+        <form id="reportAnalyzeForm" onsubmit="return submitReportForm(event)">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Analyst Name</label>
+                <input type="text" name="analyst" class="form-control form-control-lg" placeholder="Enter analyst name" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Report Text</label>
+                <textarea name="text" rows="6" class="form-control" placeholder="Paste research report content here... (Stock tickers will be automatically extracted)" required></textarea>
+                <div class="form-text">Stock tickers will be automatically extracted from the report text</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-activity me-1"></i> Analyze Report
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="hideReportForm()">Cancel</button>
+            </div>
+        </form>
+        <div id="reportResultDiv" class="mt-4"></div>
+    </div>
+</div>
+
+<!-- Quick Stats Overview -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center h-100">
+            <div class="card-body">
+                <div class="skeleton-bar lg mb-2"></div>
+                <div class="text-primary fs-1 mb-2">
+                    <i class="bi bi-file-text"></i>
+                </div>
+                <h3 class="mb-1" id="totalReports">{{ reports|length }}</h3>
+                <p class="text-muted mb-0">Total Reports</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center h-100">
+            <div class="card-body">
+                <div class="skeleton-bar lg mb-2"></div>
+                <div class="text-success fs-1 mb-2">
+                    <i class="bi bi-award"></i>
+                </div>
+                <h3 class="mb-1" id="avgScore">
+                    {% if reports %}
+                        {% set scores = [] %}
+                        {% for report in reports %}
+                            {% if report.analysis and report.analysis.get('composite_quality_score') %}
+                                {{ scores.append(report.analysis.composite_quality_score) or '' }}
+                            {% endif %}
+                        {% endfor %}
+                        {% if scores %}
+                            {{ "%.1f"|format((scores|sum / scores|length) * 100) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    {% else %}
+                        0%
+                    {% endif %}
+                </h3>
+                <p class="text-muted mb-0">Average Quality</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center h-100">
+            <div class="card-body">
+                <div class="skeleton-bar lg mb-2"></div>
+                <div class="text-info fs-1 mb-2">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3 class="mb-1" id="totalAnalysts">{{ reports|map(attribute='analyst')|unique|list|length }}</h3>
+                <p class="text-muted mb-0">Active Analysts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center h-100">
+            <div class="card-body">
+                <div class="skeleton-bar lg mb-2"></div>
+                <div class="text-warning fs-1 mb-2">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="mb-1" id="topScore">
+                    {% if reports %}
+                        {% set max_score = 0 %}
+                        {% for report in reports %}
+                            {% if report.analysis and report.analysis.get('composite_quality_score') %}
+                                {% if report.analysis.composite_quality_score > max_score %}
+                                    {% set max_score = report.analysis.composite_quality_score %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ "%.1f"|format(max_score * 100) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </h3>
+                <p class="text-muted mb-0">Highest Score</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time SEBI Compliance and Trending Stocks -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-check me-2 text-success"></i>Real-time SEBI Compliance
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="radial-wrapper position-relative" style="width:140px; height:140px;">
+                        <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-labelledby="complianceRadialTitle complianceRadialDesc">
+                            <title id="complianceRadialTitle">Overall Compliance</title>
+                            <desc id="complianceRadialDesc">Circular gauge showing current SEBI overall compliance percentage.</desc>
+                            <circle cx="70" cy="70" r="60" stroke="var(--tok-border-soft)" stroke-width="10" fill="none" />
+                            {% set circ = 2 * 3.1416 * 60 %}
+                            <circle id="radialCompliance" cx="70" cy="70" r="60" stroke="url(#gradCompliance)" stroke-linecap="round" stroke-width="10" fill="none"
+                                    stroke-dasharray="{{ '%.2f'|format(circ) }}" stroke-dashoffset="{{ '%.2f'|format(circ - (sebi_compliance.overall_compliance/100 * circ)) }}"
+                                    style="transition:stroke-dashoffset 1s ease" transform="rotate(-90 70 70)" />
+                            <defs>
+                                <linearGradient id="gradCompliance" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#2563eb" />
+                                    <stop offset="100%" stop-color="#16a34a" />
+                                </linearGradient>
+                            </defs>
+                            <text id="radialComplianceText" x="70" y="70" text-anchor="middle" dominant-baseline="central" font-size="26" font-weight="600" fill="#111">
+                                {{ sebi_compliance.overall_compliance }}%
+                            </text>
+                        </svg>
+                        <div class="position-absolute top-0 start-0 w-100 text-center mt-2 small text-muted">Overall</div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="row g-3 small" style="min-width:220px;">
+                            <div class="col-6">
+                                <div class="border rounded p-2 h-100 bg-light-subtle">
+                                    <div class="text-muted">Reports</div>
+                                    <div class="fw-semibold" id="complianceReports">{{ sebi_compliance.compliant_reports }}/{{ sebi_compliance.total_reports }}</div>
+                                    <div class="progress mt-1" style="height:4px;">
+                                        {% set rep_pct = (sebi_compliance.compliant_reports / (sebi_compliance.total_reports or 1))*100 %}
+                                        <div id="complianceReportsBar" class="progress-bar bg-success" style="width: {{ '%.1f'|format(rep_pct) }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-2 h-100 bg-light-subtle">
+                                    <div class="text-muted d-flex justify-content-between align-items-center">
+                                        <span>Trend</span>
+                                        <span id="complianceTrendIcon">
+                                            {% if sebi_compliance.compliance_trend == 'Improving' %}📈{% elif sebi_compliance.compliance_trend == 'Declining' %}📉{% else %}➡️{% endif %}
+                                        </span>
+                                    </div>
+                                    <div id="complianceTrendText" class="fw-semibold">{{ sebi_compliance.compliance_trend }}</div>
+                                    <div class="small text-muted mt-1" id="avgComplianceScore">Avg Score: {{ (sebi_compliance.avg_compliance_score * 100)|round(1) }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="border rounded p-2 bg-light-subtle">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Violations</span>
+                                        <span class="badge bg-{% if sebi_compliance.major_violations|length == 0 %}success{% else %}danger{% endif %}" id="violationsCount">{{ sebi_compliance.major_violations|length }}</span>
+                                    </div>
+                                    <div class="mt-1" id="violationsList">
+                                        {% if sebi_compliance.major_violations %}
+                                            <div class="small text-danger">High severity issues detected</div>
+                                        {% else %}
+                                            <div class="small text-success">No major violations</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                    <span id="complianceLastUpdated">Updated now</span>
+                    <button class="btn btn-sm btn-outline-primary" onclick="Dashboard.manualComplianceRefresh()" aria-label="Refresh compliance metrics" title="Refresh compliance metrics"><i class="bi bi-arrow-clockwise" id="complianceRefreshIcon"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 d-flex align-items-center"><i class="bi bi-graph-up me-2 text-primary"></i>Trending Stocks Backtest</h5>
+                <div class="d-none d-md-flex gap-2 small text-muted align-items-center">
+                    <span class="d-flex align-items-center"><span class="spark-legend spark-up me-1"></span>Up</span>
+                    <span class="d-flex align-items-center"><span class="spark-legend spark-flat me-1"></span>Flat</span>
+                    <span class="d-flex align-items-center"><span class="spark-legend spark-down me-1"></span>Down</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle" id="trendingStocksTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Stock</th>
+                                <th>Mentions</th>
+                                <th>6M Return</th>
+                                <th>Sharpe</th>
+                                <th>Trend</th>
+                                <th>Rec</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in trending_backtest[:5] %}
+                            <tr data-history="{{ stock.history|join(',') if stock.history is defined and stock.history else '' }}">
+                                <td><strong>{{ stock.company }}</strong></td>
+                                <td><span class="badge bg-primary">{{ stock.mentions }}</span></td>
+                                <td><span class="badge bg-{% if stock.returns > 10 %}success{% elif stock.returns > 0 %}info{% else %}danger{% endif %}">{{ stock.returns }}%</span></td>
+                                <td>{{ stock.sharpe_ratio }}</td>
+                                <td class="sparkline-cell"><canvas class="sparkline" height="28" width="90"></canvas></td>
+                                <td><span class="badge bg-{% if stock.recommendation == 'Buy' %}success{% elif stock.recommendation == 'Hold' %}warning{% else %}danger{% endif %}">{{ stock.recommendation }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Features Overview -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-tools me-2 text-success"></i>Enhanced Analysis Features
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-success rounded-pill me-2">✓</div>
+                            <small>Real-time SEBI Compliance</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-primary rounded-pill me-2">✓</div>
+                            <small>Trending Stocks Backtest</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-info rounded-pill me-2">✓</div>
+                            <small>JSON API Integration</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-warning rounded-pill me-2">✓</div>
+                            <small>Multi-Report Comparison</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <p class="mb-0 text-muted small">
+                    Advanced compliance checking with geopolitical risk assessment and global standards validation
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-tools me-2 text-primary"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success" onclick="showReportForm()">
+                        <i class="bi bi-plus-circle me-2"></i>Submit New Report Analysis
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="window.location.href='/compare_reports'">
+                        <i class="bi bi-bar-chart me-2"></i>Compare Multiple Reports
+                    </button>
+                    <button class="btn btn-outline-info" onclick="window.location.href='/portfolio'">
+                        <i class="bi bi-graph-up me-2"></i>Portfolio Analysis
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="window.location.href='/ai_research_assistant'">
+                        <i class="bi bi-chat-dots me-2"></i>AI Research Assistant
+                    </button>
+                    <button class="btn btn-primary" onclick="window.location.href='/subscriber_dashboard'">
+                        <i class="bi bi-robot me-2"></i>ML Models Analytics
+                    </button>
+                    <button class="btn btn-success" onclick="window.location.href='/subscribed_ml_models'">
+                        <i class="bi bi-stars me-2"></i>My Subscribed Models
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/published'">
+                        <i class="bi bi-collection me-2"></i>Browse ML Models
+                    </button>
+                    <button class="btn btn-outline-dark" onclick="window.location.href='/referral/dashboard'">
+                        <i class="bi bi-people me-2"></i>Refer & Earn Credits
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Referral System Card -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm bg-gradient-light">
+            <div class="card-body text-center py-4">
+                <div class="mb-3">
+                    <i class="bi bi-gift-fill text-primary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="card-title text-primary mb-3">Refer Friends & Earn Credits</h5>
+                <p class="text-muted mb-4">
+                    Share PredictRAM with your fellow investors and earn credits for premium features when they join!
+                </p>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="/referral/dashboard" class="btn btn-primary px-4">
+                                <i class="bi bi-speedometer2 me-2"></i>Referral Dashboard
+                            </a>
+                            <button class="btn btn-outline-primary px-4" onclick="copyInvestorReferralLink()">
+                                <i class="bi bi-share me-2"></i>Share Your Link
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>Earn 10 credits for each successful referral
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reports -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Research Reports</h5>
+            <a href="/" class="btn btn-sm btn-outline-primary">View All Reports</a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Analyst</th>
+                        <th>Topic</th>
+                        <th>Tickers</th>
+                        <th class="text-center">Quality Score</th>
+                        <th>SEBI Compliance</th>
+                        <th>Created</th>
+                        <th class="pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports[:10] %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-35px symbol-circle me-2">
+                                    <span class="symbol-label bg-light-primary text-primary fw-bold">{{ report.analyst[0] }}</span>
+                                </div>
+                                {{ report.analyst }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if report.topic %}
+                                <span class="text-dark fw-medium">{{ report.topic }}</span>
+                            {% else %}
+                                <span class="text-muted">No topic</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                {% for ticker in report.tickers|loads %}
+                                <span class="badge bg-light text-dark border">{{ ticker }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {% if report.analysis and report.analysis.get('composite_quality_score') %}
+                                {% set score = report.analysis.composite_quality_score * 100 %}
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar" style="width: {{ score }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ "%.1f"|format(score) }}%</small>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if report.analysis and report.analysis.sebi_compliance %}
+                                {% set sebi_data = report.analysis.sebi_compliance %}
+                                {% set sebi_score = (sebi_data.get('score', sebi_data.get('overall_score', sebi_data.get('overall_compliance_score', 0.7))) * 100) %}
+                                {% if sebi_score >= 85 %}
+                                    <span class="badge bg-success">Excellent</span>
+                                {% elif sebi_score >= 70 %}
+                                    <span class="badge bg-primary">Good</span>
+                                {% elif sebi_score >= 55 %}
+                                    <span class="badge bg-warning">Fair</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Poor</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </td>
+                        <td class="pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <a href="/report/{{ report.id }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/enhanced_analysis/{{ report.id }}" class="btn btn-outline-success">
+                                    <i class="bi bi-shield-check"></i>
+                                </a>
+                                <a href="/api/report/{{ report.id }}/json" class="btn btn-outline-info" target="_blank">
+                                    <i class="bi bi-code"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chatbot Interface -->
+<div id="chatbotContainer" class="position-fixed" style="bottom: 20px; right: 20px; width: 400px; height: 500px; z-index: 1000; display: none;">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="bi bi-robot me-2"></i>AI Research Assistant</h6>
+            <button class="btn btn-sm btn-outline-light" onclick="toggleChatbot()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="card-body p-0" style="height: 350px; overflow-y: auto;" id="chatMessages">
+            <div class="p-3">
+                <div class="alert alert-info alert-sm mb-2">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Welcome!</strong> Ask me about research reports, stock analysis, or market insights.
+                </div>
+                <div class="text-muted small mb-3">
+                    <strong>Try asking:</strong><br>
+                    • "What's the latest analysis on RELIANCE?"
+                    • "Show me reports with high quality scores"
+                    • "What are the SEBI compliance issues?"
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <input type="text" class="form-control" id="chatInput" placeholder="Ask about reports, stocks, or analysis..." onkeypress="handleChatKeyPress(event)">
+                <button class="btn btn-primary" onclick="sendChatMessage()">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+            <div class="mt-2">
+                <button class="btn btn-sm btn-outline-secondary" onclick="updateKnowledgeBase()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Update Knowledge Base
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support & Feedback (Investor) START -->
+<div class="card border-0 shadow-sm my-4" id="investorSupportCard">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Support & Feedback</h5>
+    <button class="btn btn-sm btn-outline-primary" type="button" onclick="toggleInvestorTicketForm()"><i class="bi bi-plus-circle me-1"></i> New Ticket</button>
+  </div>
+  <div class="card-body">
+    <div id="investorTicketForm" style="display:none;" class="mb-3">
+        <div class="row g-2">
+            <div class="col-md-4"><input type="text" id="invTicketSubject" class="form-control" placeholder="Subject"></div>
+            <div class="col-md-3">
+                <select id="invTicketCategory" class="form-select">
+                    <option value="general">General</option>
+                    <option value="technical">Technical</option>
+                    <option value="billing">Billing</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="complaint">Complaint</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="invTicketPriority" class="form-select">
+                    <option value="low">Low</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="col-12"><textarea id="invTicketDescription" class="form-control" rows="3" placeholder="Describe your issue or feedback..."></textarea></div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-success btn-sm" type="button" onclick="submitInvestorTicket()"><i class="bi bi-send me-1"></i>Submit</button>
+                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleInvestorTicketForm(false)">Cancel</button>
+            </div>
+        </div>
+        <div class="small text-muted mt-2">Max 5 tickets per 24h.</div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead class="table-light"><tr><th>ID</th><th>Subject</th><th>Status</th><th>Category</th><th>Priority</th><th>Created</th><th></th></tr></thead>
+        <tbody id="invTicketsBody"><tr><td colspan="7" class="text-center text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function toggleInvestorTicketForm(force){ const el=document.getElementById('investorTicketForm'); if(force===false){el.style.display='none';return;} el.style.display=(el.style.display==='none'||!el.style.display)?'block':'none'; }
+function submitInvestorTicket(){ const subject=invTicketSubject.value.trim(); const description=invTicketDescription.value.trim(); const category=invTicketCategory.value; const priority=invTicketPriority.value; if(!subject||!description){return alert('Subject & description required');} fetch('/api/support/tickets',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({subject, description, category, priority, is_complaint: category==='complaint'})}).then(r=>r.json()).then(j=>{ if(!j.ok){ alert(j.error||'Error'); } else { toggleInvestorTicketForm(false); loadInvestorTickets(); }}); }
+function loadInvestorTickets(){ fetch('/api/support/tickets').then(r=>r.json()).then(j=>{ if(!j.ok){ return;} const body=document.getElementById('invTicketsBody'); body.innerHTML=''; if(!j.tickets.length){ body.innerHTML='<tr><td colspan="7" class="text-center text-muted">No tickets</td></tr>'; return;} j.tickets.forEach(t=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${t.id}</td><td><button class='btn btn-link p-0' type='button' onclick='viewInvestorTicket(${t.id})'>${t.subject}</button></td><td><span class='badge bg-${t.status==='resolved'?'success':(t.status==='in_progress'?'warning':'secondary')}'>${t.status}</span></td><td>${t.category}</td><td>${t.priority}</td><td>${new Date(t.created_at).toLocaleDateString()}</td><td><button class='btn btn-sm btn-outline-info' type='button' onclick='viewInvestorTicket(${t.id})'>View</button></td>`; body.appendChild(tr); }); }); }
+function viewInvestorTicket(id){ fetch(`/api/support/tickets/${id}`).then(r=>r.json()).then(j=>{ if(!j.ok){return;} const t=j.ticket; fetch(`/api/support/tickets/${id}/history`).then(r=>r.json()).then(h=>{ const historyRows=(h.history||[]).map(x=>`<tr><td>${new Date(x.created_at).toLocaleString()}</td><td>${x.from_status||'-'}</td><td>${x.to_status}</td><td>${x.note||''}</td></tr>`).join(''); const modalHtml=`<div class='modal fade' id='invTicketModal'><div class='modal-dialog modal-lg'><div class='modal-content'><div class='modal-header'><h5 class='modal-title'>Ticket #${t.id} - ${t.subject}</h5><button type='button' class='btn-close' data-bs-dismiss='modal'></button></div><div class='modal-body'><p><strong>Status:</strong> ${t.status}</p><p><strong>Category:</strong> ${t.category} | <strong>Priority:</strong> ${t.priority}</p><p style='white-space:pre-wrap'>${t.description}</p><hr><h6>History</h6><div class='table-responsive'><table class='table table-sm'><thead><tr><th>Time</th><th>From</th><th>To</th><th>Note</th></tr></thead><tbody>${historyRows||'<tr><td colspan=4 class=text-muted>No history</td></tr>'}</tbody></table></div></div><div class='modal-footer'><button class='btn btn-secondary' data-bs-dismiss='modal'>Close</button></div></div></div></div>`; document.body.insertAdjacentHTML('beforeend', modalHtml); const m=new bootstrap.Modal(document.getElementById('invTicketModal')); document.getElementById('invTicketModal').addEventListener('hidden.bs.modal',()=>document.getElementById('invTicketModal').remove()); m.show(); }); }); }
+if(document.getElementById('investorSupportCard')){ loadInvestorTickets(); }
+</script>
+<!-- Support & Feedback (Investor) END -->
+
+<script>
+// Sparkline renderer (lightweight)
+function renderSparklines(){
+    document.querySelectorAll('#trendingStocksTable tbody tr').forEach(row=>{
+        const histStr=row.getAttribute('data-history');
+        const canvas=row.querySelector('canvas.sparkline');
+        if(!canvas || !histStr) return;
+        const ctx=canvas.getContext('2d');
+        const values=histStr.split(',').map(x=>parseFloat(x)).filter(x=>!isNaN(x));
+        if(values.length<2){ ctx.fillStyle='rgba(0,0,0,.15)'; ctx.fillRect(0,canvas.height/2,canvas.width,1); return; }
+        const min=Math.min(...values), max=Math.max(...values);
+        const pad=2; const h=canvas.height - pad*2; const w=canvas.width - pad*2;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.lineWidth=1.6; const rising=values[values.length-1] > values[0]; const flat=Math.abs(values[values.length-1]-values[0]) < 0.001;
+        ctx.strokeStyle = flat ? '#94a3b8' : (rising ? '#16a34a' : '#dc2626');
+        ctx.beginPath(); values.forEach((v,i)=>{
+            const x=pad + (i/(values.length-1))*w; const norm = (max===min)?0.5:(1-(v-min)/(max-min)); const y= pad + norm*h; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }); ctx.stroke();
+        // fill fade
+        const grd=ctx.createLinearGradient(0,0,0,canvas.height);
+        grd.addColorStop(0, ctx.strokeStyle+'33'); grd.addColorStop(1, ctx.strokeStyle+'00');
+        ctx.lineTo(pad+w,canvas.height-pad); ctx.lineTo(pad,canvas.height-pad); ctx.closePath(); ctx.fillStyle=grd; ctx.fill();
+    });
+}
+
+// Lazy section observer
+function initLazySections(){
+    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('lazy-visible'); e.target.classList.remove('lazy-hidden'); obs.unobserve(e.target); }});},{threshold:.15});
+    document.querySelectorAll('.lazy-section').forEach(sec=>{sec.classList.add('lazy-hidden'); obs.observe(sec);});
+}
+
+// AI Dock interactions
+window.Dashboard = window.Dashboard || {};
+Dashboard.toggleAIDock = function(){
+    const dock=document.getElementById('chatbotContainer'); const btn=document.getElementById('aiDockToggleBtn');
+    const hidden=dock.classList.toggle('collapsed'); btn.setAttribute('aria-expanded', !hidden); dock.setAttribute('aria-hidden', hidden);
+};
+Dashboard.toggleAIDockSize = function(){
+    const dock=document.getElementById('chatbotContainer'); dock.classList.toggle('dock-large');
+};
+Dashboard.insertPrompt = function(text){ const input=document.getElementById('chatInput'); input.value=text; input.focus(); };
+Dashboard.startResize = function(evt){
+    const dock=document.getElementById('chatbotContainer'); const startX=evt.clientX; const startW=dock.offsetWidth; function move(e){ const delta=startX-e.clientX; dock.style.width=Math.min(Math.max(startW+delta,260),600)+'px'; }
+    function up(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }
+    window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+};
+
+// Quality score percentile tooltip (basic heuristic)
+function initQualityTooltips(){
+    document.querySelectorAll('#recentReportsTable .progress').forEach(bar=>{ bar.addEventListener('mouseenter',e=>{ const val=parseFloat(bar.querySelector('.progress-bar')?.style.width||'0'); const percentile = Math.max(1,Math.min(99, Math.round(val))); let tip=document.createElement('div'); tip.className='qs-tooltip show'; tip.textContent=percentile+"th percentile"; document.body.appendChild(tip); const r=bar.getBoundingClientRect(); tip.style.left=(r.left + r.width/2)+'px'; tip.style.top=(r.top - 8)+'px'; bar.addEventListener('mouseleave',()=> tip.remove(),{once:true}); }); });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+    // Defer sparkline a frame for layout
+    requestAnimationFrame(()=>renderSparklines());
+    initLazySections();
+    setTimeout(()=>{ document.querySelectorAll('.skeleton-bar.lg').forEach(el=>el.style.display='none'); },600);
+    // Add id to recent reports table if not present
+    const rptTbl=document.querySelector('table.table-hover'); if(rptTbl && !rptTbl.id) rptTbl.id='recentReportsTable';
+    initQualityTooltips();
+});
+</script>
+
+<script>
+// Report Form Functions
+function showReportForm() {
+    document.getElementById('reportFormDiv').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hideReportForm() {
+    document.getElementById('reportFormDiv').style.display = 'none';
+}
+
+function submitReportForm(event) {
+    event.preventDefault();
+    const form = document.getElementById('reportAnalyzeForm');
+    const data = {
+        analyst: form.analyst.value,
+        text: form.text.value
+    };
+    
+    // Show loading indicator
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Analyzing...';
+    submitBtn.disabled = true;
+    
+    fetch('/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(r=>r.json()).then(res=>{
+        if (res.result) {
+            document.getElementById('reportResultDiv').innerHTML = `
+                <div class="alert alert-success d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Analysis Complete!</h5>
+                        <div class="mb-0">Report ID: ${res.report_id}</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="${window.location.origin}/report/${res.report_id}" class="btn btn-success me-2">
+                        <i class="bi bi-eye me-1"></i> View Report
+                    </a>
+                    <a href="${window.location.origin}/enhanced_analysis/${res.report_id}" class="btn btn-outline-success">
+                        <i class="bi bi-shield-check me-1"></i> Enhanced Analysis
+                    </a>
+                </div>
+            `;
+            form.reset();
+            
+            // Refresh page after 3 seconds to show new report
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        } else {
+            document.getElementById('reportResultDiv').innerHTML = `
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-0">Error: ${res.error || 'Unknown error'}</h5>
+                    </div>
+                </div>
+            `;
+        }
+    }).catch(error => {
+        document.getElementById('reportResultDiv').innerHTML = `
+            <div class="alert alert-danger">
+                Network error: ${error.message}
+            </div>
+        `;
+    }).finally(() => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Chatbot Functions
+function toggleChatbot() {
+    const chatbot = document.getElementById('chatbotContainer');
+    if (chatbot.style.display === 'none' || chatbot.style.display === '') {
+        chatbot.style.display = 'block';
+        // Auto-update knowledge base when opening chatbot
+        updateKnowledgeBase();
+    } else {
+        chatbot.style.display = 'none';
+    }
+}
+
+function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendChatMessage();
+    }
+}
+
+function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const question = input.value.trim();
+    
+    if (!question) return;
+    
+    // Add user message to chat
+    addChatMessage('user', question);
+    input.value = '';
+    
+    // Add loading message
+    const loadingId = addChatMessage('bot', 'Thinking...', true);
+    
+    // Send to backend
+    fetch('/api/chatbot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question: question})
+    })
+    .then(r => r.json())
+    .then(data => {
+        // Remove loading message
+        document.getElementById(loadingId).remove();
+        
+        if (data.error) {
+            addChatMessage('bot', 'Sorry, I encountered an error: ' + data.error);
+        } else {
+            addChatMessage('bot', data.answer, false, data.sources);
+        }
+    })
+    .catch(error => {
+        document.getElementById(loadingId).remove();
+        addChatMessage('bot', 'Sorry, I\'m having trouble connecting right now.');
+    });
+}
+
+function addChatMessage(sender, message, isLoading = false, sources = null) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageId = 'msg_' + Date.now();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.id = messageId;
+    messageDiv.className = `mb-3 ${sender === 'user' ? 'text-end' : ''}`;
+    
+    let messageHtml = '';
+    
+    if (sender === 'user') {
+        messageHtml = `
+            <div class="d-inline-block bg-primary text-white rounded px-3 py-2 max-width-75">
+                ${message}
+            </div>
+        `;
+    } else {
+        let sourcesHtml = '';
+        if (sources && sources.length > 0) {
+            sourcesHtml = '<div class="mt-2"><small class="text-muted"><strong>Sources:</strong></small>';
+            sources.forEach(source => {
+                sourcesHtml += `<br><small class="text-muted">• ${source.title} (${source.type})</small>`;
+            });
+            sourcesHtml += '</div>';
+        }
+        
+        messageHtml = `
+            <div class="d-inline-block bg-light rounded px-3 py-2 max-width-75">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-robot text-primary me-2 mt-1"></i>
+                    <div>
+                        ${isLoading ? '<div class="spinner-border spinner-border-sm me-2"></div>' : ''}
+                        ${message}
+                        ${sourcesHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    messageDiv.innerHTML = messageHtml;
+    chatMessages.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    return messageId;
+}
+
+function updateKnowledgeBase() {
+    const updateBtn = document.querySelector('button[onclick="updateKnowledgeBase()"]');
+    const originalText = updateBtn.innerHTML;
+    updateBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1 spin"></i>Updating...';
+    updateBtn.disabled = true;
+    
+    fetch('/api/knowledge_base/update', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            addChatMessage('bot', `Knowledge base updated! Added ${data.updated_entries} entries from reports and topics.`);
+        } else {
+            addChatMessage('bot', 'Failed to update knowledge base: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        addChatMessage('bot', 'Error updating knowledge base.');
+    })
+    .finally(() => {
+        updateBtn.innerHTML = originalText;
+        updateBtn.disabled = false;
+    });
+}
+
+// Add CSS for chat styling
+const chatStyles = `
+<style>
+.max-width-75 { max-width: 75%; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#chatMessages { background: #f8f9fa; }
+</style>
+`;
+document.head.insertAdjacentHTML('beforeend', chatStyles);
+</script>
+
+<!-- Connect With Analysts Section Removed -->
+<!-- Will be added back later as requested -->
+
+<!-- Booking Modal Placeholder -->
+<div id="bookingModalContainer"></div>
+<script>
+function loadConnectAnalysts(){
+  const spec = document.getElementById('specFilter').value.trim();
+  const url = '/api/analysts/connectable'+(spec?`?specialty=${encodeURIComponent(spec)}`:'');
+    fetch(url).then(r=>r.json()).then(j=>{
+        const wrap=document.getElementById('analystConnectList');
+        wrap.innerHTML='';
+        if(!j.analysts.length){
+            wrap.innerHTML='<div class="col-12 text-muted small">No analysts available</div>';
+            return;
+        }
+            window._connectProfiles = j.analysts; // cache for booking modal enrichment
+            j.analysts.forEach(a=>{
+            const col=document.createElement('div');
+            col.className='col-md-4 mb-3';
+            const specs=(a.specialties||[]).slice(0,5).map(s=>`<span class='badge bg-secondary me-1 mb-1'>${s}</span>`).join('');
+            const ratingHtml = a.avg_rating?`<div class='small mb-1'>${[1,2,3,4,5].map(i=> a.avg_rating>=i?"<i class='bi bi-star-fill text-warning'></i>":(a.avg_rating>=i-0.5?"<i class='bi bi-star-half text-warning'></i>":"<i class='bi bi-star text-warning'></i>")).join('')} <span class='small text-muted ms-1'>${a.avg_rating} (${a.ratings_count})</span></div>`:'<div class="small text-muted mb-1">No ratings yet</div>';
+                    const img = a.profile_image
+                        ? `<img src='${a.profile_image}' loading='lazy' alt='${(a.analyst_name||'Analyst')}' class='rounded-circle me-3 flex-shrink-0' style='width:72px;height:72px;object-fit:cover;'>`
+                        : "<div class='rounded-circle bg-secondary me-3 d-inline-flex align-items-center justify-content-center flex-shrink-0' style='width:72px;height:72px;font-size:1.1rem;color:#fff;'>A</div>";
+            const displayName = a.analyst_name || ('Analyst #'+a.analyst_id);
+    // Clean up function stubs - session functionality temporarily disabled
+function loadConnectAnalysts(){
+    console.log('Connect Analysts feature temporarily disabled');
+}
+
+function openBooking(analystId){
+    console.log('Booking feature temporarily disabled');
+}
+
+function selectSlot(btn, analystId){ 
+    console.log('Slot selection feature temporarily disabled'); 
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Investor Dashboard loaded - session features temporarily disabled');
+});
+
+// On page load, hide the disabled sections
+window.addEventListener('load', function() {
+    // Remove any existing session-related elements
+    const connectCard = document.getElementById('connectAnalystsCard');
+    if (connectCard) {
+        connectCard.remove();
+    }
+    
+    const sessionsPanel = document.getElementById('mySessionsPanel');
+    if (sessionsPanel) {
+        sessionsPanel.remove();
+    }
+});
+
+// Investor Referral Link Function
+async function copyInvestorReferralLink() {
+    try {
+        // Get the referral code from the API
+        const response = await fetch('/api/referral/code');
+        const data = await response.json();
+        
+        if (data.success) {
+            const baseUrl = window.location.origin;
+            const referralLink = `${baseUrl}/register_investor?ref=${data.code}`;
+            
+            // Copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(referralLink);
+                // Show success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
+                button.classList.remove('btn-outline-primary');
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-primary');
+                }, 2000);
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = referralLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Referral link copied to clipboard!');
+            }
+        } else {
+            alert('Error getting referral link: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to copy referral link. Please try again.');
+    }
+}
+</script>
+        </div> <!-- End Overview Tab -->
+
+        <!-- Real-time Portfolio Tab -->
+        <div class="tab-pane fade" id="portfolio-pane" role="tabpanel" aria-labelledby="portfolio-tab">
+            <!-- Portfolio Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">TOTAL VALUE</h6>
+                                    <h2 class="mb-1 fw-bold" id="portfolioTotalValue">₹5,42,387</h2>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success bg-opacity-20 text-success me-2" id="portfolioTotalChange">+2.35%</span>
+                                        <small class="text-white-75" id="portfolioTotalPnL">+₹12,450</small>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <i class="bi bi-briefcase-fill fs-1 text-white-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-white-50 mb-1">DAY P&L</h6>
+                                    <h2 class="mb-1 fw-bold" id="portfolioDayPnL">+₹12,450</h2>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success bg-opacity-20 text-success me-2" id="portfolioDayChange">+1.24%</span>
+                                        <small class="text-white-75">Today's Performance</small>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <i class="bi bi-graph-up fs-1 text-white-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Holdings & Add Symbol -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-list-ul me-2 text-primary"></i>Portfolio Holdings</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="refreshPortfolioData()">
+                                    <i class="bi bi-arrow-clockwise" id="portfolioRefreshIcon"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="showAddSymbolModal()">
+                                    <i class="bi bi-plus-lg me-1"></i>Add Symbol
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" id="portfolioHoldingsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Qty</th>
+                                            <th>Avg Price</th>
+                                            <th>Current Price</th>
+                                            <th>P&L</th>
+                                            <th>% Change</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic content loaded via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Risk Analytics Panel -->
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0"><i class="bi bi-shield-exclamation me-2 text-warning"></i>Risk Analytics</h6>
+                        </div>
+                        <div class="card-body" id="portfolioRiskAnalytics">
+                            <div class="text-center text-muted">
+                                <div class="spinner-border spinner-border-sm me-2"></div>
+                                Loading risk data...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ML Recommendations Panel -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0"><i class="bi bi-robot me-2 text-info"></i>ML Recommendations</h6>
+                        </div>
+                        <div class="card-body" id="portfolioMLRecommendations">
+                            <div class="text-center text-muted">
+                                <div class="spinner-border spinner-border-sm me-2"></div>
+                                Loading recommendations...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- End Portfolio Tab -->
+    </div> <!-- End Tab Content -->
+</div> <!-- End Container -->
+
+<!-- Add Symbol Modal -->
+<div class="modal fade" id="addSymbolModal" tabindex="-1" aria-labelledby="addSymbolModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSymbolModalLabel">
+                    <i class="bi bi-plus-circle-fill me-2 text-success"></i>Add New Symbol
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSymbolForm">
+                    <div class="mb-3">
+                        <label for="symbolInput" class="form-label fw-semibold">Stock Symbol</label>
+                        <input type="text" class="form-control form-control-lg" id="symbolInput" placeholder="e.g., SBIN, RELIANCE" required style="text-transform: uppercase;">
+                        <div class="form-text">Enter NSE stock symbol</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantityInput" class="form-label fw-semibold">Quantity</label>
+                                <input type="number" class="form-control form-control-lg" id="quantityInput" placeholder="100" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="avgPriceInput" class="form-label fw-semibold">Average Price</label>
+                                <input type="number" class="form-control form-control-lg" id="avgPriceInput" placeholder="520.50" min="0.01" step="0.01" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="addSymbolToPortfolio()">
+                    <i class="bi bi-plus-lg me-1"></i>Add Symbol
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===========================================
+// 📊 REAL-TIME PORTFOLIO JAVASCRIPT
+// ===========================================
+
+let portfolioRefreshInterval;
+let isPortfolioTabActive = false;
+
+// Tab switching event handling
+document.addEventListener('DOMContentLoaded', function() {
+    const portfolioTab = document.getElementById('portfolio-tab');
+    const overviewTab = document.getElementById('overview-tab');
+    
+    if (portfolioTab) {
+        portfolioTab.addEventListener('shown.bs.tab', function() {
+            isPortfolioTabActive = true;
+            loadPortfolioData();
+            startPortfolioRealTimeUpdates();
+        });
+        
+        portfolioTab.addEventListener('hidden.bs.tab', function() {
+            isPortfolioTabActive = false;
+            stopPortfolioRealTimeUpdates();
+        });
+        
+        // Load portfolio data if starting on portfolio tab
+        if (portfolioTab.classList.contains('active')) {
+            isPortfolioTabActive = true;
+            loadPortfolioData();
+            startPortfolioRealTimeUpdates();
+        }
+    }
+});
+
+async function loadPortfolioData() {
+    try {
+        // Load portfolio overview
+        const overviewResponse = await fetch('/api/portfolio/realtime_overview');
+        const overviewData = await overviewResponse.json();
+        
+        if (overviewData.status === 'success') {
+            updatePortfolioOverview(overviewData.data);
+            updatePortfolioHoldings(overviewData.data.holdings);
+        }
+        
+        // Load risk analytics
+        loadPortfolioRiskAnalytics();
+        
+        // Load ML recommendations
+        loadPortfolioMLRecommendations();
+        
+    } catch (error) {
+        console.error('Portfolio data loading error:', error);
+        showPortfolioError('Failed to load portfolio data');
+    }
+}
+
+function updatePortfolioOverview(data) {
+    // Update total value
+    const totalValueEl = document.getElementById('portfolioTotalValue');
+    const totalChangeEl = document.getElementById('portfolioTotalChange');
+    const totalPnLEl = document.getElementById('portfolioTotalPnL');
+    
+    if (totalValueEl) totalValueEl.textContent = `₹${formatCurrency(data.total_value)}`;
+    if (totalChangeEl) totalChangeEl.textContent = `${data.total_pnl_percent >= 0 ? '+' : ''}${data.total_pnl_percent.toFixed(2)}%`;
+    if (totalPnLEl) totalPnLEl.textContent = `${data.total_pnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(data.total_pnl))}`;
+    
+    // Update day P&L
+    const dayPnLEl = document.getElementById('portfolioDayPnL');
+    const dayChangeEl = document.getElementById('portfolioDayChange');
+    
+    if (dayPnLEl) dayPnLEl.textContent = `${data.day_pnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(data.day_pnl))}`;
+    if (dayChangeEl) dayChangeEl.textContent = `${data.day_pnl_percent >= 0 ? '+' : ''}${data.day_pnl_percent.toFixed(2)}%`;
+    
+    // Update colors based on positive/negative
+    if (totalChangeEl) {
+        totalChangeEl.className = `badge bg-${data.total_pnl_percent >= 0 ? 'success' : 'danger'} bg-opacity-20 text-${data.total_pnl_percent >= 0 ? 'success' : 'danger'} me-2`;
+    }
+    if (dayChangeEl) {
+        dayChangeEl.className = `badge bg-${data.day_pnl_percent >= 0 ? 'success' : 'danger'} bg-opacity-20 text-${data.day_pnl_percent >= 0 ? 'success' : 'danger'} me-2`;
+    }
+}
+
+function updatePortfolioHoldings(holdings) {
+    const tbody = document.querySelector('#portfolioHoldingsTable tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    holdings.forEach(holding => {
+        const row = document.createElement('tr');
+        const pnlClass = holding.pnl >= 0 ? 'text-success' : 'text-danger';
+        const pnlIcon = holding.pnl >= 0 ? '↗' : '↘';
+        
+        row.innerHTML = `
+            <td><strong>${holding.symbol}</strong></td>
+            <td>${holding.quantity}</td>
+            <td>₹${holding.avg_price.toFixed(2)}</td>
+            <td class="${pnlClass}">₹${holding.current_price.toFixed(2)}</td>
+            <td class="${pnlClass}">${pnlIcon} ₹${Math.abs(holding.pnl).toFixed(2)}</td>
+            <td class="${pnlClass}">${holding.pnl_percent >= 0 ? '+' : ''}${holding.pnl_percent.toFixed(2)}%</td>
+            <td><strong>₹${formatCurrency(holding.current_amount)}</strong></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+async function loadPortfolioRiskAnalytics() {
+    try {
+        const response = await fetch('/api/portfolio/realtime_risk');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayPortfolioRiskAnalytics(data.data);
+        }
+    } catch (error) {
+        console.error('Risk analytics loading error:', error);
+        const container = document.getElementById('portfolioRiskAnalytics');
+        if (container) {
+            container.innerHTML = '<div class="text-danger small">Failed to load risk data</div>';
+        }
+    }
+}
+
+function displayPortfolioRiskAnalytics(data) {
+    const container = document.getElementById('portfolioRiskAnalytics');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="row g-2 text-center mb-3">
+            <div class="col-6">
+                <div class="border rounded p-2">
+                    <div class="small text-muted">Risk Grade</div>
+                    <div class="h5 mb-0 text-warning">${data.risk_grade}</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="border rounded p-2">
+                    <div class="small text-muted">Volatility</div>
+                    <div class="h5 mb-0">${data.volatility}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="small">
+            <div class="d-flex justify-content-between mb-1">
+                <span>VaR (95%)</span>
+                <span class="text-danger">₹${formatCurrency(Math.abs(data.var_95))}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+                <span>Sharpe Ratio</span>
+                <span class="text-success">${data.sharpe_ratio}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+                <span>Max Drawdown</span>
+                <span class="text-warning">${data.max_drawdown}%</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Beta</span>
+                <span>${data.beta}</span>
+            </div>
+        </div>
+    `;
+}
+
+async function loadPortfolioMLRecommendations() {
+    try {
+        const response = await fetch('/api/portfolio/ml_recommendations');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayPortfolioMLRecommendations(data.data);
+        }
+    } catch (error) {
+        console.error('ML recommendations loading error:', error);
+        const container = document.getElementById('portfolioMLRecommendations');
+        if (container) {
+            container.innerHTML = '<div class="text-danger small">Failed to load recommendations</div>';
+        }
+    }
+}
+
+function displayPortfolioMLRecommendations(data) {
+    const container = document.getElementById('portfolioMLRecommendations');
+    if (!container) return;
+    
+    let html = '';
+    
+    // Show top recommendation
+    if (data.new_opportunities && data.new_opportunities.length > 0) {
+        const rec = data.new_opportunities[0];
+        html += `
+            <div class="border rounded p-2 mb-2 bg-light">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-semibold">${rec.symbol}</div>
+                        <div class="small text-muted">${rec.recommendation}</div>
+                    </div>
+                    <span class="badge bg-success">${rec.upside_potential.toFixed(1)}%</span>
+                </div>
+                <div class="small mt-1 text-truncate" title="${rec.reasoning}">
+                    ${rec.reasoning}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Show risk alerts
+    if (data.risk_alerts && data.risk_alerts.length > 0) {
+        const alert = data.risk_alerts[0];
+        const alertClass = alert.severity === 'HIGH' ? 'danger' : alert.severity === 'MEDIUM' ? 'warning' : 'info';
+        html += `
+            <div class="alert alert-${alertClass} alert-sm p-2 mb-2">
+                <div class="small fw-semibold">${alert.type}</div>
+                <div class="small">${alert.message}</div>
+            </div>
+        `;
+    }
+    
+    // Show model info
+    if (data.models_used && data.models_used.length > 0) {
+        html += `
+            <div class="small text-muted mt-2">
+                <div class="d-flex justify-content-between">
+                    <span>Active Models</span>
+                    <span>${data.models_used.length}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html || '<div class="text-muted small">No recommendations available</div>';
+}
+
+function startPortfolioRealTimeUpdates() {
+    if (portfolioRefreshInterval) return;
+    
+    portfolioRefreshInterval = setInterval(() => {
+        if (isPortfolioTabActive) {
+            loadPortfolioData();
+        }
+    }, 30000); // Update every 30 seconds
+}
+
+function stopPortfolioRealTimeUpdates() {
+    if (portfolioRefreshInterval) {
+        clearInterval(portfolioRefreshInterval);
+        portfolioRefreshInterval = null;
+    }
+}
+
+function refreshPortfolioData() {
+    const icon = document.getElementById('portfolioRefreshIcon');
+    if (icon) icon.classList.add('fa-spin');
+    
+    loadPortfolioData().finally(() => {
+        setTimeout(() => {
+            if (icon) icon.classList.remove('fa-spin');
+        }, 1000);
+    });
+}
+
+function showAddSymbolModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addSymbolModal'));
+    modal.show();
+    
+    // Clear form
+    const form = document.getElementById('addSymbolForm');
+    if (form) form.reset();
+}
+
+async function addSymbolToPortfolio() {
+    try {
+        const symbol = document.getElementById('symbolInput').value.toUpperCase();
+        const quantity = parseFloat(document.getElementById('quantityInput').value);
+        const avgPrice = parseFloat(document.getElementById('avgPriceInput').value);
+        
+        if (!symbol || !quantity || !avgPrice) {
+            alert('Please fill all fields');
+            return;
+        }
+        
+        const response = await fetch('/api/portfolio/add_symbol', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                symbol: symbol,
+                quantity: quantity,
+                avg_price: avgPrice
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            // Close modal
+            const modalEl = document.getElementById('addSymbolModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+            
+            // Show success message
+            showPortfolioSuccess(`Added ${quantity} shares of ${symbol} at ₹${avgPrice}`);
+            
+            // Refresh portfolio data
+            setTimeout(() => loadPortfolioData(), 500);
+        } else {
+            alert('Error adding symbol: ' + data.error);
+        }
+        
+    } catch (error) {
+        console.error('Add symbol error:', error);
+        alert('Failed to add symbol');
+    }
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-IN').format(amount);
+}
+
+function showPortfolioSuccess(message) {
+    // Create temporary success toast
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #d4edda;
+        color: #155724;
+        padding: 12px 20px;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
+}
+
+function showPortfolioError(message) {
+    console.error('Portfolio Error:', message);
+}
+</script>
+
+{% endblock %}

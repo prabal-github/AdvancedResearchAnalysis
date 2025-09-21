@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+{% block title %}Certificate Request{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Certificate Request</h1>
+        <p class="text-muted mb-0">Request internship completion certificate</p>
+    </div>
+    <div>
+        <a href="/analyst/certificate_status" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-list-check me-1"></i> View Status
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-award me-2"></i>Request Certificate</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="certificateRequestForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Internship Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            <div class="form-text">When did your internship begin?</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">Internship End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            <div class="form-text">When did your internship complete?</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="issue_date" class="form-label">Requested Issue Date</label>
+                        <input type="date" class="form-control" id="issue_date" name="issue_date" required>
+                        <div class="form-text">Preferred date for certificate issuance</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message to Admin (Optional)</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                placeholder="Any additional information or special requests..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> Your certificate request will be reviewed by the admin team. 
+                        You will receive an email notification once approved, and you can download your certificate from the status page.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send me-2"></i>Submit Certificate Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Previous Requests</h6>
+            </div>
+            <div class="card-body">
+                {% if existing_requests %}
+                    {% for req in existing_requests %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ req.internship_start_date.strftime('%d %b %Y') }} - {{ req.internship_end_date.strftime('%d %b %Y') }}</strong>
+                                <div class="small text-muted">Requested: {{ req.requested_at.strftime('%d %b %Y') }}</div>
+                            </div>
+                            <span class="badge bg-{% if req.status == 'approved' %}success{% elif req.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                                {{ req.status.title() }}
+                            </span>
+                        </div>
+                        {% if req.status == 'approved' and req.certificate_generated %}
+                        <div class="mt-2">
+                            <a href="/certificate/{{ req.id }}/generate" class="btn btn-sm btn-success">
+                                <i class="bi bi-download me-1"></i>Download
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No previous requests</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Certificate Information</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Professional PDF certificate</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Unique certificate ID</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></li>Digital signatures</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Performance score included</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i>Suitable for LinkedIn sharing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default dates
+    const today = new Date();
+    const issueDate = document.getElementById('issue_date');
+    issueDate.value = today.toISOString().split('T')[0];
+    
+    // Date validation
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    
+    startDate.addEventListener('change', function() {
+        endDate.min = this.value;
+    });
+    
+    endDate.addEventListener('change', function() {
+        startDate.max = this.value;
+        // End date cannot be in the future
+        const today = new Date().toISOString().split('T')[0];
+        if (this.value > today) {
+            this.value = today;
+            alert('End date cannot be in the future');
+        }
+    });
+    
+    // Form validation
+    document.getElementById('certificateRequestForm').addEventListener('submit', function(e) {
+        const start = new Date(startDate.value);
+        const end = new Date(endDate.value);
+        
+        if (start >= end) {
+            e.preventDefault();
+            alert('End date must be after start date');
+            return false;
+        }
+        
+        if (end > new Date()) {
+            e.preventDefault();
+            alert('End date cannot be in the future');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

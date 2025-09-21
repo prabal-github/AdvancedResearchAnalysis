@@ -1,0 +1,4664 @@
+{
+  "data": {
+    "strategyChainType": "PC_CHAIN",
+    "assetKey": "NSE_INDEX|Nifty 50",
+    "expiry": "25-09-2025",
+    "strategyChainData": {
+      "strikeMap": {
+        "17000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64678",
+            "marketData": {
+              "ltp": 7939.2,
+              "cp": 7920.0,
+              "bidPrice": 7863.55,
+              "bidQty": 75,
+              "askPrice": 7908.3,
+              "askQty": 75,
+              "volume": 975,
+              "oi": 170025.0,
+              "prevOi": 169575.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64679",
+            "marketData": {
+              "ltp": 5.25,
+              "cp": 6.25,
+              "bidPrice": 5.25,
+              "bidQty": 75,
+              "askPrice": 6.0,
+              "askQty": 2400,
+              "volume": 7875,
+              "oi": 44100.0,
+              "prevOi": 39375.0
+            },
+            "analytics": {
+              "vega": 1.2309,
+              "theta": -0.4239,
+              "gamma": 0.0,
+              "delta": -0.0043,
+              "iv": 38.57,
+              "pop": 0.66
+            }
+          },
+          "pcr": 0.2594
+        },
+        "18000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64680",
+            "marketData": {
+              "ltp": 6868.45,
+              "cp": 6982.65,
+              "bidPrice": 6705.05,
+              "bidQty": 75,
+              "askPrice": 7114.2,
+              "askQty": 75,
+              "volume": 450,
+              "oi": 18975.0,
+              "prevOi": 19050.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64681",
+            "marketData": {
+              "ltp": 6.0,
+              "cp": 6.35,
+              "bidPrice": 5.7,
+              "bidQty": 1800,
+              "askPrice": 7.25,
+              "askQty": 750,
+              "volume": 3075,
+              "oi": 25125.0,
+              "prevOi": 24450.0
+            },
+            "analytics": {
+              "vega": 1.5361,
+              "theta": -0.4646,
+              "gamma": 0.0,
+              "delta": -0.0055,
+              "iv": 33.87,
+              "pop": 0.79
+            }
+          },
+          "pcr": 1.3241
+        },
+        "19000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64682",
+            "marketData": {
+              "ltp": 6003.0,
+              "cp": 6003.0,
+              "bidPrice": 5819.95,
+              "bidQty": 75,
+              "askPrice": 6190.1,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 3750.0,
+              "prevOi": 3675.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64683",
+            "marketData": {
+              "ltp": 8.0,
+              "cp": 7.8,
+              "bidPrice": 7.4,
+              "bidQty": 525,
+              "askPrice": 8.45,
+              "askQty": 975,
+              "volume": 7650,
+              "oi": 160725.0,
+              "prevOi": 159150.0
+            },
+            "analytics": {
+              "vega": 2.1413,
+              "theta": -0.57,
+              "gamma": 0.0,
+              "delta": -0.008,
+              "iv": 29.82,
+              "pop": 1.08
+            }
+          },
+          "pcr": 42.86
+        },
+        "20000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64684",
+            "marketData": {
+              "ltp": 4920.85,
+              "cp": 5019.15,
+              "bidPrice": 4922.25,
+              "bidQty": 75,
+              "askPrice": 4946.65,
+              "askQty": 75,
+              "volume": 6000,
+              "oi": 113475.0,
+              "prevOi": 112650.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64685",
+            "marketData": {
+              "ltp": 10.35,
+              "cp": 9.8,
+              "bidPrice": 10.35,
+              "bidQty": 1050,
+              "askPrice": 10.55,
+              "askQty": 300,
+              "volume": 55575,
+              "oi": 545025.0,
+              "prevOi": 522225.0
+            },
+            "analytics": {
+              "vega": 2.9688,
+              "theta": -0.6811,
+              "gamma": 0.0,
+              "delta": -0.0116,
+              "iv": 25.7,
+              "pop": 1.48
+            }
+          },
+          "pcr": 4.803
+        },
+        "21000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64686",
+            "marketData": {
+              "ltp": 3964.0,
+              "cp": 4048.15,
+              "bidPrice": 3956.6,
+              "bidQty": 75,
+              "askPrice": 3972.5,
+              "askQty": 75,
+              "volume": 6750,
+              "oi": 409200.0,
+              "prevOi": 410775.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64687",
+            "marketData": {
+              "ltp": 15.45,
+              "cp": 14.15,
+              "bidPrice": 14.7,
+              "bidQty": 900,
+              "askPrice": 15.45,
+              "askQty": 975,
+              "volume": 73275,
+              "oi": 687075.0,
+              "prevOi": 694875.0
+            },
+            "analytics": {
+              "vega": 4.5685,
+              "theta": -0.8963,
+              "gamma": 0.0,
+              "delta": -0.0191,
+              "iv": 21.97,
+              "pop": 2.31
+            }
+          },
+          "pcr": 1.6791
+        },
+        "22000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64688",
+            "marketData": {
+              "ltp": 2987.45,
+              "cp": 3060.95,
+              "bidPrice": 2978.1,
+              "bidQty": 75,
+              "askPrice": 2996.2,
+              "askQty": 75,
+              "volume": 6450,
+              "oi": 218550.0,
+              "prevOi": 218775.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64689",
+            "marketData": {
+              "ltp": 22.15,
+              "cp": 21.35,
+              "bidPrice": 21.2,
+              "bidQty": 750,
+              "askPrice": 22.3,
+              "askQty": 300,
+              "volume": 365625,
+              "oi": 1372950.0,
+              "prevOi": 1426950.0
+            },
+            "analytics": {
+              "vega": 6.9406,
+              "theta": -1.1111,
+              "gamma": 0.0,
+              "delta": -0.0315,
+              "iv": 17.93,
+              "pop": 3.57
+            }
+          },
+          "pcr": 6.2821
+        },
+        "22950.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60315",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 3015.05,
+              "bidPrice": 1899.15,
+              "bidQty": 75,
+              "askPrice": 2171.85,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60316",
+            "marketData": {
+              "ltp": 53.85,
+              "cp": 46.1,
+              "bidPrice": 43.3,
+              "bidQty": 375,
+              "askPrice": 45.1,
+              "askQty": 375,
+              "volume": 20325,
+              "oi": 12525.0,
+              "prevOi": 5700.0
+            },
+            "analytics": {
+              "vega": 14.0457,
+              "theta": -1.9614,
+              "gamma": 0.0001,
+              "delta": -0.0763,
+              "iv": 15.64,
+              "pop": 7.96
+            }
+          }
+        },
+        "23000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64690",
+            "marketData": {
+              "ltp": 2009.2,
+              "cp": 2099.3,
+              "bidPrice": 2006.55,
+              "bidQty": 75,
+              "askPrice": 2025.35,
+              "askQty": 75,
+              "volume": 30750,
+              "oi": 335775.0,
+              "prevOi": 331950.0
+            },
+            "analytics": {
+              "vega": 2.3794,
+              "theta": -0.1932,
+              "gamma": 0.0,
+              "delta": 0.991,
+              "iv": 9.09,
+              "pop": 49.17
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64691",
+            "marketData": {
+              "ltp": 46.3,
+              "cp": 43.35,
+              "bidPrice": 46.15,
+              "bidQty": 1800,
+              "askPrice": 46.65,
+              "askQty": 75,
+              "volume": 874500,
+              "oi": 1787700.0,
+              "prevOi": 1652025.0
+            },
+            "analytics": {
+              "vega": 13.0743,
+              "theta": -1.718,
+              "gamma": 0.0001,
+              "delta": -0.0695,
+              "iv": 14.72,
+              "pop": 7.27
+            }
+          },
+          "pcr": 5.3241
+        },
+        "23050.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60317",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2924.85,
+              "bidPrice": 1810.85,
+              "bidQty": 75,
+              "askPrice": 2025.6,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60318",
+            "marketData": {
+              "ltp": 48.6,
+              "cp": 44.5,
+              "bidPrice": 39.45,
+              "bidQty": 300,
+              "askPrice": 59.15,
+              "askQty": 900,
+              "volume": 10575,
+              "oi": 6000.0,
+              "prevOi": 675.0
+            },
+            "analytics": {
+              "vega": 13.7281,
+              "theta": -1.7983,
+              "gamma": 0.0001,
+              "delta": -0.074,
+              "iv": 14.67,
+              "pop": 7.7
+            }
+          }
+        },
+        "23100.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60319",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2880.05,
+              "bidPrice": 1765.9,
+              "bidQty": 75,
+              "askPrice": 2026.45,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60320",
+            "marketData": {
+              "ltp": 51.65,
+              "cp": 46.5,
+              "bidPrice": 49.95,
+              "bidQty": 375,
+              "askPrice": 52.0,
+              "askQty": 375,
+              "volume": 18450,
+              "oi": 10425.0,
+              "prevOi": 5175.0
+            },
+            "analytics": {
+              "vega": 14.3291,
+              "theta": -1.8663,
+              "gamma": 0.0001,
+              "delta": -0.0783,
+              "iv": 14.59,
+              "pop": 8.1
+            }
+          }
+        },
+        "23150.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60321",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2835.45,
+              "bidPrice": 1721.75,
+              "bidQty": 75,
+              "askPrice": 1978.2,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60322",
+            "marketData": {
+              "ltp": 53.7,
+              "cp": 49.35,
+              "bidPrice": 52.85,
+              "bidQty": 375,
+              "askPrice": 54.6,
+              "askQty": 375,
+              "volume": 8475,
+              "oi": 4425.0,
+              "prevOi": 1125.0
+            },
+            "analytics": {
+              "vega": 14.7949,
+              "theta": -1.9038,
+              "gamma": 0.0001,
+              "delta": -0.0817,
+              "iv": 14.41,
+              "pop": 8.4
+            }
+          }
+        },
+        "23200.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60323",
+            "marketData": {
+              "ltp": 1700.0,
+              "cp": 1700.0,
+              "bidPrice": 1396.2,
+              "bidQty": 1725,
+              "askPrice": 1928.65,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 1200.0,
+              "prevOi": 1275.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60324",
+            "marketData": {
+              "ltp": 54.5,
+              "cp": 52.45,
+              "bidPrice": 54.6,
+              "bidQty": 450,
+              "askPrice": 56.3,
+              "askQty": 375,
+              "volume": 168825,
+              "oi": 164250.0,
+              "prevOi": 36600.0
+            },
+            "analytics": {
+              "vega": 15.1013,
+              "theta": -1.9103,
+              "gamma": 0.0001,
+              "delta": -0.084,
+              "iv": 14.17,
+              "pop": 8.6
+            }
+          },
+          "pcr": 136.875
+        },
+        "23250.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60325",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2746.95,
+              "bidPrice": 1742.85,
+              "bidQty": 75,
+              "askPrice": 1891.5,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60326",
+            "marketData": {
+              "ltp": 59.7,
+              "cp": 54.6,
+              "bidPrice": 58.65,
+              "bidQty": 375,
+              "askPrice": 60.75,
+              "askQty": 375,
+              "volume": 12225,
+              "oi": 11250.0,
+              "prevOi": 7500.0
+            },
+            "analytics": {
+              "vega": 15.9634,
+              "theta": -2.0231,
+              "gamma": 0.0001,
+              "delta": -0.0904,
+              "iv": 14.19,
+              "pop": 9.2
+            }
+          }
+        },
+        "23300.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60327",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2703.0,
+              "bidPrice": 1590.5,
+              "bidQty": 75,
+              "askPrice": 1832.55,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60328",
+            "marketData": {
+              "ltp": 63.3,
+              "cp": 59.05,
+              "bidPrice": 61.5,
+              "bidQty": 375,
+              "askPrice": 63.75,
+              "askQty": 375,
+              "volume": 21000,
+              "oi": 44625.0,
+              "prevOi": 37800.0
+            },
+            "analytics": {
+              "vega": 16.6221,
+              "theta": -2.0925,
+              "gamma": 0.0001,
+              "delta": -0.0955,
+              "iv": 14.1,
+              "pop": 9.65
+            }
+          }
+        },
+        "23350.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60331",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2659.3,
+              "bidPrice": 1548.0,
+              "bidQty": 75,
+              "askPrice": 1786.0,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60332",
+            "marketData": {
+              "ltp": 67.5,
+              "cp": 60.8,
+              "bidPrice": 66.7,
+              "bidQty": 375,
+              "askPrice": 68.75,
+              "askQty": 375,
+              "volume": 6825,
+              "oi": 35250.0,
+              "prevOi": 33675.0
+            },
+            "analytics": {
+              "vega": 17.344,
+              "theta": -2.1709,
+              "gamma": 0.0001,
+              "delta": -0.1012,
+              "iv": 14.02,
+              "pop": 10.16
+            }
+          }
+        },
+        "23400.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60333",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2615.85,
+              "bidPrice": 1504.2,
+              "bidQty": 75,
+              "askPrice": 1740.75,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60334",
+            "marketData": {
+              "ltp": 71.75,
+              "cp": 66.1,
+              "bidPrice": 62.65,
+              "bidQty": 300,
+              "askPrice": 73.8,
+              "askQty": 75,
+              "volume": 98550,
+              "oi": 72825.0,
+              "prevOi": 72525.0
+            },
+            "analytics": {
+              "vega": 18.0515,
+              "theta": -2.2478,
+              "gamma": 0.0001,
+              "delta": -0.107,
+              "iv": 13.95,
+              "pop": 10.67
+            }
+          }
+        },
+        "23450.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60335",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 2572.65,
+              "bidPrice": 1520.95,
+              "bidQty": 75,
+              "askPrice": 1693.8,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60336",
+            "marketData": {
+              "ltp": 73.85,
+              "cp": 68.6,
+              "bidPrice": 73.2,
+              "bidQty": 300,
+              "askPrice": 75.1,
+              "askQty": 300,
+              "volume": 11700,
+              "oi": 10200.0,
+              "prevOi": 7425.0
+            },
+            "analytics": {
+              "vega": 18.529,
+              "theta": -2.2719,
+              "gamma": 0.0001,
+              "delta": -0.1109,
+              "iv": 13.73,
+              "pop": 11.0
+            }
+          }
+        },
+        "23500.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60337",
+            "marketData": {
+              "ltp": 1554.0,
+              "cp": 1626.5,
+              "bidPrice": 1539.9,
+              "bidQty": 300,
+              "askPrice": 1582.3,
+              "askQty": 150,
+              "volume": 6525,
+              "oi": 12900.0,
+              "prevOi": 8025.0
+            },
+            "analytics": {
+              "vega": 15.5083,
+              "theta": -1.6438,
+              "gamma": 0.0001,
+              "delta": 0.913,
+              "iv": 11.87,
+              "pop": 47.45
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60338",
+            "marketData": {
+              "ltp": 79.25,
+              "cp": 71.9,
+              "bidPrice": 77.65,
+              "bidQty": 300,
+              "askPrice": 79.8,
+              "askQty": 150,
+              "volume": 469200,
+              "oi": 446925.0,
+              "prevOi": 374175.0
+            },
+            "analytics": {
+              "vega": 19.2657,
+              "theta": -2.3472,
+              "gamma": 0.0001,
+              "delta": -0.1172,
+              "iv": 13.65,
+              "pop": 11.54
+            }
+          },
+          "pcr": 34.6453
+        },
+        "23550.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60339",
+            "marketData": {
+              "ltp": 1604.25,
+              "cp": 1604.25,
+              "bidPrice": 1197.05,
+              "bidQty": 75,
+              "askPrice": 1599.5,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 75.0,
+              "prevOi": 75.0
+            },
+            "analytics": {
+              "vega": 24.543,
+              "theta": -3.6012,
+              "gamma": 0.0002,
+              "delta": 0.8326,
+              "iv": 16.43,
+              "pop": 45.08
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60340",
+            "marketData": {
+              "ltp": 82.55,
+              "cp": 76.0,
+              "bidPrice": 81.6,
+              "bidQty": 300,
+              "askPrice": 83.85,
+              "askQty": 300,
+              "volume": 10725,
+              "oi": 8850.0,
+              "prevOi": 7200.0
+            },
+            "analytics": {
+              "vega": 19.9462,
+              "theta": -2.4077,
+              "gamma": 0.0002,
+              "delta": -0.1231,
+              "iv": 13.52,
+              "pop": 12.04
+            }
+          },
+          "pcr": 118.0
+        },
+        "23600.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60341",
+            "marketData": {
+              "ltp": 1551.05,
+              "cp": 1551.05,
+              "bidPrice": 1058.85,
+              "bidQty": 900,
+              "askPrice": 1565.55,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 75.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 24.6683,
+              "theta": -3.5078,
+              "gamma": 0.0002,
+              "delta": 0.8313,
+              "iv": 15.93,
+              "pop": 45.08
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60342",
+            "marketData": {
+              "ltp": 88.85,
+              "cp": 80.6,
+              "bidPrice": 88.55,
+              "bidQty": 225,
+              "askPrice": 90.85,
+              "askQty": 300,
+              "volume": 69900,
+              "oi": 111375.0,
+              "prevOi": 107925.0
+            },
+            "analytics": {
+              "vega": 20.8214,
+              "theta": -2.5076,
+              "gamma": 0.0002,
+              "delta": -0.1309,
+              "iv": 13.49,
+              "pop": 12.7
+            }
+          },
+          "pcr": 1485.0
+        },
+        "23650.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60345",
+            "marketData": {
+              "ltp": 1506.2,
+              "cp": 1506.2,
+              "bidPrice": 1300.9,
+              "bidQty": 75,
+              "askPrice": 1527.95,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 75.0,
+              "prevOi": 150.0
+            },
+            "analytics": {
+              "vega": 25.3387,
+              "theta": -3.5764,
+              "gamma": 0.0002,
+              "delta": 0.824,
+              "iv": 15.81,
+              "pop": 44.89
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60346",
+            "marketData": {
+              "ltp": 92.4,
+              "cp": 85.0,
+              "bidPrice": 91.95,
+              "bidQty": 300,
+              "askPrice": 94.35,
+              "askQty": 300,
+              "volume": 7575,
+              "oi": 25875.0,
+              "prevOi": 25125.0
+            },
+            "analytics": {
+              "vega": 21.442,
+              "theta": -2.5488,
+              "gamma": 0.0002,
+              "delta": -0.1366,
+              "iv": 13.31,
+              "pop": 13.17
+            }
+          },
+          "pcr": 345.0
+        },
+        "23700.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60347",
+            "marketData": {
+              "ltp": 1390.85,
+              "cp": 1462.9,
+              "bidPrice": 1357.15,
+              "bidQty": 225,
+              "askPrice": 1397.55,
+              "askQty": 75,
+              "volume": 75,
+              "oi": 225.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 21.1904,
+              "theta": -2.394,
+              "gamma": 0.0002,
+              "delta": 0.8657,
+              "iv": 12.65,
+              "pop": 46.26
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60348",
+            "marketData": {
+              "ltp": 97.0,
+              "cp": 88.85,
+              "bidPrice": 96.55,
+              "bidQty": 225,
+              "askPrice": 98.5,
+              "askQty": 75,
+              "volume": 74175,
+              "oi": 112500.0,
+              "prevOi": 104250.0
+            },
+            "analytics": {
+              "vega": 22.1495,
+              "theta": -2.6057,
+              "gamma": 0.0002,
+              "delta": -0.1433,
+              "iv": 13.18,
+              "pop": 13.71
+            }
+          },
+          "pcr": 500.0
+        },
+        "23750.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60350",
+            "marketData": {
+              "ltp": 1272.15,
+              "cp": 1417.55,
+              "bidPrice": 1219.15,
+              "bidQty": 75,
+              "askPrice": 1451.5,
+              "askQty": 1725,
+              "volume": 150,
+              "oi": 225.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 9.7474,
+              "theta": -0.6939,
+              "gamma": 0.0001,
+              "delta": 0.9522,
+              "iv": 7.97,
+              "pop": 48.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60351",
+            "marketData": {
+              "ltp": 103.15,
+              "cp": 93.55,
+              "bidPrice": 94.15,
+              "bidQty": 900,
+              "askPrice": 111.1,
+              "askQty": 900,
+              "volume": 4875,
+              "oi": 29625.0,
+              "prevOi": 28950.0
+            },
+            "analytics": {
+              "vega": 22.9742,
+              "theta": -2.6863,
+              "gamma": 0.0002,
+              "delta": -0.1513,
+              "iv": 13.1,
+              "pop": 14.36
+            }
+          },
+          "pcr": 131.6667
+        },
+        "23800.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60353",
+            "marketData": {
+              "ltp": 1304.55,
+              "cp": 1374.95,
+              "bidPrice": 1275.0,
+              "bidQty": 75,
+              "askPrice": 1397.9,
+              "askQty": 900,
+              "volume": 75,
+              "oi": 600.0,
+              "prevOi": 600.0
+            },
+            "analytics": {
+              "vega": 22.9215,
+              "theta": -2.5623,
+              "gamma": 0.0002,
+              "delta": 0.8492,
+              "iv": 12.52,
+              "pop": 45.85
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60356",
+            "marketData": {
+              "ltp": 111.25,
+              "cp": 99.55,
+              "bidPrice": 109.0,
+              "bidQty": 75,
+              "askPrice": 111.05,
+              "askQty": 225,
+              "volume": 145425,
+              "oi": 318300.0,
+              "prevOi": 285375.0
+            },
+            "analytics": {
+              "vega": 23.9198,
+              "theta": -2.7936,
+              "gamma": 0.0002,
+              "delta": -0.1609,
+              "iv": 13.08,
+              "pop": 15.13
+            }
+          },
+          "pcr": 530.5
+        },
+        "23850.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60357",
+            "marketData": {
+              "ltp": 1330.35,
+              "cp": 1330.35,
+              "bidPrice": 1141.0,
+              "bidQty": 75,
+              "askPrice": 1359.6,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 27.7772,
+              "theta": -3.7597,
+              "gamma": 0.0002,
+              "delta": 0.7956,
+              "iv": 15.16,
+              "pop": 44.14
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60358",
+            "marketData": {
+              "ltp": 118.0,
+              "cp": 104.85,
+              "bidPrice": 116.4,
+              "bidQty": 225,
+              "askPrice": 119.05,
+              "askQty": 225,
+              "volume": 9075,
+              "oi": 24900.0,
+              "prevOi": 22650.0
+            },
+            "analytics": {
+              "vega": 24.7536,
+              "theta": -2.8691,
+              "gamma": 0.0002,
+              "delta": -0.1697,
+              "iv": 12.98,
+              "pop": 15.81
+            }
+          },
+          "pcr": 166.0
+        },
+        "23900.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60359",
+            "marketData": {
+              "ltp": 1281.7,
+              "cp": 1285.25,
+              "bidPrice": 948.15,
+              "bidQty": 975,
+              "askPrice": 1309.7,
+              "askQty": 1725,
+              "volume": 600,
+              "oi": 3075.0,
+              "prevOi": 2625.0
+            },
+            "analytics": {
+              "vega": 28.114,
+              "theta": -3.7062,
+              "gamma": 0.0002,
+              "delta": 0.7915,
+              "iv": 14.76,
+              "pop": 44.05
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60362",
+            "marketData": {
+              "ltp": 124.25,
+              "cp": 109.85,
+              "bidPrice": 117.9,
+              "bidQty": 375,
+              "askPrice": 124.25,
+              "askQty": 900,
+              "volume": 65400,
+              "oi": 409500.0,
+              "prevOi": 400275.0
+            },
+            "analytics": {
+              "vega": 25.5241,
+              "theta": -2.9332,
+              "gamma": 0.0002,
+              "delta": -0.178,
+              "iv": 12.87,
+              "pop": 16.46
+            }
+          },
+          "pcr": 133.1707
+        },
+        "23950.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60363",
+            "marketData": {
+              "ltp": 1168.7,
+              "cp": 1244.9,
+              "bidPrice": 909.6,
+              "bidQty": 1800,
+              "askPrice": 1255.45,
+              "askQty": 1725,
+              "volume": 75,
+              "oi": 375.0,
+              "prevOi": 375.0
+            },
+            "analytics": {
+              "vega": 25.1118,
+              "theta": -2.6951,
+              "gamma": 0.0002,
+              "delta": 0.8265,
+              "iv": 12.02,
+              "pop": 45.28
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60372",
+            "marketData": {
+              "ltp": 131.5,
+              "cp": 117.8,
+              "bidPrice": 131.5,
+              "bidQty": 225,
+              "askPrice": 134.25,
+              "askQty": 225,
+              "volume": 6900,
+              "oi": 21750.0,
+              "prevOi": 22050.0
+            },
+            "analytics": {
+              "vega": 26.3459,
+              "theta": -3.0043,
+              "gamma": 0.0002,
+              "delta": -0.1873,
+              "iv": 12.77,
+              "pop": 17.16
+            }
+          },
+          "pcr": 58.0
+        },
+        "24000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64692",
+            "marketData": {
+              "ltp": 1122.75,
+              "cp": 1201.6,
+              "bidPrice": 1123.4,
+              "bidQty": 75,
+              "askPrice": 1130.0,
+              "askQty": 225,
+              "volume": 79500,
+              "oi": 393150.0,
+              "prevOi": 395100.0
+            },
+            "analytics": {
+              "vega": 25.7935,
+              "theta": -2.719,
+              "gamma": 0.0002,
+              "delta": 0.819,
+              "iv": 11.81,
+              "pop": 45.09
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64693",
+            "marketData": {
+              "ltp": 144.0,
+              "cp": 126.65,
+              "bidPrice": 140.95,
+              "bidQty": 150,
+              "askPrice": 143.9,
+              "askQty": 225,
+              "volume": 809100,
+              "oi": 2261625.0,
+              "prevOi": 2185500.0
+            },
+            "analytics": {
+              "vega": 27.4356,
+              "theta": -3.1491,
+              "gamma": 0.0002,
+              "delta": -0.2002,
+              "iv": 12.86,
+              "pop": 18.13
+            }
+          },
+          "pcr": 5.7526
+        },
+        "24050.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60373",
+            "marketData": {
+              "ltp": 1158.8,
+              "cp": 1170.95,
+              "bidPrice": 863.8,
+              "bidQty": 1800,
+              "askPrice": 1215.75,
+              "askQty": 1725,
+              "volume": 225,
+              "oi": 750.0,
+              "prevOi": 750.0
+            },
+            "analytics": {
+              "vega": 30.2224,
+              "theta": -3.9023,
+              "gamma": 0.0002,
+              "delta": 0.7633,
+              "iv": 14.46,
+              "pop": 43.23
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60374",
+            "marketData": {
+              "ltp": 150.75,
+              "cp": 134.0,
+              "bidPrice": 142.85,
+              "bidQty": 900,
+              "askPrice": 162.0,
+              "askQty": 900,
+              "volume": 3450,
+              "oi": 18825.0,
+              "prevOi": 18900.0
+            },
+            "analytics": {
+              "vega": 28.1718,
+              "theta": -3.1943,
+              "gamma": 0.0002,
+              "delta": -0.2093,
+              "iv": 12.7,
+              "pop": 18.79
+            }
+          },
+          "pcr": 25.1
+        },
+        "24100.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60377",
+            "marketData": {
+              "ltp": 1120.0,
+              "cp": 1121.95,
+              "bidPrice": 803.55,
+              "bidQty": 900,
+              "askPrice": 1140.15,
+              "askQty": 900,
+              "volume": 300,
+              "oi": 1200.0,
+              "prevOi": 1125.0
+            },
+            "analytics": {
+              "vega": 30.9506,
+              "theta": -3.9795,
+              "gamma": 0.0002,
+              "delta": 0.7526,
+              "iv": 14.4,
+              "pop": 42.9
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60381",
+            "marketData": {
+              "ltp": 159.25,
+              "cp": 142.75,
+              "bidPrice": 156.75,
+              "bidQty": 225,
+              "askPrice": 159.55,
+              "askQty": 75,
+              "volume": 57450,
+              "oi": 408975.0,
+              "prevOi": 400425.0
+            },
+            "analytics": {
+              "vega": 28.9829,
+              "theta": -3.2596,
+              "gamma": 0.0002,
+              "delta": -0.2197,
+              "iv": 12.6,
+              "pop": 19.54
+            }
+          },
+          "pcr": 340.8125
+        },
+        "24150.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60382",
+            "marketData": {
+              "ltp": 1021.75,
+              "cp": 1079.6,
+              "bidPrice": 768.55,
+              "bidQty": 1800,
+              "askPrice": 1084.85,
+              "askQty": 1725,
+              "volume": 225,
+              "oi": 900.0,
+              "prevOi": 825.0
+            },
+            "analytics": {
+              "vega": 29.6643,
+              "theta": -3.2816,
+              "gamma": 0.0002,
+              "delta": 0.7711,
+              "iv": 12.39,
+              "pop": 43.64
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60383",
+            "marketData": {
+              "ltp": 168.45,
+              "cp": 150.85,
+              "bidPrice": 154.15,
+              "bidQty": 900,
+              "askPrice": 184.15,
+              "askQty": 900,
+              "volume": 2700,
+              "oi": 12075.0,
+              "prevOi": 11025.0
+            },
+            "analytics": {
+              "vega": 29.7992,
+              "theta": -3.326,
+              "gamma": 0.0002,
+              "delta": -0.2308,
+              "iv": 12.5,
+              "pop": 20.32
+            }
+          },
+          "pcr": 13.4167
+        },
+        "24200.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60384",
+            "marketData": {
+              "ltp": 969.05,
+              "cp": 1040.0,
+              "bidPrice": 909.4,
+              "bidQty": 675,
+              "askPrice": 972.5,
+              "askQty": 75,
+              "volume": 3225,
+              "oi": 1950.0,
+              "prevOi": 1425.0
+            },
+            "analytics": {
+              "vega": 28.5363,
+              "theta": -2.7652,
+              "gamma": 0.0003,
+              "delta": 0.7861,
+              "iv": 10.85,
+              "pop": 44.23
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60390",
+            "marketData": {
+              "ltp": 180.0,
+              "cp": 161.0,
+              "bidPrice": 177.65,
+              "bidQty": 225,
+              "askPrice": 180.3,
+              "askQty": 75,
+              "volume": 132150,
+              "oi": 336600.0,
+              "prevOi": 336825.0
+            },
+            "analytics": {
+              "vega": 30.6709,
+              "theta": -3.4129,
+              "gamma": 0.0003,
+              "delta": -0.2432,
+              "iv": 12.46,
+              "pop": 21.18
+            }
+          },
+          "pcr": 172.6154
+        },
+        "24250.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60391",
+            "marketData": {
+              "ltp": 1050.0,
+              "cp": 1000.35,
+              "bidPrice": 707.0,
+              "bidQty": 1800,
+              "askPrice": 1012.35,
+              "askQty": 1725,
+              "volume": 1950,
+              "oi": 675.0,
+              "prevOi": 450.0
+            },
+            "analytics": {
+              "vega": 33.8515,
+              "theta": -4.6903,
+              "gamma": 0.0002,
+              "delta": 0.7039,
+              "iv": 15.52,
+              "pop": 41.2
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60392",
+            "marketData": {
+              "ltp": 190.0,
+              "cp": 167.2,
+              "bidPrice": 187.35,
+              "bidQty": 225,
+              "askPrice": 190.95,
+              "askQty": 225,
+              "volume": 10650,
+              "oi": 19200.0,
+              "prevOi": 18975.0
+            },
+            "analytics": {
+              "vega": 31.4544,
+              "theta": -3.4711,
+              "gamma": 0.0003,
+              "delta": -0.255,
+              "iv": 12.36,
+              "pop": 21.98
+            }
+          },
+          "pcr": 28.4444
+        },
+        "24300.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60398",
+            "marketData": {
+              "ltp": 936.05,
+              "cp": 963.55,
+              "bidPrice": 852.6,
+              "bidQty": 150,
+              "askPrice": 977.75,
+              "askQty": 900,
+              "volume": 1275,
+              "oi": 1350.0,
+              "prevOi": 1050.0
+            },
+            "analytics": {
+              "vega": 32.9815,
+              "theta": -3.871,
+              "gamma": 0.0003,
+              "delta": 0.7198,
+              "iv": 13.15,
+              "pop": 41.95
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60401",
+            "marketData": {
+              "ltp": 204.75,
+              "cp": 178.45,
+              "bidPrice": 201.0,
+              "bidQty": 225,
+              "askPrice": 204.7,
+              "askQty": 225,
+              "volume": 43950,
+              "oi": 346275.0,
+              "prevOi": 341700.0
+            },
+            "analytics": {
+              "vega": 32.3435,
+              "theta": -3.5769,
+              "gamma": 0.0003,
+              "delta": -0.2693,
+              "iv": 12.39,
+              "pop": 22.94
+            }
+          },
+          "pcr": 256.5
+        },
+        "24350.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60402",
+            "marketData": {
+              "ltp": 959.75,
+              "cp": 921.4,
+              "bidPrice": 767.7,
+              "bidQty": 900,
+              "askPrice": 913.8,
+              "askQty": 900,
+              "volume": 4350,
+              "oi": 1200.0,
+              "prevOi": 375.0
+            },
+            "analytics": {
+              "vega": 34.7168,
+              "theta": -4.6039,
+              "gamma": 0.0002,
+              "delta": 0.6867,
+              "iv": 14.85,
+              "pop": 40.66
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60406",
+            "marketData": {
+              "ltp": 199.0,
+              "cp": 190.0,
+              "bidPrice": 210.55,
+              "bidQty": 150,
+              "askPrice": 214.45,
+              "askQty": 150,
+              "volume": 975,
+              "oi": 6375.0,
+              "prevOi": 6150.0
+            },
+            "analytics": {
+              "vega": 32.6336,
+              "theta": -3.4284,
+              "gamma": 0.0003,
+              "delta": -0.2742,
+              "iv": 11.77,
+              "pop": 23.2
+            }
+          },
+          "pcr": 5.3125
+        },
+        "24400.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60427",
+            "marketData": {
+              "ltp": 813.05,
+              "cp": 883.65,
+              "bidPrice": 595.2,
+              "bidQty": 825,
+              "askPrice": 861.3,
+              "askQty": 75,
+              "volume": 4125,
+              "oi": 3900.0,
+              "prevOi": 3225.0
+            },
+            "analytics": {
+              "vega": 33.3026,
+              "theta": -3.4335,
+              "gamma": 0.0003,
+              "delta": 0.7141,
+              "iv": 11.55,
+              "pop": 41.9
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60440",
+            "marketData": {
+              "ltp": 226.85,
+              "cp": 202.05,
+              "bidPrice": 222.0,
+              "bidQty": 150,
+              "askPrice": 226.0,
+              "askQty": 75,
+              "volume": 60525,
+              "oi": 229725.0,
+              "prevOi": 227250.0
+            },
+            "analytics": {
+              "vega": 33.7101,
+              "theta": -3.6288,
+              "gamma": 0.0003,
+              "delta": -0.2934,
+              "iv": 12.06,
+              "pop": 24.47
+            }
+          },
+          "pcr": 58.9038
+        },
+        "24450.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60441",
+            "marketData": {
+              "ltp": 748.2,
+              "cp": 858.0,
+              "bidPrice": 712.4,
+              "bidQty": 1200,
+              "askPrice": 805.45,
+              "askQty": 75,
+              "volume": 1575,
+              "oi": 1050.0,
+              "prevOi": 450.0
+            },
+            "analytics": {
+              "vega": 33.399,
+              "theta": -3.1761,
+              "gamma": 0.0003,
+              "delta": 0.7124,
+              "iv": 10.65,
+              "pop": 41.92
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60442",
+            "marketData": {
+              "ltp": 241.4,
+              "cp": 207.6,
+              "bidPrice": 236.55,
+              "bidQty": 150,
+              "askPrice": 240.65,
+              "askQty": 150,
+              "volume": 2100,
+              "oi": 7575.0,
+              "prevOi": 6975.0
+            },
+            "analytics": {
+              "vega": 34.517,
+              "theta": -3.7327,
+              "gamma": 0.0003,
+              "delta": -0.3092,
+              "iv": 12.11,
+              "pop": 25.47
+            }
+          },
+          "pcr": 7.2143
+        },
+        "24500.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60443",
+            "marketData": {
+              "ltp": 749.0,
+              "cp": 814.7,
+              "bidPrice": 746.0,
+              "bidQty": 75,
+              "askPrice": 749.0,
+              "askQty": 300,
+              "volume": 124725,
+              "oi": 245625.0,
+              "prevOi": 228900.0
+            },
+            "analytics": {
+              "vega": 34.9799,
+              "theta": -3.6439,
+              "gamma": 0.0003,
+              "delta": 0.681,
+              "iv": 11.67,
+              "pop": 40.75
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60450",
+            "marketData": {
+              "ltp": 256.85,
+              "cp": 228.8,
+              "bidPrice": 255.5,
+              "bidQty": 300,
+              "askPrice": 257.7,
+              "askQty": 150,
+              "volume": 544350,
+              "oi": 959625.0,
+              "prevOi": 921675.0
+            },
+            "analytics": {
+              "vega": 35.2265,
+              "theta": -3.8058,
+              "gamma": 0.0003,
+              "delta": -0.3244,
+              "iv": 12.1,
+              "pop": 26.4
+            }
+          },
+          "pcr": 3.9069
+        },
+        "24550.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60451",
+            "marketData": {
+              "ltp": 682.9,
+              "cp": 780.5,
+              "bidPrice": 675.55,
+              "bidQty": 225,
+              "askPrice": 731.4,
+              "askQty": 75,
+              "volume": 1350,
+              "oi": 975.0,
+              "prevOi": 675.0
+            },
+            "analytics": {
+              "vega": 35.1611,
+              "theta": -3.3676,
+              "gamma": 0.0003,
+              "delta": 0.6771,
+              "iv": 10.73,
+              "pop": 40.69
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60452",
+            "marketData": {
+              "ltp": 273.05,
+              "cp": 234.25,
+              "bidPrice": 265.55,
+              "bidQty": 150,
+              "askPrice": 270.0,
+              "askQty": 150,
+              "volume": 1800,
+              "oi": 5550.0,
+              "prevOi": 5325.0
+            },
+            "analytics": {
+              "vega": 35.8636,
+              "theta": -3.8557,
+              "gamma": 0.0003,
+              "delta": -0.3394,
+              "iv": 12.04,
+              "pop": 27.29
+            }
+          },
+          "pcr": 5.6923
+        },
+        "24600.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60453",
+            "marketData": {
+              "ltp": 683.65,
+              "cp": 719.8,
+              "bidPrice": 666.9,
+              "bidQty": 75,
+              "askPrice": 691.1,
+              "askQty": 75,
+              "volume": 10650,
+              "oi": 9150.0,
+              "prevOi": 7575.0
+            },
+            "analytics": {
+              "vega": 36.3284,
+              "theta": -3.7801,
+              "gamma": 0.0003,
+              "delta": 0.6487,
+              "iv": 11.65,
+              "pop": 39.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60454",
+            "marketData": {
+              "ltp": 277.15,
+              "cp": 254.75,
+              "bidPrice": 280.0,
+              "bidQty": 150,
+              "askPrice": 284.6,
+              "askQty": 150,
+              "volume": 81450,
+              "oi": 187200.0,
+              "prevOi": 187125.0
+            },
+            "analytics": {
+              "vega": 36.3986,
+              "theta": -3.8456,
+              "gamma": 0.0003,
+              "delta": -0.3532,
+              "iv": 11.83,
+              "pop": 28.07
+            }
+          },
+          "pcr": 20.459
+        },
+        "24650.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60455",
+            "marketData": {
+              "ltp": 695.25,
+              "cp": 705.55,
+              "bidPrice": 625.05,
+              "bidQty": 150,
+              "askPrice": 745.6,
+              "askQty": 150,
+              "volume": 3450,
+              "oi": 1725.0,
+              "prevOi": 1575.0
+            },
+            "analytics": {
+              "vega": 37.2273,
+              "theta": -4.2565,
+              "gamma": 0.0003,
+              "delta": 0.6222,
+              "iv": 12.81,
+              "pop": 38.46
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60456",
+            "marketData": {
+              "ltp": 304.95,
+              "cp": 264.9,
+              "bidPrice": 297.4,
+              "bidQty": 150,
+              "askPrice": 302.15,
+              "askQty": 150,
+              "volume": 4425,
+              "oi": 5775.0,
+              "prevOi": 5775.0
+            },
+            "analytics": {
+              "vega": 36.9869,
+              "theta": -3.928,
+              "gamma": 0.0003,
+              "delta": -0.3701,
+              "iv": 11.89,
+              "pop": 29.04
+            }
+          },
+          "pcr": 3.3478
+        },
+        "24700.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60457",
+            "marketData": {
+              "ltp": 612.45,
+              "cp": 669.85,
+              "bidPrice": 608.0,
+              "bidQty": 75,
+              "askPrice": 619.95,
+              "askQty": 75,
+              "volume": 49425,
+              "oi": 24000.0,
+              "prevOi": 22125.0
+            },
+            "analytics": {
+              "vega": 37.3714,
+              "theta": -3.8014,
+              "gamma": 0.0003,
+              "delta": 0.6174,
+              "iv": 11.39,
+              "pop": 38.41
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60460",
+            "marketData": {
+              "ltp": 314.45,
+              "cp": 284.85,
+              "bidPrice": 313.6,
+              "bidQty": 150,
+              "askPrice": 318.5,
+              "askQty": 150,
+              "volume": 47850,
+              "oi": 93825.0,
+              "prevOi": 86550.0
+            },
+            "analytics": {
+              "vega": 37.451,
+              "theta": -3.9211,
+              "gamma": 0.0003,
+              "delta": -0.3853,
+              "iv": 11.73,
+              "pop": 29.87
+            }
+          },
+          "pcr": 3.9094
+        },
+        "24750.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60461",
+            "marketData": {
+              "ltp": 585.0,
+              "cp": 618.7,
+              "bidPrice": 526.45,
+              "bidQty": 900,
+              "askPrice": 606.65,
+              "askQty": 150,
+              "volume": 5025,
+              "oi": 5625.0,
+              "prevOi": 5850.0
+            },
+            "analytics": {
+              "vega": 37.8515,
+              "theta": -3.8689,
+              "gamma": 0.0003,
+              "delta": 0.5996,
+              "iv": 11.45,
+              "pop": 37.7
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60464",
+            "marketData": {
+              "ltp": 337.4,
+              "cp": 302.6,
+              "bidPrice": 319.85,
+              "bidQty": 150,
+              "askPrice": 352.4,
+              "askQty": 900,
+              "volume": 3600,
+              "oi": 8475.0,
+              "prevOi": 7875.0
+            },
+            "analytics": {
+              "vega": 37.8912,
+              "theta": -3.953,
+              "gamma": 0.0003,
+              "delta": -0.402,
+              "iv": 11.68,
+              "pop": 30.77
+            }
+          },
+          "pcr": 1.5067
+        },
+        "24800.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60465",
+            "marketData": {
+              "ltp": 557.5,
+              "cp": 608.95,
+              "bidPrice": 545.05,
+              "bidQty": 75,
+              "askPrice": 562.75,
+              "askQty": 75,
+              "volume": 55800,
+              "oi": 39675.0,
+              "prevOi": 35100.0
+            },
+            "analytics": {
+              "vega": 38.2346,
+              "theta": -3.8768,
+              "gamma": 0.0004,
+              "delta": 0.5826,
+              "iv": 11.36,
+              "pop": 37.02
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60466",
+            "marketData": {
+              "ltp": 352.4,
+              "cp": 318.25,
+              "bidPrice": 344.5,
+              "bidQty": 525,
+              "askPrice": 364.75,
+              "askQty": 75,
+              "volume": 85275,
+              "oi": 153825.0,
+              "prevOi": 142275.0
+            },
+            "analytics": {
+              "vega": 38.2573,
+              "theta": -3.9482,
+              "gamma": 0.0003,
+              "delta": -0.4185,
+              "iv": 11.56,
+              "pop": 31.63
+            }
+          },
+          "pcr": 3.8771
+        },
+        "24850.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60467",
+            "marketData": {
+              "ltp": 524.9,
+              "cp": 573.1,
+              "bidPrice": 504.55,
+              "bidQty": 150,
+              "askPrice": 543.05,
+              "askQty": 75,
+              "volume": 8700,
+              "oi": 1350.0,
+              "prevOi": 1275.0
+            },
+            "analytics": {
+              "vega": 38.5579,
+              "theta": -3.909,
+              "gamma": 0.0004,
+              "delta": 0.5649,
+              "iv": 11.35,
+              "pop": 36.28
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60468",
+            "marketData": {
+              "ltp": 377.1,
+              "cp": 337.95,
+              "bidPrice": 356.05,
+              "bidQty": 150,
+              "askPrice": 394.55,
+              "askQty": 900,
+              "volume": 4050,
+              "oi": 3450.0,
+              "prevOi": 2550.0
+            },
+            "analytics": {
+              "vega": 38.5723,
+              "theta": -3.9879,
+              "gamma": 0.0003,
+              "delta": -0.436,
+              "iv": 11.58,
+              "pop": 32.53
+            }
+          },
+          "pcr": 2.5556
+        },
+        "24900.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60469",
+            "marketData": {
+              "ltp": 495.25,
+              "cp": 544.2,
+              "bidPrice": 480.95,
+              "bidQty": 450,
+              "askPrice": 505.85,
+              "askQty": 75,
+              "volume": 54600,
+              "oi": 37425.0,
+              "prevOi": 30600.0
+            },
+            "analytics": {
+              "vega": 38.8019,
+              "theta": -3.9092,
+              "gamma": 0.0004,
+              "delta": 0.5472,
+              "iv": 11.28,
+              "pop": 35.53
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60470",
+            "marketData": {
+              "ltp": 394.0,
+              "cp": 358.7,
+              "bidPrice": 394.0,
+              "bidQty": 75,
+              "askPrice": 396.5,
+              "askQty": 150,
+              "volume": 58650,
+              "oi": 58650.0,
+              "prevOi": 61275.0
+            },
+            "analytics": {
+              "vega": 38.806,
+              "theta": -3.9566,
+              "gamma": 0.0004,
+              "delta": -0.4531,
+              "iv": 11.42,
+              "pop": 33.37
+            }
+          },
+          "pcr": 1.5671
+        },
+        "24950.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60474",
+            "marketData": {
+              "ltp": 470.3,
+              "cp": 524.05,
+              "bidPrice": 465.75,
+              "bidQty": 150,
+              "askPrice": 471.6,
+              "askQty": 150,
+              "volume": 6150,
+              "oi": 6750.0,
+              "prevOi": 6675.0
+            },
+            "analytics": {
+              "vega": 38.9715,
+              "theta": -3.9356,
+              "gamma": 0.0004,
+              "delta": 0.5292,
+              "iv": 11.31,
+              "pop": 34.73
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60475",
+            "marketData": {
+              "ltp": 419.7,
+              "cp": 380.0,
+              "bidPrice": 413.4,
+              "bidQty": 150,
+              "askPrice": 419.2,
+              "askQty": 150,
+              "volume": 3000,
+              "oi": 12675.0,
+              "prevOi": 11925.0
+            },
+            "analytics": {
+              "vega": 38.9726,
+              "theta": -3.9888,
+              "gamma": 0.0004,
+              "delta": -0.471,
+              "iv": 11.46,
+              "pop": 34.25
+            }
+          },
+          "pcr": 1.8778
+        },
+        "25000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64694",
+            "marketData": {
+              "ltp": 442.7,
+              "cp": 495.2,
+              "bidPrice": 444.35,
+              "bidQty": 75,
+              "askPrice": 451.5,
+              "askQty": 75,
+              "volume": 521250,
+              "oi": 1111575.0,
+              "prevOi": 1100250.0
+            },
+            "analytics": {
+              "vega": 39.0607,
+              "theta": -3.9433,
+              "gamma": 0.0004,
+              "delta": 0.5112,
+              "iv": 11.31,
+              "pop": 33.92
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64695",
+            "marketData": {
+              "ltp": 432.35,
+              "cp": 402.2,
+              "bidPrice": 440.3,
+              "bidQty": 75,
+              "askPrice": 446.7,
+              "askQty": 75,
+              "volume": 614475,
+              "oi": 2251725.0,
+              "prevOi": 2283450.0
+            },
+            "analytics": {
+              "vega": 39.0606,
+              "theta": -3.9706,
+              "gamma": 0.0004,
+              "delta": -0.4888,
+              "iv": 11.38,
+              "pop": 35.08
+            }
+          },
+          "pcr": 2.0257
+        },
+        "25050.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60481",
+            "marketData": {
+              "ltp": 414.25,
+              "cp": 469.8,
+              "bidPrice": 413.4,
+              "bidQty": 150,
+              "askPrice": 418.8,
+              "askQty": 150,
+              "volume": 3900,
+              "oi": 4500.0,
+              "prevOi": 1725.0
+            },
+            "analytics": {
+              "vega": 39.0697,
+              "theta": -3.8857,
+              "gamma": 0.0004,
+              "delta": 0.4928,
+              "iv": 11.14,
+              "pop": 33.08
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60482",
+            "marketData": {
+              "ltp": 481.25,
+              "cp": 420.9,
+              "bidPrice": 438.35,
+              "bidQty": 150,
+              "askPrice": 482.25,
+              "askQty": 150,
+              "volume": 1050,
+              "oi": 11025.0,
+              "prevOi": 10875.0
+            },
+            "analytics": {
+              "vega": 39.0718,
+              "theta": -4.0961,
+              "gamma": 0.0003,
+              "delta": -0.5059,
+              "iv": 11.74,
+              "pop": 35.9
+            }
+          },
+          "pcr": 2.45
+        },
+        "25100.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60483",
+            "marketData": {
+              "ltp": 388.25,
+              "cp": 436.05,
+              "bidPrice": 388.65,
+              "bidQty": 150,
+              "askPrice": 393.9,
+              "askQty": 150,
+              "volume": 47550,
+              "oi": 59175.0,
+              "prevOi": 61050.0
+            },
+            "analytics": {
+              "vega": 38.9952,
+              "theta": -3.8543,
+              "gamma": 0.0004,
+              "delta": 0.4743,
+              "iv": 11.07,
+              "pop": 32.21
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60484",
+            "marketData": {
+              "ltp": 477.05,
+              "cp": 442.7,
+              "bidPrice": 463.7,
+              "bidQty": 150,
+              "askPrice": 500.0,
+              "askQty": 225,
+              "volume": 28050,
+              "oi": 46125.0,
+              "prevOi": 44850.0
+            },
+            "analytics": {
+              "vega": 38.9922,
+              "theta": -3.8129,
+              "gamma": 0.0004,
+              "delta": -0.5261,
+              "iv": 10.95,
+              "pop": 36.74
+            }
+          },
+          "pcr": 0.7795
+        },
+        "25150.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60485",
+            "marketData": {
+              "ltp": 369.2,
+              "cp": 414.05,
+              "bidPrice": 364.9,
+              "bidQty": 150,
+              "askPrice": 369.95,
+              "askQty": 150,
+              "volume": 2325,
+              "oi": 3675.0,
+              "prevOi": 3375.0
+            },
+            "analytics": {
+              "vega": 38.8443,
+              "theta": -3.8699,
+              "gamma": 0.0004,
+              "delta": 0.4566,
+              "iv": 11.16,
+              "pop": 31.34
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60486",
+            "marketData": {
+              "ltp": 520.3,
+              "cp": 464.6,
+              "bidPrice": 486.7,
+              "bidQty": 150,
+              "askPrice": 542.8,
+              "askQty": 150,
+              "volume": 600,
+              "oi": 7275.0,
+              "prevOi": 7350.0
+            },
+            "analytics": {
+              "vega": 38.8553,
+              "theta": -3.9384,
+              "gamma": 0.0004,
+              "delta": -0.5424,
+              "iv": 11.35,
+              "pop": 37.48
+            }
+          },
+          "pcr": 1.9796
+        },
+        "25200.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60487",
+            "marketData": {
+              "ltp": 347.2,
+              "cp": 388.35,
+              "bidPrice": 342.55,
+              "bidQty": 150,
+              "askPrice": 347.4,
+              "askQty": 150,
+              "volume": 74400,
+              "oi": 62025.0,
+              "prevOi": 75750.0
+            },
+            "analytics": {
+              "vega": 38.611,
+              "theta": -3.842,
+              "gamma": 0.0004,
+              "delta": 0.4385,
+              "iv": 11.14,
+              "pop": 30.44
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60488",
+            "marketData": {
+              "ltp": 530.0,
+              "cp": 492.65,
+              "bidPrice": 517.25,
+              "bidQty": 900,
+              "askPrice": 557.1,
+              "askQty": 75,
+              "volume": 40125,
+              "oi": 39975.0,
+              "prevOi": 52125.0
+            },
+            "analytics": {
+              "vega": 38.6063,
+              "theta": -3.8264,
+              "gamma": 0.0004,
+              "delta": -0.5618,
+              "iv": 11.1,
+              "pop": 38.28
+            }
+          },
+          "pcr": 0.6445
+        },
+        "25250.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60489",
+            "marketData": {
+              "ltp": 320.7,
+              "cp": 362.15,
+              "bidPrice": 320.6,
+              "bidQty": 150,
+              "askPrice": 325.25,
+              "askQty": 150,
+              "volume": 2925,
+              "oi": 4275.0,
+              "prevOi": 5250.0
+            },
+            "analytics": {
+              "vega": 38.3307,
+              "theta": -3.8761,
+              "gamma": 0.0004,
+              "delta": 0.4222,
+              "iv": 11.33,
+              "pop": 29.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60490",
+            "marketData": {
+              "ltp": 567.0,
+              "cp": 517.0,
+              "bidPrice": 556.8,
+              "bidQty": 75,
+              "askPrice": 577.0,
+              "askQty": 75,
+              "volume": 2550,
+              "oi": 8175.0,
+              "prevOi": 8250.0
+            },
+            "analytics": {
+              "vega": 38.2932,
+              "theta": -3.7856,
+              "gamma": 0.0004,
+              "delta": -0.5798,
+              "iv": 11.07,
+              "pop": 39.01
+            }
+          },
+          "pcr": 1.9123
+        },
+        "25300.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60491",
+            "marketData": {
+              "ltp": 300.0,
+              "cp": 341.6,
+              "bidPrice": 299.55,
+              "bidQty": 150,
+              "askPrice": 304.05,
+              "askQty": 150,
+              "volume": 90750,
+              "oi": 102525.0,
+              "prevOi": 100800.0
+            },
+            "analytics": {
+              "vega": 37.8719,
+              "theta": -3.7078,
+              "gamma": 0.0004,
+              "delta": 0.4012,
+              "iv": 10.97,
+              "pop": 28.52
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60492",
+            "marketData": {
+              "ltp": 596.45,
+              "cp": 536.55,
+              "bidPrice": 560.65,
+              "bidQty": 600,
+              "askPrice": 624.85,
+              "askQty": 75,
+              "volume": 24150,
+              "oi": 70050.0,
+              "prevOi": 74025.0
+            },
+            "analytics": {
+              "vega": 37.8915,
+              "theta": -3.7362,
+              "gamma": 0.0004,
+              "delta": -0.598,
+              "iv": 11.04,
+              "pop": 39.74
+            }
+          },
+          "pcr": 0.6832
+        },
+        "25350.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60493",
+            "marketData": {
+              "ltp": 282.65,
+              "cp": 334.25,
+              "bidPrice": 280.0,
+              "bidQty": 150,
+              "askPrice": 284.3,
+              "askQty": 150,
+              "volume": 3975,
+              "oi": 3750.0,
+              "prevOi": 3075.0
+            },
+            "analytics": {
+              "vega": 37.4123,
+              "theta": -3.6756,
+              "gamma": 0.0004,
+              "delta": 0.384,
+              "iv": 11.0,
+              "pop": 27.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60494",
+            "marketData": {
+              "ltp": 584.5,
+              "cp": 577.65,
+              "bidPrice": 475.95,
+              "bidQty": 900,
+              "askPrice": 872.65,
+              "askQty": 900,
+              "volume": 600,
+              "oi": 4950.0,
+              "prevOi": 5250.0
+            },
+            "analytics": {
+              "vega": 36.968,
+              "theta": -3.2624,
+              "gamma": 0.0004,
+              "delta": -0.6304,
+              "iv": 9.88,
+              "pop": 40.87
+            }
+          },
+          "pcr": 1.32
+        },
+        "25400.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60495",
+            "marketData": {
+              "ltp": 265.3,
+              "cp": 302.35,
+              "bidPrice": 261.1,
+              "bidQty": 150,
+              "askPrice": 265.2,
+              "askQty": 150,
+              "volume": 59475,
+              "oi": 57000.0,
+              "prevOi": 50325.0
+            },
+            "analytics": {
+              "vega": 36.8801,
+              "theta": -3.629,
+              "gamma": 0.0003,
+              "delta": 0.3669,
+              "iv": 11.02,
+              "pop": 26.63
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60496",
+            "marketData": {
+              "ltp": 653.3,
+              "cp": 604.25,
+              "bidPrice": 639.35,
+              "bidQty": 75,
+              "askPrice": 659.0,
+              "askQty": 75,
+              "volume": 13875,
+              "oi": 29925.0,
+              "prevOi": 31050.0
+            },
+            "analytics": {
+              "vega": 36.8139,
+              "theta": -3.5735,
+              "gamma": 0.0004,
+              "delta": -0.6351,
+              "iv": 10.87,
+              "pop": 41.14
+            }
+          },
+          "pcr": 0.525
+        },
+        "25450.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60497",
+            "marketData": {
+              "ltp": 248.0,
+              "cp": 294.4,
+              "bidPrice": 243.4,
+              "bidQty": 150,
+              "askPrice": 247.4,
+              "askQty": 150,
+              "volume": 3450,
+              "oi": 16950.0,
+              "prevOi": 16725.0
+            },
+            "analytics": {
+              "vega": 36.2723,
+              "theta": -3.5673,
+              "gamma": 0.0003,
+              "delta": 0.3498,
+              "iv": 11.01,
+              "pop": 25.66
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60498",
+            "marketData": {
+              "ltp": 638.0,
+              "cp": 629.55,
+              "bidPrice": 678.45,
+              "bidQty": 75,
+              "askPrice": 940.6,
+              "askQty": 975,
+              "volume": 300,
+              "oi": 3300.0,
+              "prevOi": 3300.0
+            },
+            "analytics": {
+              "vega": 35.2167,
+              "theta": -2.9843,
+              "gamma": 0.0004,
+              "delta": -0.6758,
+              "iv": 9.49,
+              "pop": 42.47
+            }
+          },
+          "pcr": 0.1947
+        },
+        "25500.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60499",
+            "marketData": {
+              "ltp": 234.45,
+              "cp": 269.3,
+              "bidPrice": 231.15,
+              "bidQty": 75,
+              "askPrice": 236.55,
+              "askQty": 150,
+              "volume": 523725,
+              "oi": 748425.0,
+              "prevOi": 697575.0
+            },
+            "analytics": {
+              "vega": 35.6206,
+              "theta": -3.5111,
+              "gamma": 0.0003,
+              "delta": 0.3335,
+              "iv": 11.04,
+              "pop": 24.71
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60500",
+            "marketData": {
+              "ltp": 726.0,
+              "cp": 670.65,
+              "bidPrice": 715.5,
+              "bidQty": 150,
+              "askPrice": 726.0,
+              "askQty": 1200,
+              "volume": 173100,
+              "oi": 445425.0,
+              "prevOi": 446550.0
+            },
+            "analytics": {
+              "vega": 35.6181,
+              "theta": -3.5096,
+              "gamma": 0.0003,
+              "delta": -0.6666,
+              "iv": 11.04,
+              "pop": 42.29
+            }
+          },
+          "pcr": 0.5951
+        },
+        "25550.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60501",
+            "marketData": {
+              "ltp": 216.05,
+              "cp": 252.8,
+              "bidPrice": 211.7,
+              "bidQty": 150,
+              "askPrice": 215.3,
+              "askQty": 150,
+              "volume": 7500,
+              "oi": 6225.0,
+              "prevOi": 6300.0
+            },
+            "analytics": {
+              "vega": 34.8733,
+              "theta": -3.4279,
+              "gamma": 0.0003,
+              "delta": 0.3167,
+              "iv": 11.01,
+              "pop": 23.72
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60502",
+            "marketData": {
+              "ltp": 707.0,
+              "cp": 691.5,
+              "bidPrice": 726.3,
+              "bidQty": 150,
+              "askPrice": 1019.95,
+              "askQty": 1050,
+              "volume": 525,
+              "oi": 4050.0,
+              "prevOi": 4050.0
+            },
+            "analytics": {
+              "vega": 33.4109,
+              "theta": -2.829,
+              "gamma": 0.0004,
+              "delta": -0.7122,
+              "iv": 9.48,
+              "pop": 43.7
+            }
+          },
+          "pcr": 0.6506
+        },
+        "25600.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60503",
+            "marketData": {
+              "ltp": 196.5,
+              "cp": 230.6,
+              "bidPrice": 192.15,
+              "bidQty": 375,
+              "askPrice": 199.1,
+              "askQty": 450,
+              "volume": 62625,
+              "oi": 51900.0,
+              "prevOi": 50250.0
+            },
+            "analytics": {
+              "vega": 34.0323,
+              "theta": -3.3255,
+              "gamma": 0.0003,
+              "delta": 0.2995,
+              "iv": 10.94,
+              "pop": 22.68
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60504",
+            "marketData": {
+              "ltp": 716.45,
+              "cp": 743.4,
+              "bidPrice": 775.1,
+              "bidQty": 75,
+              "askPrice": 800.0,
+              "askQty": 75,
+              "volume": 1275,
+              "oi": 13275.0,
+              "prevOi": 13500.0
+            },
+            "analytics": {
+              "vega": 30.9415,
+              "theta": -2.3696,
+              "gamma": 0.0004,
+              "delta": -0.7527,
+              "iv": 8.58,
+              "pop": 44.9
+            }
+          },
+          "pcr": 0.2558
+        },
+        "25650.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60505",
+            "marketData": {
+              "ltp": 184.75,
+              "cp": 216.35,
+              "bidPrice": 182.95,
+              "bidQty": 225,
+              "askPrice": 186.25,
+              "askQty": 225,
+              "volume": 3450,
+              "oi": 5400.0,
+              "prevOi": 4650.0
+            },
+            "analytics": {
+              "vega": 33.1769,
+              "theta": -3.2374,
+              "gamma": 0.0003,
+              "delta": 0.2836,
+              "iv": 10.93,
+              "pop": 21.69
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60506",
+            "marketData": {
+              "ltp": 776.8,
+              "cp": 762.2,
+              "bidPrice": 596.05,
+              "bidQty": 675,
+              "askPrice": 1063.95,
+              "askQty": 1800,
+              "volume": 300,
+              "oi": 1650.0,
+              "prevOi": 1725.0
+            },
+            "analytics": {
+              "vega": 31.075,
+              "theta": -2.5889,
+              "gamma": 0.0003,
+              "delta": -0.7508,
+              "iv": 9.33,
+              "pop": 44.91
+            }
+          },
+          "pcr": 0.3056
+        },
+        "25700.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60508",
+            "marketData": {
+              "ltp": 169.5,
+              "cp": 203.45,
+              "bidPrice": 169.8,
+              "bidQty": 300,
+              "askPrice": 172.5,
+              "askQty": 225,
+              "volume": 75225,
+              "oi": 62400.0,
+              "prevOi": 45225.0
+            },
+            "analytics": {
+              "vega": 32.2449,
+              "theta": -3.1355,
+              "gamma": 0.0003,
+              "delta": 0.2677,
+              "iv": 10.89,
+              "pop": 20.68
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60509",
+            "marketData": {
+              "ltp": 800.0,
+              "cp": 798.85,
+              "bidPrice": 681.95,
+              "bidQty": 900,
+              "askPrice": 949.95,
+              "askQty": 525,
+              "volume": 225,
+              "oi": 10800.0,
+              "prevOi": 10800.0
+            },
+            "analytics": {
+              "vega": 28.9251,
+              "theta": -2.2748,
+              "gamma": 0.0003,
+              "delta": -0.781,
+              "iv": 8.81,
+              "pop": 45.76
+            }
+          },
+          "pcr": 0.1731
+        },
+        "25750.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60510",
+            "marketData": {
+              "ltp": 160.4,
+              "cp": 184.55,
+              "bidPrice": 157.8,
+              "bidQty": 225,
+              "askPrice": 160.8,
+              "askQty": 225,
+              "volume": 16125,
+              "oi": 12900.0,
+              "prevOi": 11400.0
+            },
+            "analytics": {
+              "vega": 31.4118,
+              "theta": -3.0748,
+              "gamma": 0.0003,
+              "delta": 0.2544,
+              "iv": 10.96,
+              "pop": 19.81
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60511",
+            "marketData": {
+              "ltp": 963.1,
+              "cp": 831.0,
+              "bidPrice": 796.25,
+              "bidQty": 75,
+              "askPrice": 991.8,
+              "askQty": 75,
+              "volume": 75,
+              "oi": 5475.0,
+              "prevOi": 5475.0
+            },
+            "analytics": {
+              "vega": 33.4064,
+              "theta": -3.814,
+              "gamma": 0.0003,
+              "delta": -0.7122,
+              "iv": 12.79,
+              "pop": 44.0
+            }
+          },
+          "pcr": 0.4244
+        },
+        "25800.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60512",
+            "marketData": {
+              "ltp": 145.8,
+              "cp": 174.15,
+              "bidPrice": 145.0,
+              "bidQty": 75,
+              "askPrice": 147.9,
+              "askQty": 75,
+              "volume": 387300,
+              "oi": 297150.0,
+              "prevOi": 124125.0
+            },
+            "analytics": {
+              "vega": 30.4119,
+              "theta": -2.9687,
+              "gamma": 0.0003,
+              "delta": 0.2395,
+              "iv": 10.93,
+              "pop": 18.83
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60513",
+            "marketData": {
+              "ltp": 947.3,
+              "cp": 885.25,
+              "bidPrice": 918.45,
+              "bidQty": 150,
+              "askPrice": 1006.75,
+              "askQty": 300,
+              "volume": 2925,
+              "oi": 11250.0,
+              "prevOi": 11700.0
+            },
+            "analytics": {
+              "vega": 30.6989,
+              "theta": -3.051,
+              "gamma": 0.0003,
+              "delta": -0.7564,
+              "iv": 11.13,
+              "pop": 45.24
+            }
+          },
+          "pcr": 0.0379
+        },
+        "25850.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60514",
+            "marketData": {
+              "ltp": 138.8,
+              "cp": 161.35,
+              "bidPrice": 135.9,
+              "bidQty": 225,
+              "askPrice": 138.65,
+              "askQty": 225,
+              "volume": 14775,
+              "oi": 14175.0,
+              "prevOi": 8475.0
+            },
+            "analytics": {
+              "vega": 29.5337,
+              "theta": -2.901,
+              "gamma": 0.0003,
+              "delta": 0.2271,
+              "iv": 11.0,
+              "pop": 17.99
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60515",
+            "marketData": {
+              "ltp": 910.4,
+              "cp": 905.45,
+              "bidPrice": 872.45,
+              "bidQty": 75,
+              "askPrice": 1270.0,
+              "askQty": 75,
+              "volume": 75,
+              "oi": 6600.0,
+              "prevOi": 6600.0
+            },
+            "analytics": {
+              "vega": 23.683,
+              "theta": -1.7609,
+              "gamma": 0.0003,
+              "delta": -0.8415,
+              "iv": 8.33,
+              "pop": 47.38
+            }
+          },
+          "pcr": 0.4656
+        },
+        "25900.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60516",
+            "marketData": {
+              "ltp": 129.45,
+              "cp": 149.5,
+              "bidPrice": 127.0,
+              "bidQty": 300,
+              "askPrice": 129.25,
+              "askQty": 75,
+              "volume": 143250,
+              "oi": 276075.0,
+              "prevOi": 258525.0
+            },
+            "analytics": {
+              "vega": 28.4447,
+              "theta": -2.7815,
+              "gamma": 0.0003,
+              "delta": 0.2127,
+              "iv": 10.95,
+              "pop": 17.01
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60517",
+            "marketData": {
+              "ltp": 960.2,
+              "cp": 940.0,
+              "bidPrice": 831.5,
+              "bidQty": 900,
+              "askPrice": 1315.35,
+              "askQty": 900,
+              "volume": 75,
+              "oi": 9975.0,
+              "prevOi": 9975.0
+            },
+            "analytics": {
+              "vega": 23.206,
+              "theta": -1.7894,
+              "gamma": 0.0003,
+              "delta": -0.8463,
+              "iv": 8.64,
+              "pop": 47.53
+            }
+          },
+          "pcr": 0.0361
+        },
+        "25950.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60518",
+            "marketData": {
+              "ltp": 120.25,
+              "cp": 142.0,
+              "bidPrice": 118.2,
+              "bidQty": 225,
+              "askPrice": 120.7,
+              "askQty": 225,
+              "volume": 7650,
+              "oi": 30225.0,
+              "prevOi": 30075.0
+            },
+            "analytics": {
+              "vega": 27.6003,
+              "theta": -2.728,
+              "gamma": 0.0003,
+              "delta": 0.2022,
+              "iv": 11.07,
+              "pop": 16.26
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60547",
+            "marketData": {
+              "ltp": 1113.9,
+              "cp": 1113.9,
+              "bidPrice": 823.15,
+              "bidQty": 1725,
+              "askPrice": 1179.55,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 12600.0,
+              "prevOi": 12600.0
+            },
+            "analytics": {
+              "vega": 30.2749,
+              "theta": -3.4564,
+              "gamma": 0.0002,
+              "delta": -0.7625,
+              "iv": 12.79,
+              "pop": 45.56
+            }
+          },
+          "pcr": 0.4169
+        },
+        "26000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64696",
+            "marketData": {
+              "ltp": 110.8,
+              "cp": 131.2,
+              "bidPrice": 110.4,
+              "bidQty": 75,
+              "askPrice": 110.8,
+              "askQty": 300,
+              "volume": 1428000,
+              "oi": 1745400.0,
+              "prevOi": 1631100.0
+            },
+            "analytics": {
+              "vega": 26.5679,
+              "theta": -2.6215,
+              "gamma": 0.0003,
+              "delta": 0.1899,
+              "iv": 11.05,
+              "pop": 15.39
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64697",
+            "marketData": {
+              "ltp": 1095.0,
+              "cp": 1026.7,
+              "bidPrice": 1087.4,
+              "bidQty": 75,
+              "askPrice": 1095.0,
+              "askQty": 975,
+              "volume": 72450,
+              "oi": 661125.0,
+              "prevOi": 659325.0
+            },
+            "analytics": {
+              "vega": 25.8524,
+              "theta": -2.469,
+              "gamma": 0.0003,
+              "delta": -0.8183,
+              "iv": 10.7,
+              "pop": 46.97
+            }
+          },
+          "pcr": 0.3788
+        },
+        "26050.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60548",
+            "marketData": {
+              "ltp": 101.95,
+              "cp": 120.4,
+              "bidPrice": 100.6,
+              "bidQty": 300,
+              "askPrice": 102.85,
+              "askQty": 300,
+              "volume": 5175,
+              "oi": 10125.0,
+              "prevOi": 7275.0
+            },
+            "analytics": {
+              "vega": 25.5111,
+              "theta": -2.5155,
+              "gamma": 0.0002,
+              "delta": 0.1779,
+              "iv": 11.04,
+              "pop": 14.53
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60551",
+            "marketData": {
+              "ltp": 1060.1,
+              "cp": 1060.1,
+              "bidPrice": 1020.7,
+              "bidQty": 75,
+              "askPrice": 1241.45,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 450.0,
+              "prevOi": 450.0
+            },
+            "analytics": {
+              "vega": 11.6493,
+              "theta": -0.692,
+              "gamma": 0.0002,
+              "delta": -0.9401,
+              "iv": 6.65,
+              "pop": 49.5
+            }
+          },
+          "pcr": 0.0444
+        },
+        "26100.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60552",
+            "marketData": {
+              "ltp": 92.4,
+              "cp": 109.05,
+              "bidPrice": 92.35,
+              "bidQty": 75,
+              "askPrice": 94.6,
+              "askQty": 300,
+              "volume": 380025,
+              "oi": 115800.0,
+              "prevOi": 249000.0
+            },
+            "analytics": {
+              "vega": 24.4224,
+              "theta": -2.404,
+              "gamma": 0.0002,
+              "delta": 0.1661,
+              "iv": 11.02,
+              "pop": 13.67
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60553",
+            "marketData": {
+              "ltp": 1100.2,
+              "cp": 1097.45,
+              "bidPrice": 966.5,
+              "bidQty": 975,
+              "askPrice": 1499.85,
+              "askQty": 1725,
+              "volume": 75,
+              "oi": 900.0,
+              "prevOi": 900.0
+            },
+            "analytics": {
+              "vega": 6.7615,
+              "theta": -0.35,
+              "gamma": 0.0001,
+              "delta": -0.9695,
+              "iv": 5.8,
+              "pop": 49.98
+            }
+          },
+          "pcr": 0.0078
+        },
+        "26150.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60554",
+            "marketData": {
+              "ltp": 86.95,
+              "cp": 104.4,
+              "bidPrice": 85.95,
+              "bidQty": 300,
+              "askPrice": 88.0,
+              "askQty": 600,
+              "volume": 13800,
+              "oi": 12450.0,
+              "prevOi": 9900.0
+            },
+            "analytics": {
+              "vega": 23.4589,
+              "theta": -2.3203,
+              "gamma": 0.0002,
+              "delta": 0.1562,
+              "iv": 11.08,
+              "pop": 12.92
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60565",
+            "marketData": {
+              "ltp": 1163.85,
+              "cp": 1138.55,
+              "bidPrice": 1019.9,
+              "bidQty": 1725,
+              "askPrice": 1551.05,
+              "askQty": 1725,
+              "volume": 150,
+              "oi": 600.0,
+              "prevOi": 675.0
+            },
+            "analytics": {
+              "vega": 12.3676,
+              "theta": -0.8231,
+              "gamma": 0.0002,
+              "delta": -0.9353,
+              "iv": 7.45,
+              "pop": 49.47
+            }
+          },
+          "pcr": 0.0482
+        },
+        "26200.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60566",
+            "marketData": {
+              "ltp": 78.4,
+              "cp": 94.65,
+              "bidPrice": 78.3,
+              "bidQty": 225,
+              "askPrice": 80.45,
+              "askQty": 300,
+              "volume": 226200,
+              "oi": 111600.0,
+              "prevOi": 112350.0
+            },
+            "analytics": {
+              "vega": 22.3971,
+              "theta": -2.2107,
+              "gamma": 0.0002,
+              "delta": 0.1457,
+              "iv": 11.05,
+              "pop": 12.13
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60573",
+            "marketData": {
+              "ltp": 1182.55,
+              "cp": 1182.55,
+              "bidPrice": 1058.5,
+              "bidQty": 975,
+              "askPrice": 1355.9,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 1275.0,
+              "prevOi": 1275.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0114
+        },
+        "26250.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60574",
+            "marketData": {
+              "ltp": 75.65,
+              "cp": 90.0,
+              "bidPrice": 73.0,
+              "bidQty": 300,
+              "askPrice": 74.75,
+              "askQty": 300,
+              "volume": 11400,
+              "oi": 9675.0,
+              "prevOi": 8400.0
+            },
+            "analytics": {
+              "vega": 21.6552,
+              "theta": -2.1603,
+              "gamma": 0.0002,
+              "delta": 0.1386,
+              "iv": 11.17,
+              "pop": 11.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60575",
+            "marketData": {
+              "ltp": 1177.5,
+              "cp": 1177.5,
+              "bidPrice": 1182.65,
+              "bidQty": 75,
+              "askPrice": 1418.5,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 375.0,
+              "prevOi": 375.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0388
+        },
+        "26300.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60576",
+            "marketData": {
+              "ltp": 68.2,
+              "cp": 81.7,
+              "bidPrice": 67.05,
+              "bidQty": 375,
+              "askPrice": 69.0,
+              "askQty": 375,
+              "volume": 147750,
+              "oi": 117375.0,
+              "prevOi": 122025.0
+            },
+            "analytics": {
+              "vega": 20.4845,
+              "theta": -2.0331,
+              "gamma": 0.0002,
+              "delta": 0.1279,
+              "iv": 11.12,
+              "pop": 10.76
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60582",
+            "marketData": {
+              "ltp": 1343.0,
+              "cp": 1266.75,
+              "bidPrice": 1125.25,
+              "bidQty": 1275,
+              "askPrice": 1680.15,
+              "askQty": 1725,
+              "volume": 150,
+              "oi": 375.0,
+              "prevOi": 375.0
+            },
+            "analytics": {
+              "vega": 17.6593,
+              "theta": -1.5879,
+              "gamma": 0.0002,
+              "delta": -0.8962,
+              "iv": 10.07,
+              "pop": 48.84
+            }
+          },
+          "pcr": 0.0032
+        },
+        "26350.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60583",
+            "marketData": {
+              "ltp": 63.0,
+              "cp": 76.0,
+              "bidPrice": 62.0,
+              "bidQty": 150,
+              "askPrice": 64.0,
+              "askQty": 375,
+              "volume": 10950,
+              "oi": 6000.0,
+              "prevOi": 9825.0
+            },
+            "analytics": {
+              "vega": 19.5522,
+              "theta": -1.9459,
+              "gamma": 0.0002,
+              "delta": 0.1196,
+              "iv": 11.15,
+              "pop": 10.11
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60584",
+            "marketData": {
+              "ltp": 1310.1,
+              "cp": 1310.1,
+              "bidPrice": 1165.65,
+              "bidQty": 1725,
+              "askPrice": 0.0,
+              "askQty": 0,
+              "volume": 0,
+              "oi": 300.0,
+              "prevOi": 450.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.05
+        },
+        "26400.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60585",
+            "marketData": {
+              "ltp": 59.3,
+              "cp": 68.55,
+              "bidPrice": 57.5,
+              "bidQty": 375,
+              "askPrice": 59.3,
+              "askQty": 225,
+              "volume": 58800,
+              "oi": 64125.0,
+              "prevOi": 67800.0
+            },
+            "analytics": {
+              "vega": 18.5803,
+              "theta": -1.8504,
+              "gamma": 0.0002,
+              "delta": 0.1114,
+              "iv": 11.15,
+              "pop": 9.46
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60586",
+            "marketData": {
+              "ltp": 1353.25,
+              "cp": 1353.25,
+              "bidPrice": 1319.15,
+              "bidQty": 75,
+              "askPrice": 1508.6,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 600.0,
+              "prevOi": 675.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0094
+        },
+        "26450.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60587",
+            "marketData": {
+              "ltp": 54.2,
+              "cp": 65.3,
+              "bidPrice": 53.15,
+              "bidQty": 375,
+              "askPrice": 55.2,
+              "askQty": 375,
+              "volume": 4350,
+              "oi": 5325.0,
+              "prevOi": 7275.0
+            },
+            "analytics": {
+              "vega": 17.8058,
+              "theta": -1.7854,
+              "gamma": 0.0002,
+              "delta": 0.105,
+              "iv": 11.23,
+              "pop": 8.94
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60588",
+            "marketData": {
+              "ltp": 1398.0,
+              "cp": 1398.0,
+              "bidPrice": 1352.05,
+              "bidQty": 75,
+              "askPrice": 1602.75,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 300.0,
+              "prevOi": 375.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0563
+        },
+        "26500.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60589",
+            "marketData": {
+              "ltp": 50.75,
+              "cp": 60.9,
+              "bidPrice": 50.85,
+              "bidQty": 150,
+              "askPrice": 51.65,
+              "askQty": 75,
+              "volume": 712875,
+              "oi": 556125.0,
+              "prevOi": 481050.0
+            },
+            "analytics": {
+              "vega": 17.0948,
+              "theta": -1.7281,
+              "gamma": 0.0002,
+              "delta": 0.0992,
+              "iv": 11.32,
+              "pop": 8.48
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60590",
+            "marketData": {
+              "ltp": 1525.0,
+              "cp": 1448.15,
+              "bidPrice": 1518.1,
+              "bidQty": 75,
+              "askPrice": 1535.1,
+              "askQty": 75,
+              "volume": 10425,
+              "oi": 83625.0,
+              "prevOi": 82875.0
+            },
+            "analytics": {
+              "vega": 13.5734,
+              "theta": -1.2177,
+              "gamma": 0.0001,
+              "delta": -0.9271,
+              "iv": 10.05,
+              "pop": 49.51
+            }
+          },
+          "pcr": 0.1504
+        },
+        "26550.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60591",
+            "marketData": {
+              "ltp": 47.5,
+              "cp": 56.65,
+              "bidPrice": 47.0,
+              "bidQty": 150,
+              "askPrice": 52.2,
+              "askQty": 900,
+              "volume": 5100,
+              "oi": 12225.0,
+              "prevOi": 14625.0
+            },
+            "analytics": {
+              "vega": 16.3097,
+              "theta": -1.6565,
+              "gamma": 0.0001,
+              "delta": 0.0931,
+              "iv": 11.38,
+              "pop": 7.98
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60592",
+            "marketData": {
+              "ltp": 1487.6,
+              "cp": 1487.6,
+              "bidPrice": 1387.05,
+              "bidQty": 1725,
+              "askPrice": 1935.45,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 600.0,
+              "prevOi": 675.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0491
+        },
+        "26600.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60593",
+            "marketData": {
+              "ltp": 44.8,
+              "cp": 53.45,
+              "bidPrice": 43.2,
+              "bidQty": 300,
+              "askPrice": 44.8,
+              "askQty": 1500,
+              "volume": 31725,
+              "oi": 71700.0,
+              "prevOi": 67650.0
+            },
+            "analytics": {
+              "vega": 15.6478,
+              "theta": -1.6021,
+              "gamma": 0.0001,
+              "delta": 0.088,
+              "iv": 11.47,
+              "pop": 7.56
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60594",
+            "marketData": {
+              "ltp": 1540.75,
+              "cp": 1677.0,
+              "bidPrice": 1526.8,
+              "bidQty": 75,
+              "askPrice": 1707.2,
+              "askQty": 75,
+              "volume": 75,
+              "oi": 300.0,
+              "prevOi": 300.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0042
+        },
+        "26650.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60595",
+            "marketData": {
+              "ltp": 41.4,
+              "cp": 48.75,
+              "bidPrice": 40.0,
+              "bidQty": 75,
+              "askPrice": 41.15,
+              "askQty": 375,
+              "volume": 4050,
+              "oi": 5775.0,
+              "prevOi": 6750.0
+            },
+            "analytics": {
+              "vega": 14.8444,
+              "theta": -1.5249,
+              "gamma": 0.0001,
+              "delta": 0.0821,
+              "iv": 11.51,
+              "pop": 7.07
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60596",
+            "marketData": {
+              "ltp": 1660.4,
+              "cp": 1583.95,
+              "bidPrice": 1514.0,
+              "bidQty": 1725,
+              "askPrice": 2026.55,
+              "askQty": 1725,
+              "volume": 75,
+              "oi": 225.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 8.8035,
+              "theta": -0.7328,
+              "gamma": 0.0001,
+              "delta": -0.9579,
+              "iv": 9.32,
+              "pop": 50.06
+            }
+          },
+          "pcr": 0.039
+        },
+        "26700.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60597",
+            "marketData": {
+              "ltp": 37.9,
+              "cp": 46.35,
+              "bidPrice": 36.25,
+              "bidQty": 375,
+              "askPrice": 38.2,
+              "askQty": 300,
+              "volume": 257550,
+              "oi": 156825.0,
+              "prevOi": 66600.0
+            },
+            "analytics": {
+              "vega": 14.0252,
+              "theta": -1.4407,
+              "gamma": 0.0001,
+              "delta": 0.0761,
+              "iv": 11.51,
+              "pop": 6.58
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60598",
+            "marketData": {
+              "ltp": 1807.0,
+              "cp": 1807.0,
+              "bidPrice": 1522.15,
+              "bidQty": 675,
+              "askPrice": 2063.4,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 2925.0,
+              "prevOi": 2925.0
+            },
+            "analytics": {
+              "vega": 22.6494,
+              "theta": -3.1474,
+              "gamma": 0.0002,
+              "delta": -0.8518,
+              "iv": 15.56,
+              "pop": 48.24
+            }
+          },
+          "pcr": 0.0187
+        },
+        "26750.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60599",
+            "marketData": {
+              "ltp": 34.95,
+              "cp": 44.1,
+              "bidPrice": 34.65,
+              "bidQty": 375,
+              "askPrice": 36.35,
+              "askQty": 375,
+              "volume": 8550,
+              "oi": 29700.0,
+              "prevOi": 25950.0
+            },
+            "analytics": {
+              "vega": 13.2952,
+              "theta": -1.3712,
+              "gamma": 0.0001,
+              "delta": 0.071,
+              "iv": 11.55,
+              "pop": 6.15
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60600",
+            "marketData": {
+              "ltp": 1675.6,
+              "cp": 1675.6,
+              "bidPrice": 1615.95,
+              "bidQty": 75,
+              "askPrice": 1853.85,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0051
+        },
+        "26800.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60601",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 518.95,
+              "bidPrice": 22.2,
+              "bidQty": 75,
+              "askPrice": 59.95,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60602",
+            "marketData": {
+              "ltp": 1777.0,
+              "cp": 1777.0,
+              "bidPrice": 1654.9,
+              "bidQty": 75,
+              "askPrice": 1955.75,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 75.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "26850.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60603",
+            "marketData": {
+              "ltp": 31.85,
+              "cp": 37.95,
+              "bidPrice": 29.1,
+              "bidQty": 300,
+              "askPrice": 33.1,
+              "askQty": 300,
+              "volume": 11400,
+              "oi": 44100.0,
+              "prevOi": 41850.0
+            },
+            "analytics": {
+              "vega": 12.3365,
+              "theta": -1.2975,
+              "gamma": 0.0001,
+              "delta": 0.0644,
+              "iv": 11.78,
+              "pop": 5.59
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60604",
+            "marketData": {
+              "ltp": 1759.5,
+              "cp": 1758.6,
+              "bidPrice": 1703.55,
+              "bidQty": 1725,
+              "askPrice": 2339.0,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 300.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0034
+        },
+        "26900.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60605",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 486.75,
+              "bidPrice": 16.85,
+              "bidQty": 75,
+              "askPrice": 53.35,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60606",
+            "marketData": {
+              "ltp": 1807.45,
+              "cp": 1807.45,
+              "bidPrice": 1673.55,
+              "bidQty": 975,
+              "askPrice": 2355.25,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 750.0,
+              "prevOi": 825.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "26950.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60607",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 471.2,
+              "bidPrice": 15.05,
+              "bidQty": 75,
+              "askPrice": 50.3,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60608",
+            "marketData": {
+              "ltp": 1850.35,
+              "cp": 1850.35,
+              "bidPrice": 1810.95,
+              "bidQty": 75,
+              "askPrice": 2079.55,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 450.0,
+              "prevOi": 525.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64698",
+            "marketData": {
+              "ltp": 26.0,
+              "cp": 31.8,
+              "bidPrice": 26.1,
+              "bidQty": 150,
+              "askPrice": 26.2,
+              "askQty": 600,
+              "volume": 652650,
+              "oi": 1207800.0,
+              "prevOi": 1162875.0
+            },
+            "analytics": {
+              "vega": 10.6642,
+              "theta": -1.1412,
+              "gamma": 0.0001,
+              "delta": 0.0535,
+              "iv": 11.99,
+              "pop": 4.66
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64699",
+            "marketData": {
+              "ltp": 1989.7,
+              "cp": 1914.1,
+              "bidPrice": 1986.4,
+              "bidQty": 75,
+              "askPrice": 2003.8,
+              "askQty": 75,
+              "volume": 16950,
+              "oi": 402300.0,
+              "prevOi": 402675.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.3331
+        },
+        "27050.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60609",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 441.3,
+              "bidPrice": 15.0,
+              "bidQty": 75,
+              "askPrice": 44.65,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60610",
+            "marketData": {
+              "ltp": 1947.8,
+              "cp": 1947.8,
+              "bidPrice": 1882.0,
+              "bidQty": 75,
+              "askPrice": 2038.45,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27100.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60611",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 426.9,
+              "bidPrice": 14.05,
+              "bidQty": 75,
+              "askPrice": 42.1,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60612",
+            "marketData": {
+              "ltp": 1992.3,
+              "cp": 1992.3,
+              "bidPrice": 1929.1,
+              "bidQty": 75,
+              "askPrice": 2249.45,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27150.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60613",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 412.9,
+              "bidPrice": 12.05,
+              "bidQty": 75,
+              "askPrice": 41.85,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60614",
+            "marketData": {
+              "ltp": 2041.9,
+              "cp": 2041.9,
+              "bidPrice": 2002.9,
+              "bidQty": 75,
+              "askPrice": 2263.45,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 675.0,
+              "prevOi": 750.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27200.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60615",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 399.2,
+              "bidPrice": 10.0,
+              "bidQty": 75,
+              "askPrice": 39.4,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60618",
+            "marketData": {
+              "ltp": 2087.9,
+              "cp": 2087.9,
+              "bidPrice": 2052.25,
+              "bidQty": 1725,
+              "askPrice": 2717.8,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27250.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60619",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 385.9,
+              "bidPrice": 8.5,
+              "bidQty": 75,
+              "askPrice": 37.0,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60620",
+            "marketData": {
+              "ltp": 2133.7,
+              "cp": 2133.7,
+              "bidPrice": 2096.95,
+              "bidQty": 1725,
+              "askPrice": 2774.5,
+              "askQty": 1725,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27300.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60621",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 372.95,
+              "bidPrice": 7.55,
+              "bidQty": 75,
+              "askPrice": 34.8,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60622",
+            "marketData": {
+              "ltp": 2181.3,
+              "cp": 2181.3,
+              "bidPrice": 2125.85,
+              "bidQty": 75,
+              "askPrice": 2448.15,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27350.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60623",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 361.45,
+              "bidPrice": 8.05,
+              "bidQty": 75,
+              "askPrice": 32.7,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60624",
+            "marketData": {
+              "ltp": 2228.3,
+              "cp": 2228.3,
+              "bidPrice": 2180.5,
+              "bidQty": 75,
+              "askPrice": 2504.55,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 150.0,
+              "prevOi": 225.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "27400.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|60625",
+            "marketData": {
+              "ltp": 0.0,
+              "cp": 349.25,
+              "bidPrice": 12.0,
+              "bidQty": 75,
+              "askPrice": 30.7,
+              "askQty": 900,
+              "volume": 0,
+              "oi": 0.0,
+              "prevOi": 0.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": 0.0,
+              "iv": 0.0,
+              "pop": 0.0
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|60626",
+            "marketData": {
+              "ltp": 2283.85,
+              "cp": 2283.85,
+              "bidPrice": 2233.1,
+              "bidQty": 75,
+              "askPrice": 2535.7,
+              "askQty": 75,
+              "volume": 0,
+              "oi": 450.0,
+              "prevOi": 525.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          }
+        },
+        "28000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64700",
+            "marketData": {
+              "ltp": 12.0,
+              "cp": 12.7,
+              "bidPrice": 11.55,
+              "bidQty": 1500,
+              "askPrice": 12.0,
+              "askQty": 1500,
+              "volume": 206775,
+              "oi": 868875.0,
+              "prevOi": 848325.0
+            },
+            "analytics": {
+              "vega": 5.2908,
+              "theta": -0.6725,
+              "gamma": 0.0,
+              "delta": 0.0228,
+              "iv": 14.24,
+              "pop": 1.96
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64701",
+            "marketData": {
+              "ltp": 2970.65,
+              "cp": 2867.35,
+              "bidPrice": 2951.0,
+              "bidQty": 375,
+              "askPrice": 2973.1,
+              "askQty": 75,
+              "volume": 22425,
+              "oi": 268425.0,
+              "prevOi": 270750.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.3089
+        },
+        "29000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64702",
+            "marketData": {
+              "ltp": 6.45,
+              "cp": 6.65,
+              "bidPrice": 6.0,
+              "bidQty": 75,
+              "askPrice": 6.7,
+              "askQty": 300,
+              "volume": 58200,
+              "oi": 637500.0,
+              "prevOi": 639750.0
+            },
+            "analytics": {
+              "vega": 3.0188,
+              "theta": -0.4442,
+              "gamma": 0.0,
+              "delta": 0.0118,
+              "iv": 16.48,
+              "pop": 0.99
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64703",
+            "marketData": {
+              "ltp": 3944.75,
+              "cp": 3847.55,
+              "bidPrice": 3940.0,
+              "bidQty": 150,
+              "askPrice": 3949.7,
+              "askQty": 75,
+              "volume": 17475,
+              "oi": 540150.0,
+              "prevOi": 528300.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.8473
+        },
+        "30000.0": {
+          "callOptionData": {
+            "instrumentKey": "NSE_FO|64704",
+            "marketData": {
+              "ltp": 4.2,
+              "cp": 3.95,
+              "bidPrice": 3.85,
+              "bidQty": 5625,
+              "askPrice": 4.2,
+              "askQty": 525,
+              "volume": 18075,
+              "oi": 296550.0,
+              "prevOi": 299925.0
+            },
+            "analytics": {
+              "vega": 1.9331,
+              "theta": -0.3224,
+              "gamma": 0.0,
+              "delta": 0.0071,
+              "iv": 18.68,
+              "pop": 0.57
+            }
+          },
+          "putOptionData": {
+            "instrumentKey": "NSE_FO|64705",
+            "marketData": {
+              "ltp": 4914.45,
+              "cp": 4830.0,
+              "bidPrice": 4906.8,
+              "bidQty": 75,
+              "askPrice": 4932.8,
+              "askQty": 75,
+              "volume": 525,
+              "oi": 29400.0,
+              "prevOi": 29175.0
+            },
+            "analytics": {
+              "vega": 0.0,
+              "theta": 0.0,
+              "gamma": 0.0,
+              "delta": -1.0,
+              "iv": 0.0,
+              "pop": 99.0
+            }
+          },
+          "pcr": 0.0991
+        }
+      },
+      "lastUpdated": 1753955970119
+    },
+    "optionChainExtendedData": {
+      "totalCallOi": 11082525.0,
+      "totalPutOi": 16631925.0,
+      "totalCallVol": 6780525.0,
+      "totalPutVol": 5630400.0,
+      "assetLtpc": {
+        "ltp": 24764.2,
+        "ltt": 1753956002000,
+        "ltq": 0,
+        "cp": 24855.05
+      },
+      "indiaVixLtpc": {
+        "ltp": 11.49,
+        "ltt": 1753956002000,
+        "ltq": 0,
+        "cp": 11.21
+      }
+    }
+  },
+  "success": true
+}

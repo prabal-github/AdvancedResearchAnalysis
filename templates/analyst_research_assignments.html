@@ -1,0 +1,325 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-info text-white border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-2">
+                                <i class="bi bi-journal-text me-2"></i>Research Assignments
+                            </h2>
+                            <p class="card-text mb-0">
+                                AI-generated research topics assigned to {{ analyst_name }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="text-end me-3">
+                                    <small class="opacity-75">Active Assignments</small><br>
+                                    <strong>{{ assigned_topics|length }}</strong>
+                                </div>
+                                <i class="bi bi-clipboard-check" style="font-size: 2.5rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Assignments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard-data me-2"></i>Current Research Assignments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if assigned_topics %}
+                    {% for topic in assigned_topics %}
+                    <div class="card border-start border-primary border-4 mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5 class="card-title text-primary">{{ topic.title }}</h5>
+                                    <div class="mb-3">
+                                        <span class="badge bg-secondary me-2">{{ topic.research_type.replace('_', ' ').title() }}</span>
+                                        <span class="badge bg-{{ 'danger' if topic.priority_level == 'high' else 'warning' if topic.priority_level == 'medium' else 'secondary' }}">
+                                            {{ topic.priority_level.title() }} Priority
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Research Requirements:</strong>
+                                        <div class="mt-2" style="white-space: pre-wrap; line-height: 1.6;">{{ topic.description }}</div>
+                                    </div>
+
+                                    {% if topic.target_companies %}
+                                    <div class="mb-2">
+                                        <strong>Target Companies:</strong>
+                                        {% set companies = topic.target_companies|loads %}
+                                        {% for company in companies %}
+                                        <span class="badge bg-info me-1">{{ company }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if topic.target_sectors %}
+                                    <div class="mb-2">
+                                        <strong>Target Sectors:</strong>
+                                        {% set sectors = topic.target_sectors|loads %}
+                                        {% for sector in sectors %}
+                                        <span class="badge bg-success me-1">{{ sector }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if topic.expected_deliverables %}
+                                    <div class="mb-3">
+                                        <strong>Expected Deliverables:</strong>
+                                        <ul class="mt-2">
+                                            {% set deliverables = topic.expected_deliverables|loads %}
+                                            {% for deliverable in deliverables %}
+                                            <li>{{ deliverable }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="text-end">
+                                        <div class="mb-3">
+                                            <small class="text-muted">Assigned:</small><br>
+                                            <strong>{{ topic.created_at.strftime('%Y-%m-%d') if topic.created_at else 'Recently' }}</strong>
+                                        </div>
+                                        
+                                        {% if topic.deadline %}
+                                        <div class="mb-3">
+                                            <small class="text-muted">Deadline:</small><br>
+                                            <strong class="text-{{ 'danger' if (topic.deadline - now()).days < 0 else 'warning' if (topic.deadline - now()).days <= 2 else 'success' }}">
+                                                {{ topic.deadline.strftime('%Y-%m-%d') }}
+                                            </strong>
+                                            {% set days_left = (topic.deadline - now()).days %}
+                                            {% if days_left < 0 %}
+                                            <br><span class="badge bg-danger">{{ (-days_left) }} days overdue</span>
+                                            {% elif days_left == 0 %}
+                                            <br><span class="badge bg-warning">Due today</span>
+                                            {% else %}
+                                            <br><span class="badge bg-info">{{ days_left }} days left</span>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+
+                                        <div class="mb-3">
+                                            <small class="text-muted">Status:</small><br>
+                                            <span class="badge bg-{{ 'warning' if topic.status == 'assigned' else 'info' }} fs-6">
+                                                {{ topic.status.replace('_', ' ').title() }}
+                                            </span>
+                                        </div>
+
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" onclick="startResearch('{{ topic.id }}')">
+                                                {% if topic.status == 'assigned' %}
+                                                <i class="bi bi-play-circle me-1"></i>Start Research
+                                                {% else %}
+                                                <i class="bi bi-arrow-clockwise me-1"></i>Continue Research
+                                                {% endif %}
+                                            </button>
+                                            <button class="btn btn-outline-success" onclick="showSubmitModal('{{ topic.id }}', '{{ topic.title }}')">
+                                                <i class="bi bi-upload me-1"></i>Submit Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3">No Current Assignments</h4>
+                        <p class="text-muted">You have no active research assignments from the AI system.</p>
+                        <a href="/analyst/{{ analyst_name }}/profile" class="btn btn-outline-primary">
+                            <i class="bi bi-person me-2"></i>View Your Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Completed Assignments -->
+            {% if completed_topics %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-check-circle me-2"></i>Recently Completed Assignments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for topic in completed_topics %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-start border-success border-4 h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ topic.title }}</h6>
+                                    <p class="card-text text-muted small">{{ topic.description[:100] }}...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">Completed: {{ topic.completed_at.strftime('%Y-%m-%d') if topic.completed_at else 'Recently' }}</small>
+                                            {% if topic.quality_review_score %}
+                                            <br><small class="text-success">Quality Score: {{ (topic.quality_review_score * 100)|round }}%</small>
+                                            {% endif %}
+                                        </div>
+                                        {% if topic.submitted_report_id %}
+                                        <a href="/report/{{ topic.submitted_report_id }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i>View Report
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Submit Report Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submit Research Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="submitForm">
+                    <input type="hidden" id="submitTopicId">
+                    <div class="mb-3">
+                        <label class="form-label">Research Topic:</label>
+                        <p id="submitTopicTitle" class="fw-bold text-primary"></p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle me-2"></i>How to Submit</h6>
+                        <p class="mb-0">First, submit your research report through the normal process. Then, enter the Report ID below to link it to this research request.</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reportId" class="form-label">Report ID:</label>
+                        <input type="text" class="form-control" id="reportId" 
+                               placeholder="Enter the ID of your submitted report (e.g., rep_123456)" required>
+                        <small class="form-text text-muted">
+                            You can find the Report ID in the report URL or in your analyst dashboard.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="completionNotes" class="form-label">Completion Notes (Optional):</label>
+                        <textarea class="form-control" id="completionNotes" rows="3" 
+                                  placeholder="Any additional notes about the research or findings..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitResearchReport()">
+                    <i class="bi bi-upload me-1"></i>Submit Research Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let submitModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+    submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
+});
+
+function startResearch(topicId) {
+    // Update status to in_progress
+    fetch('/api/update_research_status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            topic_id: topicId,
+            status: 'in_progress'
+        })
+    }).then(response => response.json()).then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function showSubmitModal(topicId, topicTitle) {
+    document.getElementById('submitTopicId').value = topicId;
+    document.getElementById('submitTopicTitle').textContent = topicTitle;
+    submitModal.show();
+}
+
+async function submitResearchReport() {
+    const topicId = document.getElementById('submitTopicId').value;
+    const reportId = document.getElementById('reportId').value.trim();
+
+    if (!reportId) {
+        alert('Please enter the Report ID');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/submit_research_report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                topic_id: topicId,
+                report_id: reportId
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Research report submitted successfully! Investors will be notified.');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the report.');
+    }
+
+    submitModal.hide();
+}
+</script>
+
+<style>
+.card-title {
+    font-size: 1.1rem;
+}
+.border-4 {
+    border-width: 4px !important;
+}
+</style>
+{% endblock %}

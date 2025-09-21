@@ -1,0 +1,355 @@
+{% extends "layout.html" %}
+
+{% block title %}Simulation Result - {{ simulation.id }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .simulation-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .result-card {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+    }
+    .result-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .result-label {
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+    .analysis-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .confidence-meter {
+        background: #e9ecef;
+        height: 30px;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        margin: 15px 0;
+    }
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        transition: width 1s ease-in-out;
+    }
+    .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .metadata-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        text-align: center;
+    }
+    .metadata-value {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 5px;
+    }
+    .metadata-label {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    .related-reports {
+        background: #e3f2fd;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .related-report {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+    .knowledge-gaps {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .gap-item {
+        background: #fff;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        border-left: 3px solid #ffc107;
+    }
+    .scenario-params {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+    }
+    .param-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .param-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Simulation Header -->
+            <div class="simulation-header">
+                <h2><i class="fas fa-robot"></i> AI Simulation Result</h2>
+                <p class="mb-2">Query ID: {{ simulation.id }}</p>
+                <p class="mb-0"><strong>{{ simulation.query_text }}</strong></p>
+            </div>
+
+            <!-- Scenario Parameters -->
+            {% if simulation.scenario_parameters %}
+                {% set params = simulation.scenario_parameters | loads %}
+                <div class="scenario-params">
+                    <h4><i class="fas fa-cogs"></i> Scenario Parameters</h4>
+                    <div class="param-item">
+                        <span>Scenario Type:</span>
+                        <span><strong>{{ params.type.replace('_', ' ').title() if params.type else 'General' }}</strong></span>
+                    </div>
+                    <div class="param-item">
+                        <span>Target Asset:</span>
+                        <span><strong>{{ params.target_asset or 'Not specified' }}</strong></span>
+                    </div>
+                    {% if params.magnitude %}
+                    <div class="param-item">
+                        <span>Magnitude:</span>
+                        <span><strong>{{ params.magnitude }}%</strong></span>
+                    </div>
+                    {% endif %}
+                    {% if params.direction %}
+                    <div class="param-item">
+                        <span>Direction:</span>
+                        <span><strong>{{ params.direction.title() }}</strong></span>
+                    </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Results Grid -->
+            {% if simulation.simulation_results %}
+                {% set results = simulation.simulation_results | loads %}
+                <div class="results-grid">
+                    {% if results.eps_impact is defined %}
+                    <div class="result-card">
+                        <div class="result-value">{{ results.eps_impact }}%</div>
+                        <div class="result-label">EPS Impact</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if results.price_impact is defined %}
+                    <div class="result-card">
+                        <div class="result-value">{{ results.price_impact }}%</div>
+                        <div class="result-label">Price Impact</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if results.margin_impact is defined %}
+                    <div class="result-card">
+                        <div class="result-value">{{ results.margin_impact }}%</div>
+                        <div class="result-label">Margin Impact</div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Default confidence card -->
+                    <div class="result-card">
+                        <div class="result-value">{{ (simulation.confidence_score * 100)|round(1) if simulation.confidence_score else 0 }}%</div>
+                        <div class="result-label">Confidence Level</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Confidence Meter -->
+            <div class="analysis-section">
+                <h4><i class="fas fa-tachometer-alt"></i> Confidence Level</h4>
+                <div class="confidence-meter">
+                    <div class="confidence-fill" style="width: {{ (simulation.confidence_score * 100)|round(1) if simulation.confidence_score else 0 }}%">
+                        {{ (simulation.confidence_score * 100)|round(1) if simulation.confidence_score else 0 }}% Confident
+                    </div>
+                </div>
+                <p class="text-muted text-center">
+                    {% if simulation.confidence_score %}
+                        {% if simulation.confidence_score >= 0.8 %}
+                            High confidence - Results based on strong historical patterns and comprehensive data
+                        {% elif simulation.confidence_score >= 0.6 %}
+                            Moderate confidence - Results based on available data with some assumptions
+                        {% else %}
+                            Lower confidence - Limited historical data available for this scenario
+                        {% endif %}
+                    {% else %}
+                        Confidence level not available
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Metadata Grid -->
+            <div class="metadata-grid">
+                <div class="metadata-card">
+                    <div class="metadata-value">{{ simulation.ai_model_used or 'AI Model' }}</div>
+                    <div class="metadata-label">Analysis Engine</div>
+                </div>
+                <div class="metadata-card">
+                    <div class="metadata-value">{{ simulation.execution_time_ms or 0 }}ms</div>
+                    <div class="metadata-label">Execution Time</div>
+                </div>
+                <div class="metadata-card">
+                    <div class="metadata-value">{{ simulation.created_at.strftime('%Y-%m-%d') if simulation.created_at else 'Unknown' }}</div>
+                    <div class="metadata-label">Analysis Date</div>
+                </div>
+                <div class="metadata-card">
+                    <div class="metadata-value">{{ simulation.user_type.title() if simulation.user_type else 'User' }}</div>
+                    <div class="metadata-label">Requested By</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Detailed Analysis -->
+                    <div class="analysis-section">
+                        <h4><i class="fas fa-brain"></i> AI Analysis</h4>
+                        <div style="white-space: pre-line; line-height: 1.6;">{{ simulation.impact_analysis or 'No detailed analysis available' }}</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Related Reports -->
+                    {% if simulation.related_reports %}
+                        {% set related = simulation.related_reports | loads %}
+                        {% if related %}
+                        <div class="related-reports mb-4">
+                            <h5><i class="fas fa-file-alt"></i> Related Reports</h5>
+                            {% for report in related %}
+                            <div class="related-report">
+                                <a href="/report/{{ report.id }}" target="_blank" class="text-decoration-none">
+                                    <strong>{{ report.analyst }}</strong><br>
+                                    <small class="text-muted">{{ report.created_at }}</small>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Knowledge Gaps -->
+                    {% if simulation.knowledge_gaps %}
+                        {% set gaps = simulation.knowledge_gaps | loads %}
+                        {% if gaps %}
+                        <div class="knowledge-gaps">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Knowledge Gaps Identified</h5>
+                            {% for gap in gaps %}
+                            <div class="gap-item">{{ gap }}</div>
+                            {% endfor %}
+                            <small class="text-muted d-block mt-2">
+                                These gaps indicate areas where additional research could improve simulation accuracy.
+                            </small>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Data Sources -->
+                    {% if simulation.data_sources %}
+                        {% set sources = simulation.data_sources | loads %}
+                        {% if sources %}
+                        <div class="analysis-section">
+                            <h5><i class="fas fa-database"></i> Data Sources</h5>
+                            <ul class="list-unstyled">
+                                {% for source in sources %}
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i> {{ source }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('ai_simulation') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Back to Simulation
+                </a>
+                <button class="btn btn-success btn-lg ml-3" onclick="shareSimulation()">
+                    <i class="fas fa-share"></i> Share Result
+                </button>
+                <button class="btn btn-info btn-lg ml-3" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function shareSimulation() {
+    const url = window.location.href;
+    if (navigator.share) {
+        navigator.share({
+            title: 'AI Simulation Result',
+            text: '{{ simulation.query_text }}',
+            url: url
+        });
+    } else {
+        // Fallback to copy to clipboard
+        navigator.clipboard.writeText(url).then(function() {
+            alert('Simulation URL copied to clipboard!');
+        });
+    }
+}
+
+// Animate confidence meter on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const confidenceFill = document.querySelector('.confidence-fill');
+    const targetWidth = confidenceFill.style.width;
+    confidenceFill.style.width = '0%';
+    
+    setTimeout(() => {
+        confidenceFill.style.width = targetWidth;
+    }, 500);
+});
+</script>
+{% endblock %}

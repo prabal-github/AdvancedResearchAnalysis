@@ -1,0 +1,956 @@
+[
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "High-Frequency Market Making Model",
+    "description": "Ultra-low latency model for market making in NIFTY futures using order book dynamics, tick-by-tick analysis, and real-time spread optimization."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Options Greeks Arbitrage Model",
+    "description": "Advanced options arbitrage model exploiting delta, gamma, and theta inefficiencies across NIFTY and Bank NIFTY option chains."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Pairs Trading Statistical Model",
+    "description": "Statistical arbitrage model identifying cointegrated stock pairs within NIFTY 50 for market-neutral trading strategies."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Event-Driven Alpha Generator",
+    "description": "NLP-powered model capturing alpha from corporate events, earnings calls, and management guidance changes across Indian stocks."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Momentum Factor Timing Model",
+    "description": "Dynamic factor model timing momentum strategies based on market regimes, volatility conditions, and cross-sectional momentum."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Smart Order Execution Model",
+    "description": "AI-powered execution model minimizing market impact and slippage for large institutional orders using TWAP, VWAP, and adaptive strategies."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Cryptocurrency-Equity Correlation Model",
+    "description": "Cross-asset model analyzing Bitcoin, Ethereum impact on Indian IT and financial stocks for hedging and alpha generation."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "ESG Momentum Screening Model",
+    "description": "Sustainable investing model combining ESG scores with momentum factors for responsible alpha generation in Indian equities."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Liquidity Risk Assessment Model",
+    "description": "Real-time liquidity scoring model for NIFTY stocks using order book depth, trading volumes, and market stress indicators."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Multi-Timeframe Confluence Model",
+    "description": "Hierarchical model combining signals from multiple timeframes (1min to daily) for high-probability trade entry and exit points."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Index Rebalancing Anticipation Model",
+    "description": "Predictive model identifying stocks likely to be added/removed from NIFTY indices for pre-positioning strategies."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Weather-Agriculture Equity Model",
+    "description": "Seasonal model linking weather patterns, monsoon data, and agricultural commodity prices to related equity sectors."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Dark Pool Detection Model",
+    "description": "Pattern recognition model identifying institutional dark pool activity through volume anomalies and price action analysis."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Quarterly Results Surprise Model",
+    "description": "Comprehensive model predicting quarterly earnings surprises using financial metrics, management guidance, and peer comparisons."
+  },
+  {
+    "source_file": "create_advanced_models.py",
+    "name": "Global Macro Risk-On/Risk-Off Model",
+    "description": "Macro regime detection model using global indicators to switch between growth and defensive equity strategies in Indian markets."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "NIFTY 50 Intraday Scalping Model",
+    "description": "High-frequency LSTM model for 1-5 minute scalping trades on NIFTY 50 stocks using real-time price action, volume spikes, and order flow analysis."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Bank NIFTY Options Flow Predictor",
+    "description": "CNN-based model analyzing Bank NIFTY options flow, open interest changes, and institutional activity for directional bias prediction."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Sector Rotation Momentum Model",
+    "description": "XGBoost model identifying sector rotation patterns using relative strength analysis across NIFTY sectoral indices for swing trading."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Earnings Surprise Alpha Generator",
+    "description": "Multi-modal deep learning model predicting earnings surprises and post-earnings price movements using financial data and sentiment analysis."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Technical Breakout Pattern Scanner",
+    "description": "Computer vision model identifying technical breakout patterns (triangles, flags, cups) across 200+ stocks for swing trading opportunities."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Mean Reversion Quant Strategy",
+    "description": "Statistical arbitrage model exploiting mean reversion in stock prices using z-score analysis and pair trading methodology."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "FII/DII Flow Impact Predictor",
+    "description": "Time series model analyzing foreign and domestic institutional money flows to predict medium-term market direction and stock selection."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Fundamental Growth Score Model",
+    "description": "Ensemble model combining fundamental analysis with growth metrics to identify undervalued growth stocks for medium-term investment."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Multi-Factor Equity Quant Model",
+    "description": "Advanced factor model combining value, momentum, quality, and low volatility factors for systematic equity portfolio construction."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Smart Beta ESG Enhanced Model",
+    "description": "ESG-integrated smart beta model optimizing risk-adjusted returns while maintaining sustainability criteria for long-term equity allocation."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Currency Hedged Equity Model",
+    "description": "Multi-asset model optimizing equity exposure while managing currency risk through dynamic hedging strategies for global diversification."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Commodity-Equity Correlation Model",
+    "description": "Cross-asset model analyzing commodity price movements"
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "NIFTY ETF Arbitrage Scanner",
+    "description": "Real-time arbitrage model identifying price discrepancies between NIFTY ETFs and underlying index for risk-free profit opportunities."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Sectoral ETF Rotation Strategy",
+    "description": "Momentum-based model rotating between sectoral ETFs based on relative performance, economic cycles, and global trends."
+  },
+  {
+    "source_file": "create_equity_models.py",
+    "name": "Volatility Regime Detection Model",
+    "description": "Hidden Markov Model detecting market volatility regimes to adjust position sizing and strategy selection dynamically."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "NIFTY Options Put-Call Ratio Analyzer",
+    "description": "Advanced options analytics model using Upstox API to analyze put-call ratios and predict market direction for NIFTY 50 index options."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "Options Greeks Delta-Gamma Scanner",
+    "description": "Sophisticated ML model analyzing options Greeks (Delta, Gamma, Theta, Vega) to identify optimal strike prices and trading opportunities."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "NIFTY Options Volatility Smile Predictor",
+    "description": "Machine learning model analyzing implied volatility patterns across strike prices to predict volatility smile distortions and trading opportunities."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "Options Open Interest Flow Analyzer",
+    "description": "Advanced analytics model tracking open interest changes and options flow to predict institutional sentiment and market direction."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "Options Straddle-Strangle Strategy Optimizer",
+    "description": "ML-powered strategy selector for options straddles and strangles based on volatility forecasts and market conditions."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "NIFTY Options Support-Resistance Level Predictor",
+    "description": "Machine learning model identifying key support and resistance levels using options data and predicting price targets for NIFTY 50."
+  },
+  {
+    "source_file": "create_options_models.py",
+    "name": "{model_data["
+  },
+  {
+    "name": "AI-Powered Stock Screener",
+    "description": "Machine learning model screening stocks based on technical and fundamental criteria",
+    "model_type": "Multi-Factor Screening",
+    "accuracy": 84.2,
+    "category": "Stock Screening",
+    "features": "P/E Ratio, ROE, Debt-to-Equity, Technical Indicators",
+    "timeframe": "Daily screening",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Cryptocurrency Correlation Tracker",
+    "description": "Model tracking correlations between crypto and Indian equity markets",
+    "model_type": "Correlation Analysis",
+    "accuracy": 72.8,
+    "category": "Cross-Asset",
+    "features": "Bitcoin Price, Ethereum, Market Sentiment, FII Flows",
+    "timeframe": "Daily correlation",
+    "risk_level": "High"
+  },
+  {
+    "name": "Mutual Fund NAV Predictor",
+    "description": "Predictive model for mutual fund NAV movements based on underlying holdings",
+    "model_type": "Portfolio Analysis",
+    "accuracy": 76.5,
+    "category": "Mutual Funds",
+    "features": "Holdings Analysis, AUM Changes, Fund Manager Performance",
+    "timeframe": "Daily NAV prediction",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Smart Beta Factor Model",
+    "description": "Factor-based model identifying smart beta opportunities in Indian markets",
+    "model_type": "Factor Analysis",
+    "accuracy": 79.3,
+    "category": "Factor Investing",
+    "features": "Quality, Momentum, Low Volatility, Value Factors",
+    "timeframe": "Monthly rebalancing",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Real Estate Sector Analyzer",
+    "description": "Specialized model for real estate and construction sector stocks",
+    "model_type": "Sector Analysis",
+    "accuracy": 71.6,
+    "category": "Real Estate",
+    "features": "Interest Rates, Government Policy, Project Pipeline",
+    "timeframe": "Quarterly analysis",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Pharmaceutical Patent Expiry Model",
+    "description": "Model tracking pharma stocks based on patent expiries and new drug approvals",
+    "model_type": "Pharma Analysis",
+    "accuracy": 83.1,
+    "category": "Pharmaceuticals",
+    "features": "Patent Database, FDA Approvals, R&D Pipeline",
+    "timeframe": "Event-driven",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Auto Sales Prediction Model",
+    "description": "Model predicting auto sector performance based on sales data and economic indicators",
+    "model_type": "Sales Forecasting",
+    "accuracy": 77.9,
+    "category": "Automotive",
+    "features": "Monthly Sales, Rural Demand, Fuel Prices, Interest Rates",
+    "timeframe": "Monthly prediction",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "IT Services Dollar Revenue Model",
+    "description": "Model for IT services companies focusing on dollar revenue and margin analysis",
+    "model_type": "Revenue Analysis",
+    "accuracy": 80.7,
+    "category": "Information Technology",
+    "features": "USD-INR, Client Addition, Margin Expansion, Digital Revenue",
+    "timeframe": "Quarterly analysis",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Steel Price Cycle Predictor",
+    "description": "Cyclical model predicting steel prices and related equity performance",
+    "model_type": "Commodity Cycle",
+    "accuracy": 74.2,
+    "category": "Steel & Metals",
+    "features": "Steel Prices, Iron Ore, Coal Prices, Global Demand",
+    "timeframe": "Monthly cycle analysis",
+    "risk_level": "High"
+  },
+  {
+    "name": "Energy Transition Investment Model",
+    "description": "Model identifying renewable energy and transition investment opportunities",
+    "model_type": "Thematic Investing",
+    "accuracy": 75.8,
+    "category": "Renewable Energy",
+    "features": "Solar Capacity, Wind Projects, Government Incentives",
+    "timeframe": "Long-term thematic",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #48",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 87.5,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #49",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 88.5,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #50",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 89.5,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #51",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 65.5,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #52",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 66.5,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #53",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 67.5,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #54",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 68.5,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #55",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 69.5,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #56",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 70.5,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #57",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 71.6,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #58",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 72.6,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #59",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 73.6,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #60",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 74.6,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #61",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 75.6,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #62",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 76.6,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #63",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 77.6,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #64",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 78.6,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #65",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 79.6,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #66",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 80.7,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #67",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 81.7,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #68",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 82.7,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #69",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 83.7,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #70",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 84.7,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #71",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 85.7,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #72",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 86.7,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #73",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 87.7,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #74",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 88.7,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #75",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 89.7,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #76",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 65.8,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #77",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 66.8,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #78",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 67.8,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #79",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 68.8,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #80",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 69.8,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #81",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 70.8,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #82",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 71.8,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #83",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 72.8,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #84",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 73.8,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #85",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 74.8,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #86",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 75.8,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #87",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 76.9,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #88",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 77.9,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #89",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 78.9,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #90",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 79.9,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #91",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 80.9,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #92",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 81.9,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #93",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 82.9,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #94",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 83.9,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #95",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 84.9,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #96",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 86.0,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #97",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 87.0,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #98",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 88.0,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #99",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 89.0,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #100",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 90.0,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #101",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 66.0,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #102",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 67.0,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #103",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 68.0,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #104",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 69.0,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #105",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 70.0,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #106",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 71.0,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #107",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 72.1,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #108",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 73.1,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #109",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 74.1,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium-High"
+  },
+  {
+    "name": "Advanced Trading Model #110",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 75.1,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "High"
+  },
+  {
+    "name": "Advanced Trading Model #111",
+    "description": "Sophisticated quantitative analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 76.1,
+    "category": "Quantitative",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Weekly",
+    "risk_level": "Low"
+  },
+  {
+    "name": "Advanced Trading Model #112",
+    "description": "Sophisticated algorithmic analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 77.1,
+    "category": "Risk Management",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Monthly",
+    "risk_level": "Medium-Low"
+  },
+  {
+    "name": "Advanced Trading Model #113",
+    "description": "Sophisticated technical analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 78.1,
+    "category": "Technical Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Intraday",
+    "risk_level": "Medium"
+  },
+  {
+    "name": "Advanced Trading Model #114",
+    "description": "Sophisticated fundamental analysis model for Indian equity markets",
+    "model_type": "('ML', 'AI', 'Statistical', 'Deep Learning')[i%4] Model",
+    "accuracy": 79.1,
+    "category": "Fundamental Analysis",
+    "features": "Advanced mathematical models, real-time data processing, risk optimization",
+    "timeframe": "Daily",
+    "risk_level": "Medium-High"
+  }
+]

@@ -1,0 +1,67 @@
+"""
+ML Models Database Configuration
+Separate PostgreSQL connection for ML models while keeping main app SQLite
+"""
+
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+
+# PostgreSQL connection for ML models - using environment variables for security
+ML_DATABASE_URL = os.getenv(
+    'ML_DATABASE_URL', 
+    'postgresql://localhost:5432/research'  # Safe default for development
+)
+
+# Create separate engine for ML models
+ml_engine = create_engine(
+    ML_DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=280,
+    pool_size=10,
+    max_overflow=20,
+    echo=False  # Set to True for SQL debugging
+)
+
+# Create session factory for ML models
+MLSession = scoped_session(sessionmaker(bind=ml_engine))
+
+# Create base class for ML model tables
+MLBase = declarative_base()
+
+def get_ml_session():
+    """Get a database session for ML models"""
+    return MLSession()
+
+def init_ml_database():
+    """Initialize ML database tables"""
+    try:
+        # Import all ML model classes here to ensure they're registered
+        from app import PublishedModel, MLModelResult, ScriptExecution, PublishedModelRunHistory, PublishedModelEvaluation
+        
+        # Create all tables in the ML database
+        MLBase.metadata.create_all(bind=ml_engine)
+        print("✅ ML Database initialized with PostgreSQL")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to initialize ML database: {e}")
+        return False
+
+def test_ml_connection():
+    """Test the ML database connection"""
+    try:
+        # Test basic connection
+        from sqlalchemy import text
+        with ml_engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            row = result.fetchone()
+            if row and row[0] == 1:
+                print("✅ ML Database connection successful")
+                return True
+    except Exception as e:
+        print(f"❌ ML Database connection failed: {e}")
+        return False
+
+# Export the session for use in ML model operations
+__all__ = ['MLSession', 'get_ml_session', 'init_ml_database', 'test_ml_connection', 'ml_engine']

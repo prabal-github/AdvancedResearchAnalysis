@@ -1,0 +1,296 @@
+{% extends "layout.html" %}
+{% block title %}Plagiarism Analysis - {{ report.analyst }} - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Plagiarism Analysis</h1>
+        <p class="text-muted mb-0">Detailed similarity detection for Report {{ report.id }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('view_report', report_id=report.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Report
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Report Summary -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Report Summary</h5>
+            {% set plagiarism_score = overall_similarity_score or 0.0 %}
+            {% if plagiarism_score < 0.3 %}
+                <span class="badge bg-success fs-6">Original Content</span>
+            {% elif plagiarism_score < 0.7 %}
+                <span class="badge bg-warning fs-6">Moderate Similarity</span>
+            {% else %}
+                <span class="badge bg-danger fs-6">High Similarity Detected</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h6 class="text-muted">Current Report</h6>
+                <p class="fw-semibold">{{ report.analyst }}</p>
+                <small class="text-muted">{{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-muted">Overall Similarity Score</h6>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="progress flex-grow-1 me-3" style="height: 12px;">
+                        {% set similarity_percentage = (plagiarism_score * 100) %}
+                        {% if similarity_percentage < 30 %}
+                            {% set progress_class = "bg-success" %}
+                        {% elif similarity_percentage < 70 %}
+                            {% set progress_class = "bg-warning" %}
+                        {% else %}
+                            {% set progress_class = "bg-danger" %}
+                        {% endif %}
+                        <div class="progress-bar {{ progress_class }}" style="width: {{ similarity_percentage }}%"></div>
+                    </div>
+                    <span class="fw-bold">{{ "%.1f"|format(similarity_percentage) }}%</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-muted">Detection Status</h6>
+                <div class="d-flex align-items-center">
+                    {% if report.plagiarism_checked %}
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span class="text-success">Checked</span>
+                    {% else %}
+                        <i class="bi bi-clock text-warning me-2"></i>
+                        <span class="text-warning">Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Plagiarism Matches -->
+{% if plagiarism_matches %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Similar Reports Found ({{ plagiarism_matches|length }})
+        </h5>
+    </div>
+    <div class="card-body">
+        {% for match in plagiarism_matches %}
+        <div class="border rounded p-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <h6 class="fw-bold mb-2">
+                        <i class="bi bi-person-fill me-1 text-warning"></i>
+                        Original Creator: {{ match.matched_report.analyst }}
+                        <small class="text-muted">(Report ID: {{ match.matched_report_id }})</small>
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-calendar me-1"></i>
+                            Original Creation: {{ match.matched_report.created_at.strftime('%B %d, %Y at %H:%M') }}
+                        </p>
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-search me-1"></i>
+                            Detection Method: {{ match.match_type.replace('_', ' ').title() }}
+                        </p>
+                        {% if match.content_analysis %}
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-clipboard-data me-1"></i>
+                            Content Copied: {{ match.content_analysis.get('content_type', 'Multiple sections') }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Content Attribution Details -->
+                    {% if match.content_analysis %}
+                    <div class="alert alert-warning alert-dismissible mb-2" role="alert">
+                        <h6 class="alert-heading mb-2">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Content Attribution Required
+                        </h6>
+                        <small class="mb-0">
+                            <strong>Source:</strong> {{ match.content_analysis.get('sections_copied', 'Multiple sections') }} from 
+                            <strong>{{ match.matched_report.analyst }}</strong>'s report created on 
+                            <strong>{{ match.matched_report.created_at.strftime('%B %d, %Y') }}</strong>
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-end">
+                    {% set similarity_percentage = (match.similarity_score * 100) %}
+                    {% if similarity_percentage > 80 %}
+                        <span class="badge bg-danger fs-6 mb-2">{{ similarity_percentage | round(1) }}% Similar</span>
+                        <div class="text-danger small fw-bold">High Similarity</div>
+                    {% elif similarity_percentage > 60 %}
+                        <span class="badge bg-warning fs-6 mb-2">{{ similarity_percentage | round(1) }}% Similar</span>
+                        <div class="text-warning small fw-bold">Moderate Similarity</div>
+                    {% else %}
+                        <span class="badge bg-info fs-6 mb-2">{{ similarity_percentage | round(1) }}% Similar</span>
+                        <div class="text-info small fw-bold">Low Similarity</div>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <a href="{{ url_for('view_report', report_id=match.matched_report_id) }}" 
+                           class="btn btn-sm btn-outline-primary mb-1" target="_blank">
+                            <i class="bi bi-eye me-1"></i>View Original
+                        </a>
+                        {% if match.content_analysis %}
+                        <div class="btn btn-sm btn-outline-info" 
+                             onclick="showContentAnalysis({{ loop.index0 }})" 
+                             data-bs-toggle="tooltip" 
+                             title="View detailed content analysis">
+                            <i class="bi bi-analytics me-1"></i>Analysis
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Similar Segments -->
+            {% if match.matched_segments %}
+            {# Handle both already-parsed lists and JSON strings #}
+            {% if match.matched_segments is iterable and match.matched_segments is not string %}
+                {% set segments = match.matched_segments %}
+            {% else %}
+                {% set segments = match.matched_segments|loads %}
+            {% endif %}
+            {% if segments %}
+            <div class="mt-4">
+                <h6 class="text-muted mb-3">Similar Text Segments</h6>
+                {% for segment in segments[:3] %}
+                <div class="bg-light rounded p-3 mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted fw-semibold">Current Report:</small>
+                            <div class="border-start border-primary border-3 ps-3 mt-1">
+                                <p class="mb-0 small">{{ segment.text1 }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted fw-semibold">Matched Report:</small>
+                            <div class="border-start border-warning border-3 ps-3 mt-1">
+                                <p class="mb-0 small">{{ segment.text2 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-percent me-1"></i>
+                            Segment Similarity: {{ (segment.similarity * 100) | round(1) }}%
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if segments|length > 3 %}
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="toggleMoreSegments({{ loop.index0 }})">
+                        <i class="bi bi-chevron-down me-1"></i>
+                        Show {{ segments|length - 3 }} more segments
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<!-- No Matches Found -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-shield-check fs-1 text-success d-block mb-3"></i>
+        <h4 class="mb-2">No Plagiarism Detected</h4>
+        <p class="text-muted mb-0">This report appears to contain original content with no significant similarities to existing reports.</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Original Report Text -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Original Report Text</h5>
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleReportText()">
+                <i class="bi bi-eye me-1"></i>Toggle View
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="reportText" style="max-height: 400px; overflow-y: auto;">
+            <div class="bg-light rounded p-3">
+                <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">{{ report.original_text }}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showContentAnalysis(matchIndex) {
+    // Show detailed content analysis modal or alert
+    const plagiarismMatches = {{ matches_for_js | tojson | safe }};
+    if (plagiarismMatches && plagiarismMatches[matchIndex] && plagiarismMatches[matchIndex].content_analysis) {
+        const analysis = plagiarismMatches[matchIndex].content_analysis;
+        const originalCreator = plagiarismMatches[matchIndex].matched_report.analyst;
+        const creationDate = new Date(plagiarismMatches[matchIndex].matched_report.created_at).toLocaleDateString();
+        
+        let message = `Detailed Content Analysis:\n\n`;
+        message += `Original Creator: ${originalCreator}\n`;
+        message += `Creation Date: ${creationDate}\n`;
+        message += `Content Type: ${analysis.content_type || 'Multiple sections'}\n`;
+        message += `Sections Copied: ${analysis.sections_copied || 'Various sections'}\n`;
+        message += `Similarity Score: ${(plagiarismMatches[matchIndex].similarity_score * 100).toFixed(1)}%\n\n`;
+        
+        if (analysis.detailed_segments) {
+            message += `Copied Segments:\n`;
+            analysis.detailed_segments.forEach((segment, idx) => {
+                message += `${idx + 1}. "${segment.text}" (${(segment.similarity * 100).toFixed(1)}% similar)\n`;
+            });
+        }
+        
+        alert(message);
+    } else {
+        alert('Content analysis data not available for this match.');
+    }
+}
+
+function toggleMoreSegments(matchIndex) {
+    // Implementation for showing more segments
+    const segmentContainer = document.querySelector(`#moreSegments${matchIndex}`);
+    if (segmentContainer) {
+        if (segmentContainer.style.display === 'none') {
+            segmentContainer.style.display = 'block';
+        } else {
+            segmentContainer.style.display = 'none';
+        }
+    }
+    console.log('Toggle more segments for match', matchIndex);
+}
+
+function toggleReportText() {
+    const reportText = document.getElementById('reportText');
+    if (reportText.style.maxHeight === '400px') {
+        reportText.style.maxHeight = 'none';
+    } else {
+        reportText.style.maxHeight = '400px';
+    }
+}
+
+// Initialize Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+{% endblock %}

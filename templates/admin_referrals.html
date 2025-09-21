@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Referral System - PredictRAM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .admin-actions {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> Admin Panel
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/admin/dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Main Site
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">
+                    <i class="fas fa-users"></i> Referral System Management
+                </h1>
+            </div>
+        </div>
+
+        <!-- Overview Statistics -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_users }}</div>
+                    <div class="text-muted">Total Users</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_referrals }}</div>
+                    <div class="text-muted">Total Referrals</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_credits_issued }}</div>
+                    <div class="text-muted">Credits Issued</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_credits_used }}</div>
+                    <div class="text-muted">Credits Used</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="admin-actions">
+                    <h5><i class="fas fa-tools"></i> Admin Actions</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Add Bonus Credits</h6>
+                            <form id="addCreditsForm">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="userId" placeholder="User ID" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" id="userType" required>
+                                            <option value="investor">Investor</option>
+                                            <option value="analyst">Analyst</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" class="form-control" id="creditAmount" placeholder="Credits" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-plus"></i> Add Credits
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <input type="text" class="form-control" id="creditReason" placeholder="Reason for bonus credits">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Quick Stats</h6>
+                            <p class="mb-1">Average credits per user: {{ "%.1f"|format((total_credits_issued / total_users) if total_users > 0 else 0) }}</p>
+                            <p class="mb-1">Credit utilization: {{ "%.1f"|format((total_credits_used / total_credits_issued * 100) if total_credits_issued > 0 else 0) }}%</p>
+                            <p class="mb-1">Referral conversion: {{ "%.1f"|format((total_referrals / total_users * 100) if total_users > 0 else 0) }}%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Referrers -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-trophy"></i> Top Referrers</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if top_referrers %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>User ID</th>
+                                        <th>Type</th>
+                                        <th>Referrals</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for referrer in top_referrers %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ referrer.referrer_id }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if referrer.referrer_type == 'investor' %}info{% else %}warning{% endif %}">
+                                                {{ referrer.referrer_type.title() }}
+                                            </span>
+                                        </td>
+                                        <td>{{ referrer.referral_count }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No referrals yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-clock"></i> Recent Referrals</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_referrals %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Referrer</th>
+                                        <th>Referee</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for referral in recent_referrals %}
+                                    <tr>
+                                        <td>{{ referral.created_at.strftime('%m/%d %H:%M') }}</td>
+                                        <td>
+                                            {{ referral.referrer_id[:20] }}...
+                                            <br><small class="text-muted">{{ referral.referrer_type }}</small>
+                                        </td>
+                                        <td>
+                                            {{ referral.referee_id[:20] }}...
+                                            <br><small class="text-muted">{{ referral.referee_type }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if referral.status == 'confirmed' %}success{% else %}warning{% endif %}">
+                                                {{ referral.status.title() }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No recent referrals.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-receipt"></i> Recent Credit Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_transactions %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Reference</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in recent_transactions %}
+                                    <tr>
+                                        <td>{{ transaction.created_at.strftime('%m/%d/%Y %H:%M') }}</td>
+                                        <td>
+                                            {{ transaction.user_id[:25] }}...
+                                            <br><small class="text-muted">{{ transaction.user_type }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if transaction.transaction_type == 'earned' %}success{% elif transaction.transaction_type == 'used' %}danger{% else %}info{% endif %}">
+                                                {{ transaction.transaction_type.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'used' %}-{% else %}+{% endif %}{{ transaction.amount }}
+                                        </td>
+                                        <td>{{ transaction.description[:50] }}{% if transaction.description|length > 50 %}...{% endif %}</td>
+                                        <td><small class="text-muted">{{ transaction.reference_id }}</small></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No recent transactions.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('addCreditsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const userType = document.getElementById('userType').value;
+            const amount = parseInt(document.getElementById('creditAmount').value);
+            const reason = document.getElementById('creditReason').value || 'Admin bonus';
+            
+            if (!userId || !amount || amount <= 0) {
+                alert('Please fill in all required fields with valid values.');
+                return;
+            }
+            
+            fetch('/api/admin/credits/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    user_type: userType,
+                    amount: amount,
+                    reason: reason
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Success: ${data.message}`);
+                    // Clear form
+                    document.getElementById('addCreditsForm').reset();
+                    // Refresh page to show updated stats
+                    location.reload();
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding credits.');
+            });
+        });
+
+        // Auto-refresh every 2 minutes
+        setInterval(() => {
+            location.reload();
+        }, 120000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PredictRAM Talent Hunt — Research Analyst Internship</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#0f1320; color:#e9eef9; }
+    .hero { background:linear-gradient(135deg,#10182f 0%,#0b1f3a 100%); border-radius:16px; padding:32px; }
+    .badge-pill { border-radius:50rem; padding:.5rem .75rem; }
+    .card { background:#121a2b; border:1px solid rgba(255,255,255,0.06); }
+    .param-badge { background:#14223a; color:#a8c1ff; border:1px solid #223251; }
+    .muted { color:#a7b4c9; }
+    a.btn-apply { background:#2f7df6; border:none; }
+    a.btn-apply:hover { background:#1968ee; }
+    .brand { color:#89c2ff; }
+  </style>
+  <meta name="description" content="PredictRAM Talent Hunt: India’s only risk management and financial analytics firm backed by IIT Kanpur, Tenity F10 Singapore Graduate and SEBI registered Research Analysts. Apply for Research Analyst internships.">
+</head>
+<body>
+  <div class="container py-5">
+    <div class="hero mb-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <h1 class="mb-2">PredictRAM Talent Hunt</h1>
+          <p class="mb-0 muted">India’s only Risk Management and Financial Analytics firm — <span class="brand">Backed by IIT Kanpur</span>, Tenity F10 Singapore Graduate and <span class="brand">SEBI registered Research Analysts</span>.</p>
+        </div>
+        <div>
+          <a href="{{ url_for('register_analyst') }}" class="btn btn-apply btn-lg">Apply Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card p-4 mb-4">
+          <h3 class="mb-2">What is this?</h3>
+          <p class="mb-0">We’re launching a Talent Hunt for Financial Research Analysts. You’ll prepare research reports and analyze major market events — government policies, macro and micro economic factors, and company financial events. We evaluate your performance using transparent parameters. Top performers get internship opportunities with us or partner companies.</p>
+        </div>
+
+        <div class="card p-4 mb-4">
+          <h3 class="mb-3">How we evaluate</h3>
+          <p class="muted">Our scoring engine analyzes every report and produces a composite Quality Score. Below are the parameters and weights we use.</p>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Factual Accuracy</strong>
+                <div class="small muted">Data sources, metrics, numeric evidence</div>
+                <div class="small">Weight: 16%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Predictive Power</strong>
+                <div class="small muted">Backtest/trend consistency</div>
+                <div class="small">Weight: 12%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Bias Control</strong>
+                <div class="small muted">Neutral tone, balanced perspective, risk acknowledgment, scenarios</div>
+                <div class="small">Weight: 9%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Originality</strong>
+                <div class="small muted">Lower plagiarism → higher originality</div>
+                <div class="small">Weight: 9%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Risk Disclosure</strong>
+                <div class="small muted">Specific risks, breadth, clarity</div>
+                <div class="small">Weight: 11%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Transparency</strong>
+                <div class="small muted">Assumptions, data references</div>
+                <div class="small">Weight: 7%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Geopolitical Assessment</strong>
+                <div class="small muted">Macro context and implications</div>
+                <div class="small">Weight: 9%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>SEBI Compliance</strong>
+                <div class="small muted">Disclosures, disclaimers, conflicts, methodology</div>
+                <div class="small">Weight: 7%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Content Quality Metrics</strong>
+                <div class="small muted">Depth (financial/technical), citations, price target clarity, timelines, risk mentions</div>
+                <div class="small">Weight: 5%</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Content Guidelines Compliance</strong>
+                <div class="small muted">Methodology explained, assumptions stated, peer comparison, sensitivity, timelines</div>
+                <div class="small">Weight: 5%</div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="p-3 rounded-3 param-badge h-100">
+                <strong>Stock Quality Assessment</strong>
+                <div class="small muted">Ticker-level quality rolled into portfolio insights</div>
+                <div class="small">Weight: 10%</div>
+              </div>
+            </div>
+          </div>
+          <hr class="border-secondary my-4" />
+          <p class="mb-2"><strong>Penalties</strong> reduce the base score where applicable:</p>
+          <ul class="mb-0">
+            <li>Plagiarism Penalty (based on plagiarism score)</li>
+            <li>AI-detection Penalty (based on AI probability)</li>
+          </ul>
+        </div>
+
+        <div class="card p-4 mb-4">
+          <h3 class="mb-2">What you’ll do</h3>
+          <ul class="mb-0">
+            <li>Prepare high-quality equity research reports</li>
+            <li>Analyze market events: government policy changes, macro and micro developments, company financial events</li>
+            <li>Use evidence, data, and balanced argumentation; state assumptions clearly</li>
+          </ul>
+        </div>
+
+        <div class="card p-4 mb-4">
+          <h3 class="mb-2">Selection & Internship</h3>
+          <p class="mb-2">We shortlist based on the metrics above. Top performers are offered internships with PredictRAM or partner companies.</p>
+          <p class="mb-0"><a href="{{ url_for('register_analyst') }}" class="btn btn-apply">Apply Here</a></p>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card p-4 mb-4">
+          <h5 class="mb-2">Why PredictRAM?</h5>
+          <ul class="mb-0">
+            <li>India’s only Risk Management & Financial Analytics firm of its kind</li>
+            <li>Backed by IIT Kanpur, Tenity F10 Singapore Graduate</li>
+            <li>SEBI Registered Research Analysts</li>
+            <li>World-class infra to enhance your skills</li>
+          </ul>
+        </div>
+        <div class="card p-4">
+          <h5 class="mb-2">Quick Tips</h5>
+          <ul class="mb-0">
+            <li>Always cite data sources and quantify claims</li>
+            <li>Explain methodology and assumptions</li>
+            <li>Be balanced; outline risks and scenarios</li>
+            <li>Ensure SEBI-compliant disclosures</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Public view: No authentication required for this page -->
+  <!-- "Apply Here" uses existing route: register_analyst -->
+</body>
+</html>

@@ -1,0 +1,1555 @@
+{% extends "layout.html" %}
+{% block title %}Trading Calls Dashboard - Market Intelligence{% endblock %}
+
+{% block extra_css %}
+<style>
+    .modern-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    
+    .modern-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+    }
+    
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px 15px 0 0;
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: scale(1.05);
+    }
+    
+    .metric-card.blue {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .metric-card.green {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    .metric-card.purple {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    
+    .confidence-badge {
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .confidence-high {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+    }
+    
+    .confidence-medium {
+        background: linear-gradient(45deg, #ffc107, #fd7e14);
+        color: white;
+    }
+    
+    .confidence-low {
+        background: linear-gradient(45deg, #6c757d, #495057);
+        color: white;
+    }
+    
+    .model-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .btst-icon {
+        background: linear-gradient(45deg, #00c9ff, #92fe9d);
+    }
+    
+    .glow-button {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .glow-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        color: white;
+    }
+    
+    .insight-item {
+        border-radius: 10px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .insight-item:hover {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .insight-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .performance-stats {
+        padding: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .progress {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .ai-insight-cell {
+        max-width: 200px;
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+    
+    .ai-insight-cell small {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .results-table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .results-table thead {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .results-table tbody tr:hover {
+        background-color: rgba(102, 126, 234, 0.1);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+    }
+    
+    .recommendation-card {
+        border-left: 4px solid;
+        border-radius: 0 12px 12px 0;
+        background: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .recommendation-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    .buy-card {
+        border-left-color: #28a745;
+    }
+    
+    .sell-card {
+        border-left-color: #dc3545;
+    }
+    
+    .hold-card {
+        border-left-color: #ffc107;
+    }
+    
+    .floating-stats {
+        position: fixed;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        z-index: 1000;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        max-width: 200px;
+    }
+    
+    .performance-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    
+    .indicator-excellent { background: #28a745; }
+    .indicator-good { background: #20c997; }
+    .indicator-average { background: #ffc107; }
+    .indicator-poor { background: #dc3545; }
+    
+    .animated-counter {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .loading-shimmer {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0 d-flex align-items-center">
+            <div class="model-icon btst-icon me-3">
+                <i class="bi bi-robot"></i>
+            </div>
+            <div>
+                <span class="animated-counter">AI-Powered</span> Market Intelligence
+                <div class="h6 text-muted mt-1 mb-0">
+                    <i class="bi bi-cpu me-1"></i>
+                    Advanced machine learning insights for smarter investment decisions
+                </div>
+            </div>
+        </h1>
+    </div>
+    <div>
+        <a href="/investor_dashboard" class="glow-button me-2">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+        <button class="glow-button" onclick="refreshResults()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </button>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Enhanced Performance Overview -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="modern-card">
+            <div class="gradient-header">
+                <h5 class="mb-0 d-flex align-items-center">
+                    <i class="bi bi-graph-up-arrow me-2"></i> 
+                    Live Trading Calls Dashboard
+                </h5>
+                <p class="mb-0 mt-2 opacity-75">Real-time trading signals and market opportunities</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="metric-card blue pulse-animation">
+                            <i class="bi bi-graph-up fs-2 mb-2"></i>
+                            <h3 class="mb-1">{{ summary_stats.total_calls if summary_stats else 0 }}</h3>
+                            <p class="mb-0">Active Calls</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card green">
+                            <i class="bi bi-arrow-up-circle fs-2 mb-2"></i>
+                            <h3 class="mb-1">{{ summary_stats.buy_signals if summary_stats else 0 }}</h3>
+                            <p class="mb-0">BUY Signals</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card purple">
+                            <i class="bi bi-arrow-down-circle fs-2 mb-2"></i>
+                            <h3 class="mb-1">{{ summary_stats.sell_signals if summary_stats else 0 }}</h3>
+                            <p class="mb-0">SELL Signals</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card blue">
+                            <i class="bi bi-dash-circle fs-2 mb-2"></i>
+                            <h3 class="mb-1">{{ summary_stats.high_confidence_calls if summary_stats else 0 }}</h3>
+                            <p class="mb-0">High Confidence</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Insights -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="alert alert-info border-0" style="background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-radius: 12px;">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-lightbulb fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Market Outlook: {{ ai_insights.market_outlook if ai_insights else 'Analyzing market conditions...' }}</h6>
+                                    <p class="mb-0">{{ summary_stats.total_calls if summary_stats else 0 }} trading signals identified from {{ summary_stats.models_active if summary_stats else 0 }} models with average confidence of {{ summary_stats.avg_confidence if summary_stats else 0 }}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Insights & Analytics -->
+                {% if ai_insights %}
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="modern-card h-100">
+                            <div class="gradient-header">
+                                <h6 class="mb-0 d-flex align-items-center">
+                                    <i class="bi bi-robot me-2"></i>
+                                    AI Market Intelligence
+                                </h6>
+                                <small class="opacity-75">Powered by advanced ML algorithms</small>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="insight-item">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="insight-icon bg-primary">
+                                                    <i class="bi bi-graph-up"></i>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h6 class="mb-0">Market Outlook</h6>
+                                                    <small class="text-muted">Current sentiment</small>
+                                                </div>
+                                            </div>
+                                            <p class="text-dark">{{ ai_insights.market_outlook }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="insight-item">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="insight-icon bg-success">
+                                                    <i class="bi bi-shield-check"></i>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h6 class="mb-0">Risk Assessment</h6>
+                                                    <small class="text-muted">Current risk level</small>
+                                                </div>
+                                            </div>
+                                            <p class="text-dark">{{ ai_insights.risk_assessment }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="insight-item">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="insight-icon bg-warning">
+                                                    <i class="bi bi-lightbulb"></i>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h6 class="mb-0">Recommended Strategy</h6>
+                                                    <small class="text-muted">AI-powered suggestion</small>
+                                                </div>
+                                            </div>
+                                            <p class="text-dark">{{ ai_insights.recommended_strategy }}</p>
+                                        </div>
+                                    </div>
+                                    {% if ai_insights.key_trends %}
+                                    <div class="col-md-12">
+                                        <h6 class="mb-2">
+                                            <i class="bi bi-trending-up me-2"></i>Key Market Trends
+                                        </h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% for trend in ai_insights.key_trends %}
+                                            <span class="badge bg-light text-dark border">{{ trend }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="modern-card h-100">
+                            <div class="gradient-header">
+                                <h6 class="mb-0 d-flex align-items-center">
+                                    <i class="bi bi-graph-down me-2"></i>
+                                    Performance Analytics
+                                </h6>
+                                <small class="opacity-75">Historical insights</small>
+                            </div>
+                            <div class="card-body p-4">
+                                {% if historical_performance %}
+                                <div class="performance-stats">
+                                    <div class="stat-item mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted">Success Rate</span>
+                                            <span class="fw-bold text-success">{{ historical_performance.success_rate }}%</span>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: {{ historical_performance.success_rate }}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-item mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted">Avg. Confidence</span>
+                                            <span class="fw-bold text-primary">{{ historical_performance.average_confidence }}%</span>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 6px;">
+                                            <div class="progress-bar bg-primary" style="width: {{ historical_performance.average_confidence }}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="border-end">
+                                                <h5 class="text-primary mb-1">{{ historical_performance.total_calls_generated }}</h5>
+                                                <small class="text-muted">Calls Generated</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success mb-1">{{ historical_performance.models_used }}</h5>
+                                            <small class="text-muted">Models Active</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>
+                                            Last updated: {{ historical_performance.last_update if historical_performance.last_update else 'Recently' }}
+                                        </small>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="text-center py-4">
+                                    <i class="bi bi-graph-up text-muted display-6 mb-3"></i>
+                                    <p class="text-muted">Performance data will appear after running models</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trading Calls Table -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="modern-card">
+            <div class="card-header bg-white border-0 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-broadcast me-2 text-primary"></i> 
+                        Live Trading Calls
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="glow-button" onclick="refreshResults()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        </button>
+                        <button type="button" class="glow-button" onclick="exportCalls()">
+                            <i class="bi bi-download me-1"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if trading_calls %}
+                <div class="table-responsive">
+                    <table class="table results-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3">Stock Symbol</th>
+                                <th class="px-4 py-3">Signal</th>
+                                <th class="px-4 py-3">Current Price</th>
+                                <th class="px-4 py-3">Target/SL</th>
+                                <th class="px-4 py-3">Confidence</th>
+                                <th class="px-4 py-3">AI Insight</th>
+                                <th class="px-4 py-3">Model</th>
+                                <th class="px-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for call in trading_calls %}
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="model-icon btst-icon me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                            <i class="bi bi-graph-up"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="text-primary">{{ call.symbol }}</strong>
+                                            <br><small class="text-muted">{{ call.time_ago }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    {% if call.signal_type == 'BUY' %}
+                                    <span class="badge bg-success px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
+                                        <i class="bi bi-arrow-up me-1"></i>{{ call.signal_type }}
+                                    </span>
+                                    {% elif call.signal_type == 'SELL' %}
+                                    <span class="badge bg-danger px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
+                                        <i class="bi bi-arrow-down me-1"></i>{{ call.signal_type }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-warning px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
+                                        <i class="bi bi-dash me-1"></i>{{ call.signal_type }}
+                                    </span>
+                                    {% endif %}
+                                    <br><small class="text-muted">{{ call.risk_level }}</small>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <strong>₹{{ call.current_price if call.current_price else 'N/A' }}</strong>
+                                    {% if call.market_trend %}
+                                    <br><small class="text-muted">{{ call.market_trend }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3">
+                                    {% if call.target_price %}
+                                    <span class="text-success fw-bold">₹{{ call.target_price }}</span>
+                                    {% endif %}
+                                    {% if call.stop_loss %}
+                                    <br><span class="text-danger">SL: ₹{{ call.stop_loss }}</span>
+                                    {% endif %}
+                                    {% if call.potential_return %}
+                                    <br><small class="badge {% if call.potential_return > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ "+" if call.potential_return > 0 else "" }}{{ call.potential_return }}%
+                                    </small>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="confidence-badge confidence-{% if call.confidence > 80 %}high{% elif call.confidence > 60 %}medium{% else %}low{% endif %}">
+                                        {{ call.confidence }}%
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="ai-insight-cell">
+                                        <i class="bi bi-robot text-primary me-1"></i>
+                                        <small class="text-muted">{{ call.ai_insight if call.ai_insight else 'Analyzing...' }}</small>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge bg-light text-dark border">{{ call.model_source }}</span>
+                                    {% if call.volume_analysis %}
+                                    <br><small class="text-muted">{{ call.volume_analysis }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary rounded-pill me-1" onclick="viewCallDetails('{{ call.symbol }}')" 
+                                                data-bs-toggle="tooltip" title="View detailed analysis">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success rounded-pill" onclick="bookmarkCall('{{ call.symbol }}')"
+                                                data-bs-toggle="tooltip" title="Add to watchlist">
+                                            <i class="bi bi-bookmark"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="model-icon btst-icon mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                        <i class="bi bi-broadcast"></i>
+                    </div>
+                    <h5 class="text-muted mt-3">No Trading Calls Available</h5>
+                    <p class="text-muted">Trading signals are being analyzed. Check back in a few moments for fresh market opportunities.</p>
+                    <button class="glow-button mt-3" onclick="refreshResults()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Check for New Calls
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Trading Calls -->
+{% if trading_calls %}
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="modern-card">
+            <div class="card-header bg-white border-0 p-4">
+                <h5 class="mb-0 d-flex align-items-center">
+                    <i class="bi bi-star-fill me-2 text-warning"></i> 
+                    Featured Trading Calls
+                </h5>
+                <p class="text-muted mb-0 mt-2">High-confidence opportunities from our latest market analysis</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    {% for call in trading_calls[:3] %}
+                    <div class="col-md-4">
+                        <div class="modern-card">
+                            <div class="card-header bg-light border-0 p-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h6 class="text-primary mb-0">{{ call.symbol }}</h6>
+                                    <small class="text-muted">{{ call.category }}</small>
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="recommendation-card {% if call.signal == 'BUY' %}buy-card{% elif call.signal == 'SELL' %}sell-card{% else %}hold-card{% endif %} p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong class="text-dark">{{ call.symbol }}</strong>
+                                            <div class="mt-1">
+                                                {% if call.signal == 'BUY' %}
+                                                <span class="badge bg-success">{{ call.signal }}</span>
+                                                {% elif call.signal == 'SELL' %}
+                                                <span class="badge bg-danger">{{ call.signal }}</span>
+                                                {% else %}
+                                                <span class="badge bg-warning">{{ call.signal }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="confidence-badge confidence-{% if call.confidence > 80 %}high{% elif call.confidence > 60 %}medium{% else %}low{% endif %}">
+                                                {{ call.confidence }}%
+                                            </div>
+                                            <small class="text-muted d-block mt-1">₹{{ call.current_price }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Target: ₹{{ call.target_price }} | SL: ₹{{ call.stop_loss }}</small>
+                                        {% if call.potential_return %}
+                                        <div class="mt-1">
+                                            <span class="badge {% if call.potential_return > 0 %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 text-{% if call.potential_return > 0 %}success{% else %}danger{% endif %}">
+                                                {{ "+" if call.potential_return > 0 else "" }}{{ call.potential_return }}% return
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-outline-primary btn-sm rounded-pill" onclick="viewCallDetails('{{ call.symbol }}')">
+                                        <i class="bi bi-eye me-1"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trading Insights Summary -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="modern-card">
+            <div class="card-header bg-white border-0 p-4">
+                <h5 class="mb-0 d-flex align-items-center">
+                    <i class="bi bi-lightbulb-fill me-2 text-warning"></i> 
+                    Trading Insights Summary
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="alert alert-success border-0" style="background: linear-gradient(45deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1)); border-radius: 12px;">
+                            <h6><i class="bi bi-graph-up me-2"></i>Market Opportunities</h6>
+                            <p class="mb-0">{{ trading_stats.buy_signals }} BUY signals identified with high-confidence investment opportunities across multiple sectors. Focus on stocks showing strong technical momentum.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-warning border-0" style="background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(253, 126, 20, 0.1)); border-radius: 12px;">
+                            <h6><i class="bi bi-exclamation-triangle me-2"></i>Risk Assessment</h6>
+                            <p class="mb-0">Current market outlook shows {{ market_outlook.lower() }} conditions. Consider proper position sizing and stop-loss management for all active positions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Enhanced Result Details Modal -->
+<div class="modal fade" id="resultDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content modern-card">
+            <div class="modal-header gradient-header">
+                <h5 class="modal-title" id="resultDetailsTitle">
+                    <i class="bi bi-graph-up me-2"></i> AI Analysis Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="resultDetailsBody">
+                <div class="text-center">
+                    <div class="model-icon btst-icon mx-auto mb-3 loading-shimmer">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <p class="text-muted">Loading AI analysis results...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Compare Results Modal -->
+<div class="modal fade" id="compareModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content modern-card">
+            <div class="modal-header gradient-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-arrow-left-right me-2"></i> Compare AI Analysis Results
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Select First Analysis:</label>
+                        <select class="form-select" id="compareResult1" style="border-radius: 10px; border: 2px solid #e9ecef;">
+                            <option value="">Choose first result...</option>
+                            {% for result in results %}
+                            <option value="{{ result.id }}">{{ result.model_display_name }} - {{ result.created_at.strftime('%Y-%m-%d %H:%M') }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Select Second Analysis:</label>
+                        <select class="form-select" id="compareResult2" style="border-radius: 10px; border: 2px solid #e9ecef;">
+                            <option value="">Choose second result...</option>
+                            {% for result in results %}
+                            <option value="{{ result.id }}">{{ result.model_display_name }} - {{ result.created_at.strftime('%Y-%m-%d %H:%M') }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <button class="glow-button" onclick="performComparison()">
+                        <i class="bi bi-arrow-left-right me-2"></i> Compare Analysis Results
+                    </button>
+                </div>
+                <div id="comparisonResults"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content modern-card text-center">
+            <div class="modal-body p-4">
+                <div class="model-icon btst-icon mx-auto mb-3 pulse-animation">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div class="loading-shimmer p-2 rounded mb-3">
+                    <p id="loadingMessage" class="mb-0 fw-bold">Processing AI Analysis...</p>
+                </div>
+                <small class="text-muted">Please wait while our AI models process the data</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables for comparison selection
+let selectedResults = [];
+
+// Add event listeners when document loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for compare buttons
+    document.querySelectorAll('.compare-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const resultId = this.dataset.resultId;
+            const modelName = this.dataset.modelName;
+            const date = this.dataset.date;
+            selectForComparison(resultId, modelName, date);
+        });
+    });
+});
+
+// Load result details
+function viewResultDetails(resultId) {
+    const modal = new bootstrap.Modal(document.getElementById('resultDetailsModal'));
+    document.getElementById('resultDetailsTitle').textContent = 'Loading Analysis Details...';
+    document.getElementById('resultDetailsBody').innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    
+    modal.show();
+    
+    fetch(`/api/investor/ml_result/${resultId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayResultDetails(data.result);
+            } else {
+                document.getElementById('resultDetailsBody').innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('resultDetailsBody').innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error loading result details:</strong> ${error.message || 'Please check your authentication and try again.'}
+                </div>`;
+        });
+}
+
+function displayResultDetails(result) {
+    document.getElementById('resultDetailsTitle').textContent = `${result.model_display_name} - Analysis Details`;
+    
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6>Analysis Overview</h6>
+                <table class="table table-sm">
+                    <tr><td>Model:</td><td><strong>${result.model_display_name}</strong></td></tr>
+                    <tr><td>Category:</td><td>${result.stock_category}</td></tr>
+                    <tr><td>Analysis Date:</td><td>${new Date(result.created_at).toLocaleString()}</td></tr>
+                    <tr><td>Run by:</td><td>${result.run_by}</td></tr>
+                    <tr><td>Execution Time:</td><td>${result.execution_time}s</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6>Performance Metrics</h6>
+                <table class="table table-sm">
+                    <tr><td>Total Analyzed:</td><td><span class="badge bg-info">${result.total_analyzed}</span></td></tr>
+                    <tr><td>Actionable Results:</td><td><span class="badge bg-success">${result.actionable_count}</span></td></tr>
+                    <tr><td>Average Confidence:</td><td><span class="badge bg-primary">${result.avg_confidence}%</span></td></tr>
+                    ${result.avg_btst_score ? `<tr><td>Average BTST Score:</td><td><span class="badge bg-warning">${result.avg_btst_score}</span></td></tr>` : ''}
+                </table>
+            </div>
+        </div>
+    `;
+    
+    if (result.summary) {
+        html += `
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h6>Analysis Summary</h6>
+                    <div class="alert alert-info">${result.summary}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Model Quality & Governance Scores
+    if (result.model_quality && Array.isArray(result.model_quality) && result.model_quality.length) {
+        html += `
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h6>Model Quality & Governance</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Dimension</th>
+                                <th scope="col" style="width:90px;">Score</th>
+                                <th scope="col" style="width:120px;">Level</th>
+                                <th scope="col">Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${result.model_quality.map(row => {
+                                const badgeClass = row.score >= 5 ? 'bg-success' : row.score === 4 ? 'bg-primary' : row.score === 3 ? 'bg-info' : row.score === 2 ? 'bg-warning' : 'bg-danger';
+                                return `
+                                <tr>
+                                    <td><strong>${row.name}</strong></td>
+                                    <td><span class="badge ${badgeClass}">${row.score}/5</span></td>
+                                    <td>${row.level}</td>
+                                    <td>${row.explanation}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-muted">Scores are heuristic and updated as more validation data becomes available.</small>
+            </div>
+        </div>`;
+    }
+
+    // Show HML guidance if available
+    if (result.hml_guidance) {
+        const g = result.hml_guidance || {};
+        html += `
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h6>Model Guidance</h6>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Risk Impact</strong>
+                                    <div class="text-danger">${g.risk_impact || 'N/A'}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Notes</strong>
+                                    <div>${g.notes || 'N/A'}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Key Investor KPIs</strong>
+                                    <div>${g.investor_kpis || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Sector-specific analytics: Top Performing Sectors & Rotation Analytics
+    if ((result.model_display_name || '').toLowerCase().includes('sector') && result.all_results) {
+        const cr = result.all_results.comprehensive_report || {};
+        const ra = result.all_results.rotation_analytics || {};
+        if (cr.top_performing_sectors && cr.top_performing_sectors.length) {
+            html += `
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h6>Top Performing Sectors</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sector</th>
+                                    <th>Return (%)</th>
+                                    <th>Volatility</th>
+                                    <th>Outlook</th>
+                                    <th>Recommendation</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${cr.top_performing_sectors.map(s => `
+                                    <tr>
+                                        <td><strong>${s.sector}</strong></td>
+                                        <td>${(s.return ?? 0).toFixed(2)}</td>
+                                        <td>${s.volatility != null ? s.volatility.toFixed(2) : 'N/A'}</td>
+                                        <td>${s.outlook || 'neutral'}</td>
+                                        <td>${s.recommendation || 'HOLD'}</td>
+                                        <td>${s.confidence || 0}%</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        }
+        if (ra && (ra.top_by_3m || ra.bb_signals || ra.rsi_latest)) {
+            const top3m = Array.isArray(ra.top_by_3m) ? ra.top_by_3m.slice(0,5) : [];
+            html += `
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6>Rotation: Top by 3M Returns</h6>
+                    <ul class="list-group">
+                        ${top3m.map(x => `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>${x.sector}</strong></span>
+                            <span class="badge bg-success">${(x.return_3M ?? 0).toFixed(2)}% (3M)</span>
+                        </li>`).join('')}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Technical Signals (Latest)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sector</th>
+                                    <th>RSI</th>
+                                    <th>BB</th>
+                                    <th>MACD</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.keys(ra.rsi_latest || {}).slice(0,8).map(sec => `
+                                    <tr>
+                                        <td>${sec}</td>
+                                        <td>${(ra.rsi_latest[sec] ?? 'N/A')}</td>
+                                        <td>${(ra.bb_signals && ra.bb_signals[sec]) || 'Neutral'}</td>
+                                        <td>${(ra.macd_signals && ra.macd_signals[sec]) || 'Neutral'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        }
+    }
+    if (result.actionable_results && result.actionable_results.length > 0) {
+        html += `
+            <div class="row">
+                <div class="col-md-12">
+                    <h6>Actionable Recommendations (${result.actionable_results.length})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Current Price</th>
+                                    <th>Recommendation</th>
+                                    <th>Confidence</th>
+                                    <th>Stop Loss</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        result.actionable_results.forEach(rec => {
+            const recText = (rec['Recommendation'] || '').toString().toUpperCase();
+            const recClass = recText.includes('BUY') ? 'success' : (recText.includes('SELL') ? 'danger' : 'warning');
+
+            const priceRaw = rec['Current Price'] || rec['price'] || 'N/A';
+            const priceStr = String(priceRaw).includes('₹') || priceRaw === 'N/A' ? priceRaw : `₹${priceRaw}`;
+
+            const slRaw = rec['Stop Loss'] || rec['stop_loss'] || 'N/A';
+            const slStr = String(slRaw).includes('₹') || slRaw === 'N/A' ? slRaw : `₹${slRaw}`;
+
+            const tgtRaw = rec['Target'] || rec['target'] || 'N/A';
+            const tgtStr = String(tgtRaw).includes('₹') || tgtRaw === 'N/A' ? tgtRaw : `₹${tgtRaw}`;
+
+            // Normalize confidence to avoid double percentage symbols
+            let confVal = rec['Confidence (%)'] || rec['confidence'] || 'N/A';
+            let confStr = 'N/A';
+            if (confVal !== 'N/A' && confVal !== null && confVal !== undefined) {
+                const s = String(confVal);
+                confStr = s.includes('%') ? s : `${s}%`;
+            }
+
+            html += `
+                <tr>
+                    <td><strong>${rec['Symbol'] || rec['symbol'] || 'N/A'}</strong></td>
+                    <td>${priceStr}</td>
+                    <td><span class="badge bg-${recClass}">${rec['Recommendation'] || 'N/A'}</span></td>
+                    <td>${confStr}</td>
+                    <td>${slStr}</td>
+                    <td>${tgtStr}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div></div></div>';
+    } else {
+        html += '<div class="alert alert-warning">No actionable recommendations found in this analysis.</div>';
+    }
+    
+    document.getElementById('resultDetailsBody').innerHTML = html;
+}
+
+function selectForComparison(resultId, modelName, date) {
+    if (selectedResults.length >= 2) {
+        selectedResults = [];
+    }
+    
+    selectedResults.push({id: resultId, name: modelName, date: date});
+    
+    // Update compare modal selects
+    if (selectedResults.length === 1) {
+        document.getElementById('compareResult1').value = selectedResults[0].id;
+    } else if (selectedResults.length === 2) {
+        document.getElementById('compareResult2').value = selectedResults[1].id;
+        // Auto-open compare modal
+        const compareModal = new bootstrap.Modal(document.getElementById('compareModal'));
+        compareModal.show();
+    }
+    
+    showAlert(`Selected: ${modelName} (${date})${selectedResults.length === 2 ? ' - Ready to compare!' : ' - Select one more result'}`, 'info');
+}
+
+function performComparison() {
+    const result1Id = document.getElementById('compareResult1').value;
+    const result2Id = document.getElementById('compareResult2').value;
+    
+    if (!result1Id || !result2Id) {
+        showAlert('Please select both results for comparison', 'warning');
+        return;
+    }
+    
+    if (result1Id === result2Id) {
+        showAlert('Please select two different results for comparison', 'warning');
+        return;
+    }
+    
+    const loadingHtml = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p>Analyzing differences...</p></div>';
+    document.getElementById('comparisonResults').innerHTML = loadingHtml;
+    
+    fetch('/api/investor/compare_ml_results', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            result1_id: result1Id,
+            result2_id: result2Id
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayComparison(data.comparison);
+        } else {
+            document.getElementById('comparisonResults').innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('comparisonResults').innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error performing comparison:</strong> ${error.message || 'Please check your authentication and try again.'}
+            </div>`;
+    });
+}
+
+function displayComparison(comparison) {
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">Result 1: ${comparison.result1.model_name}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Date:</strong> ${new Date(comparison.result1.created_at).toLocaleString()}</p>
+                        <p><strong>Category:</strong> ${comparison.result1.stock_category}</p>
+                        <p><strong>Actionable:</strong> ${comparison.result1.actionable_count}</p>
+                        <p><strong>Confidence:</strong> ${comparison.result1.avg_confidence}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">Result 2: ${comparison.result2.model_name}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Date:</strong> ${new Date(comparison.result2.created_at).toLocaleString()}</p>
+                        <p><strong>Category:</strong> ${comparison.result2.stock_category}</p>
+                        <p><strong>Actionable:</strong> ${comparison.result2.actionable_count}</p>
+                        <p><strong>Confidence:</strong> ${comparison.result2.avg_confidence}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Changes summary
+    html += `
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h6>Changes Summary</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h5 class="${comparison.changes.actionable_count_change > 0 ? 'text-success' : comparison.changes.actionable_count_change < 0 ? 'text-danger' : 'text-muted'}">
+                                ${comparison.changes.actionable_count_change > 0 ? '+' : ''}${comparison.changes.actionable_count_change}
+                            </h5>
+                            <p class="mb-0">Actionable Recommendations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h5 class="${comparison.changes.confidence_change > 0 ? 'text-success' : comparison.changes.confidence_change < 0 ? 'text-danger' : 'text-muted'}">
+                                ${comparison.changes.confidence_change > 0 ? '+' : ''}${comparison.changes.confidence_change}%
+                            </h5>
+                            <p class="mb-0">Average Confidence</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h5 class="${comparison.changes.total_analyzed_change > 0 ? 'text-success' : comparison.changes.total_analyzed_change < 0 ? 'text-danger' : 'text-muted'}">
+                                ${comparison.changes.total_analyzed_change > 0 ? '+' : ''}${comparison.changes.total_analyzed_change}
+                            </h5>
+                            <p class="mb-0">Total Analyzed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // New recommendations
+    if (comparison.new_recommendations && comparison.new_recommendations.length > 0) {
+        html += `
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h6 class="text-success">New Recommendations (${comparison.new_recommendations.length})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-success">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Recommendation</th>
+                                    <th>Confidence</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        comparison.new_recommendations.forEach(rec => {
+            html += `
+                <tr>
+                    <td><strong>${rec['Symbol'] || rec['symbol'] || 'N/A'}</strong></td>
+                    <td><span class="badge bg-${rec['Recommendation'] === 'Buy' ? 'success' : 'danger'}">${rec['Recommendation'] || 'N/A'}</span></td>
+                    <td>${rec['Confidence (%)'] || rec['confidence'] || 'N/A'}%</td>
+                    <td>₹${rec['Current Price'] || rec['price'] || 'N/A'}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div></div></div>';
+    }
+    
+    // Removed recommendations
+    if (comparison.removed_recommendations && comparison.removed_recommendations.length > 0) {
+        html += `
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h6 class="text-danger">Removed Recommendations (${comparison.removed_recommendations.length})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-danger">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Recommendation</th>
+                                    <th>Confidence</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        comparison.removed_recommendations.forEach(rec => {
+            html += `
+                <tr>
+                    <td><strong>${rec['Symbol'] || rec['symbol'] || 'N/A'}</strong></td>
+                    <td><span class="badge bg-${rec['Recommendation'] === 'Buy' ? 'success' : 'danger'}">${rec['Recommendation'] || 'N/A'}</span></td>
+                    <td>${rec['Confidence (%)'] || rec['confidence'] || 'N/A'}%</td>
+                    <td>₹${rec['Current Price'] || rec['price'] || 'N/A'}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div></div></div>';
+    }
+    
+    // Confidence changes
+    if (comparison.confidence_changes && comparison.confidence_changes.length > 0) {
+        html += `
+            <div class="row">
+                <div class="col-md-12">
+                    <h6 class="text-info">Confidence Changes (${comparison.confidence_changes.length})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-info">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Old Confidence</th>
+                                    <th>New Confidence</th>
+                                    <th>Change</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        comparison.confidence_changes.forEach(change => {
+            html += `
+                <tr>
+                    <td><strong>${change.symbol}</strong></td>
+                    <td>${change.old_confidence}%</td>
+                    <td>${change.new_confidence}%</td>
+                    <td class="${change.change > 0 ? 'text-success' : 'text-danger'}">${change.change > 0 ? '+' : ''}${change.change}%</td>
+                    <td>
+                        <span class="badge bg-${change.old_recommendation === 'Buy' ? 'success' : 'danger'} me-1">${change.old_recommendation}</span>
+                        →
+                        <span class="badge bg-${change.new_recommendation === 'Buy' ? 'success' : 'danger'} ms-1">${change.new_recommendation}</span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div></div></div>';
+    }
+    
+    if (!comparison.new_recommendations?.length && !comparison.removed_recommendations?.length && !comparison.confidence_changes?.length) {
+        html += '<div class="alert alert-info">No significant changes found between the selected results.</div>';
+    }
+    
+    document.getElementById('comparisonResults').innerHTML = html;
+}
+
+function refreshResults() {
+    location.reload();
+}
+
+// Trading Calls Functions
+function viewCallDetails(symbol) {
+    const modal = new bootstrap.Modal(document.getElementById('resultDetailsModal'));
+    document.getElementById('resultDetailsTitle').textContent = `Trading Call Details - ${symbol}`;
+    document.getElementById('resultDetailsBody').innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    
+    modal.show();
+    
+    // Simulate fetching call details
+    setTimeout(() => {
+        displayCallDetails(symbol);
+    }, 1000);
+}
+
+function displayCallDetails(symbol) {
+    // Find the trading call from the page data
+    const callElements = document.querySelectorAll('tr');
+    let callData = null;
+    
+    callElements.forEach(row => {
+        const symbolEl = row.querySelector('strong.text-primary');
+        if (symbolEl && symbolEl.textContent === symbol) {
+            callData = {
+                symbol: symbol,
+                signal: row.cells[1].textContent.trim(),
+                currentPrice: row.cells[2].textContent.trim(),
+                targetPrice: row.cells[3].textContent.trim(),
+                stopLoss: row.cells[4].textContent.trim(),
+                confidence: row.cells[5].textContent.trim(),
+                potentialReturn: row.cells[6].textContent.trim()
+            };
+        }
+    });
+    
+    if (callData) {
+        let html = `
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="mb-3">Trading Signal Details</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tr><td><strong>Symbol:</strong></td><td>${callData.symbol}</td></tr>
+                                        <tr><td><strong>Signal:</strong></td><td>${callData.signal}</td></tr>
+                                        <tr><td><strong>Current Price:</strong></td><td>${callData.currentPrice}</td></tr>
+                                        <tr><td><strong>Target Price:</strong></td><td>${callData.targetPrice}</td></tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tr><td><strong>Stop Loss:</strong></td><td>${callData.stopLoss}</td></tr>
+                                        <tr><td><strong>Confidence:</strong></td><td>${callData.confidence}</td></tr>
+                                        <tr><td><strong>Potential Return:</strong></td><td>${callData.potentialReturn}</td></tr>
+                                        <tr><td><strong>Risk Level:</strong></td><td>Medium</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h6>Technical Analysis Summary</h6>
+                    <div class="alert alert-info">
+                        This trading call is generated based on comprehensive technical analysis including price patterns, 
+                        volume indicators, and market momentum. The confidence level reflects the strength of the signal 
+                        based on multiple technical indicators aligning in the same direction.
+                    </div>
+                    <div class="alert alert-warning">
+                        <strong>Risk Disclaimer:</strong> All trading calls are for educational purposes only. 
+                        Please consult with a financial advisor before making investment decisions.
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('resultDetailsBody').innerHTML = html;
+    } else {
+        document.getElementById('resultDetailsBody').innerHTML = '<div class="alert alert-danger">Unable to load call details.</div>';
+    }
+}
+
+function bookmarkCall(symbol) {
+    showAlert(`${symbol} added to your watchlist!`, 'success');
+}
+
+function exportCalls() {
+    showAlert('Trading calls exported successfully!', 'info');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Enhanced UI interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Animated counters
+    const counters = document.querySelectorAll('.animated-counter');
+    counters.forEach(counter => {
+        const target = parseInt(counter.innerText);
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            counter.innerText = Math.floor(current);
+        }, 20);
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Auto-refresh indicator
+    let refreshCounter = 0;
+    const refreshButton = document.querySelector('[onclick="refreshResults()"]');
+    if (refreshButton) {
+        setInterval(() => {
+            refreshCounter++;
+            if (refreshCounter % 60 === 0) { // Every minute
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-warning ms-2';
+                badge.textContent = 'Update Available';
+                badge.style.animation = 'pulse 1s infinite';
+                refreshButton.appendChild(badge);
+                
+                setTimeout(() => {
+                    if (badge.parentNode) {
+                        badge.remove();
+                    }
+                }, 10000);
+            }
+        }, 1000);
+    }
+    
+    // Progressive loading effect
+    const cards = document.querySelectorAll('.modern-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Performance monitoring
+window.addEventListener('load', function() {
+    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+    console.log(`Page loaded in ${loadTime}ms`);
+    
+    if (loadTime > 3000) {
+        showAlert('Page took longer than expected to load. Consider refreshing if content appears incomplete.', 'warning');
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl + R for refresh
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        refreshResults();
+    }
+    
+    // Escape to close modals
+    if (e.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal.show');
+        modals.forEach(modal => {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

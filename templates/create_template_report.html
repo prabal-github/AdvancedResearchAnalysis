@@ -1,0 +1,402 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Report - {{ template.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .report-form {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border-left: 4px solid #007bff;
+    }
+    .section-title {
+        color: #007bff;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    .section-title i {
+        margin-right: 10px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .form-control {
+        border-radius: 6px;
+        border: 2px solid #e0e0e0;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .btn-primary-gradient {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+    }
+    .add-item-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+    .remove-item-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.8em;
+    }
+    .dynamic-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="report-form">
+                <div class="text-center mb-4">
+                    <h2><i class="fas fa-edit"></i> Create Report using {{ template.name }}</h2>
+                    <p class="text-muted">{{ template.description }}</p>
+                </div>
+
+                <form id="templateReportForm">
+                    <!-- Analyst Information -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-user"></i> Analyst Information
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="analyst">Analyst Name</label>
+                                    <input type="text" class="form-control" id="analyst" name="analyst" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="targetTicker">Target Ticker</label>
+                                    <input type="text" class="form-control" id="targetTicker" name="target_ticker" placeholder="e.g., TCS.NS">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Details -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-calendar-alt"></i> Event Details
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Macro Triggers</label>
+                                    <div class="input-group">
+                                        <input type="text" id="macroTriggerInput" class="form-control" placeholder="Add macro trigger">
+                                        <div class="input-group-append">
+                                            <button type="button" class="add-item-btn" onclick="addItem('macroTriggers', 'macroTriggerInput')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="macroTriggers" class="dynamic-list mt-2"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="timeframe">Timeframe</label>
+                                    <select class="form-control" id="timeframe" name="timeframe">
+                                        <option value="">Select Timeframe</option>
+                                        <option value="Q1">Q1</option>
+                                        <option value="Q2">Q2</option>
+                                        <option value="Q3">Q3</option>
+                                        <option value="Q4">Q4</option>
+                                        <option value="H1">H1</option>
+                                        <option value="H2">H2</option>
+                                        <option value="Annual">Annual</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Catalysts</label>
+                                    <div class="input-group">
+                                        <input type="text" id="catalystInput" class="form-control" placeholder="Add catalyst">
+                                        <div class="input-group-append">
+                                            <button type="button" class="add-item-btn" onclick="addItem('catalysts', 'catalystInput')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="catalysts" class="dynamic-list mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Impact Metrics -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-chart-line"></i> Direct Impact Metrics
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="epsChange">Expected EPS Change</label>
+                                    <textarea class="form-control" id="epsChange" name="expected_eps_change" rows="3" 
+                                              placeholder="e.g., -5% if inflation >5%"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="marginSensitivity">Margin Sensitivity</label>
+                                    <textarea class="form-control" id="marginSensitivity" name="margin_sensitivity" rows="3"
+                                              placeholder="e.g., Every 1% inflation → 0.7% operating margin contraction"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="revenueExposure">Revenue Exposure</label>
+                                    <textarea class="form-control" id="revenueExposure" name="revenue_exposure" rows="3"
+                                              placeholder="e.g., 70% revenue USD-denominated → benefits from INR depreciation"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-Asset Correlations -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-project-diagram"></i> Cross-Asset Correlations
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sectorCorrelations">Sector Correlations</label>
+                                    <textarea class="form-control" id="sectorCorrelations" name="sector_correlations" rows="4"
+                                              placeholder="e.g., IT sector stocks drop 2x faster than Nifty50 during inflation shocks"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="assetCorrelations">Asset Correlations</label>
+                                    <textarea class="form-control" id="assetCorrelations" name="asset_correlations" rows="4"
+                                              placeholder="e.g., TCS.NS vs USD/INR correlation: -0.8"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analyst Confidence Scores -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-bullseye"></i> Analyst Confidence Scores
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="probabilityWeightings">Probability Weightings</label>
+                                    <textarea class="form-control" id="probabilityWeightings" name="probability_weightings" rows="4"
+                                              placeholder="e.g., 80% likelihood of high inflation scenario"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="severityTiers">Severity Tiers</label>
+                                    <textarea class="form-control" id="severityTiers" name="severity_tiers" rows="4"
+                                              placeholder="e.g., Moderate inflation: 4-5%, Severe: >6%"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Result -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-file-alt"></i> Analysis Summary
+                        </h4>
+                        <div class="form-group">
+                            <label for="analysisResult">Detailed Analysis</label>
+                            <textarea class="form-control" id="analysisResult" name="analysis_result" rows="6"
+                                      placeholder="Provide detailed analysis summary based on the template data above"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary-gradient">
+                            <i class="fas fa-save"></i> Create Template Report
+                        </button>
+                        <a href="{{ url_for('view_template', template_id=template.id) }}" class="btn btn-secondary ml-3">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let macroTriggersList = [];
+let catalystsList = [];
+
+function addItem(listId, inputId) {
+    const input = document.getElementById(inputId);
+    const value = input.value.trim();
+    
+    if (value) {
+        if (listId === 'macroTriggers') {
+            macroTriggersList.push(value);
+            updateList('macroTriggers', macroTriggersList);
+        } else if (listId === 'catalysts') {
+            catalystsList.push(value);
+            updateList('catalysts', catalystsList);
+        }
+        input.value = '';
+    }
+}
+
+function removeItem(listId, index) {
+    if (listId === 'macroTriggers') {
+        macroTriggersList.splice(index, 1);
+        updateList('macroTriggers', macroTriggersList);
+    } else if (listId === 'catalysts') {
+        catalystsList.splice(index, 1);
+        updateList('catalysts', catalystsList);
+    }
+}
+
+function updateList(listId, items) {
+    const container = document.getElementById(listId);
+    container.innerHTML = '';
+    
+    items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            <span>${item}</span>
+            <button type="button" class="remove-item-btn" onclick="removeItem('${listId}', ${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Handle form submission
+document.getElementById('templateReportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        analyst: formData.get('analyst'),
+        target_ticker: formData.get('target_ticker'),
+        macro_triggers: macroTriggersList,
+        timeframe: formData.get('timeframe'),
+        catalysts: catalystsList,
+        expected_eps_change: { description: formData.get('expected_eps_change') },
+        margin_sensitivity: { description: formData.get('margin_sensitivity') },
+        revenue_exposure: { description: formData.get('revenue_exposure') },
+        sector_correlations: { description: formData.get('sector_correlations') },
+        asset_correlations: { description: formData.get('asset_correlations') },
+        probability_weightings: { description: formData.get('probability_weightings') },
+        severity_tiers: { description: formData.get('severity_tiers') },
+        analysis_result: formData.get('analysis_result')
+    };
+    
+    // Show loading
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Report...';
+    submitBtn.disabled = true;
+    
+    fetch('{{ url_for("create_template_report", template_id=template.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Template report created successfully!');
+            window.location.href = '/template_report/' + result.report_id;
+        } else {
+            alert('Error: ' + result.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to create report');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Allow Enter key to add items
+document.getElementById('macroTriggerInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addItem('macroTriggers', 'macroTriggerInput');
+    }
+});
+
+document.getElementById('catalystInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addItem('catalysts', 'catalystInput');
+    }
+});
+</script>
+{% endblock %}

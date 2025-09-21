@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Integrated ML Models & Agentic AI Catalog</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { margin:0; font-family: system-ui, Arial, sans-serif; background:#0f172a; color:#e2e8f0; }
+    a { color:#38bdf8; text-decoration:none; }
+    .layout { display:flex; height:100vh; }
+    .sidebar { width:260px; background:#1e293b; border-right:1px solid #334155; display:flex; flex-direction:column; }
+    .sidebar h1 { font-size:16px; padding:16px; margin:0; font-weight:600; display:flex; gap:8px; align-items:center; }
+    .nav-links { padding:8px 12px; display:flex; flex-direction:column; gap:4px; }
+    .nav-links a { padding:8px 10px; border-radius:4px; font-size:13px; }
+    .nav-links a.active, .nav-links a:hover { background:#334155; }
+    .provider-box { margin:12px; background:#0f172a; border:1px solid #334155; border-radius:6px; padding:12px; }
+    .provider-box h3 { margin:0 0 8px 0; font-size:13px; letter-spacing:.5px; color:#93c5fd; }
+    .provider-box label { font-size:12px; display:block; margin-bottom:6px; }
+    .provider-box input, .provider-box select { width:100%; background:#1e293b; border:1px solid #334155; border-radius:4px; padding:6px 8px; font-size:12px; color:#e2e8f0; }
+    .provider-box button { width:100%; margin-top:8px; padding:8px; background:#2563eb; border:none; border-radius:4px; color:#fff; font-size:12px; cursor:pointer; }
+
+    .content { flex:1; display:flex; flex-direction:column; }
+    .header { padding:14px 20px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center; background:#0f172a; }
+    .header .title { font-size:18px; font-weight:600; }
+    .tabs { display:flex; gap:6px; padding:12px 20px 0 20px; }
+    .tab-btn { background:#1e293b; color:#94a3b8; border:1px solid #334155; padding:8px 14px; font-size:12px; cursor:pointer; border-radius:4px; }
+    .tab-btn.active { background:#2563eb; border-color:#2563eb; color:#fff; }
+
+    .catalog-grid { padding:16px 20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; overflow:auto; }
+    .item-card { background:#1e293b; border:1px solid #334155; border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:visible; z-index:1; }
+    .item-card h4 { margin:0; font-size:14px; font-weight:600; display:flex; gap:6px; align-items:center; }
+    .badge { font-size:10px; text-transform:uppercase; letter-spacing:.5px; background:#334155; padding:2px 6px; border-radius:4px; color:#93c5fd; }
+    .desc { font-size:12px; line-height:1.4; color:#cbd5e1; }
+    .meta { font-size:10px; color:#64748b; display:flex; gap:8px; flex-wrap:wrap; }
+    .actions { display:flex; gap:6px; }
+    .actions button { flex:1; background:#2563eb; border:none; color:#fff; padding:6px 8px; font-size:12px; cursor:pointer; border-radius:4px; }
+    .actions button.secondary { background:#334155; color:#cbd5e1; }
+    .filter-bar { padding:0 20px 8px 20px; display:flex; gap:10px; align-items:center; }
+    .filter-bar input, .filter-bar select { background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:6px 8px; font-size:12px; border-radius:4px; }
+    .empty { padding:30px; text-align:center; font-size:13px; color:#64748b; }
+    .footer { padding:10px 14px; font-size:11px; color:#64748b; border-top:1px solid #334155; }
+    .subscribed-pill { position:absolute; top:8px; right:8px; background:#10b981; color:#fff; font-size:10px; padding:2px 6px; border-radius:12px; }
+    
+    /* Backtesting styles */
+    .backtest-section { background:#0f172a; border:1px solid #334155; border-radius:6px; padding:12px; margin-top:8px; position:relative; z-index:2; }
+    .backtest-controls { display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
+    .backtest-row { display:flex; gap:8px; align-items:flex-start; }
+    .stock-selection-container { flex:1; display:flex; flex-direction:column; gap:4px; }
+    .period-and-button { display:flex; gap:8px; align-items:flex-start; }
+    .stock-multiselect { background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:6px 8px; font-size:11px; border-radius:4px; min-height:60px; resize:vertical; width:100%; }
+    .stock-multiselect option { padding:2px 4px; }
+    .stock-multiselect option:checked { background:#2563eb; color:#fff; }
+    .selected-stocks { font-size:10px; color:#94a3b8; margin-top:2px; max-height:40px; overflow-y:auto; }
+    .past-month-return { font-size:10px; color:#10b981; margin-top:2px; font-weight:600; }
+    .backtest-controls select { background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:6px 8px; font-size:11px; border-radius:4px; height:32px; min-width:70px; }
+    .backtest-controls button { background:#2563eb; color:#fff; cursor:pointer; border:none; padding:8px 12px; font-size:11px; border-radius:4px; font-weight:600; height:32px; min-width:80px; white-space:nowrap; }
+    .backtest-controls button:hover { background:#1d4ed8; }
+    .backtest-controls button:disabled { background:#374151; cursor:not-allowed; }
+    .backtest-results { margin-top:8px; font-size:12px; position:relative; z-index:1; }
+    .metric-row { display:flex; justify-content:space-between; margin-bottom:4px; }
+    .metric-label { color:#94a3b8; }
+    .metric-value { color:#e2e8f0; font-weight:500; }
+    .returns-chart { margin-top:8px; }
+    .loading { color:#64748b; font-style:italic; }
+    .multi-stock-label { font-size:10px; color:#94a3b8; margin-bottom:2px; }
+    
+    /* Evaluation Modal Styles */
+    .eval-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; display:none; align-items:center; justify-content:center; }
+    .eval-content { background:#1e293b; border:1px solid #334155; border-radius:8px; padding:20px; max-width:600px; width:90%; max-height:80%; overflow-y:auto; }
+    .eval-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .eval-title { font-size:18px; font-weight:600; color:#e2e8f0; }
+    .eval-close { background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; padding:4px; }
+    .eval-close:hover { color:#e2e8f0; }
+    .eval-overall { text-align:center; margin-bottom:20px; padding:16px; background:#0f172a; border-radius:6px; }
+    .eval-overall-score { font-size:32px; font-weight:bold; color:#10b981; }
+    .eval-overall-label { color:#94a3b8; font-size:12px; margin-top:4px; }
+    .eval-category { margin-bottom:16px; }
+    .eval-category-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .eval-category-name { font-weight:600; color:#e2e8f0; }
+    .eval-category-score { font-weight:bold; padding:2px 8px; border-radius:4px; color:#fff; }
+    .eval-category-desc { color:#cbd5e1; font-size:12px; margin-bottom:4px; }
+    .eval-category-details { color:#94a3b8; font-size:11px; line-height:1.4; }
+    .score-excellent { background:#10b981; }
+    .score-good { background:#059669; }
+    .score-fair { background:#d97706; }
+    .score-poor { background:#dc2626; }
+  </style>
+</head>
+<body data-is-admin="{{ 1 if is_admin else 0 }}">
+  <div class="layout">
+    <div class="sidebar">
+      <h1><i class="fas fa-layer-group"></i> Catalog</h1>
+      <div class="nav-links">
+        <a href="/vs_terminal_MLClass">← Back to ML Class</a>
+        <a class="active" href="#">Integrated Catalog</a>
+      </div>
+      {% if is_admin %}
+      <div class="provider-box">
+        <h3>Market Data Provider</h3>
+        <select id="provider-select">
+          <option value="yfinance">yfinance (local)</option>
+          <option value="fyers">fyers (prod)</option>
+        </select>
+        <label>Fyers App ID</label>
+        <input id="fyers-app-id" placeholder="Optional unless fyers" />
+        <label>Fyers Access Token</label>
+        <input id="fyers-access-token" placeholder="Optional unless fyers" />
+        <button onclick="saveProvider()">Save Provider</button>
+        <div id="provider-status" style="margin-top:6px; font-size:11px; color:#64748b;"></div>
+      </div>
+      {% else %}
+      <div style="margin:12px; background:#0f172a; border:1px solid #334155; border-radius:6px; padding:12px; font-size:12px; color:#64748b;">
+        Market data provider is managed by administrators.
+      </div>
+      {% endif %}
+    </div>
+    <div class="content">
+      <div class="header">
+        <div class="title">Integrated ML Models & Agentic AI</div>
+        <div style="font-size:12px; color:#64748b;" id="sub-summary">Loading...</div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('agents')">Agents</button>
+        <button class="tab-btn" onclick="switchTab('models')">ML Models</button>
+        <button class="tab-btn" onclick="switchTab('subscriptions')">My Subscriptions</button>
+      </div>
+      <div class="filter-bar">
+        <input id="search-box" placeholder="Search name or category" oninput="renderActive()" />
+        <select id="tier-filter" onchange="renderActive()">
+          <option value="">All Tiers</option>
+          <option value="S">Small</option>
+          <option value="M">Medium</option>
+          <option value="H">HNI</option>
+        </select>
+        <select id="cat-filter" onchange="renderActive()">
+          <option value="">All Categories</option>
+          <option>Risk</option>
+          <option>Macro</option>
+          <option>Strategy</option>
+          <option>News</option>
+          <option>Advisory</option>
+          <option>Forecast</option>
+          <option>Optimization</option>
+          <option>NLP</option>
+        </select>
+      </div>
+      <div id="agents-tab" class="catalog-grid"></div>
+      <div id="models-tab" class="catalog-grid" style="display:none;"></div>
+      <div id="subscriptions-tab" class="catalog-grid" style="display:none;"></div>
+      <div class="footer">Catalog © 2025 • Extensible registry</div>
+    </div>
+  </div>
+
+  <!-- Evaluation Modal -->
+  <div id="evaluation-modal" class="eval-modal">
+    <div class="eval-content">
+      <div class="eval-header">
+        <div class="eval-title" id="eval-title">Model Evaluation</div>
+        <button class="eval-close" onclick="closeEvaluation()">&times;</button>
+      </div>
+      <div class="eval-overall">
+        <div class="eval-overall-score" id="eval-overall-score">8.5</div>
+        <div class="eval-overall-label">Overall Score</div>
+      </div>
+      <div id="eval-details">
+        <!-- Evaluation details will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  let agents=[], models=[], subs={agents:[], models:[]}, stocks=[];
+  const IS_ADMIN = document.body.getAttribute('data-is-admin') === '1';
+
+    async function fetchJSON(url, opts={}){ const r=await fetch(url, opts); return r.json(); }
+
+    async function init(){
+      const promises = [
+        fetchJSON('/api/catalog/agents'),
+        fetchJSON('/api/catalog/models'),
+        fetchJSON('/api/catalog/enhanced_models'),
+        fetchJSON('/api/catalog/subscriptions'),
+        fetchJSON('/api/catalog/stocks')
+      ];
+      if (IS_ADMIN) promises.push(fetchJSON('/api/admin/market_data_provider'));
+      const results = await Promise.all(promises);
+      const a = results[0], m = results[1], e = results[2], s = results[3], st = results[4];
+      const prov = IS_ADMIN ? results[5] : null;
+      
+      // Combine regular models with enhanced models
+      const regularModels = m.models || [];
+      const enhancedModels = e.enhanced_models || [];
+      models = [...regularModels, ...enhancedModels];
+      
+      agents = a.agents||[]; subs = s.subscriptions||subs; stocks = st.stocks||[];
+      if (IS_ADMIN && prov && prov.provider){
+        const sel = document.getElementById('provider-select');
+        if (sel) sel.value = prov.provider;
+      }
+      updateSummary();
+      renderActive();
+    }
+
+    function updateSummary(){
+      const el=document.getElementById('sub-summary');
+      el.textContent = `Subscribed: ${subs.agents.length} agents • ${subs.models.length} models`;
+    }
+
+    function switchTab(name){
+      document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+      const map={agents:0,models:1,subscriptions:2};
+      document.querySelectorAll('.tab-btn')[map[name]].classList.add('active');
+      document.getElementById('agents-tab').style.display = name==='agents'? 'grid':'none';
+      document.getElementById('models-tab').style.display = name==='models'? 'grid':'none';
+      document.getElementById('subscriptions-tab').style.display = name==='subscriptions'? 'grid':'none';
+      renderActive();
+    }
+
+    function filtered(list){
+      const q = document.getElementById('search-box').value.trim().toLowerCase();
+      const tier = document.getElementById('tier-filter').value;
+      const cat = document.getElementById('cat-filter').value;
+      return list.filter(x=>{
+        if (q && !(x.name.toLowerCase().includes(q) || (x.category||'').toLowerCase().includes(q))) return false;
+        if (tier && !(x.tier||[]).includes(tier)) return false;
+        if (cat && (x.category||'') !== cat) return false;
+        return true;
+      });
+    }
+
+    function cardHTML(x, type){
+      const subscribed = (type==='agent'? subs.agents: subs.models).includes(x.id);
+      const backtestSection = type === 'model' ? `
+        <div class='backtest-section'>
+          <div class='backtest-controls'>
+            <div class='stock-selection-container'>
+              <div class='multi-stock-label'>Select Stocks (Hold Ctrl/Cmd for multiple):</div>
+              <select id='stock-select-${x.id}' class='stock-multiselect' multiple onchange="updateSelectedStocks('${x.id}')">
+                ${stocks.map(s => `<option value='${s.yfinance_symbol}'>${s.name}</option>`).join('')}
+              </select>
+              <div id='selected-stocks-${x.id}' class='selected-stocks'>No stocks selected</div>
+              <div id='past-month-return-${x.id}' class='past-month-return'></div>
+            </div>
+            <div class='period-and-button'>
+              <select id='period-select-${x.id}'>
+                <option value='3mo'>3M</option>
+                <option value='6mo'>6M</option>
+                <option value='1y' selected>1Y</option>
+                <option value='2y'>2Y</option>
+              </select>
+              <button onclick="runBacktest('${x.id}')" id='backtest-btn-${x.id}' disabled>Backtest</button>
+            </div>
+          </div>
+          <div id='backtest-results-${x.id}' class='backtest-results'></div>
+        </div>
+      ` : '';
+      
+      return `<div class='item-card'>
+        ${subscribed ? `<div class='subscribed-pill'>Subscribed</div>`:''}
+        <h4>${type==='agent'?'<i class=\"fas fa-robot\"></i>':'<i class=\"fas fa-brain\"></i>'} ${x.name}</h4>
+        <div class='desc'>${x.description || ''}</div>
+        <div class='meta'>
+          <span class='badge'>${x.category||'General'}</span>
+          <span>${(x.tier||[]).join('/')}</span>
+          ${x.evaluation ? `<span style='color:#10b981; font-weight:600;'><i class="fas fa-star"></i> ${x.evaluation.overall_score}/10</span>` : ''}
+          <span style='color:#64748b;'>id:${x.id}</span>
+        </div>
+        <div class='actions'>
+          ${subscribed ? `<button class='secondary' onclick="toggleSub('${type}','${x.id}',false)">Unsubscribe</button>`:
+          `<button onclick="toggleSub('${type}','${x.id}',true)">Subscribe</button>`}
+          <button class='secondary' onclick="showEvaluation('${x.id}', '${type}')" style="margin-left:4px;">
+            <i class="fas fa-chart-line"></i> Evaluation
+          </button>
+        </div>
+        ${backtestSection}
+      </div>`;
+    }
+
+    function renderActive(){
+      // Agents
+      document.getElementById('agents-tab').innerHTML = filtered(agents).map(a=>cardHTML(a,'agent')).join('') || `<div class='empty'>No agents match filters.</div>`;
+      // Models
+      document.getElementById('models-tab').innerHTML = filtered(models).map(m=>cardHTML(m,'model')).join('') || `<div class='empty'>No models match filters.</div>`;
+      // Subscriptions
+      const subAgents = agents.filter(a=>subs.agents.includes(a.id));
+      const subModels = models.filter(m=>subs.models.includes(m.id));
+      const merged = subAgents.map(x=>({...x,_t:'agent'})).concat(subModels.map(x=>({...x,_t:'model'})));
+      document.getElementById('subscriptions-tab').innerHTML = merged.length? merged.map(x=>cardHTML(x,x._t)).join('') : `<div class='empty'>No subscriptions yet.</div>`;
+      updateSummary();
+    }
+
+    async function toggleSub(type,id,add){
+      const url = add? '/api/catalog/subscribe':'/api/catalog/unsubscribe';
+      await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type: type==='agent'?'agent':'model', id})});
+      const s = await fetchJSON('/api/catalog/subscriptions');
+      subs = s.subscriptions || subs; renderActive();
+    }
+
+    async function saveProvider(){
+      if (!IS_ADMIN) return;
+      const providerSel = document.getElementById('provider-select');
+      if (!providerSel) return;
+      const provider = providerSel.value;
+      const appId = (document.getElementById('fyers-app-id')||{}).value?.trim?.() || '';
+      const token = (document.getElementById('fyers-access-token')||{}).value?.trim?.() || '';
+      const body = { provider };
+      if (provider==='fyers'){ body.app_id = appId; body.access_token = token; }
+      const resp = await fetch('/api/admin/market_data_provider',{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+      const data = await resp.json();
+      const status = document.getElementById('provider-status');
+      if (status){
+        if (data.success){ status.style.color='#10b981'; status.textContent = 'Saved provider: '+data.provider; }
+        else { status.style.color='#dc2626'; status.textContent = 'Error: '+(data.error||'unknown'); }
+      }
+    }
+
+    function updateSelectedStocks(modelId) {
+      const stockSelect = document.getElementById(`stock-select-${modelId}`);
+      const selectedStocksDiv = document.getElementById(`selected-stocks-${modelId}`);
+      const pastMonthReturnDiv = document.getElementById(`past-month-return-${modelId}`);
+      const backtestBtn = document.getElementById(`backtest-btn-${modelId}`);
+      
+      const selectedOptions = Array.from(stockSelect.selectedOptions);
+      const selectedStocks = selectedOptions.map(option => option.text);
+      const selectedSymbols = selectedOptions.map(option => option.value);
+      
+      if (selectedStocks.length === 0) {
+        selectedStocksDiv.textContent = 'No stocks selected';
+        pastMonthReturnDiv.textContent = '';
+        backtestBtn.disabled = true;
+      } else {
+        selectedStocksDiv.textContent = `Selected (${selectedStocks.length}): ${selectedStocks.join(', ')}`;
+        backtestBtn.disabled = false;
+        
+        // Calculate past month return
+        calculatePastMonthReturn(selectedSymbols, pastMonthReturnDiv);
+      }
+    }
+
+    async function calculatePastMonthReturn(symbols, displayDiv) {
+      if (symbols.length === 0) {
+        displayDiv.textContent = '';
+        return;
+      }
+      
+      displayDiv.textContent = 'Calculating past month return...';
+      
+      try {
+        const response = await fetch('/api/catalog/past_month_return', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ symbols: symbols })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          if (symbols.length === 1) {
+            const result = data.results[0];
+            displayDiv.textContent = `Past Month: ${(result.return * 100).toFixed(2)}%`;
+            displayDiv.style.color = result.return >= 0 ? '#10b981' : '#dc2626';
+          } else {
+            const avgReturn = data.average_return;
+            const validCount = data.results.filter(r => !r.error).length;
+            displayDiv.textContent = `Portfolio Past Month (${validCount}/${symbols.length}): ${(avgReturn * 100).toFixed(2)}%`;
+            displayDiv.style.color = avgReturn >= 0 ? '#10b981' : '#dc2626';
+          }
+        } else {
+          displayDiv.textContent = 'Error calculating past month return';
+          displayDiv.style.color = '#dc2626';
+        }
+      } catch (error) {
+        displayDiv.textContent = 'Error calculating past month return';
+        displayDiv.style.color = '#dc2626';
+      }
+    }
+
+    async function runBacktest(modelId) {
+      const stockSelect = document.getElementById(`stock-select-${modelId}`);
+      const periodSelect = document.getElementById(`period-select-${modelId}`);
+      const resultsDiv = document.getElementById(`backtest-results-${modelId}`);
+      const backtestBtn = document.getElementById(`backtest-btn-${modelId}`);
+      
+      const selectedOptions = Array.from(stockSelect.selectedOptions);
+      const selectedStocks = selectedOptions.map(option => option.value);
+      const period = periodSelect.value;
+      
+      if (selectedStocks.length === 0) {
+        resultsDiv.innerHTML = '<div style="color:#dc2626;">Please select at least one stock</div>';
+        return;
+      }
+      
+      backtestBtn.disabled = true;
+      backtestBtn.textContent = 'Running...';
+      resultsDiv.innerHTML = '<div class="loading">Running backtest for multiple stocks...</div>';
+      
+      try {
+        if (selectedStocks.length === 1) {
+          // Single stock backtest
+          await runSingleStockBacktest(modelId, selectedStocks[0], period, resultsDiv);
+        } else {
+          // Multiple stocks backtest
+          await runMultiStockBacktest(modelId, selectedStocks, period, resultsDiv);
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = `<div style="color:#dc2626;">Error: ${error.message}</div>`;
+      } finally {
+        backtestBtn.disabled = false;
+        backtestBtn.textContent = 'Backtest';
+      }
+    }
+    
+    async function runSingleStockBacktest(modelId, stockSymbol, period, resultsDiv) {
+      const response = await fetch('/api/catalog/backtest', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          model_id: modelId,
+          stock_symbol: stockSymbol,
+          period: period
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        displayBacktestResults(resultsDiv, data.backtest_result, stockSymbol);
+      } else {
+        resultsDiv.innerHTML = `<div style="color:#dc2626;">Error: ${data.error}</div>`;
+      }
+    }
+    
+    async function runMultiStockBacktest(modelId, stockSymbols, period, resultsDiv) {
+      const results = [];
+      
+      // Run backtest for each stock
+      for (let i = 0; i < stockSymbols.length; i++) {
+        const stockSymbol = stockSymbols[i];
+        resultsDiv.innerHTML = `<div class="loading">Running backtest ${i + 1}/${stockSymbols.length}: ${stockSymbol}...</div>`;
+        
+        try {
+          const response = await fetch('/api/catalog/backtest', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              model_id: modelId,
+              stock_symbol: stockSymbol,
+              period: period
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            results.push({
+              symbol: stockSymbol,
+              result: data.backtest_result
+            });
+          } else {
+            results.push({
+              symbol: stockSymbol,
+              error: data.error
+            });
+          }
+        } catch (error) {
+          results.push({
+            symbol: stockSymbol,
+            error: error.message
+          });
+        }
+      }
+      
+      displayMultiStockResults(resultsDiv, results, modelId);
+    }
+    
+    function displayBacktestResults(container, results, stockSymbol = '') {
+      const monthlyReturns = results.monthly_returns || [];
+      const benchmarkReturns = results.benchmark_monthly_returns || [];
+      
+      container.innerHTML = `
+        ${stockSymbol ? `<div style='font-weight:600; color:#60a5fa; margin-bottom:8px;'>${stockSymbol}</div>` : ''}
+        <div class='metric-row'>
+          <span class='metric-label'>Total Return:</span>
+          <span class='metric-value' style='color:${results.total_return >= 0 ? '#10b981' : '#dc2626'};'>
+            ${(results.total_return * 100).toFixed(2)}%
+          </span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Annual Volatility:</span>
+          <span class='metric-value'>${(results.annual_volatility * 100).toFixed(2)}%</span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Sharpe Ratio:</span>
+          <span class='metric-value'>${results.sharpe_ratio.toFixed(3)}</span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Max Drawdown:</span>
+          <span class='metric-value' style='color:#dc2626;'>${(results.max_drawdown * 100).toFixed(2)}%</span>
+        </div>
+        <div style='margin-top:8px; font-size:11px; color:#94a3b8;'>
+          Monthly Returns (Strategy vs Benchmark):
+        </div>
+        <div style='max-height:100px; overflow-y:auto; font-size:10px; margin-top:4px;'>
+          ${monthlyReturns.map((ret, i) => {
+            const benchmark = benchmarkReturns[i] || {return: 0};
+            return `<div style='display:flex; justify-content:space-between; padding:1px 0;'>
+              <span>${ret.date}</span>
+              <span style='color:${ret.return >= 0 ? '#10b981' : '#dc2626'};'>${(ret.return * 100).toFixed(1)}%</span>
+              <span style='color:${benchmark.return >= 0 ? '#64748b' : '#dc2626'};'>(${(benchmark.return * 100).toFixed(1)}%)</span>
+            </div>`;
+          }).join('')}
+        </div>
+      `;
+    }
+    
+    function displayMultiStockResults(container, results, modelId) {
+      // Calculate aggregate metrics
+      const validResults = results.filter(r => r.result && !r.error);
+      const avgReturn = validResults.length > 0 ? 
+        validResults.reduce((sum, r) => sum + r.result.total_return, 0) / validResults.length : 0;
+      const avgVolatility = validResults.length > 0 ? 
+        validResults.reduce((sum, r) => sum + r.result.annual_volatility, 0) / validResults.length : 0;
+      const avgSharpe = validResults.length > 0 ? 
+        validResults.reduce((sum, r) => sum + r.result.sharpe_ratio, 0) / validResults.length : 0;
+      const maxDrawdown = validResults.length > 0 ? 
+        Math.max(...validResults.map(r => r.result.max_drawdown)) : 0;
+      
+      container.innerHTML = `
+        <div style='font-weight:600; color:#60a5fa; margin-bottom:8px;'>
+          Portfolio Results (${validResults.length}/${results.length} stocks)
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Avg Total Return:</span>
+          <span class='metric-value' style='color:${avgReturn >= 0 ? '#10b981' : '#dc2626'};'>
+            ${(avgReturn * 100).toFixed(2)}%
+          </span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Avg Volatility:</span>
+          <span class='metric-value'>${(avgVolatility * 100).toFixed(2)}%</span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Avg Sharpe Ratio:</span>
+          <span class='metric-value'>${avgSharpe.toFixed(3)}</span>
+        </div>
+        <div class='metric-row'>
+          <span class='metric-label'>Max Drawdown:</span>
+          <span class='metric-value' style='color:#dc2626;'>${(maxDrawdown * 100).toFixed(2)}%</span>
+        </div>
+        
+        <div style='margin-top:12px; font-size:11px; color:#94a3b8;'>Individual Stock Results:</div>
+        <div style='max-height:150px; overflow-y:auto; margin-top:4px;'>
+          ${results.map(r => {
+            if (r.error) {
+              return `<div style='padding:4px; border-bottom:1px solid #334155; font-size:10px;'>
+                <span style='color:#dc2626;'>${r.symbol}: Error - ${r.error}</span>
+              </div>`;
+            }
+            return `<div style='padding:4px; border-bottom:1px solid #334155; font-size:10px;'>
+              <div style='display:flex; justify-content:space-between;'>
+                <span style='color:#e2e8f0; font-weight:500;'>${r.symbol}</span>
+                <span style='color:${r.result.total_return >= 0 ? '#10b981' : '#dc2626'};'>
+                  ${(r.result.total_return * 100).toFixed(1)}%
+                </span>
+              </div>
+              <div style='color:#94a3b8; font-size:9px;'>
+                Vol: ${(r.result.annual_volatility * 100).toFixed(1)}% | 
+                Sharpe: ${r.result.sharpe_ratio.toFixed(2)} | 
+                DD: ${(r.result.max_drawdown * 100).toFixed(1)}%
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function showEvaluation(modelId, type) {
+      // Find the model in the appropriate array
+      const modelList = type === 'agent' ? agents : models;
+      const model = modelList.find(m => m.id === modelId);
+      
+      if (!model || !model.evaluation) {
+        alert('Evaluation data not available for this model.');
+        return;
+      }
+      
+      const evaluation = model.evaluation;
+      const modal = document.getElementById('evaluation-modal');
+      const title = document.getElementById('eval-title');
+      const overallScore = document.getElementById('eval-overall-score');
+      const details = document.getElementById('eval-details');
+      
+      // Set title and overall score
+      title.textContent = `${model.name} - Evaluation`;
+      overallScore.textContent = evaluation.overall_score;
+      
+      // Function to get score class
+      function getScoreClass(score) {
+        if (score >= 9.0) return 'score-excellent';
+        if (score >= 8.0) return 'score-good';
+        if (score >= 7.0) return 'score-fair';
+        return 'score-poor';
+      }
+      
+      // Build details HTML
+      const detailedScores = evaluation.detailed_scores;
+      const categories = [
+        { key: 'risk_return', name: 'Risk & Return' },
+        { key: 'data_quality', name: 'Data Quality' },
+        { key: 'model_logic', name: 'Model Logic' },
+        { key: 'code_quality', name: 'Code Quality' },
+        { key: 'testing_validation', name: 'Testing & Validation' },
+        { key: 'governance_compliance', name: 'Governance & Compliance' }
+      ];
+      
+      details.innerHTML = categories.map(cat => {
+        const scoreData = detailedScores[cat.key];
+        if (!scoreData) return '';
+        
+        return `
+          <div class="eval-category">
+            <div class="eval-category-header">
+              <div class="eval-category-name">${cat.name}</div>
+              <div class="eval-category-score ${getScoreClass(scoreData.score)}">${scoreData.score}/10</div>
+            </div>
+            <div class="eval-category-desc">${scoreData.description}</div>
+            <div class="eval-category-details">${scoreData.details}</div>
+          </div>
+        `;
+      }).join('');
+      
+      // Show modal
+      modal.style.display = 'flex';
+    }
+    
+    function closeEvaluation() {
+      document.getElementById('evaluation-modal').style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('evaluation-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEvaluation();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}Error - Research Quality Assessment{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h2 class="mb-3 text-danger">Oops! Something went wrong</h2>
+                    
+                    <p class="text-muted mb-4">
+                        We encountered an error while processing your request. Please try again or contact support if the problem persists.
+                    </p>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger text-start mb-4">
+                        <h6 class="alert-heading">
+                            <i class="bi bi-bug me-2"></i>Error Details:
+                        </h6>
+                        <p class="mb-0 font-monospace small">{{ error }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary me-md-2">
+                            <i class="bi bi-house me-2"></i>Go to Dashboard
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                            <i class="bi bi-arrow-left me-2"></i>Go Back
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="location.reload()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-muted small">
+                        <p class="mb-1">
+                            <strong>Troubleshooting Tips:</strong>
+                        </p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="bi bi-check-circle me-2"></i>Check if all required fields are filled</li>
+                            <li><i class="bi bi-check-circle me-2"></i>Ensure uploaded files are in supported formats</li>
+                            <li><i class="bi bi-check-circle me-2"></i>Try refreshing the page</li>
+                            <li><i class="bi bi-check-circle me-2"></i>Clear your browser cache if issues persist</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

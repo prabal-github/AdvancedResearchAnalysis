@@ -1,0 +1,25 @@
+Multi-Factor Expected Return Model Analysis Report
+=======================================================
+Generated: 2025-08-25 20:32:08
+
+Model Parameters:
+-----------------
+Value: 25.0%
+Quality: 25.0%
+Momentum: 25.0%
+Size: 15.0%
+Low Volatility: 10.0%
+Risk-free Rate: 6.5%
+
+Top 10 Stocks by Composite Score:
+-----------------------------------
+ 1. COALINDIA.NS    | Score: 0.578 | Expected Return: 0.072
+ 2. CIPLA.NS        | Score: 0.534 | Expected Return: 0.068
+ 3. ITC.NS          | Score: 0.523 | Expected Return: 0.067
+ 4. DRREDDY.NS      | Score: 0.520 | Expected Return: 0.068
+ 5. SUNPHARMA.NS    | Score: 0.507 | Expected Return: 0.066
+ 6. HINDALCO.NS     | Score: 0.505 | Expected Return: 0.068
+ 7. TATAMOTORS.NS   | Score: 0.503 | Expected Return: 0.067
+ 8. SHRIRAMFIN.NS   | Score: 0.497 | Expected Return: 0.067
+ 9. TCS.NS          | Score: 0.497 | Expected Return: 0.066
+10. HEROMOTOCO.NS   | Score: 0.488 | Expected Return: 0.066

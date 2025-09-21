@@ -1,0 +1,4 @@
+name,email,password,full_name,specialization,experience_years,phone,bio
+bulk_analyst1,bulk1@example.com,bulkpass123,Bulk Test Analyst 1,Technical Analysis,2,555-BULK-01,Test analyst created via bulk upload feature
+bulk_analyst2,bulk2@example.com,bulkpass123,Bulk Test Analyst 2,Fundamental Analysis,3,555-BULK-02,Another test analyst for bulk creation validation
+bulk_analyst3,bulk3@example.com,bulkpass123,Bulk Test Analyst 3,Quantitative Analysis,1,555-BULK-03,Third test analyst to verify bulk upload system

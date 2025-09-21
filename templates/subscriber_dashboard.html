@@ -1,0 +1,1142 @@
+{% extends "layout.html" %}
+{% block title %}Subscriber Dashboard - ML Model Analytics{% endblock %}
+
+{% block header %}
+<style>
+/* Dashboard styling */
+:root {
+  --primary: #2563eb;
+  --primary-rgb: 37, 99, 235;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --info: #0ea5e9;
+  --surface: #ffffff;
+  --surface-dark: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --radius: 8px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme='dark'] {
+  --surface: #0f172a;
+  --surface-dark: #1e293b;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: white;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+}
+
+.analytics-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: var(--surface-dark);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(var(--primary-rgb), 0.3);
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.model-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.performance-indicator {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.performance-positive {
+  background-color: rgba(16, 163, 74, 0.1);
+  color: var(--success);
+}
+
+.performance-negative {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--danger);
+}
+
+.performance-neutral {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: var(--text-muted);
+}
+
+.chart-container {
+  height: 300px;
+  margin: 1rem 0;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.table-responsive {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: var(--surface-dark);
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(var(--primary-rgb), 0.3);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="mb-2">Subscriber Dashboard</h1>
+        <p class="mb-0 opacity-75">
+          Comprehensive analytics for your subscribed ML models
+          {% if investor %}
+          - Welcome back, {{ investor.name }}!
+          {% endif %}
+        </p>
+      </div>
+      <div class="col-md-4 text-end">
+        <div class="plan-badge bg-white bg-opacity-20 rounded px-3 py-2 d-inline-block">
+          <i class="fas fa-crown me-2"></i>
+          <strong>{{ plan_info.plan.title() }} Plan</strong>
+          <div class="small">
+            {{ plan_info.subscriptions_used }}/{{ plan_info.subscription_limit or '∞' }} subscriptions
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Portfolio Overview -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="analytics-card">
+        <h3 class="mb-4">
+          <i class="fas fa-chart-line me-2"></i>
+          Portfolio Overview
+        </h3>
+        <div class="row" id="portfolioMetrics">
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-value" id="totalSubscriptions">-</div>
+              <div class="metric-label">Active Subscriptions</div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-value" id="totalRecommendations">-</div>
+              <div class="metric-label">Total Recommendations</div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-value" id="winRate">-</div>
+              <div class="metric-label">Overall Win Rate</div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-value" id="totalReturns">-</div>
+              <div class="metric-label">Total Returns</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="models-tab" data-bs-toggle="tab" data-bs-target="#models" type="button" role="tab">
+        <i class="fas fa-robot me-2"></i>My Models
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance" type="button" role="tab">
+        <i class="fas fa-chart-bar me-2"></i>Performance Analysis
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
+        <i class="fas fa-history me-2"></i>Historical Analysis
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="advanced-analysis-tab" data-bs-toggle="tab" data-bs-target="#advanced-analysis" type="button" role="tab">
+        <i class="fas fa-chart-line me-2"></i>Advanced Analytics
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare" type="button" role="tab">
+        <i class="fas fa-balance-scale me-2"></i>Compare Results
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="dashboardTabContent">
+    
+    <!-- My Models Tab -->
+    <div class="tab-pane fade show active" id="models" role="tabpanel">
+      <div id="modelsContent">
+        {% if subscribed_models %}
+          {% for model_data in subscribed_models %}
+          <div class="model-card" data-model-id="{{ model_data.model.id }}">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h4 class="mb-2">{{ model_data.model.name }}</h4>
+                <p class="text-muted mb-2">
+                  by {{ model_data.model.author_user_key or 'Anonymous' }} • 
+                  Subscribed {{ model_data.subscription_days }} days ago
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                  {% if model_data.performance_metrics %}
+                    {% set perf = model_data.performance_metrics %}
+                    {% if perf.total_return > 0 %}
+                      <span class="performance-indicator performance-positive">
+                        +{{ "%.2f" | format(perf.total_return) }}% Total Return
+                      </span>
+                    {% elif perf.total_return < 0 %}
+                      <span class="performance-indicator performance-negative">
+                        {{ "%.2f" | format(perf.total_return) }}% Total Return
+                      </span>
+                    {% else %}
+                      <span class="performance-indicator performance-neutral">
+                        No Return Data
+                      </span>
+                    {% endif %}
+                    
+                    {% if perf.weekly_return %}
+                      <span class="performance-indicator {{ 'performance-positive' if perf.weekly_return > 0 else 'performance-negative' if perf.weekly_return < 0 else 'performance-neutral' }}">
+                        {{ "%.2f" | format(perf.weekly_return) }}% Weekly
+                      </span>
+                    {% endif %}
+                  {% else %}
+                    <span class="performance-indicator performance-neutral">
+                      Performance Calculating...
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-4 text-end">
+                <div class="mb-2">
+                  <small class="text-muted">Your Runs: {{ model_data.run_history|length }}</small>
+                </div>
+                <div class="btn-group-vertical d-grid gap-2">
+                  <button class="btn btn-primary btn-sm" onclick="viewDetailedAnalysis('{{ model_data.model.id }}')">
+                    <i class="fas fa-chart-line me-1"></i>Detailed Analysis
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="runModel('{{ model_data.model.id }}')">
+                    <i class="fas fa-play me-1"></i>Run Model
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recent Recommendations Preview -->
+            {% if model_data.recent_recommendations %}
+            <div class="mt-3 pt-3 border-top">
+              <h6 class="mb-2">Recent Recommendations ({{ model_data.recent_recommendations|length }})</h6>
+              <div class="row">
+                {% for rec in model_data.recent_recommendations[:3] %}
+                <div class="col-md-4 mb-2">
+                  <div class="small p-2 bg-light rounded">
+                    <strong>{{ rec.stock_symbol }}</strong> - {{ rec.recommendation_type }}
+                    {% if rec.current_return %}
+                      <div class="mt-1">
+                        <span class="{{ 'text-success' if rec.current_return > 0 else 'text-danger' if rec.current_return < 0 else 'text-muted' }}">
+                          {{ "%.2f" | format(rec.current_return) }}%
+                        </span>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="fas fa-robot"></i>
+            <h4>No Subscribed Models</h4>
+            <p>You haven't subscribed to any ML models yet.</p>
+            <a href="/published" class="btn btn-primary">
+              <i class="fas fa-search me-2"></i>Browse Available Models
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Performance Analysis Tab -->
+    <div class="tab-pane fade" id="performance" role="tabpanel">
+      <div class="analytics-card">
+        <h4 class="mb-4">
+          <i class="fas fa-chart-bar me-2"></i>Performance Analytics
+        </h4>
+        <div id="performanceContent">
+          <div class="text-center py-4">
+            <div class="loading-spinner"></div>
+            <p class="mt-2 text-muted">Loading performance data...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Analysis Tab -->
+    <div class="tab-pane fade" id="history" role="tabpanel">
+      <div class="analytics-card">
+        <h4 class="mb-4">
+          <i class="fas fa-history me-2"></i>Historical Analysis
+        </h4>
+        <div id="historyContent">
+          <div class="text-center py-4">
+            <div class="loading-spinner"></div>
+            <p class="mt-2 text-muted">Loading historical data...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Analytics Tab -->
+    <div class="tab-pane fade" id="advanced-analysis" role="tabpanel">
+      <div class="analytics-card">
+        <h4 class="mb-4">
+          <i class="fas fa-chart-line me-2"></i>Advanced Analytics & Predictive Insights
+        </h4>
+        <div id="advancedAnalysisContent">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading advanced analytics...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading advanced analytics and predictive insights...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Results Tab -->
+    <div class="tab-pane fade" id="compare" role="tabpanel">
+      <div class="analytics-card">
+        <h4 class="mb-4">
+          <i class="fas fa-balance-scale me-2"></i>Compare Model Results
+        </h4>
+        <div id="compareContent">
+          <div class="text-center py-4">
+            <div class="loading-spinner"></div>
+            <p class="mt-2 text-muted">Loading comparison data...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Analysis Modal -->
+<div class="modal fade" id="detailedAnalysisModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-chart-line me-2"></i>
+          Detailed Model Analysis
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="detailedAnalysisContent">
+        <div class="text-center py-4">
+          <div class="loading-spinner"></div>
+          <p class="mt-2 text-muted">Loading detailed analysis...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let dashboardData = null;
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+  loadDashboardAnalytics();
+  
+  // Tab change handlers
+  document.getElementById('performance-tab').addEventListener('shown.bs.tab', loadPerformanceAnalysis);
+  document.getElementById('history-tab').addEventListener('shown.bs.tab', loadHistoricalAnalysis);
+  document.getElementById('advanced-analysis-tab').addEventListener('shown.bs.tab', loadAdvancedAnalysis);
+  document.getElementById('compare-tab').addEventListener('shown.bs.tab', loadCompareResults);
+});
+
+async function loadDashboardAnalytics() {
+  try {
+    // Load portfolio metrics
+    const response = await fetch('/api/subscriber/portfolio_metrics');
+    const data = await response.json();
+    
+    if (!data.error) {
+      updatePortfolioMetrics(data);
+    } else {
+      showError('Failed to load dashboard analytics: ' + data.error);
+    }
+  } catch (error) {
+    showError('Network error loading dashboard analytics');
+  }
+}
+
+function updatePortfolioMetrics(portfolio) {
+  document.getElementById('totalSubscriptions').textContent = portfolio.total_subscriptions;
+  document.getElementById('totalRecommendations').textContent = portfolio.total_recommendations;
+  document.getElementById('winRate').textContent = portfolio.win_rate;
+  document.getElementById('totalReturns').textContent = portfolio.total_returns;
+  
+  // Update the actionable signals count if element exists
+  const actionableElement = document.getElementById('totalActionable');
+  if (actionableElement) {
+    actionableElement.textContent = portfolio.total_actionable;
+  }
+}
+
+async function viewDetailedAnalysis(modelId) {
+  const modal = new bootstrap.Modal(document.getElementById('detailedAnalysisModal'));
+  const content = document.getElementById('detailedAnalysisContent');
+  
+  content.innerHTML = `
+    <div class="text-center py-4">
+      <div class="loading-spinner"></div>
+      <p class="mt-2 text-muted">Loading detailed analysis...</p>
+    </div>
+  `;
+  
+  modal.show();
+  
+  try {
+    const response = await fetch(`/api/subscriber/models/${modelId}/detailed_analysis`);
+    const data = await response.json();
+    
+    if (data.ok) {
+      renderDetailedAnalysis(data, content);
+    } else {
+      content.innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Failed to load detailed analysis: ${data.error || 'Unknown error'}
+        </div>
+      `;
+    }
+  } catch (error) {
+    content.innerHTML = `
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Network error loading detailed analysis
+      </div>
+    `;
+  }
+}
+
+function renderDetailedAnalysis(data, container) {
+  const model = data.model;
+  const recommendations = data.recommendations;
+  const timeline = data.performance_timeline;
+  
+  container.innerHTML = `
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <h6>Model Information</h6>
+        <table class="table table-sm">
+          <tr><td>Name:</td><td><strong>${escapeHtml(model.name)}</strong></td></tr>
+          <tr><td>Author:</td><td>${escapeHtml(model.author || 'Anonymous')}</td></tr>
+          <tr><td>Category:</td><td>${escapeHtml(model.category || 'N/A')}</td></tr>
+          <tr><td>Created:</td><td>${new Date(model.created_at || Date.now()).toLocaleDateString()}</td></tr>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h6>Performance Summary</h6>
+        <div class="row text-center">
+          <div class="col-4">
+            <div class="metric-card">
+              <div class="metric-value small">${recommendations.length}</div>
+              <div class="metric-label">Total Signals</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="metric-card">
+              <div class="metric-value small">${timeline.filter(t => t.return > 0).length}</div>
+              <div class="metric-label">Profitable</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="metric-card">
+              <div class="metric-value small">${timeline.length > 0 ? (timeline.filter(t => t.return > 0).length / timeline.length * 100).toFixed(1) : 0}%</div>
+              <div class="metric-label">Win Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <h6>Recent Recommendations</h6>
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Stock</th>
+              <th>Type</th>
+              <th>Entry Price</th>
+              <th>Current Price</th>
+              <th>Return</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recommendations.slice(0, 10).map(rec => `
+              <tr>
+                <td>${new Date(rec.created_at || Date.now()).toLocaleDateString()}</td>
+                <td><strong>${escapeHtml(rec.stock_symbol || 'N/A')}</strong></td>
+                <td>${escapeHtml(rec.recommendation_type || 'N/A')}</td>
+                <td>₹${rec.entry_price ? rec.entry_price.toFixed(2) : 'N/A'}</td>
+                <td>₹${rec.current_price ? rec.current_price.toFixed(2) : 'N/A'}</td>
+                <td class="${rec.current_return > 0 ? 'text-success' : rec.current_return < 0 ? 'text-danger' : 'text-muted'}">
+                  ${rec.current_return ? (rec.current_return > 0 ? '+' : '') + rec.current_return.toFixed(2) + '%' : 'N/A'}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    ${timeline.length > 0 ? `
+      <div class="mb-4">
+        <h6>Performance Timeline</h6>
+        <div id="performanceChart" style="height: 300px; background: #f8f9fa; border-radius: 8px; padding: 20px;">
+          <p class="text-center text-muted mt-5">
+            Performance chart would be rendered here<br>
+            <small>Cumulative returns over time for ${timeline.length} trades</small>
+          </p>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function runModel(modelId) {
+  // Redirect to published catalog and trigger run
+  window.location.href = `/published#model-${modelId}`;
+}
+
+async function loadPerformanceAnalysis() {
+  const content = document.getElementById('performanceContent');
+  
+  content.innerHTML = `
+    <div class="text-center py-4">
+      <div class="loading-spinner"></div>
+      <p class="mt-2 text-muted">Loading performance analysis...</p>
+    </div>
+  `;
+  
+  try {
+    const response = await fetch('/api/subscriber/performance_analysis');
+    const data = await response.json();
+    
+    if (data.error) {
+      content.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+      return;
+    }
+    
+    const models = data.performance_data;
+    
+    content.innerHTML = `
+      <div class="row">
+        ${models.map(model => `
+          <div class="col-md-6 mb-4">
+            <div class="analytics-card">
+              <h6 class="mb-3">${escapeHtml(model.model_name)}</h6>
+              <div class="row text-center mb-3">
+                <div class="col-3">
+                  <div class="metric-value">${model.total_results}</div>
+                  <div class="metric-label">Results</div>
+                </div>
+                <div class="col-3">
+                  <div class="metric-value">${(model.avg_confidence * 100).toFixed(1)}%</div>
+                  <div class="metric-label">Avg Confidence</div>
+                </div>
+                <div class="col-3">
+                  <div class="metric-value">${(model.latest_confidence * 100).toFixed(1)}%</div>
+                  <div class="metric-label">Latest</div>
+                </div>
+                <div class="col-3">
+                  <div class="metric-value">${model.actionable_trend.reduce((a, b) => a + b, 0)}</div>
+                  <div class="metric-label">Total Signals</div>
+                </div>
+              </div>
+              <div class="small">
+                <strong>Trend:</strong> ${model.confidence_trend.length > 1 ? 
+                  (model.confidence_trend[0] > model.confidence_trend[model.confidence_trend.length - 1] ? 
+                    '<span class="text-success">Improving</span>' : 
+                    '<span class="text-warning">Declining</span>') : 
+                  'Insufficient data'}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      ${models.length === 0 ? '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>No performance data available yet.</p></div>' : ''}
+    `;
+  } catch (error) {
+    content.innerHTML = `<div class="alert alert-danger">Failed to load performance data: ${error.message}</div>`;
+  }
+}
+
+async function loadHistoricalAnalysis() {
+  const content = document.getElementById('historyContent');
+  
+  content.innerHTML = `
+    <div class="text-center py-4">
+      <div class="loading-spinner"></div>
+      <p class="mt-2 text-muted">Loading historical analysis...</p>
+    </div>
+  `;
+  
+  try {
+    const response = await fetch('/api/subscriber/historical_analysis');
+    const data = await response.json();
+    
+    if (data.error) {
+      content.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+      return;
+    }
+    
+    const history = data.historical_data;
+    
+    content.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Run Date</th>
+              <th>ML Results</th>
+              <th>Actionable Signals</th>
+              <th>Confidence</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${history.map(run => `
+              <tr>
+                <td><strong>${escapeHtml(run.model_name)}</strong></td>
+                <td>${new Date(run.created_at).toLocaleDateString()}</td>
+                <td>
+                  ${run.ml_result ? 
+                    `<span class="badge bg-success">${run.ml_result.status}</span>` : 
+                    '<span class="badge bg-secondary">No ML Result</span>'}
+                </td>
+                <td>
+                  ${run.ml_result ? 
+                    `<span class="badge bg-primary">${run.ml_result.actionable_count || 0}</span>` : 
+                    '-'}
+                </td>
+                <td>
+                  ${run.ml_result && run.ml_result.avg_confidence ? 
+                    `${(run.ml_result.avg_confidence * 100).toFixed(1)}%` : 
+                    '-'}
+                </td>
+                <td>${run.duration_ms ? `${run.duration_ms}ms` : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${history.length === 0 ? '<div class="empty-state"><i class="fas fa-history"></i><p>No historical data available yet.</p></div>' : ''}
+    `;
+  } catch (error) {
+    content.innerHTML = `<div class="alert alert-danger">Failed to load historical data: ${error.message}</div>`;
+  }
+}
+                    <div class="progress">
+                      <div class="progress-bar" style="width: ${model.win_rate}%">${model.win_rate.toFixed(0)}%</div>
+                    </div>
+                  </td>
+                </tr>
+              `).join('') : '<tr><td colspan="6" class="text-center">Loading...</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadAdvancedAnalysis() {
+  const content = document.getElementById('advancedAnalysisContent');
+  
+  try {
+    content.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading advanced analytics...</p></div>';
+    
+    const response = await fetch('/api/subscriber/portfolio/historical_analysis');
+    const data = await response.json();
+    
+    if (!data.ok) {
+      throw new Error(data.error || 'Failed to load advanced analysis');
+    }
+    
+    const analysis = data.historical_analysis;
+    
+    // Ensure required properties exist with defaults
+    const insights = analysis.predictive_insights || {};
+    const topPerformers = insights.top_performers || [];
+    const decliningModels = insights.declining_models || [];
+    const seasonalPatterns = analysis.portfolio_seasonal_patterns || {};
+    const modelTrends = analysis.model_performance_trends || {};
+    
+    content.innerHTML = `
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h6>Portfolio Predictive Insights</h6>
+          <p class="text-muted">Advanced analytics with trend detection, seasonal patterns, and predictive insights.</p>
+        </div>
+      </div>
+      
+      <!-- Predictive Insights Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="metric-card">
+            <div class="metric-value">${topPerformers.length}</div>
+            <div class="metric-label">Top Performers</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="metric-card">
+            <div class="metric-value">${(insights.portfolio_trend === 'positive' ? '↗️' : insights.portfolio_trend === 'negative' ? '↘️' : '➡️')}</div>
+            <div class="metric-label">Portfolio Trend</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="metric-card">
+            <div class="metric-value">${insights.seasonal_recommendation || 'N/A'}</div>
+            <div class="metric-label">Best Season</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="metric-card">
+            <div class="metric-value">${(insights.diversification_score || 0).toFixed(0)}%</div>
+            <div class="metric-label">Diversification</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Top Performers Section -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="analytics-card">
+            <h6 class="mb-3"><i class="fas fa-trophy text-warning me-2"></i>Top Performing Models</h6>
+            ${topPerformers.length > 0 ? `
+              <div class="list-group list-group-flush">
+                ${topPerformers.slice(0, 3).map((model, index) => `
+                  <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>${escapeHtml(model.model_name)}</strong>
+                      <br><small class="text-muted">3M Performance Score</small>
+                    </div>
+                    <span class="badge ${model.performance_score >= 0 ? 'bg-success' : 'bg-danger'} rounded-pill">
+                      ${(model.performance_score >= 0 ? '+' : '') + model.performance_score.toFixed(2)}%
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `
+              <div class="text-center text-muted py-4">
+                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                <p>No performance data available yet</p>
+                <small>Subscribe to models and wait for recommendation data</small>
+              </div>
+            `}
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="analytics-card">
+            <h6 class="mb-3"><i class="fas fa-chart-line text-info me-2"></i>Seasonal Performance</h6>
+            ${Object.keys(seasonalPatterns).length > 0 ? `
+              <div class="row">
+                ${Object.entries(seasonalPatterns).map(([quarter, data]) => `
+                  <div class="col-6 mb-3">
+                    <div class="text-center p-3 border rounded">
+                      <h6>${quarter}</h6>
+                      <div class="${data.average_return >= 0 ? 'text-success' : 'text-danger'} fw-bold">
+                        ${(data.average_return >= 0 ? '+' : '') + data.average_return.toFixed(2)}%
+                      </div>
+                      <small class="text-muted">${data.trade_count} trades</small>
+                      ${data.best_quarter ? '<br><span class="badge bg-warning text-dark">Best</span>' : ''}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `
+              <div class="text-center text-muted py-4">
+                <i class="fas fa-calendar fa-2x mb-2"></i>
+                <p>No seasonal data available</p>
+                <small>Insufficient trading history for seasonal analysis</small>
+              </div>
+            `}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Individual Model Trends -->
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <div class="analytics-card">
+            <h6 class="mb-3"><i class="fas fa-chart-area text-primary me-2"></i>Model Performance Trends</h6>
+            ${Object.keys(modelTrends).length > 0 ? `
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>30D Trend</th>
+                      <th>90D Return</th>
+                      <th>180D Return</th>
+                      <th>1Y Return</th>
+                      <th>Volatility</th>
+                      <th>Risk Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${Object.values(modelTrends).map(model => `
+                      <tr>
+                        <td><strong>${escapeHtml(model.model_name)}</strong></td>
+                        <td>
+                          ${model.trend_analysis && model.trend_analysis.direction ? `
+                            <span class="badge ${
+                              model.trend_analysis.direction === 'improving' ? 'bg-success' : 
+                              model.trend_analysis.direction === 'declining' ? 'bg-danger' : 'bg-secondary'
+                            }">
+                              ${model.trend_analysis.direction === 'improving' ? '↗️' : 
+                                model.trend_analysis.direction === 'declining' ? '↘️' : '➡️'} 
+                              ${model.trend_analysis.direction}
+                            </span>
+                          ` : '<span class="text-muted">N/A</span>'}
+                        </td>
+                        <td class="${(model.period_returns && model.period_returns['3M'] && model.period_returns['3M'].total_return || 0) >= 0 ? 'text-success' : 'text-danger'}">
+                          ${((model.period_returns && model.period_returns['3M'] && model.period_returns['3M'].total_return || 0) >= 0 ? '+' : '') + (model.period_returns && model.period_returns['3M'] && model.period_returns['3M'].total_return || 0).toFixed(2)}%
+                        </td>
+                        <td class="${(model.period_returns && model.period_returns['6M'] && model.period_returns['6M'].total_return || 0) >= 0 ? 'text-success' : 'text-danger'}">
+                          ${((model.period_returns && model.period_returns['6M'] && model.period_returns['6M'].total_return || 0) >= 0 ? '+' : '') + (model.period_returns && model.period_returns['6M'] && model.period_returns['6M'].total_return || 0).toFixed(2)}%
+                        </td>
+                        <td class="${(model.period_returns && model.period_returns['1Y'] && model.period_returns['1Y'].total_return || 0) >= 0 ? 'text-success' : 'text-danger'}">
+                          ${((model.period_returns && model.period_returns['1Y'] && model.period_returns['1Y'].total_return || 0) >= 0 ? '+' : '') + (model.period_returns && model.period_returns['1Y'] && model.period_returns['1Y'].total_return || 0).toFixed(2)}%
+                        </td>
+                        <td>
+                          <div class="progress" style="height: 5px;">
+                            <div class="progress-bar ${(model.volatility_metrics && model.volatility_metrics.standard_deviation || 0) > 10 ? 'bg-danger' : (model.volatility_metrics && model.volatility_metrics.standard_deviation || 0) > 5 ? 'bg-warning' : 'bg-success'}" 
+                                 style="width: ${Math.min((model.volatility_metrics && model.volatility_metrics.standard_deviation || 0) * 5, 100)}%">
+                            </div>
+                          </div>
+                          <small class="text-muted">${(model.volatility_metrics && model.volatility_metrics.standard_deviation || 0).toFixed(2)}%</small>
+                        </td>
+                        <td>
+                          ${getRiskRating(model.volatility_metrics && model.volatility_metrics.risk_adjusted_return || 0)}
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            ` : `
+              <div class="text-center text-muted py-4">
+                <i class="fas fa-chart-area fa-2x mb-2"></i>
+                <p>No model trends available</p>
+                <small>Performance data will appear as models generate recommendations</small>
+              </div>
+            `}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recommendations -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="analytics-card">
+            <h6 class="mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>AI-Powered Recommendations</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="alert alert-success">
+                  <h6><i class="fas fa-star me-2"></i>Portfolio Optimization</h6>
+                  ${insights.portfolio_trend === 'positive' ? 
+                    'Your portfolio is showing positive momentum. Consider increasing allocation to top performers.' :
+                    insights.portfolio_trend === 'negative' ?
+                    'Portfolio needs attention. Review declining models and consider rebalancing.' :
+                    'Portfolio shows neutral trend. Monitor performance and consider diversification.'}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="alert alert-info">
+                  <h6><i class="fas fa-calendar me-2"></i>Seasonal Strategy</h6>
+                  ${insights.seasonal_recommendation ? 
+                    `${insights.seasonal_recommendation} typically shows the best performance for your portfolio.` :
+                    'Insufficient seasonal data available for recommendations.'}
+                </div>
+              </div>
+              ${decliningModels.length > 0 ? `
+                <div class="col-md-12">
+                  <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Attention Needed</h6>
+                    <p>The following models are showing declining trends:</p>
+                    <ul class="mb-0">
+                      ${decliningModels.map(model => `
+                        <li><strong>${escapeHtml(model.model_name)}</strong> - Consider reviewing or reallocating</li>
+                      `).join('')}
+                    </ul>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+  } catch (error) {
+    console.error('Advanced analysis error:', error);
+    content.innerHTML = `
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>Error:</strong> Failed to load advanced analysis. ${error.message}
+      </div>
+    `;
+  }
+}
+
+async function loadCompareResults() {
+  const content = document.getElementById('compareContent');
+  
+  content.innerHTML = `
+    <div class="text-center py-4">
+      <div class="loading-spinner"></div>
+      <p class="mt-2 text-muted">Loading model comparison...</p>
+    </div>
+  `;
+  
+  try {
+    const response = await fetch('/api/subscriber/compare_models');
+    const data = await response.json();
+    
+    if (data.error) {
+      content.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+      return;
+    }
+    
+    const models = data.comparison_data;
+    
+    content.innerHTML = `
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h6>Model Comparison</h6>
+          <p class="text-muted">Compare performance metrics across your subscribed models.</p>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Model Name</th>
+              <th>Author</th>
+              <th>Results</th>
+              <th>Avg Confidence</th>
+              <th>Total Signals</th>
+              <th>Latest Confidence</th>
+              <th>Latest Signals</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${models.sort((a, b) => b.metrics.avg_confidence - a.metrics.avg_confidence).map(model => `
+              <tr>
+                <td><strong>${escapeHtml(model.model_name)}</strong></td>
+                <td>${escapeHtml(model.author)}</td>
+                <td><span class="badge bg-primary">${model.metrics.total_results}</span></td>
+                <td>
+                  <span class="badge ${model.metrics.avg_confidence >= 0.6 ? 'bg-success' : model.metrics.avg_confidence >= 0.4 ? 'bg-warning' : 'bg-danger'}">
+                    ${(model.metrics.avg_confidence * 100).toFixed(1)}%
+                  </span>
+                </td>
+                <td>${model.metrics.total_actionable}</td>
+                <td>${(model.metrics.latest_confidence * 100).toFixed(1)}%</td>
+                <td>${model.metrics.latest_actionable}</td>
+                <td>
+                  ${model.performance_trend.length > 1 ? 
+                    (model.performance_trend[0] > model.performance_trend[model.performance_trend.length - 1] ? 
+                      '<span class="text-success">↗️ Up</span>' : 
+                      '<span class="text-danger">↘️ Down</span>') : 
+                    '<span class="text-muted">-</span>'}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      
+      ${models.length === 0 ? '<div class="empty-state"><i class="fas fa-balance-scale"></i><p>No models available for comparison.</p></div>' : ''}
+      
+      ${models.length > 0 ? `
+        <div class="mt-4">
+          <h6>Comparison Insights</h6>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="alert alert-success">
+                <strong>Highest Confidence:</strong><br>
+                ${models.reduce((best, model) => model.metrics.avg_confidence > best.metrics.avg_confidence ? model : best).model_name}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="alert alert-info">
+                <strong>Most Signals:</strong><br>
+                ${models.reduce((best, model) => model.metrics.total_actionable > best.metrics.total_actionable ? model : best).model_name}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="alert alert-warning">
+                <strong>Most Results:</strong><br>
+                ${models.reduce((best, model) => model.metrics.total_results > best.metrics.total_results ? model : best).model_name}
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+    `;
+  } catch (error) {
+    content.innerHTML = `<div class="alert alert-danger">Failed to load comparison data: ${error.message}</div>`;
+  }
+}
+
+function getPerformanceRating(winRate, avgReturn) {
+  const score = (winRate * 0.6) + (avgReturn * 10 * 0.4); // Weighted score
+  
+  if (score >= 70) {
+    return '<span class="badge bg-success"><i class="fas fa-star"></i> Excellent</span>';
+  } else if (score >= 50) {
+    return '<span class="badge bg-primary"><i class="fas fa-thumbs-up"></i> Good</span>';
+  } else if (score >= 30) {
+    return '<span class="badge bg-warning"><i class="fas fa-minus"></i> Average</span>';
+  } else {
+    return '<span class="badge bg-danger"><i class="fas fa-thumbs-down"></i> Poor</span>';
+  }
+}
+
+function showError(message) {
+  console.error(message);
+  // You could show a toast notification here
+}
+
+function getRiskRating(riskAdjustedReturn) {
+  if (riskAdjustedReturn >= 1.5) {
+    return '<span class="badge bg-success">Low Risk</span>';
+  } else if (riskAdjustedReturn >= 1.0) {
+    return '<span class="badge bg-warning">Medium Risk</span>';
+  } else {
+    return '<span class="badge bg-danger">High Risk</span>';
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+</script>
+{% endblock %}

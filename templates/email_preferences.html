@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Notification Preferences - ML Trading Platform</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .preference-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .preference-section {
+            margin-bottom: 25px;
+        }
+        .form-check {
+            margin-bottom: 10px;
+        }
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .settings-header {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-save {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 500;
+        }
+        .btn-save:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            color: white;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-enabled {
+            background-color: #28a745;
+        }
+        .status-disabled {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body style="background-color: #f8f9fa;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('subscribed_ml_models') }}">
+                <i class="fas fa-chart-line me-2"></i>ML Trading Platform
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('subscribed_ml_models') }}">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2 class="settings-header">
+                    <i class="fas fa-envelope me-2"></i>Email Notification Preferences
+                </h2>
+                
+                <form id="preferencesForm">
+                    <!-- AI Alert Preferences -->
+                    <div class="preference-card">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-robot me-2"></i>AI Trading Alerts
+                        </h4>
+                        <div class="preference-section">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ai_alerts_enabled" 
+                                       {% if preferences.ai_alerts_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="ai_alerts_enabled">
+                                    <strong>Enable AI Trading Alerts</strong>
+                                    <small class="text-muted d-block">Receive AI-powered trading signals via email</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="entry_signals_enabled" 
+                                       {% if preferences.entry_signals_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="entry_signals_enabled">
+                                    <strong>Entry Signals</strong>
+                                    <small class="text-muted d-block">Get notified when AI suggests buying opportunities</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exit_signals_enabled" 
+                                       {% if preferences.exit_signals_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="exit_signals_enabled">
+                                    <strong>Exit Signals</strong>
+                                    <small class="text-muted d-block">Get notified when AI suggests selling opportunities</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="risk_warnings_enabled" 
+                                       {% if preferences.risk_warnings_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="risk_warnings_enabled">
+                                    <strong>Risk Warnings</strong>
+                                    <small class="text-muted d-block">Receive alerts about potential risks and market volatility</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Reports -->
+                    <div class="preference-card">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>Performance Reports
+                        </h4>
+                        <div class="preference-section">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="weekly_reports_enabled" 
+                                       {% if preferences.weekly_reports_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="weekly_reports_enabled">
+                                    <strong>Weekly Performance Reports</strong>
+                                    <small class="text-muted d-block">Receive weekly summary of your ML model performance</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="monthly_reports_enabled" 
+                                       {% if preferences.monthly_reports_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="monthly_reports_enabled">
+                                    <strong>Monthly Summary Reports</strong>
+                                    <small class="text-muted d-block">Comprehensive monthly analysis and insights</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email Timing & Limits -->
+                    <div class="preference-card">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-clock me-2"></i>Email Timing & Limits
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="preferred_time" class="form-label">
+                                        <strong>Preferred Email Time</strong>
+                                    </label>
+                                    <input type="time" class="form-control" id="preferred_time" 
+                                           value="{{ preferences.preferred_time.strftime('%H:%M') if preferences.preferred_time else '09:00' }}">
+                                    <small class="text-muted">Best time to receive daily reports (IST)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="max_daily_alerts" class="form-label">
+                                        <strong>Max Daily Alerts</strong>
+                                    </label>
+                                    <input type="number" class="form-control" id="max_daily_alerts" 
+                                           value="{{ preferences.max_daily_alerts or 5 }}" min="1" max="20">
+                                    <small class="text-muted">Maximum alerts per day (1-20)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="alert_cooldown_minutes" class="form-label">
+                                        <strong>Alert Cooldown (minutes)</strong>
+                                    </label>
+                                    <input type="number" class="form-control" id="alert_cooldown_minutes" 
+                                           value="{{ preferences.alert_cooldown_minutes or 60 }}" min="15" max="1440">
+                                    <small class="text-muted">Minimum time between similar alerts (15-1440 minutes)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Status -->
+                    <div class="preference-card">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Current Status
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <span class="status-indicator status-enabled" id="email-status"></span>
+                                    <strong>Email Notifications:</strong> 
+                                    <span id="email-status-text">Enabled</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Last Updated:</strong> 
+                                    {{ preferences.updated_at.strftime('%Y-%m-%d %H:%M:%S') if preferences.updated_at else 'Never' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="text-center mb-4">
+                        <button type="submit" class="btn btn-save btn-lg me-3">
+                            <i class="fas fa-save me-2"></i>Save Preferences
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="sendTestEmail()">
+                            <i class="fas fa-paper-plane me-2"></i>Send Test Email
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>Preferences saved successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i><span id="errorMessage">Error saving preferences</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('preferencesForm');
+            const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+            
+            // Update status indicator
+            function updateStatus() {
+                const aiEnabled = document.getElementById('ai_alerts_enabled').checked;
+                const statusIndicator = document.getElementById('email-status');
+                const statusText = document.getElementById('email-status-text');
+                
+                if (aiEnabled) {
+                    statusIndicator.className = 'status-indicator status-enabled';
+                    statusText.textContent = 'Enabled';
+                } else {
+                    statusIndicator.className = 'status-indicator status-disabled';
+                    statusText.textContent = 'Disabled';
+                }
+            }
+            
+            // Listen for changes
+            document.getElementById('ai_alerts_enabled').addEventListener('change', updateStatus);
+            updateStatus(); // Initial update
+            
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    ai_alerts_enabled: document.getElementById('ai_alerts_enabled').checked,
+                    entry_signals_enabled: document.getElementById('entry_signals_enabled').checked,
+                    exit_signals_enabled: document.getElementById('exit_signals_enabled').checked,
+                    risk_warnings_enabled: document.getElementById('risk_warnings_enabled').checked,
+                    weekly_reports_enabled: document.getElementById('weekly_reports_enabled').checked,
+                    monthly_reports_enabled: document.getElementById('monthly_reports_enabled').checked,
+                    preferred_time: document.getElementById('preferred_time').value,
+                    max_daily_alerts: parseInt(document.getElementById('max_daily_alerts').value),
+                    alert_cooldown_minutes: parseInt(document.getElementById('alert_cooldown_minutes').value)
+                };
+                
+                try {
+                    const response = await fetch('/api/update_email_preferences', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.ok) {
+                        successToast.show();
+                        updateStatus();
+                    } else {
+                        document.getElementById('errorMessage').textContent = result.error || 'Error saving preferences';
+                        errorToast.show();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+                    errorToast.show();
+                }
+            });
+        });
+        
+        // Test email function
+        async function sendTestEmail() {
+            const testButton = document.querySelector('button[onclick="sendTestEmail()"]');
+            const originalText = testButton.innerHTML;
+            
+            try {
+                testButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending Test...';
+                testButton.disabled = true;
+                
+                const response = await fetch('/api/test_email_alert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    // Show success message
+                    document.getElementById('successToast').querySelector('.toast-body').innerHTML = 
+                        `<i class="fas fa-check-circle me-2"></i>Test email sent successfully to ${result.email}!`;
+                    successToast.show();
+                } else {
+                    // Show error message
+                    document.getElementById('errorMessage').textContent = 
+                        result.message || 'Failed to send test email';
+                    errorToast.show();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+                errorToast.show();
+            } finally {
+                testButton.innerHTML = originalText;
+                testButton.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

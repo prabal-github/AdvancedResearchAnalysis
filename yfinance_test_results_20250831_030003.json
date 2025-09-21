@@ -1,0 +1,407 @@
+{
+  "successful": [
+    {
+      "success": true,
+      "symbol": "RELIANCE.NS",
+      "latest_price": 1357.2,
+      "volume": 18758842,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TCS.NS",
+      "latest_price": 3084.7,
+      "volume": 2271789,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "INFY.NS",
+      "latest_price": 1469.6,
+      "volume": 8169075,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HDFCBANK.NS",
+      "latest_price": 951.6,
+      "volume": 14823813,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ICICIBANK.NS",
+      "latest_price": 1397.8,
+      "volume": 8519507,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BHARTIARTL.NS",
+      "latest_price": 1888.8,
+      "volume": 4339042,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ITC.NS",
+      "latest_price": 409.75,
+      "volume": 25255050,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "KOTAKBANK.NS",
+      "latest_price": 1960.3,
+      "volume": 3074358,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "LT.NS",
+      "latest_price": 3601.0,
+      "volume": 1678055,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ASIANPAINT.NS",
+      "latest_price": 2518.6,
+      "volume": 1798653,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ADANIENT.NS",
+      "latest_price": 2244.7,
+      "volume": 795699,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ADANIPORTS.NS",
+      "latest_price": 1312.8,
+      "volume": 1592903,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "APOLLOHOSP.NS",
+      "latest_price": 7610.0,
+      "volume": 481590,
+      "days": 4,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "AXISBANK.NS",
+      "latest_price": 1045.2,
+      "volume": 4718016,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BAJAJ-AUTO.NS",
+      "latest_price": 8631.5,
+      "volume": 344340,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BAJFINANCE.NS",
+      "latest_price": 877.85,
+      "volume": 5672446,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BAJAJFINSV.NS",
+      "latest_price": 1913.5,
+      "volume": 735268,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BEL.NS",
+      "latest_price": 369.4,
+      "volume": 12739664,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BPCL.NS",
+      "latest_price": 308.2,
+      "volume": 4334416,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "BRITANNIA.NS",
+      "latest_price": 5824.0,
+      "volume": 699161,
+      "days": 4,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "CIPLA.NS",
+      "latest_price": 1589.4,
+      "volume": 1342344,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "COALINDIA.NS",
+      "latest_price": 374.8,
+      "volume": 4578400,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "DRREDDY.NS",
+      "latest_price": 1260.1,
+      "volume": 2422956,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "EICHERMOT.NS",
+      "latest_price": 6103.0,
+      "volume": 496302,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "GRASIM.NS",
+      "latest_price": 2775.6,
+      "volume": 542362,
+      "days": 4,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HCLTECH.NS",
+      "latest_price": 1454.8,
+      "volume": 3404604,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HDFCLIFE.NS",
+      "latest_price": 772.05,
+      "volume": 1865283,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HEROMOTOCO.NS",
+      "latest_price": 5087.7,
+      "volume": 783364,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HINDALCO.NS",
+      "latest_price": 703.95,
+      "volume": 5335149,
+      "days": 4,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "HINDUNILVR.NS",
+      "latest_price": 2659.8,
+      "volume": 1972773,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "INDUSINDBK.NS",
+      "latest_price": 739.5,
+      "volume": 2538543,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "JSWSTEEL.NS",
+      "latest_price": 1026.6,
+      "volume": 1062037,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "M&M.NS",
+      "latest_price": 3199.5,
+      "volume": 3017625,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "MARUTI.NS",
+      "latest_price": 14791.0,
+      "volume": 621560,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "NTPC.NS",
+      "latest_price": 327.55,
+      "volume": 11813425,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "NESTLEIND.NS",
+      "latest_price": 1156.2,
+      "volume": 1593255,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ONGC.NS",
+      "latest_price": 233.71,
+      "volume": 9928988,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "POWERGRID.NS",
+      "latest_price": 275.25,
+      "volume": 12841075,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "SBILIFE.NS",
+      "latest_price": 1805.5,
+      "volume": 801378,
+      "days": 4,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "SHRIRAMFIN.NS",
+      "latest_price": 580.25,
+      "volume": 12236788,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "SBIN.NS",
+      "latest_price": 802.5,
+      "volume": 6861440,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "SUNPHARMA.NS",
+      "latest_price": 1594.5,
+      "volume": 3176534,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TATACONSUM.NS",
+      "latest_price": 1065.4,
+      "volume": 1079893,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TATAMOTORS.NS",
+      "latest_price": 669.0,
+      "volume": 8201917,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TATASTEEL.NS",
+      "latest_price": 154.48,
+      "volume": 16971859,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TECHM.NS",
+      "latest_price": 1481.4,
+      "volume": 2279980,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TITAN.NS",
+      "latest_price": 3628.8,
+      "volume": 660956,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "TRENT.NS",
+      "latest_price": 5298.0,
+      "volume": 1333724,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "ULTRACEMCO.NS",
+      "latest_price": 12640.0,
+      "volume": 177858,
+      "days": 5,
+      "error": null
+    },
+    {
+      "success": true,
+      "symbol": "WIPRO.NS",
+      "latest_price": 249.41,
+      "volume": 10117017,
+      "days": 5,
+      "error": null
+    }
+  ],
+  "failed": [],
+  "total_tested": 50,
+  "success_rate": 100.0
+}

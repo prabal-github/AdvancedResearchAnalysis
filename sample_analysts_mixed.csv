@@ -1,0 +1,8 @@
+name,email,password,full_name,specialization,experience_years,phone,bio
+mixed_success_1,success1@mixed.com,mixedpass123,Success User 1,Technical Analysis,2,555-MIX-01,This user should be created successfully
+,failure1@mixed.com,mixedpass123,Missing Name User,Fundamental Analysis,3,555-MIX-02,This row will fail due to missing username
+mixed_success_2,success2@mixed.com,mixedpass123,Success User 2,Quantitative Analysis,1,555-MIX-03,This user should also be created successfully
+invalid_user,not-email-format,mixedpass123,Invalid Email User,Risk Assessment,2,555-MIX-04,This row will fail due to invalid email
+mixed_success_3,success3@mixed.com,mixedpass123,Success User 3,Industry Analysis,4,555-MIX-05,Another successful user creation
+migration_test,duplicate@mixed.com,mixedpass123,Duplicate Username,Derivatives Analysis,1,555-MIX-06,This will be skipped as duplicate username
+mixed_success_4,success4@mixed.com,mixedpass123,Success User 4,Macro Economics,3,555-MIX-07,Final successful user in mixed batch

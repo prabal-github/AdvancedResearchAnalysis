@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Contact Form - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4><i class="fas fa-edit"></i> Edit Contact Form: {{ form.form_title }}</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="form_title" class="form-label">Form Title *</label>
+                  <input type="text" class="form-control" id="form_title" name="form_title" 
+                         value="{{ form.form_title }}" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="form_subject" class="form-label">Form Subject *</label>
+                  <input type="text" class="form-control" id="form_subject" name="form_subject" 
+                         value="{{ form.form_subject }}" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Form URL</label>
+              <div class="input-group">
+                <span class="input-group-text">/form/</span>
+                <input type="text" class="form-control" value="{{ form.form_slug }}" readonly>
+                <span class="input-group-text">
+                  <i class="fas fa-lock text-muted" title="URL slug cannot be changed after creation"></i>
+                </span>
+              </div>
+              <div class="form-text">URL slug cannot be changed after creation to maintain existing links.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="form_description" class="form-label">Form Description</label>
+              <textarea class="form-control" id="form_description" name="form_description" rows="3">{{ form.form_description or '' }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="success_message" class="form-label">Success Message</label>
+              <textarea class="form-control" id="success_message" name="success_message" rows="2">{{ form.success_message }}</textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="require_phone" name="require_phone" 
+                           {% if form.require_phone %}checked{% endif %}>
+                    <label class="form-check-label" for="require_phone">
+                      Require Phone Number
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                           {% if form.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                      Form is Active
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+              <div class="card-body">
+                <h6 class="card-title">Form Statistics</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <h4 class="text-primary mb-0">{{ form.submissions.count() }}</h4>
+                      <small class="text-muted">Total Submissions</small>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <h4 class="text-success mb-0">{{ form.submissions.filter_by(is_contacted=True).count() }}</h4>
+                      <small class="text-muted">Contacted</small>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <h4 class="text-warning mb-0">{{ form.submissions.filter_by(is_read=False).count() }}</h4>
+                      <small class="text-muted">Unread</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <div>
+                <a href="{{ url_for('admin_contact_forms') }}" class="btn btn-secondary">
+                  <i class="fas fa-arrow-left"></i> Back to Forms
+                </a>
+                <a href="{{ url_for('admin_view_submissions', form_id=form.id) }}" class="btn btn-info">
+                  <i class="fas fa-list"></i> View Submissions
+                </a>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Update Form
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

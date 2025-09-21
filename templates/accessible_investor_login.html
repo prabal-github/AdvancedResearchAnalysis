@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Login - Research Quality App</title>
+    <meta name="description" content="Secure login portal for investors to access their personalized investment dashboard and research analysis tools.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Styles */
+        :root {
+            /* High contrast color scheme */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --success-green: #155724;
+            --error-red: #721c24;
+            --warning-orange: #856404;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --background-light: #f8f9fa;
+            --border-color: #ced4da;
+            --focus-outline: #0066cc;
+            
+            /* Enhanced contrast ratios */
+            --contrast-ratio-normal: 4.5; /* WCAG AA requirement */
+            --contrast-ratio-large: 3.0;  /* WCAG AA requirement for large text */
+        }
+        
+        /* Base accessibility styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        /* Skip to content link for keyboard navigation */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Remove default focus for mouse users, keep for keyboard */
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Main container */
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            max-width: 480px;
+            margin: 2rem auto;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Header styling */
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .login-header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Form styling with accessibility enhancements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+            outline: none;
+        }
+        
+        .form-control:invalid {
+            border-color: var(--error-red);
+        }
+        
+        .form-control:invalid:focus {
+            border-color: var(--error-red);
+            box-shadow: 0 0 0 0.2rem rgba(114, 28, 36, 0.25);
+        }
+        
+        /* Error styling */
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: block;
+            font-weight: 500;
+        }
+        
+        .form-control.is-invalid {
+            border-color: var(--error-red);
+            background-image: none;
+        }
+        
+        /* Button styling */
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid var(--primary-blue);
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 86, 179, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Alert styling */
+        .alert {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            color: var(--success-green);
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: var(--error-red);
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .alert-warning {
+            color: var(--warning-orange);
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        /* Navigation links */
+        .nav-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .nav-links a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+            background-color: rgba(0, 86, 179, 0.1);
+        }
+        
+        /* Registration CTA */
+        .registration-cta {
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .registration-cta h2 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .btn-group-vertical .btn {
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            background-color: transparent;
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .btn-outline-primary:hover:not(:disabled) {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        /* Loading spinner */
+        .spinner-border {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+            vertical-align: text-bottom;
+        }
+        
+        /* Demo credentials */
+        .demo-info {
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .demo-info h3 {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .demo-info p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .registration-cta {
+                padding: 0.75rem;
+            }
+            
+            .btn-group-vertical .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #0000ff;
+                --primary-blue-dark: #0000cc;
+                --text-primary: #000000;
+                --border-color: #000000;
+            }
+            
+            .form-control, .btn, .alert {
+                border-width: 3px;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        .sr-only-focusable:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            padding: inherit !important;
+            margin: inherit !important;
+            overflow: visible !important;
+            clip: auto !important;
+            white-space: normal !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link for keyboard navigation -->
+    <a href="#main-content" class="skip-link sr-only-focusable">Skip to main content</a>
+    
+    <!-- ARIA live region for announcements -->
+    <div id="announcement-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    <div id="error-region" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+    
+    <div class="container-fluid d-flex align-items-center min-vh-100">
+        <div class="row w-100 justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                <main id="main-content" class="login-container" role="main">
+                    <!-- Header Section -->
+                    <header class="login-header">
+                        <div class="mb-3" aria-hidden="true">
+                            <i class="fas fa-chart-line fa-3x text-primary" role="img" aria-label="Investment chart icon"></i>
+                        </div>
+                        <h1 id="page-title">Investor Login</h1>
+                        <p class="subtitle">Access your personalized investment dashboard</p>
+                        
+                        <!-- Registration Call-to-Action -->
+                        <section class="registration-cta" aria-labelledby="registration-heading">
+                            <h2 id="registration-heading">New to our platform?</h2>
+                            <div class="btn-group-vertical" role="group" aria-label="Registration options">
+                                <a href="{{ url_for('investor_register') }}" 
+                                   class="btn btn-primary"
+                                   aria-describedby="investor-reg-desc">
+                                    <i class="fas fa-user-plus me-2" aria-hidden="true"></i>
+                                    Create Investor Account
+                                </a>
+                                <div id="investor-reg-desc" class="sr-only">Register as an investor to access portfolio analysis and research reports</div>
+                                
+                                <a href="{{ url_for('register_analyst') }}" 
+                                   class="btn btn-outline-primary"
+                                   aria-describedby="analyst-reg-desc">
+                                    <i class="fas fa-user-tie me-2" aria-hidden="true"></i>
+                                    Register as Analyst
+                                </a>
+                                <div id="analyst-reg-desc" class="sr-only">Register as a financial analyst to submit and manage research reports</div>
+                            </div>
+                        </section>
+                    </header>
+                    
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <section aria-label="Status messages">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}" 
+                                         role="alert"
+                                         aria-describedby="message-{{ loop.index }}">
+                                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2" 
+                                           aria-hidden="true"></i>
+                                        <span id="message-{{ loop.index }}">{{ message }}</span>
+                                        <button type="button" 
+                                                class="btn-close ms-auto" 
+                                                data-bs-dismiss="alert" 
+                                                aria-label="Close message">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            </section>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Login Form -->
+                    <form id="loginForm" 
+                          method="POST" 
+                          novalidate 
+                          aria-labelledby="page-title"
+                          aria-describedby="form-instructions">
+                        
+                        <div id="form-instructions" class="sr-only">
+                            Please enter your email address and password to sign in to your investor dashboard.
+                            All fields are required.
+                        </div>
+                        
+                        <!-- Email Field -->
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2" aria-hidden="true"></i>
+                                Email Address
+                                <span class="text-danger" aria-label="required">*</span>
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   required 
+                                   autocomplete="email"
+                                   aria-describedby="email-help email-error"
+                                   aria-invalid="false">
+                            <div id="email-help" class="form-text sr-only">
+                                Enter the email address associated with your investor account
+                            </div>
+                            <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
+                        </div>
+                        
+                        <!-- Password Field -->
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2" aria-hidden="true"></i>
+                                Password
+                                <span class="text-danger" aria-label="required">*</span>
+                            </label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password" 
+                                   required 
+                                   autocomplete="current-password"
+                                   aria-describedby="password-help password-error"
+                                   aria-invalid="false">
+                            <div id="password-help" class="form-text sr-only">
+                                Enter your account password
+                            </div>
+                            <div id="password-error" class="error-message" role="alert" aria-live="polite"></div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="form-group">
+                            <button type="submit" 
+                                    id="submit-btn"
+                                    class="btn btn-primary"
+                                    aria-describedby="submit-help">
+                                <span id="btn-text">
+                                    <i class="fas fa-sign-in-alt me-2" aria-hidden="true"></i>
+                                    Sign In to Dashboard
+                                </span>
+                                <span id="loading-spinner" class="d-none" aria-hidden="true">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    Signing In...
+                                </span>
+                            </button>
+                            <div id="submit-help" class="form-text sr-only">
+                                Click to sign in to your investor dashboard
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Navigation Links -->
+                    <nav class="nav-links" aria-label="Additional login options">
+                        <a href="{{ url_for('forgot_password') }}" aria-describedby="forgot-desc">
+                            <i class="fas fa-key me-1" aria-hidden="true"></i>
+                            Forgot Password?
+                        </a>
+                        <div id="forgot-desc" class="sr-only">Reset your password if you've forgotten it</div>
+                        
+                        <a href="{{ url_for('dashboard') }}" aria-describedby="back-desc">
+                            <i class="fas fa-arrow-left me-1" aria-hidden="true"></i>
+                            Back to Main Dashboard
+                        </a>
+                        <div id="back-desc" class="sr-only">Return to the main application dashboard</div>
+                    </nav>
+                    
+                    <!-- Demo Information -->
+                    <aside class="demo-info" aria-labelledby="demo-heading">
+                        <h3 id="demo-heading">Demo Access Information</h3>
+                        <p>Contact the system administrator to create your investor account and receive login credentials.</p>
+                    </aside>
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant JavaScript with proper error handling and announcements
+        (function() {
+            'use strict';
+            
+            const form = document.getElementById('loginForm');
+            const emailField = document.getElementById('email');
+            const passwordField = document.getElementById('password');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const announcementRegion = document.getElementById('announcement-region');
+            const errorRegion = document.getElementById('error-region');
+            
+            // Form validation messages
+            const validationMessages = {
+                email: {
+                    valueMissing: 'Please enter your email address.',
+                    typeMismatch: 'Please enter a valid email address.',
+                    patternMismatch: 'Please enter a valid email address format.'
+                },
+                password: {
+                    valueMissing: 'Please enter your password.',
+                    tooShort: 'Password must be at least 8 characters long.'
+                }
+            };
+            
+            // Announce message to screen readers
+            function announce(message, isError = false) {
+                const region = isError ? errorRegion : announcementRegion;
+                region.textContent = message;
+                
+                // Clear after a delay to avoid confusion
+                setTimeout(() => {
+                    region.textContent = '';
+                }, 5000);
+            }
+            
+            // Validate individual field
+            function validateField(field) {
+                const fieldName = field.name;
+                const errorElement = document.getElementById(`${fieldName}-error`);
+                
+                // Clear previous error
+                errorElement.textContent = '';
+                field.classList.remove('is-invalid');
+                field.setAttribute('aria-invalid', 'false');
+                
+                // Check validity
+                if (!field.checkValidity()) {
+                    const validity = field.validity;
+                    let message = '';
+                    
+                    // Determine appropriate error message
+                    if (validity.valueMissing) {
+                        message = validationMessages[fieldName].valueMissing;
+                    } else if (validity.typeMismatch || validity.patternMismatch) {
+                        message = validationMessages[fieldName].typeMismatch || validationMessages[fieldName].patternMismatch;
+                    } else if (validity.tooShort) {
+                        message = validationMessages[fieldName].tooShort;
+                    } else {
+                        message = 'Please enter a valid ' + fieldName + '.';
+                    }
+                    
+                    // Show error
+                    errorElement.textContent = message;
+                    field.classList.add('is-invalid');
+                    field.setAttribute('aria-invalid', 'true');
+                    
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Real-time validation on blur
+            emailField.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            passwordField.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            // Clear errors on input
+            emailField.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid')) {
+                    const errorElement = document.getElementById('email-error');
+                    errorElement.textContent = '';
+                    this.classList.remove('is-invalid');
+                    this.setAttribute('aria-invalid', 'false');
+                }
+            });
+            
+            passwordField.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid')) {
+                    const errorElement = document.getElementById('password-error');
+                    errorElement.textContent = '';
+                    this.classList.remove('is-invalid');
+                    this.setAttribute('aria-invalid', 'false');
+                }
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                const emailValid = validateField(emailField);
+                const passwordValid = validateField(passwordField);
+                
+                if (!emailValid || !passwordValid) {
+                    // Focus first invalid field
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        announce('Please correct the errors in the form.', true);
+                    }
+                    return;
+                }
+                
+                // Show loading state
+                btnText.classList.add('d-none');
+                loadingSpinner.classList.remove('d-none');
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-busy', 'true');
+                
+                announce('Signing in, please wait...');
+                
+                // Prepare form data
+                const formData = new FormData(form);
+                const data = {
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                };
+                
+                // Submit form
+                fetch('{{ url_for("investor_login") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        announce('Login successful! Redirecting to dashboard...');
+                        // Small delay for screen reader announcement
+                        setTimeout(() => {
+                            window.location.href = '{{ url_for("investor_dashboard") }}';
+                        }, 1000);
+                    } else {
+                        throw new Error(data.error || 'Login failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Login error:', error);
+                    const errorMessage = error.message || 'Login failed. Please check your credentials and try again.';
+                    showAlert(errorMessage, 'danger');
+                    announce(errorMessage, true);
+                    
+                    // Focus email field for retry
+                    emailField.focus();
+                })
+                .finally(() => {
+                    // Reset button state
+                    btnText.classList.remove('d-none');
+                    loadingSpinner.classList.add('d-none');
+                    submitBtn.disabled = false;
+                    submitBtn.setAttribute('aria-busy', 'false');
+                });
+            });
+            
+            // Show alert with proper ARIA announcement
+            function showAlert(message, type) {
+                // Remove existing alerts
+                const existingAlerts = form.querySelectorAll('.alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                // Create new alert
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.setAttribute('role', 'alert');
+                alertDiv.setAttribute('aria-live', 'assertive');
+                
+                alertDiv.innerHTML = `
+                    <i class="fas fa-${type === 'danger' ? 'exclamation-triangle' : 'check-circle'} me-2" aria-hidden="true"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" aria-label="Close alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                `;
+                
+                // Insert before form
+                form.parentNode.insertBefore(alertDiv, form);
+                
+                // Add close functionality
+                const closeBtn = alertDiv.querySelector('.btn-close');
+                closeBtn.addEventListener('click', function() {
+                    alertDiv.remove();
+                });
+                
+                // Auto-remove after 10 seconds
+                setTimeout(() => {
+                    if (alertDiv && alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 10000);
+            }
+            
+            // Keyboard navigation enhancements
+            document.addEventListener('keydown', function(e) {
+                // Enhanced keyboard navigation for better accessibility
+                if (e.key === 'Escape') {
+                    // Close any open alerts
+                    const alerts = document.querySelectorAll('.alert .btn-close');
+                    alerts.forEach(btn => btn.click());
+                }
+            });
+            
+            // Focus management
+            emailField.focus();
+            
+        })();
+    </script>
+</body>
+</html>

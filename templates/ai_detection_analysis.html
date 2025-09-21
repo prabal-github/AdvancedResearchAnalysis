@@ -1,0 +1,367 @@
+{% extends "layout.html" %}
+{% block title %}AI Detection Analysis - {{ report.id }}{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">AI Detection Analysis</h1>
+        <p class="text-muted mb-0">Report ID: {{ report.id }} by {{ report.analyst }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('view_report', report_id=report.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Report
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- AI Detection Summary -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-robot me-2"></i>AI Detection Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="text-center p-4">
+                            {% set ai_prob = ai_analysis.ai_probability %}
+                            {% if ai_prob >= 0.7 %}
+                                <div class="display-4 text-danger mb-2">🤖</div>
+                                <h4 class="text-danger">AI Generated</h4>
+                                <p class="text-muted">{{ (ai_prob * 100) | round(1) }}% probability</p>
+                            {% elif ai_prob >= 0.4 %}
+                                <div class="display-4 text-warning mb-2">❓</div>
+                                <h4 class="text-warning">Uncertain</h4>
+                                <p class="text-muted">{{ (ai_prob * 100) | round(1) }}% AI probability</p>
+                            {% else %}
+                                <div class="display-4 text-success mb-2">👤</div>
+                                <h4 class="text-success">Human Written</h4>
+                                <p class="text-muted">{{ ((1-ai_prob) * 100) | round(1) }}% human probability</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-4">
+                            <h6>Classification Details</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>AI Probability</span>
+                                    <span class="fw-bold">{{ (ai_analysis.ai_probability * 100) | round(1) }}%</span>
+                                </div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-danger" style="width: {{ ai_analysis.ai_probability * 100 }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Human Probability</span>
+                                    <span class="fw-bold">{{ (ai_analysis.human_probability * 100) | round(1) }}%</span>
+                                </div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-success" style="width: {{ ai_analysis.human_probability * 100 }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Confidence Level</span>
+                                    <span class="fw-bold">{{ (ai_analysis.confidence * 100) | round(1) }}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" style="width: {{ ai_analysis.confidence * 100 }}%"></div>
+                                </div>
+                            </div>
+                            <div class="alert alert-light">
+                                <strong>Classification:</strong> {{ ai_analysis.classification }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-top pt-3">
+                    <h6>Analysis Explanation</h6>
+                    <p class="text-muted">{{ ai_analysis.explanation }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis -->
+        {% if ai_analysis.detailed_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Detailed Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Linguistic Analysis -->
+                    {% if ai_analysis.detailed_analysis.linguistic_analysis %}
+                    <div class="col-md-6 mb-4">
+                        <h6 class="text-primary">Linguistic Patterns</h6>
+                        {% set ling = ai_analysis.detailed_analysis.linguistic_analysis %}
+                        <div class="small">
+                            <div class="d-flex justify-content-between">
+                                <span>Average Sentence Length:</span>
+                                <span class="fw-bold">{{ ling.avg_sentence_length }} words</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Vocabulary Diversity (TTR):</span>
+                                <span class="fw-bold">{{ ling.type_token_ratio }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Sentence Variance:</span>
+                                <span class="fw-bold">{{ ling.sentence_length_variance | round(1) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Sentiment Consistency:</span>
+                                <span class="fw-bold">{{ ling.sentiment_variance | round(3) }}</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-primary" style="width: {{ ling.linguistic_ai_score * 100 }}%"></div>
+                        </div>
+                        <small class="text-muted">AI Score: {{ (ling.linguistic_ai_score * 100) | round(1) }}%</small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Pattern Analysis -->
+                    {% if ai_analysis.detailed_analysis.pattern_analysis %}
+                    <div class="col-md-6 mb-4">
+                        <h6 class="text-success">Writing Patterns</h6>
+                        {% set pattern = ai_analysis.detailed_analysis.pattern_analysis %}
+                        <div class="small">
+                            <div class="d-flex justify-content-between">
+                                <span>AI Patterns Found:</span>
+                                <span class="fw-bold text-danger">{{ pattern.total_ai_patterns }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Human Patterns Found:</span>
+                                <span class="fw-bold text-success">{{ pattern.total_human_patterns }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>AI Pattern Density:</span>
+                                <span class="fw-bold">{{ (pattern.ai_pattern_density * 1000) | round(2) }}‰</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Human Pattern Density:</span>
+                                <span class="fw-bold">{{ (pattern.human_pattern_density * 1000) | round(2) }}‰</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-success" style="width: {{ pattern.pattern_ai_score * 100 }}%"></div>
+                        </div>
+                        <small class="text-muted">Pattern AI Score: {{ (pattern.pattern_ai_score * 100) | round(1) }}%</small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Vocabulary Analysis -->
+                    {% if ai_analysis.detailed_analysis.vocabulary_analysis %}
+                    <div class="col-md-6 mb-4">
+                        <h6 class="text-info">Vocabulary Analysis</h6>
+                        {% set vocab = ai_analysis.detailed_analysis.vocabulary_analysis %}
+                        <div class="small">
+                            <div class="d-flex justify-content-between">
+                                <span>Total Words:</span>
+                                <span class="fw-bold">{{ vocab.total_words }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Unique Words:</span>
+                                <span class="fw-bold">{{ vocab.unique_words }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Average Word Length:</span>
+                                <span class="fw-bold">{{ vocab.avg_word_length }} chars</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Complex Word Ratio:</span>
+                                <span class="fw-bold">{{ (vocab.complex_word_ratio * 100) | round(1) }}%</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-info" style="width: {{ vocab.vocabulary_ai_score * 100 }}%"></div>
+                        </div>
+                        <small class="text-muted">Vocabulary AI Score: {{ (vocab.vocabulary_ai_score * 100) | round(1) }}%</small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Structure Analysis -->
+                    {% if ai_analysis.detailed_analysis.structural_analysis %}
+                    <div class="col-md-6 mb-4">
+                        <h6 class="text-warning">Text Structure</h6>
+                        {% set struct = ai_analysis.detailed_analysis.structural_analysis %}
+                        <div class="small">
+                            <div class="d-flex justify-content-between">
+                                <span>Paragraph Count:</span>
+                                <span class="fw-bold">{{ struct.paragraph_count }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Avg Paragraph Length:</span>
+                                <span class="fw-bold">{{ struct.avg_paragraph_length | round(1) }} words</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Transition Density:</span>
+                                <span class="fw-bold">{{ (struct.transition_density * 100) | round(1) }}%</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Paragraph Variance:</span>
+                                <span class="fw-bold">{{ struct.paragraph_variance | round(1) }}</span>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-warning" style="width: {{ struct.structure_ai_score * 100 }}%"></div>
+                        </div>
+                        <small class="text-muted">Structure AI Score: {{ (struct.structure_ai_score * 100) | round(1) }}%</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Pattern Details -->
+        {% if ai_analysis.detailed_analysis and ai_analysis.detailed_analysis.pattern_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-check me-2"></i>Pattern Detection Details
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set pattern = ai_analysis.detailed_analysis.pattern_analysis %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-danger">AI-Typical Patterns Found</h6>
+                        {% for category, count in pattern.ai_pattern_counts.items() %}
+                        {% if count > 0 %}
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-capitalize">{{ category.replace('_', ' ') }}:</span>
+                            <span class="badge bg-danger">{{ count }}</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Human-Typical Patterns Found</h6>
+                        {% for category, count in pattern.human_pattern_counts.items() %}
+                        {% if count > 0 %}
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-capitalize">{{ category.replace('_', ' ') }}:</span>
+                            <span class="badge bg-success">{{ count }}</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="downloadAIAnalysis()">
+                        <i class="bi bi-download me-1"></i> Download AI Analysis
+                    </button>
+                    <button class="btn btn-outline-info" onclick="rerunAIDetection()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Re-run Detection
+                    </button>
+                    <a href="{{ url_for('view_report', report_id=report.id) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-file-text me-1"></i> View Full Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Timestamp -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">Analysis Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="small">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Report Created:</span>
+                        <span class="fw-bold">{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>AI Analysis:</span>
+                        <span class="fw-bold">{{ ai_analysis.timestamp[:19] if ai_analysis.timestamp else 'Unknown' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Report Length:</span>
+                        <span class="fw-bold">{{ report.original_text|length }} chars</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Word Count:</span>
+                        <span class="fw-bold">{{ report.original_text.split()|length }} words</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">Recommendations</h6>
+            </div>
+            <div class="card-body">
+                {% set ai_prob = ai_analysis.ai_probability %}
+                {% if ai_prob >= 0.7 %}
+                <div class="alert alert-danger">
+                    <strong>High AI Probability Detected</strong><br>
+                    <small>Consider manual review and verification of content originality.</small>
+                </div>
+                {% elif ai_prob >= 0.4 %}
+                <div class="alert alert-warning">
+                    <strong>Uncertain Classification</strong><br>
+                    <small>Additional review recommended to confirm content authenticity.</small>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <strong>Likely Human-Written</strong><br>
+                    <small>Content appears to be original human writing.</small>
+                </div>
+                {% endif %}
+                
+                {% if ai_analysis.confidence < 0.6 %}
+                <div class="alert alert-info">
+                    <strong>Low Confidence</strong><br>
+                    <small>Analysis confidence is below 60%. Consider longer text samples for better accuracy.</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function downloadAIAnalysis() {
+    const analysisData = {{ ai_analysis | tojson }};
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analysisData, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "ai_analysis_{{ report.id }}.json");
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+}
+
+function rerunAIDetection() {
+    if (confirm('Re-run AI detection analysis for this report?')) {
+        // This would trigger a re-analysis - implement as needed
+        alert('AI detection re-analysis would be triggered here.');
+    }
+}
+</script>
+
+{% endblock %}

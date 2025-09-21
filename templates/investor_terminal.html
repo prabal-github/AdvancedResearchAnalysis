@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+
+{% block title %}Investor Terminal - PredictRAM{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/investor_terminal.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="investor-terminal" data-session-id="{{ active_session.id }}">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-terminal"></i> Investor Terminal</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">Welcome, {{ investor.name }}</span>
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('investor_dashboard') }}">Dashboard</a>
+                <a class="btn btn-outline-light btn-sm ms-2" href="{{ url_for('investor_logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row g-0" style="height: calc(100vh - 56px);">
+        <!-- Sidebar -->
+        <div class="col-md-3 terminal-sidebar">
+            <div class="p-3">
+                <!-- Market Overview -->
+                <div class="sidebar-section">
+                    <h6><i class="fas fa-chart-line"></i> Market Overview</h6>
+                    <div id="market-overview">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Watchlist -->
+                <div class="sidebar-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0"><i class="fas fa-eye"></i> Watchlist</h6>
+                        <button class="btn btn-sm btn-outline-primary" onclick="addToWatchlist()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="watchlist-content">
+                        {% if watchlists %}
+                            {% for watchlist in watchlists %}
+                                <div class="watchlist-item">
+                                    <div class="watchlist-name">{{ watchlist.name }}</div>
+                                    <div class="watchlist-symbols">
+                                        {% set symbols = watchlist.symbols|from_json if watchlist.symbols else [] %}
+                                        {% for symbol in symbols %}
+                                            <span class="symbol-badge" onclick="getQuote('{{ symbol }}')">
+                                                {{ symbol }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted small">No watchlists found</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Portfolio Summary -->
+                <div class="sidebar-section">
+                    <h6><i class="fas fa-briefcase"></i> Portfolio</h6>
+                    <div id="portfolio-summary">
+                        {% if portfolios %}
+                            {% for portfolio in portfolios %}
+                                <div class="portfolio-item">
+                                    <div class="portfolio-name">{{ portfolio.name }}</div>
+                                    <div class="portfolio-stats">
+                                        <div class="portfolio-value">${{ "%.2f"|format(portfolio.total_value) }}</div>
+                                        <div class="portfolio-change {% if portfolio.profit_loss >= 0 %}positive{% else %}negative{% endif %}">
+                                            {{ "%.2f"|format(portfolio.profit_loss_percentage) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted small">No portfolios found</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="sidebar-section">
+                    <h6><i class="fas fa-bell"></i> Alerts</h6>
+                    <div id="alerts-content">
+                        {% if recent_alerts %}
+                            {% for alert in recent_alerts %}
+                                <div class="alert-item {% if alert.is_triggered %}alert-triggered{% endif %}">
+                                    <div class="alert-symbol">{{ alert.symbol }}</div>
+                                    <div class="alert-condition">
+                                        {{ alert.alert_type.replace('_', ' ').title() }}
+                                        {% if alert.condition_value %}@ ${{ "%.2f"|format(alert.condition_value) }}{% endif %}
+                                    </div>
+                                    <span class="alert-status {% if alert.is_triggered %}triggered{% else %}active{% endif %}">
+                                        {% if alert.is_triggered %}triggered{% else %}active{% endif %}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted small">No alerts set</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Terminal Area -->
+        <div class="col-md-9 terminal-main">
+            <div class="terminal-container">
+                <!-- Terminal Output -->
+                <div class="terminal-output" id="terminal-output">
+                    <div class="terminal-line system">
+                        <span class="text-info">PredictRAM Investor Terminal v1.0</span>
+                    </div>
+                    <div class="terminal-line system">
+                        <span class="text-success">Session: {{ active_session.session_name }}</span>
+                    </div>
+                    <div class="terminal-line system">
+                        <span class="text-warning">Type 'help' for available commands</span>
+                    </div>
+                    <div class="terminal-line system">
+                        <span class="text-muted">Ready for commands...</span>
+                    </div>
+                    
+                    <!-- Show recent commands -->
+                    {% if recent_commands %}
+                        {% for cmd in recent_commands|reverse %}
+                            <div class="terminal-line user">
+                                <span class="terminal-prompt">$</span> {{ cmd.command }}
+                            </div>
+                            {% if cmd.response %}
+                                <div class="terminal-line output">{{ cmd.response }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Terminal Input -->
+                <div class="terminal-input-area">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-primary border-secondary terminal-prompt">$</span>
+                        <input type="text" 
+                               id="terminal-input" 
+                               class="form-control terminal-input" 
+                               placeholder="Enter command..."
+                               autocomplete="off">
+                        <button class="btn btn-terminal" onclick="window.terminal?.executeCommand()">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                    <div class="quick-commands">
+                        <small class="text-muted">Quick commands: </small>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('help')">help</span>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('portfolio')">portfolio</span>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('alerts')">alerts</span>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('quote AAPL')">quote AAPL</span>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('watch TSLA')">watch TSLA</span>
+                        <span class="quick-command" onclick="window.terminal?.insertCommand('analyze MSFT')">analyze MSFT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Add to Watchlist Modal -->
+<div class="modal fade" id="addWatchlistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Watchlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="watchlist-symbol" class="form-label">Stock Symbol</label>
+                    <input type="text" class="form-control" id="watchlist-symbol" placeholder="e.g., AAPL">
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        Popular symbols: AAPL, MSFT, GOOGL, AMZN, TSLA, META, NVDA, NFLX
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addSymbolToWatchlist()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Alert Modal -->
+<div class="modal fade" id="createAlertModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Price Alert</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="alert-symbol" class="form-label">Stock Symbol</label>
+                    <input type="text" class="form-control" id="alert-symbol" placeholder="e.g., AAPL">
+                </div>
+                <div class="mb-3">
+                    <label for="alert-type" class="form-label">Alert Type</label>
+                    <select class="form-select" id="alert-type">
+                        <option value="price_above">Price Above</option>
+                        <option value="price_below">Price Below</option>
+                        <option value="volume_spike">Volume Spike</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="alert-value" class="form-label">Target Value</label>
+                    <input type="number" class="form-control" id="alert-value" placeholder="e.g., 150.00" step="0.01">
+                </div>
+                <div class="mb-3">
+                    <label for="alert-message" class="form-label">Message (Optional)</label>
+                    <input type="text" class="form-control" id="alert-message" placeholder="Custom alert message">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createAlert()">Create Alert</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/investor_terminal.js') }}"></script>
+<script>
+// Additional functions specific to this page
+async function createAlert() {
+    const symbol = document.getElementById('alert-symbol').value.trim().toUpperCase();
+    const alertType = document.getElementById('alert-type').value;
+    const alertValue = parseFloat(document.getElementById('alert-value').value);
+    const message = document.getElementById('alert-message').value.trim();
+    
+    if (!symbol || !alertType || isNaN(alertValue)) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/investor/alerts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                symbol: symbol,
+                alert_type: alertType,
+                condition_value: alertValue,
+                message: message
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Close modal and refresh alerts
+            ModalManager.hide('createAlertModal');
+            if (window.terminal) {
+                window.terminal.updateAlerts();
+                window.terminal.addSystemMessage(`Alert created for ${symbol}`);
+            }
+            
+            // Clear form
+            document.getElementById('alert-symbol').value = '';
+            document.getElementById('alert-value').value = '';
+            document.getElementById('alert-message').value = '';
+        } else {
+            alert(`Error creating alert: ${data.error}`);
+        }
+    } catch (error) {
+        alert(`Network error: ${error.message}`);
+    }
+}
+
+// Add context menu for symbols
+document.addEventListener('contextmenu', function(e) {
+    if (e.target.classList.contains('symbol-badge')) {
+        e.preventDefault();
+        const symbol = e.target.textContent.trim();
+        
+        if (confirm(`Create alert for ${symbol}?`)) {
+            document.getElementById('alert-symbol').value = symbol;
+            ModalManager.show('createAlertModal');
+        }
+    }
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+Alt+W to open watchlist modal
+    if (e.ctrlKey && e.altKey && e.key === 'w') {
+        e.preventDefault();
+        addToWatchlist();
+    }
+    
+    // Ctrl+Alt+A to open alert modal
+    if (e.ctrlKey && e.altKey && e.key === 'a') {
+        e.preventDefault();
+        ModalManager.show('createAlertModal');
+    }
+});
+</script>
+{% endblock %}
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-terminal"></i> Investor Terminal</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">Welcome, {{ investor.name }}</span>
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('investor_dashboard') }}">Dashboard</a>
+                <a class="btn btn-outline-light btn-sm ms-2" href="{{ url_for('investor_logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row g-0" style="height: calc(100vh - 56px);">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light border-end">
+            <div class="p-3">
+                <!-- Market Overview -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-line"></i> Market Overview</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="market-overview">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Watchlist -->
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fas fa-eye"></i> Watchlist</h6>
+                        <button class="btn btn-sm btn-outline-primary" onclick="addToWatchlist()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="watchlist-content">
+                            {% if watchlists %}
+                                {% for watchlist in watchlists %}
+                                    <div class="watchlist-item mb-2">
+                                        <strong>{{ watchlist.name }}</strong>
+                                        {% set symbols = watchlist.symbols|from_json %}
+                                        {% for symbol in symbols %}
+                                            <div class="badge bg-secondary me-1 mb-1 cursor-pointer" onclick="getQuote('{{ symbol }}')">
+                                                {{ symbol }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">No watchlists found</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Summary -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-briefcase"></i> Portfolio</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="portfolio-summary">
+                            {% if portfolios %}
+                                {% for portfolio in portfolios %}
+                                    <div class="portfolio-item mb-2">
+                                        <div class="fw-bold">{{ portfolio.name }}</div>
+                                        <div class="small text-muted">
+                                            Value: ${{ "%.2f"|format(portfolio.total_value) }}
+                                            <span class="{% if portfolio.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                                ({{ "%.2f"|format(portfolio.profit_loss_percentage) }}%)
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">No portfolios found</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-bell"></i> Alerts</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="alerts-content">
+                            {% if recent_alerts %}
+                                {% for alert in recent_alerts %}
+                                    <div class="alert-item mb-2 p-2 bg-light rounded">
+                                        <div class="fw-bold">{{ alert.symbol }}</div>
+                                        <div class="small">
+                                            {{ alert.alert_type.replace('_', ' ').title() }}
+                                            {% if alert.condition_value %}@ ${{ "%.2f"|format(alert.condition_value) }}{% endif %}
+                                        </div>
+                                        {% if alert.is_triggered %}
+                                            <span class="badge bg-danger">Triggered</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">No alerts set</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Terminal Area -->
+        <div class="col-md-9">
+            <div class="h-100 d-flex flex-column">
+                <!-- Terminal Output -->
+                <div class="flex-grow-1 p-3 bg-dark text-light position-relative" style="overflow-y: auto; font-family: 'Courier New', monospace;">
+                    <div id="terminal-output">
+                        <div class="terminal-line system">
+                            <span class="text-info">PredictRAM Investor Terminal v1.0</span>
+                        </div>
+                        <div class="terminal-line system">
+                            <span class="text-success">Session: {{ active_session.session_name }}</span>
+                        </div>
+                        <div class="terminal-line system">
+                            <span class="text-warning">Type 'help' for available commands</span>
+                        </div>
+                        <div class="terminal-line system">
+                            <span class="text-muted">Ready for commands...</span>
+                        </div>
+                        
+                        <!-- Show recent commands -->
+                        {% if recent_commands %}
+                            {% for cmd in recent_commands|reverse %}
+                                <div class="terminal-line user">
+                                    <span class="text-primary">$</span> {{ cmd.command }}
+                                </div>
+                                {% if cmd.response %}
+                                    <div class="terminal-line output">{{ cmd.response }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Terminal Input -->
+                <div class="bg-dark p-3 border-top border-secondary">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-primary border-secondary">$</span>
+                        <input type="text" 
+                               id="terminal-input" 
+                               class="form-control bg-dark text-light border-secondary" 
+                               placeholder="Enter command..."
+                               autocomplete="off"
+                               style="font-family: 'Courier New', monospace;">
+                        <button class="btn btn-outline-success" onclick="executeCommand()">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Quick commands: 
+                            <span class="badge bg-secondary cursor-pointer me-1" onclick="insertCommand('help')">help</span>
+                            <span class="badge bg-secondary cursor-pointer me-1" onclick="insertCommand('portfolio')">portfolio</span>
+                            <span class="badge bg-secondary cursor-pointer me-1" onclick="insertCommand('alerts')">alerts</span>
+                            <span class="badge bg-secondary cursor-pointer me-1" onclick="insertCommand('quote AAPL')">quote AAPL</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Add to Watchlist Modal -->
+<div class="modal fade" id="addWatchlistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Watchlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="watchlist-symbol" class="form-label">Stock Symbol</label>
+                    <input type="text" class="form-control" id="watchlist-symbol" placeholder="e.g., AAPL">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addSymbolToWatchlist()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.terminal-line {
+    margin-bottom: 0.25rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.terminal-line.user {
+    color: #00ff00;
+}
+
+.terminal-line.output {
+    color: #ffffff;
+    margin-left: 1rem;
+}
+
+.terminal-line.error {
+    color: #ff6b6b;
+    margin-left: 1rem;
+}
+
+.terminal-line.system {
+    color: #ffd93d;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+#terminal-output {
+    min-height: 100%;
+}
+
+.watchlist-item, .portfolio-item, .alert-item {
+    border-left: 3px solid #007bff;
+    padding-left: 0.5rem;
+}
+
+.card-header h6 {
+    color: #495057;
+}
+
+/* Scrollbar styling for terminal */
+#terminal-output::-webkit-scrollbar {
+    width: 8px;
+}
+
+#terminal-output::-webkit-scrollbar-track {
+    background: #343a40;
+}
+
+#terminal-output::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 4px;
+}
+
+#terminal-output::-webkit-scrollbar-thumb:hover {
+    background: #495057;
+}
+</style>
+
+<script>
+// Terminal functionality
+let sessionId = '{{ active_session.id }}';
+let commandHistory = [];
+let historyIndex = -1;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadMarketOverview();
+    
+    // Terminal input event handlers
+    const terminalInput = document.getElementById('terminal-input');
+    terminalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            executeCommand();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            navigateHistory(-1);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            navigateHistory(1);
+        }
+    });
+    
+    // Focus on terminal input
+    terminalInput.focus();
+});
+
+function executeCommand() {
+    const input = document.getElementById('terminal-input');
+    const command = input.value.trim();
+    
+    if (!command) return;
+    
+    // Add to history
+    commandHistory.push(command);
+    historyIndex = commandHistory.length;
+    
+    // Display command in terminal
+    appendToTerminal(`$ ${command}`, 'user');
+    
+    // Clear input
+    input.value = '';
+    
+    // Show loading
+    const loadingId = appendToTerminal('Executing...', 'system');
+    
+    // Execute command
+    fetch('/api/investor/terminal/command', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            command: command,
+            session_id: sessionId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove loading message
+        document.getElementById(loadingId).remove();
+        
+        if (data.clear) {
+            clearTerminal();
+        } else if (data.output) {
+            appendToTerminal(data.output, data.status === 'error' ? 'error' : 'output');
+        }
+        
+        // Scroll to bottom
+        scrollToBottom();
+    })
+    .catch(error => {
+        document.getElementById(loadingId).remove();
+        appendToTerminal(`Error: ${error.message}`, 'error');
+        scrollToBottom();
+    });
+}
+
+function appendToTerminal(text, type) {
+    const output = document.getElementById('terminal-output');
+    const line = document.createElement('div');
+    const id = 'line_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    line.id = id;
+    line.className = `terminal-line ${type}`;
+    line.textContent = text;
+    output.appendChild(line);
+    return id;
+}
+
+function clearTerminal() {
+    const output = document.getElementById('terminal-output');
+    output.innerHTML = `
+        <div class="terminal-line system">
+            <span class="text-info">Terminal cleared</span>
+        </div>
+    `;
+}
+
+function scrollToBottom() {
+    const output = document.getElementById('terminal-output');
+    output.scrollTop = output.scrollHeight;
+}
+
+function navigateHistory(direction) {
+    if (commandHistory.length === 0) return;
+    
+    historyIndex += direction;
+    
+    if (historyIndex < 0) {
+        historyIndex = 0;
+    } else if (historyIndex >= commandHistory.length) {
+        historyIndex = commandHistory.length;
+        document.getElementById('terminal-input').value = '';
+        return;
+    }
+    
+    document.getElementById('terminal-input').value = commandHistory[historyIndex] || '';
+}
+
+function insertCommand(command) {
+    document.getElementById('terminal-input').value = command;
+    document.getElementById('terminal-input').focus();
+}
+
+function getQuote(symbol) {
+    insertCommand(`quote ${symbol}`);
+    executeCommand();
+}
+
+function loadMarketOverview() {
+    const container = document.getElementById('market-overview');
+    
+    // Simulate market data (in real implementation, fetch from API)
+    const marketData = {
+        '^GSPC': { name: 'S&P 500', price: 4500.25, change: 15.75, change_percent: 0.35 },
+        '^DJI': { name: 'Dow Jones', price: 35000.50, change: -25.30, change_percent: -0.07 },
+        '^IXIC': { name: 'NASDAQ', price: 14500.75, change: 45.20, change_percent: 0.31 }
+    };
+    
+    let html = '';
+    for (const [symbol, data] of Object.entries(marketData)) {
+        const changeClass = data.change >= 0 ? 'text-success' : 'text-danger';
+        const changeSymbol = data.change >= 0 ? '+' : '';
+        
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                    <div class="fw-bold small">${data.name}</div>
+                    <div class="small text-muted">${data.price.toFixed(2)}</div>
+                </div>
+                <div class="text-end ${changeClass}">
+                    <div class="small">${changeSymbol}${data.change.toFixed(2)}</div>
+                    <div class="small">${changeSymbol}${data.change_percent.toFixed(2)}%</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+function addToWatchlist() {
+    const modal = new bootstrap.Modal(document.getElementById('addWatchlistModal'));
+    modal.show();
+}
+
+function addSymbolToWatchlist() {
+    const symbol = document.getElementById('watchlist-symbol').value.trim().toUpperCase();
+    
+    if (!symbol) {
+        alert('Please enter a stock symbol');
+        return;
+    }
+    
+    // Execute watch command
+    insertCommand(`watch ${symbol}`);
+    executeCommand();
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addWatchlistModal'));
+    modal.hide();
+    
+    // Clear input
+    document.getElementById('watchlist-symbol').value = '';
+    
+    // Refresh watchlist (simplified - in real app, update UI dynamically)
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+// Auto-refresh market data every 30 seconds
+setInterval(loadMarketOverview, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+Adaptive Trend Strength Index Analysis Report
+============================================
+Generated: 2025-08-23 20:00:15
+
+Model Components:
+-----------------
+Short Term Strength: 20.0%
+Medium Term Strength: 25.0%
+Long Term Strength: 25.0%
+Momentum Consistency: 15.0%
+Volume Validation: 15.0%
+
+Top 15 Strongest Trends:
+------------------------
+ 1. MARUTI.NS       | Score: 0.823 | Up   | Very Strong Uptrend  | Sector: Consumer Cyclical
+ 2. APOLLOHOSP.NS   | Score: 0.818 | Up   | Very Strong Uptrend  | Sector: Healthcare
+ 3. TITAN.NS        | Score: 0.816 | Up   | Very Strong Uptrend  | Sector: Consumer Cyclical
+ 4. HEROMOTOCO.NS   | Score: 0.805 | Up   | Very Strong Uptrend  | Sector: Consumer Cyclical
+ 5. M&M.NS          | Score: 0.805 | Up   | Very Strong Uptrend  | Sector: Consumer Cyclical
+ 6. HINDUNILVR.NS   | Score: 0.789 | Up   | Strong Uptrend       | Sector: Consumer Defensive
+ 7. HDFCLIFE.NS     | Score: 0.780 | Side | Strong Uptrend       | Sector: Financial Services
+ 8. EICHERMOT.NS    | Score: 0.777 | Up   | Strong Uptrend       | Sector: Consumer Cyclical
+ 9. SBILIFE.NS      | Score: 0.764 | Up   | Strong Uptrend       | Sector: Financial Services
+10. GRASIM.NS       | Score: 0.738 | Up   | Strong Uptrend       | Sector: Basic Materials
+11. CIPLA.NS        | Score: 0.737 | Up   | Strong Uptrend       | Sector: Healthcare
+12. BHARTIARTL.NS   | Score: 0.732 | Side | Strong Uptrend       | Sector: Communication Services
+13. HINDALCO.NS     | Score: 0.730 | Up   | Strong Uptrend       | Sector: Basic Materials
+14. ULTRACEMCO.NS   | Score: 0.720 | Up   | Strong Uptrend       | Sector: Basic Materials
+15. BAJAJ-AUTO.NS   | Score: 0.714 | Up   | Strong Uptrend       | Sector: Consumer Cyclical

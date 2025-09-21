@@ -1,0 +1,189 @@
+{% extends "layout.html" %}
+
+{% block title %}Research Templates{% endblock %}
+
+{% block extra_head %}
+<style>
+    .template-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .template-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+    .template-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .template-category {
+        background: #007bff;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+    .template-usage {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    .btn-template {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        margin-right: 10px;
+    }
+    .btn-template:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        color: white;
+        text-decoration: none;
+    }
+    .feature-highlight {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .create-templates-btn {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="feature-highlight">
+                <h2><i class="fas fa-clipboard-list"></i> Research Templates</h2>
+                <p class="mb-0">Create structured research reports using predefined templates with advanced scenario analysis</p>
+            </div>
+
+            <!-- Create Default Templates Button -->
+            <button id="createDefaultTemplates" class="btn create-templates-btn">
+                <i class="fas fa-plus"></i> Initialize Default Templates
+            </button>
+
+            <!-- Templates Grid -->
+            <div class="row">
+                {% if templates %}
+                    {% for template in templates %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="template-card">
+                            <div class="template-header">
+                                <h5 class="mb-0">{{ template.name }}</h5>
+                                <span class="template-category">{{ template.category.replace('_', ' ').title() }}</span>
+                            </div>
+                            <p class="text-muted">{{ template.description }}</p>
+                            <div class="template-usage mb-3">
+                                <i class="fas fa-chart-line"></i> Used {{ template.usage_count }} times
+                            </div>
+                            <div class="template-actions">
+                                <a href="{{ url_for('view_template', template_id=template.id) }}" class="btn-template">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                                <a href="{{ url_for('create_template_report', template_id=template.id) }}" class="btn-template">
+                                    <i class="fas fa-edit"></i> Use Template
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <h4>No Templates Available</h4>
+                            <p>Click "Initialize Default Templates" to create the predefined research templates.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Template Features -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
+                            <h5>Event Details</h5>
+                            <p class="text-muted">Define macro triggers, timeframes, and catalysts with structured templates</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5>Impact Metrics</h5>
+                            <p class="text-muted">Analyze EPS changes, margin sensitivity, and revenue exposure systematically</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-warning">
+                        <div class="card-body text-center">
+                            <i class="fas fa-project-diagram fa-3x text-warning mb-3"></i>
+                            <h5>Correlations</h5>
+                            <p class="text-muted">Track cross-asset correlations and sector relationships</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('createDefaultTemplates').addEventListener('click', function() {
+    const btn = this;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Templates...';
+    btn.disabled = true;
+    
+    fetch('/api/create_default_templates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Default templates created successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to create templates');
+    })
+    .finally(() => {
+        btn.innerHTML = '<i class="fas fa-plus"></i> Initialize Default Templates';
+        btn.disabled = false;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1117 @@
+{% extends "layout.html" %}
+
+{% block title %}Retail Investor Hub - Simple & Smart Investing{% endblock %}
+
+{% block content %}
+{% include 'partials/_brand_header.html' %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">Retail Investor Hub</h1>
+                    <p class="text-muted">Simple, smart investing for everyone - No complex jargon, just results</p>
+                </div>
+                <div>
+                    <button id="quickStartBtn" class="btn btn-success me-2">
+                        <i class="bi bi-play-circle"></i> Quick Start Guide
+                    </button>
+                    <button id="educationBtn" class="btn btn-outline-primary">
+                        <i class="bi bi-book"></i> Learn Investing
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats Cards -->
+            <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="card-body text-center">
+                <i class="bi bi-piggy-bank fs-1 mb-2"></i>
+                <h5>Start with ₹500</h5>
+                <p class="mb-0 small">Begin your investment journey</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+            <div class="card stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="card-body text-center">
+                <i class="bi bi-graph-up-arrow fs-1 mb-2"></i>
+                <h5>12% Returns</h5>
+                <p class="mb-0 small">Historical equity returns</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+            <div class="card stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="card-body text-center">
+                <i class="bi bi-shield-check fs-1 mb-2"></i>
+                <h5>SEBI Regulated</h5>
+                <p class="mb-0 small">Safe & regulated investments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+            <div class="card stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <div class="card-body text-center">
+                <i class="bi bi-clock fs-1 mb-2"></i>
+                <h5>Long Term</h5>
+                <p class="mb-0 small">Wealth creation in 5+ years</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Tabs -->
+            <ul class="nav nav-tabs mb-4" id="retailTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="sip-calculator-tab" data-bs-toggle="tab" data-bs-target="#sip-calculator-panel" type="button" role="tab">
+                        <i class="bi bi-calculator"></i> SIP Calculator
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="investment-plan-tab" data-bs-toggle="tab" data-bs-target="#investment-plan-panel" type="button" role="tab">
+                        <i class="bi bi-person-gear"></i> Get My Plan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="simple-funds-tab" data-bs-toggle="tab" data-bs-target="#simple-funds-panel" type="button" role="tab">
+                        <i class="bi bi-list-check"></i> Simple Funds
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="portfolio-check-tab" data-bs-toggle="tab" data-bs-target="#portfolio-check-panel" type="button" role="tab">
+                        <i class="bi bi-pie-chart"></i> Portfolio Health
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="learn-tab" data-bs-toggle="tab" data-bs-target="#learn-panel" type="button" role="tab">
+                        <i class="bi bi-graduation-cap"></i> Learn & Tips
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="first-time-tab" data-bs-toggle="tab" data-bs-target="#first-time-panel" type="button" role="tab">
+                        <i class="bi bi-rocket-takeoff"></i> First-Time Equity & ETF
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="retailTabContent">
+                <!-- SIP Calculator Panel -->
+                <div class="tab-pane fade show active" id="sip-calculator-panel" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">SIP Calculator - See Your Money Grow!</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="sipAmount" class="form-label">Monthly Investment Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control" id="sipAmount" value="5000" min="500" step="500">
+                                        </div>
+                                        <div class="form-text">Start with as low as ₹500 per month</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sipYears" class="form-label">Investment Period (Years)</label>
+                                        <input type="range" class="form-range" id="sipYears" min="1" max="30" value="10">
+                                        <div class="d-flex justify-content-between">
+                                            <small>1 year</small>
+                                            <span id="yearDisplay" class="fw-bold">10 years</span>
+                                            <small>30 years</small>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expectedReturn" class="form-label">Expected Annual Return</label>
+                                        <select class="form-select" id="expectedReturn">
+                                            <option value="0.08">8% (Conservative - Debt Funds)</option>
+                                            <option value="0.10">10% (Moderate - Balanced Funds)</option>
+                                            <option value="0.12" selected>12% (Equity Funds - Historical Average)</option>
+                                            <option value="0.15">15% (Aggressive - Small Cap Funds)</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-100" id="calculateSIP">
+                                        <i class="bi bi-calculator"></i> Calculate My Wealth
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Your Wealth Projection</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="sipResults">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-chart-line fs-1 mb-3"></i>
+                                            <p>Calculate your SIP to see wealth projection</p>
+                                        </div>
+                                    </div>
+                                    <div id="sipChart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Investment Plan Panel -->
+                <div class="tab-pane fade" id="investment-plan-panel" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Tell Us About Yourself</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="userAge" class="form-label">Your Age</label>
+                                        <input type="number" class="form-control" id="userAge" value="30" min="18" max="65">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="monthlyIncome" class="form-label">Monthly Income</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control" id="monthlyIncome" value="50000" min="10000" step="5000">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="riskAppetite" class="form-label">Risk Appetite</label>
+                                        <select class="form-select" id="riskAppetite">
+                                            <option value="conservative">Conservative - Safety first, lower returns OK</option>
+                                            <option value="moderate" selected>Moderate - Balanced risk and returns</option>
+                                            <option value="aggressive">Aggressive - Higher risk for higher returns</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Financial Goals (Select all that apply)</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input goal-checkbox" type="checkbox" value="retirement" id="goalRetirement" checked>
+                                            <label class="form-check-label" for="goalRetirement">Retirement Planning</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input goal-checkbox" type="checkbox" value="house" id="goalHouse">
+                                            <label class="form-check-label" for="goalHouse">Buying a House</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input goal-checkbox" type="checkbox" value="education" id="goalEducation">
+                                            <label class="form-check-label" for="goalEducation">Children's Education</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input goal-checkbox" type="checkbox" value="emergency" id="goalEmergency" checked>
+                                            <label class="form-check-label" for="goalEmergency">Emergency Fund</label>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success w-100" id="generatePlan">
+                                        <i class="bi bi-magic"></i> Generate My Investment Plan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Your Personalized Investment Plan</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="investmentPlan">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-person-gear fs-1 mb-3"></i>
+                                            <p>Fill the form to get your personalized investment plan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simple Funds Panel -->
+                <div class="tab-pane fade" id="simple-funds-panel" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Beginner-Friendly Investment Options</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="simpleFunds">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading investment options...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Health Panel -->
+                <div class="tab-pane fade" id="portfolio-check-panel" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Check Your Portfolio Health</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="text-muted">Add your current investments to get a health check and recommendations</p>
+                                    </div>
+                                    <div id="portfolioInputs">
+                                        <div class="portfolio-item mb-3">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <select class="form-select investment-type">
+                                                        <option value="equity">Equity Mutual Funds</option>
+                                                        <option value="debt">Debt Funds / FD</option>
+                                                        <option value="gold">Gold / Gold Funds</option>
+                                                        <option value="international">International Funds</option>
+                                                        <option value="cash">Savings / Liquid Funds</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input type="text" class="form-control investment-name" placeholder="Investment name">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">₹</span>
+                                                        <input type="number" class="form-control investment-value" placeholder="Current value">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button class="btn btn-outline-danger btn-sm remove-investment" style="display: none;">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button class="btn btn-outline-primary btn-sm" id="addMoreInvestment">
+                                            <i class="bi bi-plus"></i> Add More Investment
+                                        </button>
+                                    </div>
+                                    <button class="btn btn-success" id="analyzePortfolio">
+                                        <i class="bi bi-heart-pulse"></i> Check Portfolio Health
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Portfolio Health Report</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="portfolioHealth">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-heart fs-1 mb-3"></i>
+                                            <p>Add your investments to get health report</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learn & Tips Panel -->
+                <div class="tab-pane fade" id="learn-panel" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Investment Tips & Market Insights</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="marketInsights">
+                                        <div class="text-center">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <p class="mt-2">Loading market insights...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Quick Start Steps</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="step-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge bg-primary rounded-circle me-3">1</div>
+                                            <div>
+                                                <strong>Build Emergency Fund</strong>
+                                                <p class="mb-0 small text-muted">6 months expenses in liquid fund</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge bg-success rounded-circle me-3">2</div>
+                                            <div>
+                                                <strong>Start SIP</strong>
+                                                <p class="mb-0 small text-muted">₹1000/month in Index Fund</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge bg-info rounded-circle me-3">3</div>
+                                            <div>
+                                                <strong>Add Debt Funds</strong>
+                                                <p class="mb-0 small text-muted">20-30% for stability</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step-item mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge bg-warning rounded-circle me-3">4</div>
+                                            <div>
+                                                <strong>Include Gold</strong>
+                                                <p class="mb-0 small text-muted">5-10% for diversification</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge bg-secondary rounded-circle me-3">5</div>
+                                            <div>
+                                                <strong>Stay Invested</strong>
+                                                <p class="mb-0 small text-muted">Review annually, invest for 5+ years</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First-Time Equity & ETF Panel -->
+                <div class="tab-pane fade" id="first-time-panel" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Create Your Starter Plan</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ftAge">Age</label>
+                                        <input type="number" class="form-control" id="ftAge" value="28" min="18" max="70">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ftHorizon">Investment Horizon (years)</label>
+                                        <input type="number" class="form-control" id="ftHorizon" value="7" min="1" max="40">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ftRisk">Risk Profile</label>
+                                        <select class="form-select" id="ftRisk">
+                                            <option value="conservative">Conservative</option>
+                                            <option value="moderate" selected>Moderate</option>
+                                            <option value="aggressive">Aggressive</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="ftAmount">Monthly SIP Amount</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control" id="ftAmount" value="3000" min="500" step="500">
+                                        </div>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="ftPreferETF" checked>
+                                        <label class="form-check-label" for="ftPreferETF">Prefer ETFs where available</label>
+                                    </div>
+                                    <button class="btn btn-primary w-100" id="buildStarterPlan">
+                                        <i class="bi bi-rocket"></i> Build My Starter Plan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Your Starter Plan</h5>
+                                    <span class="small text-muted" id="ftPlanTotals"></span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ftPlanResult" class="text-muted text-center py-4">
+                                        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                                        Fill the form and click Build to see allocations and products.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">FAQs & Starter Packs</h5>
+                                </div>
+                                <div class="card-body" id="ftContent">
+                                    <div class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Loading beginner content…</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Retail Investor Hub JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const retailHub = {
+        // Initialize the hub
+        init() {
+            this.bindEvents();
+            this.loadSimpleFunds();
+            this.loadMarketInsights();
+            this.loadFirstTimeContent();
+            this.updateYearDisplay();
+        },
+        
+        // Bind event listeners
+        bindEvents() {
+            document.getElementById('calculateSIP').addEventListener('click', () => this.calculateSIP());
+            document.getElementById('generatePlan').addEventListener('click', () => this.generateInvestmentPlan());
+            document.getElementById('analyzePortfolio').addEventListener('click', () => this.analyzePortfolio());
+            document.getElementById('addMoreInvestment').addEventListener('click', () => this.addInvestmentRow());
+            document.getElementById('sipYears').addEventListener('input', () => this.updateYearDisplay());
+            const buildBtn = document.getElementById('buildStarterPlan');
+            if (buildBtn) buildBtn.addEventListener('click', () => this.buildStarterPlan());
+            
+            // Remove investment row handlers
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-investment')) {
+                    this.removeInvestmentRow(e.target.closest('.portfolio-item'));
+                }
+            });
+        },
+        
+        // Update year display
+        updateYearDisplay() {
+            const years = document.getElementById('sipYears').value;
+            document.getElementById('yearDisplay').textContent = `${years} years`;
+        },
+        
+        // Calculate SIP projection
+        async calculateSIP() {
+            try {
+                const monthlyAmount = parseFloat(document.getElementById('sipAmount').value);
+                const years = parseInt(document.getElementById('sipYears').value);
+                const annualReturn = parseFloat(document.getElementById('expectedReturn').value);
+                
+                const response = await fetch('/api/retail/sip_calculator', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        monthly_amount: monthlyAmount,
+                        annual_return: annualReturn,
+                        years: years
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    this.displaySIPResults(data.projection);
+                } else {
+                    this.showError('Error calculating SIP: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error calculating SIP:', error);
+                this.showError('Error calculating SIP projection');
+            }
+        },
+        
+        // Display SIP calculation results
+        displaySIPResults(projection) {
+            const resultsDiv = document.getElementById('sipResults');
+            const totalInvested = projection.total_invested;
+            const futureValue = projection.future_value;
+            const returns = projection.total_returns;
+            
+            resultsDiv.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-primary">Total Invested</h6>
+                                <h4>₹${totalInvested.toLocaleString('en-IN')}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h6>Future Value</h6>
+                                <h4>₹${futureValue.toLocaleString('en-IN')}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h6>Returns</h6>
+                                <h4>₹${returns.toLocaleString('en-IN')}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="alert alert-success">
+                        <h6><i class="bi bi-magic"></i> Wealth Creation Magic!</h6>
+                        <p class="mb-0">Your ₹${projection.monthly_investment.toLocaleString('en-IN')}/month will grow to 
+                        <strong>₹${futureValue.toLocaleString('en-IN')}</strong> in ${projection.years} years! 
+                        That's <strong>${projection.wealth_multiple.toFixed(1)}x</strong> your money!</p>
+                    </div>
+                </div>
+            `;
+            
+            // Create simple chart
+            this.createSIPChart(projection);
+        },
+        
+        // Create SIP chart
+        createSIPChart(projection) {
+            // Simple visualization using basic HTML/CSS
+            const chartDiv = document.getElementById('sipChart');
+            const breakdown = projection.monthly_breakdown || [];
+            
+            if (breakdown.length > 0) {
+                let chartHtml = '<div class="progress-chart">';
+                breakdown.forEach((item, index) => {
+                    const investedHeight = (item.invested / projection.future_value) * 100;
+                    const valueHeight = (item.value / projection.future_value) * 100;
+                    
+                    chartHtml += `
+                        <div class="year-bar" style="width: ${80/breakdown.length}%; display: inline-block; margin: 1%;">
+                            <div class="text-center small mb-1">Year ${item.year}</div>
+                            <div style="height: 200px; position: relative; background: #e6f0ff; border-radius: 4px;">
+                                <!-- Grid background changed to blue -->
+                                <div style="position: absolute; bottom: 0; width: 100%; height: ${investedHeight}%; background: #6c757d; border-radius: 0 0 4px 4px;"></div>
+                                <div style="position: absolute; bottom: 0; width: 100%; height: ${valueHeight}%; background: linear-gradient(to top, #28a745, #20c997); border-radius: 0 0 4px 4px; opacity: 0.8;"></div>
+                            </div>
+                            <div class="text-center small mt-1">₹${(item.value/100000).toFixed(1)}L</div>
+                        </div>
+                    `;
+                });
+                chartHtml += '</div>';
+                chartDiv.innerHTML = chartHtml;
+            }
+        },
+        
+        // Generate investment plan
+        async generateInvestmentPlan() {
+            try {
+                const age = parseInt(document.getElementById('userAge').value);
+                const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
+                const riskAppetite = document.getElementById('riskAppetite').value;
+                
+                const goals = [];
+                document.querySelectorAll('.goal-checkbox:checked').forEach(checkbox => {
+                    goals.push(checkbox.value);
+                });
+                
+                const response = await fetch('/api/retail/investment_plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        age: age,
+                        monthly_income: monthlyIncome,
+                        risk_appetite: riskAppetite,
+                        goals: goals
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    this.displayInvestmentPlan(data.investment_plan);
+                } else {
+                    this.showError('Error generating plan: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error generating investment plan:', error);
+                this.showError('Error generating investment plan');
+            }
+        },
+        
+        // Display investment plan
+        displayInvestmentPlan(plan) {
+            const planDiv = document.getElementById('investmentPlan');
+            const suggestedAmount = plan.suggested_monthly_investment || 0;
+            const allocation = plan.asset_allocation || {};
+            
+            planDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-lightbulb"></i> Your Personalized Plan</h6>
+                    <p class="mb-0">Based on your profile, here's what we recommend:</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Suggested Monthly Investment</h6>
+                    <div class="h4 text-success">₹${suggestedAmount.toLocaleString('en-IN')}</div>
+                    <small class="text-muted">20% of your monthly income</small>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Asset Allocation</h6>
+                    <div class="progress mb-2" style="height: 25px;">
+                        <div class="progress-bar bg-primary" style="width: ${allocation.equity}%">Equity ${allocation.equity}%</div>
+                        <div class="progress-bar bg-success" style="width: ${allocation.debt}%">Debt ${allocation.debt}%</div>
+                        <div class="progress-bar bg-warning" style="width: ${allocation.gold}%">Gold ${allocation.gold}%</div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Emergency Fund Target</h6>
+                    <div class="h5 text-info">₹${(allocation.emergency_fund || 0).toLocaleString('en-IN')}</div>
+                    <small class="text-muted">6 months of expenses - Keep in liquid fund</small>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Investment Steps</h6>
+                    <ol class="list-group list-group-numbered">
+                        ${(plan.investment_steps || []).map(step => `<li class="list-group-item">${step}</li>`).join('')}
+                    </ol>
+                </div>
+            `;
+        },
+        
+        // Add investment row
+        addInvestmentRow() {
+            const container = document.getElementById('portfolioInputs');
+            const newRow = document.createElement('div');
+            newRow.className = 'portfolio-item mb-3';
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <select class="form-select investment-type">
+                            <option value="equity">Equity Mutual Funds</option>
+                            <option value="debt">Debt Funds / FD</option>
+                            <option value="gold">Gold / Gold Funds</option>
+                            <option value="international">International Funds</option>
+                            <option value="cash">Savings / Liquid Funds</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control investment-name" placeholder="Investment name">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" class="form-control investment-value" placeholder="Current value">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-outline-danger btn-sm remove-investment">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
+            
+            // Show remove buttons if more than one row
+            const removeButtons = document.querySelectorAll('.remove-investment');
+            if (removeButtons.length > 1) {
+                removeButtons.forEach(btn => btn.style.display = 'block');
+            }
+        },
+        
+        // Remove investment row
+        removeInvestmentRow(row) {
+            row.remove();
+            
+            // Hide remove buttons if only one row left
+            const removeButtons = document.querySelectorAll('.remove-investment');
+            if (removeButtons.length === 1) {
+                removeButtons[0].style.display = 'none';
+            }
+        },
+        
+        // Analyze portfolio
+        async analyzePortfolio() {
+            try {
+                const holdings = [];
+                document.querySelectorAll('.portfolio-item').forEach(item => {
+                    const type = item.querySelector('.investment-type').value;
+                    const name = item.querySelector('.investment-name').value;
+                    const value = parseFloat(item.querySelector('.investment-value').value) || 0;
+                    
+                    if (name && value > 0) {
+                        holdings.push({ type, name, value });
+                    }
+                });
+                
+                if (holdings.length === 0) {
+                    this.showError('Please add at least one investment');
+                    return;
+                }
+                
+                const response = await fetch('/api/retail/portfolio_analysis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ holdings })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    this.displayPortfolioHealth(data.analysis);
+                } else {
+                    this.showError('Error analyzing portfolio: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error analyzing portfolio:', error);
+                this.showError('Error analyzing portfolio');
+            }
+        },
+        
+        // Display portfolio health
+        displayPortfolioHealth(analysis) {
+            const healthDiv = document.getElementById('portfolioHealth');
+            const totalValue = analysis.total_portfolio_value || 0;
+            const riskScore = analysis.risk_score || 0;
+            const diversificationScore = analysis.diversification_score || 0;
+            
+            const healthScore = Math.round((diversificationScore + (10 - riskScore)) / 2);
+            const healthColor = healthScore > 7 ? 'success' : healthScore > 4 ? 'warning' : 'danger';
+            const healthText = healthScore > 7 ? 'Excellent' : healthScore > 4 ? 'Good' : 'Needs Improvement';
+            
+            healthDiv.innerHTML = `
+                <div class="text-center mb-3">
+                    <div class="h1 text-${healthColor}">${healthScore}/10</div>
+                    <div class="h6 text-${healthColor}">${healthText}</div>
+                    <small class="text-muted">Portfolio Health Score</small>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Total Portfolio Value</strong>
+                    <div class="h5">₹${totalValue.toLocaleString('en-IN')}</div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Risk Level</strong>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-${riskScore > 6 ? 'danger' : riskScore > 3 ? 'warning' : 'success'}" 
+                             style="width: ${riskScore * 10}%"></div>
+                    </div>
+                    <small>${riskScore}/10 - ${riskScore > 6 ? 'High' : riskScore > 3 ? 'Moderate' : 'Low'} Risk</small>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Diversification</strong>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-info" style="width: ${diversificationScore * 10}%"></div>
+                    </div>
+                    <small>${diversificationScore}/10 - ${diversificationScore > 7 ? 'Well' : diversificationScore > 4 ? 'Moderately' : 'Poorly'} Diversified</small>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>Recommendations</h6>
+                    ${(analysis.recommendations || []).map(rec => 
+                        `<div class="alert alert-info py-2 small">${rec}</div>`
+                    ).join('')}
+                </div>
+            `;
+        },
+        
+        // Load simple funds recommendations
+        async loadSimpleFunds() {
+            try {
+                const response = await fetch('/api/retail/simple_recommendations');
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.displaySimpleFunds(data.recommendations);
+                } else {
+                    document.getElementById('simpleFunds').innerHTML = '<p class="text-danger">Error loading recommendations</p>';
+                }
+            } catch (error) {
+                console.error('Error loading simple funds:', error);
+                document.getElementById('simpleFunds').innerHTML = '<p class="text-danger">Error loading recommendations</p>';
+            }
+        },
+        
+        // Display simple funds
+        displaySimpleFunds(recommendations) {
+            const fundsDiv = document.getElementById('simpleFunds');
+            const funds = recommendations.beginner_friendly_funds || [];
+            
+            fundsDiv.innerHTML = `
+                <div class="row">
+                    ${funds.map(fund => `
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title">${fund.name}</h6>
+                                        <span class="badge bg-${fund.risk === 'Low' ? 'success' : fund.risk === 'Moderate' ? 'warning' : 'danger'}">${fund.risk} Risk</span>
+                                    </div>
+                                    <p class="text-muted small">${fund.type}</p>
+                                    <p class="card-text small">${fund.why_good}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-success">Min SIP: ₹${fund.min_sip}</small>
+                                        <button class="btn btn-outline-primary btn-sm">Learn More</button>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">${fund.suitable_for}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="mt-4">
+                    <h6>Quick Investment Tips</h6>
+                    <div class="row">
+                        ${(recommendations.investment_tips || []).map(tip => 
+                            `<div class="col-md-6 mb-2">
+                                <div class="alert alert-light py-2">
+                                    <i class="bi bi-lightbulb text-warning me-2"></i>${tip}
+                                </div>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="text-danger">⚠️ Avoid These Red Flags</h6>
+                    <ul class="list-unstyled">
+                        ${(recommendations.red_flags_to_avoid || []).map(flag => 
+                            `<li class="small text-danger mb-1"><i class="bi bi-x-circle me-2"></i>${flag}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
+        },
+        
+        // Load market insights
+        async loadMarketInsights() {
+            try {
+                const response = await fetch('/api/retail/market_insights');
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.displayMarketInsights(data.insights);
+                } else {
+                    document.getElementById('marketInsights').innerHTML = '<p class="text-danger">Error loading insights</p>';
+                }
+            } catch (error) {
+                console.error('Error loading market insights:', error);
+                document.getElementById('marketInsights').innerHTML = '<p class="text-danger">Error loading insights</p>';
+            }
+        },
+        
+        // Display market insights
+        displayMarketInsights(insights) {
+            const insightsDiv = document.getElementById('marketInsights');
+            
+            insightsDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-graph-up me-2"></i>Current Market Sentiment</h6>
+                    <p class="mb-0">${insights.market_sentiment || 'Stay invested for long-term wealth creation'}</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>💡 Investment Tips</h6>
+                        <ul class="list-unstyled">
+                            ${(insights.investment_tips || []).map(tip => 
+                                `<li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>${tip}</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>🚫 Mistakes to Avoid</h6>
+                        <ul class="list-unstyled">
+                            ${(insights.mistakes_to_avoid || []).map(mistake => 
+                                `<li class="mb-2"><i class="bi bi-x-circle text-danger me-2"></i>${mistake}</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>🎯 Current Opportunities</h6>
+                    <div class="row">
+                        ${(insights.current_opportunities || []).map(opp => 
+                            `<div class="col-md-6 mb-2">
+                                <div class="alert alert-success py-2 small">
+                                    <i class="bi bi-star text-warning me-2"></i>${opp}
+                                </div>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+        },
+        
+        // Load first-time content (FAQs, starter packs)
+        async loadFirstTimeContent() {
+            try {
+                const resp = await fetch('/api/retail/first_time_content');
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.error || 'failed');
+                const c = data.content || {};
+                const packs = (c.starter_packs || []).map(p => `
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3 h-100">
+                            <div class="fw-semibold">${p.title}</div>
+                            <div class="small text-muted mb-1">${p.mix}</div>
+                            <div class="small">${p.why}</div>
+                            <div class="small text-success mt-1">Example: ${p.sip_example}</div>
+                        </div>
+                    </div>
+                `).join('');
+                const faqs = (c.faqs || []).map(f => `
+                    <div class="mb-2">
+                        <div class="fw-semibold">Q: ${f.q}</div>
+                        <div class="text-muted">A: ${f.a}</div>
+                    </div>
+                `).join('');
+                const checklist = (c.checklist || []).map((it, i) => `
+                    <li class="list-group-item py-1"><span class="badge bg-secondary me-2">${i+1}</span>${it}</li>
+                `).join('');
+                document.getElementById('ftContent').innerHTML = `
+                    <div class="mb-3">
+                        <h6>Starter Packs</h6>
+                        <div class="row">${packs}</div>
+                    </div>
+                    <div class="mb-3">
+                        <h6>FAQs</h6>
+                        ${faqs}
+                    </div>
+                    <div>
+                        <h6>Checklist</h6>
+                        <ul class="list-group list-group-flush">${checklist}</ul>
+                    </div>
+                `;
+            } catch (e) {
+                console.error('first_time_content error', e);
+                document.getElementById('ftContent').innerHTML = '<p class="text-danger">Unable to load beginner content.</p>';
+            }
+        },
+        
+        // Build first-time starter plan
+        async buildStarterPlan() {
+            try {
+                const payload = {
+                    age: parseInt(document.getElementById('ftAge').value || '28'),
+                    horizon_years: parseInt(document.getElementById('ftHorizon').value || '5'),
+                    risk: document.getElementById('ftRisk').value,
+                    monthly_invest: parseFloat(document.getElementById('ftAmount').value || '3000'),
+                    prefer_etf: document.getElementById('ftPreferETF').checked
+                };
+                const resp = await fetch('/api/retail/first_time_plan', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.error || 'failed');
+                const plan = data.plan;
+                const totalsEl = document.getElementById('ftPlanTotals');
+                totalsEl.textContent = `Total: ₹${plan.totals.monthly_amount.toLocaleString('en-IN')} | ${plan.totals.percent}% allocated`;
+                const rows = (plan.products || []).map(p => `
+                    <tr>
+                        <td>${p.name}<div class="small text-muted">${p.category}</div></td>
+                        <td>${p.percent}%</td>
+                        <td>₹${p.monthly_amount.toLocaleString('en-IN')}</td>
+                    </tr>
+                `).join('');
+                const alloc = plan.asset_allocation || {};
+                document.getElementById('ftPlanResult').innerHTML = `
+                    <div class="mb-3">
+                        <div class="fw-semibold">Asset Allocation</div>
+                        <div class="progress" style="height:24px">
+                            <div class="progress-bar bg-primary" style="width:${alloc.equity || 0}%">Equity ${alloc.equity || 0}%</div>
+                            <div class="progress-bar bg-success" style="width:${alloc.debt || 0}%">Debt ${alloc.debt || 0}%</div>
+                            <div class="progress-bar bg-warning" style="width:${alloc.gold || 0}%">Gold ${alloc.gold || 0}%</div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead><tr><th>Product</th><th>Percent</th><th>Monthly</th></tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                    <div class="mt-2">
+                        ${(plan.steps || []).map(s => `<div class=\"small text-muted\"><i class=\"bi bi-check2-circle text-success me-2\"></i>${s}</div>`).join('')}
+                        ${(plan.notes || []).map(n => `<div class=\"small text-warning\">⚠ ${n}</div>`).join('')}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('first_time_plan error', e);
+                this.showError('Unable to build starter plan.');
+            }
+        },
+        
+        // Show error message
+        showError(message) {
+            // Simple error display - you can make this more sophisticated
+            alert(message);
+        }
+    };
+    
+    // Initialize the retail hub
+    retailHub.init();
+});
+</script>
+
+<style>
+.progress-chart {
+    height: 200px;
+    display: flex;
+    align-items: end;
+    justify-content: space-around;
+    padding: 10px;
+    /* Make the overall chart grid background blue */
+    background-color: #e6f0ff;
+    border-radius: 8px;
+}
+
+.step-item {
+    border-left: 3px solid #e9ecef;
+    padding-left: 15px;
+}
+
+.step-item:last-child {
+    border-left: none;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link {
+    border-radius: 10px 10px 0 0;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* Ensure stat cards show dark text (even if background renders light) */
+.stat-card .card-body, .stat-card h5, .stat-card p, .stat-card i {
+    color: #212529 !important;
+}
+</style>
+{% endblock %}

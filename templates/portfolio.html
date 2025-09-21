@@ -1,0 +1,1049 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio Analysis Dashboard{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Portfolio Analysis Dashboard</h1>
+        <p class="text-muted mb-0">AI-powered portfolio commentary with continuous improvement</p>
+    </div>
+    <div class="d-flex gap-2">
+    <!-- Removed unused placeholder button -->
+        <button class="btn btn-primary" onclick="analyzePortfolio()">
+            <i class="bi bi-graph-up me-1"></i> Analyze Portfolio
+        </button>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Report Submission Form -->
+<div id="reportFormDiv" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>Analyze New Research Report
+        </h5>
+    </div>
+    <div class="card-body">
+        <form id="reportAnalyzeForm" onsubmit="return submitReportForm(event)">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Analyst Name</label>
+                <input type="text" name="analyst" class="form-control form-control-lg" placeholder="Enter analyst name" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Report Text</label>
+                <textarea name="text" rows="6" class="form-control" placeholder="Paste research report content here... (Stock tickers will be automatically extracted)" required></textarea>
+                <div class="form-text">Stock tickers will be automatically extracted from the report text</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-activity me-1"></i> Analyze Report
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="hideReportForm()">Cancel</button>
+            </div>
+        </form>
+        <div id="reportResultDiv" class="mt-4"></div>
+    </div>
+</div>
+
+<!-- Analysis Result Card -->
+<div id="analysisResult" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">Latest Portfolio Analysis</h5>
+    </div>
+    <div class="card-body">
+        <div id="commentaryContent"></div>
+        <div class="mt-3">
+            <small class="text-muted">Generated at: <span id="analysisTimestamp"></span></small>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Card -->
+<div id="loadingCard" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-body text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 mb-0">Analyzing portfolio and generating commentary...</p>
+    </div>
+</div>
+
+<!-- Portfolio Overview Card -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between">
+        <h5 class="mb-0">Portfolio Holdings</h5>
+        <div>
+            <button class="btn btn-sm btn-success" onclick="showAddStockModal()">
+                <i class="bi bi-plus-circle me-1"></i>Add Stock
+            </button>
+        </div>
+    </div>
+
+        <!-- Imported Portfolios & Analysis Card -->
+        <div class="card border-0 shadow-sm mb-4" id="importedPortfoliosCard">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Imported Trading Account Portfolios</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="toggleImportForm()"><i class="bi bi-cloud-upload me-1"></i>Import Portfolio</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="loadImportedPortfolios(true)"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="importPlanInfo" class="small text-muted mb-2"></div>
+                <div id="importFormWrapper" class="border rounded p-3 mb-3" style="display:none;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">New Portfolio Import</h6>
+                        <button class="btn btn-sm btn-link" onclick="toggleImportForm()">Close</button>
+                    </div>
+                    <form id="portfolioImportForm" onsubmit="return submitImportPortfolio(event)">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Account Source</label>
+                                <select class="form-select form-select-sm" name="account_source" required>
+                                    <option value="zerodha">Zerodha</option>
+                                    <option value="upstox">Upstox</option>
+                                    <option value="angelone">AngelOne</option>
+                                    <option value="icici">ICICI</option>
+                                    <option value="manual_csv" selected>Manual CSV</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Portfolio Name</label>
+                                <input type="text" class="form-control form-control-sm" name="account_label" placeholder="e.g. Zerodha Main" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Data Format</label>
+                                <select class="form-select form-select-sm" name="data_format" onchange="switchImportHelp(this.value)">
+                                    <option value="csv" selected>CSV</option>
+                                    <option value="json">JSON</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label small fw-semibold">Holdings Paste</label>
+                            <textarea class="form-control" name="raw_text" rows="5" placeholder="CSV Example:\nTicker,Quantity,AvgPrice\nRELIANCE.NS,10,2480.50\nTCS.NS,5,3720\n..." required></textarea>
+                            <div class="form-text" id="importHelpText">Provide columns: Ticker, Quantity, AvgPrice (header row optional). We ignore rows with invalid numbers.</div>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-upload me-1"></i>Import</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleImportForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="importedPortfoliosStatus" class="text-muted small mb-2"></div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0" id="importedPortfoliosTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th><th>Source</th><th>Imported</th><th>Holdings</th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="importedPortfoliosBody">
+                            <tr><td colspan="5" class="text-center py-3 text-muted">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading API Connections (Pro/Pro Plus) -->
+        <div class="card border-0 shadow-sm mb-4" id="tradingConnectionsCard" style="display:none;">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Live Trading API Connections</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="toggleConnectionForm()"><i class="bi bi-plug me-1"></i>Add Connection</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="loadConnections(true)"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="connectionFormWrapper" class="border rounded p-3 mb-3" style="display:none;">
+                    <form id="connectionForm" onsubmit="return submitConnection(event)">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Provider</label>
+                                <select class="form-select form-select-sm" name="provider" required>
+                                    <option value="zerodha">Zerodha</option>
+                                    <option value="upstox">Upstox</option>
+                                    <option value="angelone">AngelOne</option>
+                                    <option value="icici">ICICI</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Label</label>
+                                <input class="form-control form-control-sm" name="account_label" placeholder="Primary" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">API Key</label>
+                                <input class="form-control form-control-sm" name="api_key" placeholder="Optional">
+                            </div>
+                                <div class="col-md-3">
+                                <label class="form-label small fw-semibold">API Secret</label>
+                                <input class="form-control form-control-sm" name="api_secret" placeholder="Optional">
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-save me-1"></i>Save</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleConnectionForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm" id="connectionsTable">
+                        <thead class="table-light"><tr><th>Label</th><th>Provider</th><th>Added</th><th></th></tr></thead>
+                        <tbody id="connectionsBody"><tr><td colspan="4" class="text-center py-3 text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <div class="card-body">
+        <div id="analysisLimitInfo" class="alert alert-info mb-3">
+            <i class="bi bi-info-circle me-2"></i>
+            <span>You have <strong>{{ analyses_remaining }}</strong> portfolio analyses remaining today. Analysis limit resets at midnight.</span>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-borderless" id="portfolioTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Company</th>
+                        <th class="d-none d-md-table-cell">Ticker</th>
+                        <th>Qty</th>
+                        <th class="d-none d-lg-table-cell">Buy Price</th>
+                        <th>Current Price</th>
+                        <th>P&L</th>
+                        <th class="d-none d-sm-table-cell">P&L %</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if portfolio_stocks %}
+                        {% for stock in portfolio_stocks %}
+                            <tr data-stock-id="{{ stock.id }}">
+                                <td>{{ stock.company_name }}</td>
+                                <td class="d-none d-md-table-cell">{{ stock.ticker }}</td>
+                                <td>{{ stock.quantity }}</td>
+                                <td class="d-none d-lg-table-cell">₹{{ stock.buy_price }}</td>
+                                <td class="current-price">Loading...</td>
+                                <td class="pnl">-</td>
+                                <td class="d-none d-sm-table-cell pnl-pct">-</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showEditStockModal('{{ stock.id }}', '{{ stock.ticker }}', '{{ stock.company_name }}', '{{ stock.quantity }}', '{{ stock.buy_price }}')">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDeleteStock('{{ stock.id }}', '{{ stock.company_name }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox display-5 d-block mb-3"></i>
+                                    <p>Your portfolio is empty. Add stocks to get started.</p>
+                                    <button class="btn btn-primary btn-sm" onclick="showAddStockModal()">
+                                        <i class="bi bi-plus-circle me-1"></i>Add Your First Stock
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white border-0">
+        <button id="analyzePortfolioBtn" class="btn btn-primary" onclick="analyzePortfolio()">
+            <i class="bi bi-graph-up me-1"></i>Analyze Portfolio
+        </button>
+        <span class="text-muted small ms-2">
+            <i class="bi bi-info-circle me-1"></i>Limited to 2 analyses per day
+        </span>
+    </div>
+</div>
+
+<!-- Add Stock Modal -->
+<div class="modal fade" id="addStockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Stock to Portfolio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addStockForm">
+                    <div class="mb-3">
+                        <label for="stockTicker" class="form-label">Stock Ticker</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="stockTicker" placeholder="Enter ticker (e.g., RELIANCE.NS)" required>
+                            <span class="input-group-text">.NS for NSE stocks</span>
+                        </div>
+                        <div class="form-text">Use .NS suffix for NSE stocks, .BO for BSE</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="companyName" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="companyName" placeholder="Enter company name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" min="1" placeholder="Number of shares" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="buyPrice" class="form-label">Buy Price (₹)</label>
+                        <input type="number" class="form-control" id="buyPrice" min="0.01" step="0.01" placeholder="Price per share" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveStockBtn" onclick="saveStock()">Add Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Stock Modal -->
+<div class="modal fade" id="editStockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editStockForm">
+                    <input type="hidden" id="editStockId">
+                    <div class="mb-3">
+                        <label for="editStockTicker" class="form-label">Stock Ticker</label>
+                        <input type="text" class="form-control" id="editStockTicker" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCompanyName" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="editCompanyName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editQuantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="editQuantity" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBuyPrice" class="form-label">Buy Price (₹)</label>
+                        <input type="number" class="form-control" id="editBuyPrice" min="0.01" step="0.01" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="updateStockBtn" onclick="updateStock()">Update Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteStockId">
+                <p>Are you sure you want to remove <span id="deleteStockName" class="fw-bold"></span> from your portfolio?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="deleteStock()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Previous Commentaries (Enhanced) -->
+<div class="card border-0 shadow-sm" id="prevCommentariesCard">
+    <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Previous Commentaries</h5>
+        <div class="d-flex gap-2">
+            <div class="btn-group btn-group-sm" role="group" aria-label="View Mode">
+                <button id="viewCompactBtn" class="btn btn-outline-secondary active" onclick="setCommentaryView('compact')"><i class="bi bi-list"></i></button>
+                <button id="viewExpandedBtn" class="btn btn-outline-secondary" onclick="setCommentaryView('expanded')"><i class="bi bi-arrows-fullscreen"></i></button>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" onclick="reloadCommentaries(true)"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div id="commentariesContainer" class="p-3" style="min-height:160px;">
+            <div id="commentariesSkeleton">
+                <div class="placeholder-glow mb-3">
+                    <span class="placeholder col-2"></span>
+                    <span class="placeholder col-8"></span>
+                    <span class="placeholder col-7"></span>
+                </div>
+                <div class="placeholder-glow mb-3">
+                    <span class="placeholder col-2"></span>
+                    <span class="placeholder col-10"></span>
+                    <span class="placeholder col-6"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+        <div class="small text-muted" id="commentaryMeta"></div>
+        <div class="btn-group btn-group-sm" id="commentaryPager">
+            <button class="btn btn-outline-secondary" id="prevCommBtn" onclick="changeCommentaryPage(-1)" disabled>&laquo;</button>
+            <button class="btn btn-outline-secondary" id="nextCommBtn" onclick="changeCommentaryPage(1)" disabled>&raquo;</button>
+        </div>
+    </div>
+</div>
+
+<!-- Support & Feedback -->
+<div class="card border-0 shadow-sm my-4" id="supportCard">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-life-preserver me-2"></i>Support & Feedback</h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary" onclick="toggleNewTicket()"><i class="bi bi-plus-circle"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadTickets()"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="newTicketForm" class="border rounded p-3 mb-3" style="display:none;">
+            <form id="ticketForm" onsubmit="return submitTicket(event)">
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label small fw-semibold">Subject</label><input name="subject" class="form-control form-control-sm" required maxlength="200"></div>
+                    <div class="col-md-3"><label class="form-label small fw-semibold">Category</label><select name="category" class="form-select form-select-sm"><option value="general">General</option><option value="technical">Technical</option><option value="billing">Billing</option><option value="feedback">Feedback</option><option value="complaint">Complaint</option></select></div>
+                    <div class="col-md-2"><label class="form-label small fw-semibold">Priority</label><select name="priority" class="form-select form-select-sm"><option value="low">Low</option><option value="normal" selected>Normal</option><option value="high">High</option></select></div>
+                    <div class="col-md-3 d-flex align-items-end"><div class="form-check"><input class="form-check-input" type="checkbox" id="isComplaintChk" name="is_complaint"><label class="form-check-label small" for="isComplaintChk">Mark Complaint</label></div></div>
+                </div>
+                <div class="mt-3"><label class="form-label small fw-semibold">Description</label><textarea name="description" rows="4" class="form-control" required></textarea></div>
+                <div class="mt-3 d-flex gap-2"><button type="submit" class="btn btn-sm btn-success"><i class="bi bi-send me-1"></i>Submit</button><button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleNewTicket()">Cancel</button></div>
+            </form>
+        </div>
+        <div id="ticketsContainer" class="table-responsive small">
+            <table class="table table-sm" id="ticketsTable"><thead class="table-light"><tr><th>ID</th><th>Subject</th><th>Category</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody id="ticketsBody"><tr><td colspan="6" class="text-center py-3 text-muted">Loading...</td></tr></tbody></table>
+        </div>
+        <div id="ticketDetailModalWrapper"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+<script>
+// Initialize Socket.IO for real-time updates
+const socket = io();
+
+// Listen for real-time price updates
+socket.on('price_update', function(data) {
+    console.log('Price update received:', data);
+    // Update the table with new prices if needed
+});
+
+// Listen for alerts
+socket.on('alert_triggered', function(data) {
+    showAlert(`Alert: ${data.ticker} ${data.alert_type} - Current: ${data.current_value}`);
+});
+
+function showAlert(message) {
+    const alertHtml = `
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('afterbegin', alertHtml);
+}
+
+function analyzePortfolio() {
+    // Show loading state
+    document.getElementById('loadingCard').style.display = 'block';
+    document.getElementById('analysisResult').style.display = 'none';
+    
+    fetch('/analyze_portfolio', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loadingCard').style.display = 'none';
+        
+        if (data.success) {
+            // Display the new commentary
+            document.getElementById('commentaryContent').innerHTML = 
+                '<pre style="white-space: pre-wrap; font-family: inherit;">' + 
+                data.commentary + 
+                '</pre>';
+            
+            document.getElementById('analysisTimestamp').textContent = 
+                new Date().toLocaleString();
+            
+            document.getElementById('analysisResult').style.display = 'block';
+            
+            // Show improvements if any
+            if (data.improvements && data.improvements.length > 0) {
+                const improvementsHtml = '<div class="alert alert-info mt-3"><strong>New Improvements:</strong> ' + 
+                    data.improvements.join(', ') + '</div>';
+                document.getElementById('commentaryContent').innerHTML += improvementsHtml;
+            }
+            
+            // Scroll to result
+            document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+            
+            // Refresh page after 3 seconds to show updated commentary in history
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+            
+        } else {
+            alert('Error analyzing portfolio: ' + data.error);
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingCard').style.display = 'none';
+        console.error('Error:', error);
+        alert('Error analyzing portfolio. Please try again.');
+    });
+}
+
+function submitReportForm(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    // Show loading state
+    document.getElementById('reportResultDiv').innerHTML = 
+        '<div class="text-center py-4">' +
+        '    <div class="spinner-border text-primary" role="status">' +
+        '        <span class="visually-hidden">Loading...</span>' +
+        '    </div>' +
+        '    <p class="mt-3 mb-0">Analyzing report and updating portfolio...</p>' +
+        '</div>';
+    
+    fetch('/submit_report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('reportResultDiv').innerHTML = 
+                '<div class="alert alert-success">' +
+                '    <i class="bi bi-check-circle me-2"></i>' +
+                '    Report analyzed successfully! Portfolio has been updated.' +
+                '</div>';
+            
+            // Optionally, refresh the portfolio data after a short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+            
+        } else {
+            document.getElementById('reportResultDiv').innerHTML = 
+                '<div class="alert alert-danger">' +
+                '    <i class="bi bi-x-circle me-2"></i>' +
+                '    Error analyzing report: ' + data.error +
+                '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('reportResultDiv').innerHTML = 
+            '<div class="alert alert-danger">' +
+            '    <i class="bi bi-x-circle me-2"></i>' +
+            '    Error analyzing report. Please try again.' +
+            '</div>';
+    });
+}
+
+// Report Form Functions
+function showReportForm() {
+    document.getElementById('reportFormDiv').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hideReportForm() {
+    document.getElementById('reportFormDiv').style.display = 'none';
+}
+
+// Portfolio Management Functions
+function showAddStockModal() {
+    // Clear form
+    document.getElementById('addStockForm').reset();
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('addStockModal'));
+    modal.show();
+}
+
+function showEditStockModal(stockId, ticker, companyName, quantity, buyPrice) {
+    // Populate form with current values
+    document.getElementById('editStockId').value = stockId;
+    document.getElementById('editStockTicker').value = ticker;
+    document.getElementById('editCompanyName').value = companyName;
+    document.getElementById('editQuantity').value = quantity;
+    document.getElementById('editBuyPrice').value = buyPrice;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editStockModal'));
+    modal.show();
+}
+
+function confirmDeleteStock(stockId, companyName) {
+    // Set the stock ID and name for confirmation
+    document.getElementById('deleteStockId').value = stockId;
+    document.getElementById('deleteStockName').textContent = companyName;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    modal.show();
+}
+
+function saveStock() {
+    // Get form values
+    const ticker = document.getElementById('stockTicker').value;
+    const companyName = document.getElementById('companyName').value;
+    const quantity = parseInt(document.getElementById('quantity').value);
+    const buyPrice = parseFloat(document.getElementById('buyPrice').value);
+    
+    // Validate form
+    if (!ticker || !companyName || isNaN(quantity) || isNaN(buyPrice)) {
+        alert('Please fill in all fields correctly');
+        return;
+    }
+    
+    // Disable button and show loading state
+    const saveBtn = document.getElementById('saveStockBtn');
+    const originalBtnText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Adding...';
+    saveBtn.disabled = true;
+    
+    // Send request to server
+    fetch('/add_portfolio_stock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ticker: ticker,
+            company_name: companyName,
+            quantity: quantity,
+            buy_price: buyPrice
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Hide modal
+            bootstrap.Modal.getInstance(document.getElementById('addStockModal')).hide();
+            
+            // Reload page to show updated portfolio
+            window.location.reload();
+        } else {
+            alert('Error adding stock: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding stock. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        saveBtn.innerHTML = originalBtnText;
+        saveBtn.disabled = false;
+    });
+}
+
+function updateStock() {
+    // Get form values
+    const stockId = document.getElementById('editStockId').value;
+    const companyName = document.getElementById('editCompanyName').value;
+    const quantity = parseInt(document.getElementById('editQuantity').value);
+    const buyPrice = parseFloat(document.getElementById('editBuyPrice').value);
+    
+    // Validate form
+    if (!stockId || !companyName || isNaN(quantity) || isNaN(buyPrice)) {
+        alert('Please fill in all fields correctly');
+        return;
+    }
+    
+    // Disable button and show loading state
+    const updateBtn = document.getElementById('updateStockBtn');
+    const originalBtnText = updateBtn.innerHTML;
+    updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Updating...';
+    updateBtn.disabled = true;
+    
+    // Send request to server
+    fetch('/update_portfolio_stock/' + stockId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            company_name: companyName,
+            quantity: quantity,
+            buy_price: buyPrice
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Hide modal
+            bootstrap.Modal.getInstance(document.getElementById('editStockModal')).hide();
+            
+            // Reload page to show updated portfolio
+            window.location.reload();
+        } else {
+            alert('Error updating stock: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating stock. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        updateBtn.innerHTML = originalBtnText;
+        updateBtn.disabled = false;
+    });
+}
+
+function deleteStock() {
+    // Get stock ID
+    const stockId = document.getElementById('deleteStockId').value;
+    
+    // Validate
+    if (!stockId) {
+        alert('No stock selected for deletion');
+        return;
+    }
+    
+    // Disable button and show loading state
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    const originalBtnText = deleteBtn.innerHTML;
+    deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Deleting...';
+    deleteBtn.disabled = true;
+    
+    // Send request to server
+    fetch('/delete_portfolio_stock/' + stockId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Hide modal
+            bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+            
+            // Reload page to show updated portfolio
+            window.location.reload();
+        } else {
+            alert('Error deleting stock: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting stock. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        deleteBtn.innerHTML = originalBtnText;
+        deleteBtn.disabled = false;
+    });
+}
+
+// Fetch and display current prices for portfolio stocks
+function fetchStockPrices() {
+    // Get all stock rows
+    const stockRows = document.querySelectorAll('#portfolioTable tbody tr[data-stock-id]');
+    
+    // If no stocks, exit
+    if (stockRows.length === 0) return;
+    
+    // Create an array of tickers to fetch prices for
+    const tickers = Array.from(stockRows).map(row => {
+        const ticker = row.querySelector('.d-none.d-md-table-cell').textContent.trim();
+        return ticker;
+    });
+    
+    // Fetch current prices for all stocks
+    fetch('/get_current_prices', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            tickers: tickers
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update price and PnL for each stock
+            stockRows.forEach(row => {
+                const ticker = row.querySelector('.d-none.d-md-table-cell').textContent.trim();
+                const quantity = parseInt(row.querySelector('td:nth-child(3)').textContent);
+                const buyPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace('₹', ''));
+                
+                if (data.prices[ticker]) {
+                    const currentPrice = data.prices[ticker];
+                    const pnl = (currentPrice - buyPrice) * quantity;
+                    const pnlPct = (currentPrice - buyPrice) / buyPrice * 100;
+                    
+                    // Update price
+                    row.querySelector('.current-price').textContent = `₹${currentPrice.toFixed(2)}`;
+                    
+                    // Update PnL
+                    const pnlCell = row.querySelector('.pnl');
+                    pnlCell.textContent = `${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(0)}`;
+                    pnlCell.className = `pnl ${pnl >= 0 ? 'text-success' : 'text-danger'}`;
+                    
+                    // Update PnL %
+                    const pnlPctCell = row.querySelector('.pnl-pct');
+                    pnlPctCell.textContent = `${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%`;
+                    pnlPctCell.className = `d-none d-sm-table-cell pnl-pct ${pnlPct >= 0 ? 'text-success' : 'text-danger'}`;
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching stock prices:', error);
+    });
+}
+
+// Call fetchStockPrices on page load
+document.addEventListener('DOMContentLoaded', fetchStockPrices);
+
+function submitReportForm(event) {
+    event.preventDefault();
+    const form = document.getElementById('reportAnalyzeForm');
+    const data = {
+        analyst: form.analyst.value,
+        text: form.text.value
+    };
+    
+    // Show loading indicator
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Analyzing...';
+    submitBtn.disabled = true;
+    
+    fetch('/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(r=>r.json()).then(res=>{
+        if (res.result) {
+            document.getElementById('reportResultDiv').innerHTML = `
+                <div class="alert alert-success d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Analysis Complete!</h5>
+                        <div class="mb-0">Report ID: ${res.report_id}</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="${window.location.origin}/report/${res.report_id}" class="btn btn-success me-2">
+                        <i class="bi bi-eye me-1"></i> View Report
+                    </a>
+                    <a href="${window.location.origin}/enhanced_analysis/${res.report_id}" class="btn btn-outline-success">
+                        <i class="bi bi-shield-check me-1"></i> Enhanced Analysis
+                    </a>
+                </div>
+            `;
+            form.reset();
+        } else {
+            document.getElementById('reportResultDiv').innerHTML = `
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-0">Error: ${res.error || 'Unknown error'}</h5>
+                    </div>
+                </div>
+            `;
+        }
+    }).catch(error => {
+        document.getElementById('reportResultDiv').innerHTML = `
+            <div class="alert alert-danger">
+                Network error: ${error.message}
+            </div>
+        `;
+    }).finally(() => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    });
+}
+
+// ---------------- Previous Commentaries Dynamic UI ----------------
+let commentaryPage=1, commentaryPages=1, commentaryView='compact', commentaryCache={};
+function setCommentaryView(mode){ commentaryView=mode; document.getElementById('viewCompactBtn').classList.toggle('active', mode==='compact'); document.getElementById('viewExpandedBtn').classList.toggle('active', mode==='expanded'); renderCommentaryList(); }
+function reloadCommentaries(reset){ if(reset){ commentaryPage=1; commentaryCache={}; }
+    const cont=document.getElementById('commentariesContainer'); if(!cont) return; cont.classList.add('position-relative'); cont.innerHTML='<div class="text-center py-4 text-muted">Loading commentaries...</div>'; fetch(`/api/portfolio/commentaries?page=${commentaryPage}&page_size=5`).then(r=>r.json()).then(d=>{ if(!d.ok){ cont.innerHTML='<div class="text-danger py-4">Error loading commentaries</div>'; return;} commentaryPages=d.pages; commentaryCache[commentaryPage]=d.commentaries||[]; updatePager(); renderCommentaryList(); }).catch(()=>{ cont.innerHTML='<div class="text-danger py-4">Network error</div>'; }); }
+function changeCommentaryPage(delta){ let np=commentaryPage+delta; if(np<1) np=1; if(np>commentaryPages) np=commentaryPages; if(np===commentaryPage) return; commentaryPage=np; if(commentaryCache[np]){ renderCommentaryList(); } else { reloadCommentaries(); } }
+function updatePager(){ const prev=document.getElementById('prevCommBtn'), next=document.getElementById('nextCommBtn'), meta=document.getElementById('commentaryMeta'); if(prev){ prev.disabled= commentaryPage<=1; } if(next){ next.disabled= commentaryPage>=commentaryPages; } if(meta){ meta.textContent=`Page ${commentaryPage} of ${commentaryPages}`; } }
+function renderCommentaryList(){ const cont=document.getElementById('commentariesContainer'); if(!cont) return; const list = commentaryCache[commentaryPage]||[]; if(!list.length){ cont.innerHTML='<div class="text-center text-muted py-4"><i class="bi bi-file-text fs-1 d-block mb-2"></i>No commentaries yet.</div>'; updatePager(); return; }
+    const html=list.map(c=> commentaryCardHTML(c)).join(''); cont.innerHTML=html; updatePager(); }
+function commentaryCardHTML(c){ const dt = c.created_at? new Date(c.created_at).toLocaleString():''; const improvements = c.improvements && c.improvements.length? `<div class='mt-2 small text-muted'><strong>Improvements:</strong> ${c.improvements.join(', ')}</div>`:''; const bodyHTML = formatCommentaryText(c.commentary_text); return `<div class='border rounded p-3 mb-3 commentary-item ${c.improved?'improved':''}'>
+    <div class='d-flex justify-content-between align-items-start mb-2'>
+        <small class='text-muted'>${dt}</small>
+        ${c.improved?"<span class='badge bg-success'>Improved</span>":''}
+    </div>
+    <div class='commentary-body ${commentaryView==='compact'?'compact-body':''}'>${bodyHTML}</div>
+    <div class='mt-2 d-flex gap-2'>
+        <button class='btn btn-sm btn-outline-secondary' onclick='copyCommentary("${c.id}")'><i class='bi bi-clipboard'></i></button>
+        <button class='btn btn-sm btn-outline-secondary' onclick='toggleExpand(this)'><i class='bi bi-arrows-expand'></i></button>
+    </div>
+    ${improvements}
+</div>`; }
+function formatCommentaryText(text){
+    if(!text) return '';
+    const headingLine = l=>{
+        if(/^(#|##|###)\s+/.test(l)) return true; // markdown style
+        if(/^[A-Z][A-Z0-9 \-/&]{2,}$/.test(l) && l.length<80) return true; // all caps heading
+        if(/^[A-Za-z][A-Za-z0-9 \-/&]{2,}:$/.test(l.trim()) && l.split(' ').length<12) return true; // ends with :
+        return false;
+    };
+    const bulletRegex = /^([*\-•]|\d+\.)\s+/;
+    const importantRegex = /(IMPORTANT|CRITICAL|HIGH RISK|KEY RISK|ALERT|ACTION REQUIRED|IMMEDIATE ACTION|DO NOT IGNORE)/gi;
+    const lines = text.split(/\r?\n/);
+    let html=[]; let listOpen=false; let para=[]; let paraCount=0; const closePara=()=>{ if(para.length){ const pText = para.join(' ').trim(); if(pText){ html.push(`<p class='mb-2'>${pText}</p>`); paraCount++; } para=[]; } };
+    const closeList=()=>{ if(listOpen){ html.push('</ul>'); listOpen=false; } };
+    for(let rawLine of lines){ let line=rawLine.trim(); if(!line){ closePara(); closeList(); continue; }
+        // Headings
+        if(headingLine(line)){
+            closePara(); closeList();
+            line=line.replace(/^#+\s+/,'');
+            const safe=escapeHTML(line.replace(/:$/,''));
+            html.push(`<div class='comm-heading mt-3 mb-1'>${safe}</div>`);
+            continue;
+        }
+        // Bullets
+        if(bulletRegex.test(line)){
+            closePara();
+            if(!listOpen){ html.push('<ul class="mb-2 ps-4">'); listOpen=true; }
+            let item=line.replace(bulletRegex,'');
+            item=escapeHTML(item);
+            item=item.replace(importantRegex, m=>`<strong>${m}</strong>`);
+            html.push(`<li>${item}</li>`);
+            continue;
+        }
+        // Normal line -> part of paragraph
+        let safe=escapeHTML(line);
+        safe=safe.replace(importantRegex, m=>`<strong>${m}</strong>`);
+        para.push(safe);
+    }
+    closePara(); closeList();
+    // Wrap first heading if missing
+    if(!/comm-heading/.test(html[0]||'')){
+        // Optionally promote first paragraph to intro; already fine
+    }
+    return html.join('');
+}
+function escapeHTML(s){ return s.replace(/[&<>]/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[ch])); }
+function copyCommentary(id){ try{ const card=document.querySelector(`.commentary-item button[onclick*='${id}']`).closest('.commentary-item'); const text=[...card.querySelectorAll('.commentary-body p')].map(p=>p.textContent).join('\n\n'); navigator.clipboard.writeText(text); }catch(e){} }
+function toggleExpand(btn){ const body=btn.closest('.commentary-item').querySelector('.commentary-body'); body.classList.toggle('compact-body'); }
+// Initial load
+document.addEventListener('DOMContentLoaded', ()=>{ reloadCommentaries(true); });
+// Styles for compact mode
+const style=document.createElement('style'); style.textContent=`.commentary-body.compact-body{max-height:140px; overflow:hidden; position:relative;} .commentary-body.compact-body::after{content:''; position:absolute; left:0; right:0; bottom:0; height:46px; background:linear-gradient(to bottom, rgba(255,255,255,0), #fff);} .commentary-item.improved{border-color:#198754;} .comm-heading{font-weight:600; font-size:0.9rem; letter-spacing:.5px; text-transform:uppercase; border-left:4px solid #0d6efd; padding-left:.5rem;} .commentary-item ul{margin:0 0 .25rem 0;} .commentary-item li{margin-bottom:2px;} .commentary-item strong{font-weight:600;} @media (prefers-color-scheme: dark){ .commentary-body.compact-body::after{background:linear-gradient(to bottom, rgba(30,30,30,0), #1e1e1e);} .comm-heading{border-left-color:#6ea8fe;} }`; document.head.appendChild(style);
+
+// ---- Imported Portfolios Frontend Logic ----
+let importedPortfolios=[]; let dailyAnalysisLimit=null; let dailyAnalysisUsed=null; let importLimits=null;
+function toggleImportForm(){ const w=document.getElementById('importFormWrapper'); if(!w) return; w.style.display = w.style.display==='none'?'block':'none'; }
+function switchImportHelp(fmt){ const h=document.getElementById('importHelpText'); if(!h) return; h.textContent = fmt==='json' ? 'Provide JSON array: [{"ticker":"RELIANCE.NS","quantity":10,"avg_price":2480.5}, ...]' : 'Provide CSV with columns: Ticker, Quantity, AvgPrice'; }
+function parseHoldingsInput(raw, fmt){ let holdings=[]; if(fmt==='json'){ try{ holdings=JSON.parse(raw); if(!Array.isArray(holdings)) holdings=[]; }catch(e){ return []; } return holdings; } const lines=raw.split(/\r?\n/).filter(l=>l.trim()); for(let ln of lines){ const parts=ln.split(',').map(p=>p.trim()); if(parts.length<2) continue; if(/ticker/i.test(parts[0]) && /quantity/i.test(parts[1])) continue; const t=parts[0].toUpperCase(); let qty=parseFloat(parts[1]); let avg=parseFloat(parts[2]||'0'); if(!t||isNaN(qty)||qty<=0) continue; if(isNaN(avg)) avg=0; holdings.push({ticker:t, quantity:qty, avg_price:avg}); } return holdings; }
+function submitImportPortfolio(e){ e.preventDefault(); const f=e.target; const source=f.account_source.value; const label=f.account_label.value.trim(); const fmt=f.data_format.value; const raw=f.raw_text.value.trim(); const holdings=parseHoldingsInput(raw, fmt); if(!holdings.length){ alert('No valid holdings parsed'); return false; } const btn=f.querySelector('button[type="submit"]'); const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Importing'; fetch('/api/investor/portfolios/import',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({account_source:source, account_label:label, holdings:holdings, raw_payload: raw})}).then(r=>r.json()).then(d=>{ if(d.ok){ toggleImportForm(); loadImportedPortfolios(true); } else { alert(d.error||'Import failed'); } }).catch(err=>alert('Network error')).finally(()=>{ btn.disabled=false; btn.innerHTML=orig; }); return false; }
+function loadImportedPortfolios(force){
+    const body=document.getElementById('importedPortfoliosBody'); if(!body) return;
+    if(force){ body.innerHTML='<tr><td colspan="5" class="text-center py-3 text-muted">Loading...</td></tr>'; }
+    fetch('/api/investor/portfolios').then(r=>r.json()).then(d=>{
+        if(!d.ok){ body.innerHTML='<tr><td colspan="5" class="text-danger py-3">Error</td></tr>'; return; }
+        importedPortfolios=d.portfolios||[]; importLimits=d.limits; const plan=d.plan;
+        const liveLabel = importLimits.live_price_integration ? 'Enabled' : '<span class=\"text-danger\">Upgrade</span>';
+        document.getElementById('importPlanInfo').innerHTML=`Plan: <strong>${plan}</strong> | Accounts Allowed: ${importLimits.max_distinct_accounts} | Daily Analyses: ${importLimits.daily_analysis_limit} | Live Prices: ${liveLabel}`;
+        if(!importedPortfolios.length){
+            body.innerHTML='<tr><td colspan="5" class="text-center py-3 text-muted">No imported portfolios yet.</td></tr>';
+        } else {
+            body.innerHTML= importedPortfolios.map(p=>{
+                const dte=new Date(p.import_date).toLocaleDateString();
+                return `<tr><td>${p.account_label}</td><td class="text-capitalize">${p.account_source}</td><td><small>${dte}</small></td><td>${p.holdings_count}</td><td class="text-end"><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary" onclick="analyzeImportedPortfolio(${p.id})" title="Analyze"><i class="bi bi-graph-up"></i></button><button class="btn btn-outline-secondary" onclick="viewImportedPortfolio(${p.id})" title="View"><i class="bi bi-eye"></i></button><button class="btn btn-outline-danger" onclick="deleteImportedPortfolio(${p.id})" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>`;
+            }).join('');
+        }
+        if(importLimits.live_price_integration){ document.getElementById('tradingConnectionsCard').style.display='block'; loadConnections(); }
+    }).catch(()=> body.innerHTML='<tr><td colspan="5" class="text-danger py-3">Network error</td></tr>');
+}
+function analyzeImportedPortfolio(id){
+    const btn = event.target.closest('button');
+    if(!btn) return;
+    btn.disabled=true; const ico=btn.innerHTML; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>';
+    fetch(`/api/investor/portfolios/${id}/analyze`,{method:'POST'}).then(r=>r.json()).then(d=>{
+        if(!d.ok){ alert(d.error||'Analyze failed'); }
+    else { dailyAnalysisUsed=d.analysis_count_today; dailyAnalysisLimit=d.limit; updateDailyUsageBadge(); reloadCommentaries(true); }
+    }).catch(()=>alert('Network error')).finally(()=>{ btn.disabled=false; btn.innerHTML=ico; });
+}
+function viewImportedPortfolio(id){
+    fetch(`/api/investor/portfolios/${id}`).then(r=>r.json()).then(d=>{
+        if(!d.ok){ alert(d.error||'Not found'); return; }
+        const h=d.portfolio.holdings||[];
+    let rows = h.map(x=>`<tr><td>${x.ticker}</td><td>${x.quantity}</td><td>${x.avg_price}</td><td class="live-price">...</td></tr>`).join('');
+    let html = `<div class="table-responsive"><table id="importedPortfolioTable" class="table table-sm"><thead><tr><th>Ticker</th><th>Qty</th><th>Avg Price</th><th>Live Price</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        const wrap=document.createElement('div');
+    wrap.innerHTML=`<div class="modal fade" id="viewImportedModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">${d.portfolio.account_label}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">${html}<div id="sectorSummary" class="mt-3 small text-muted">&nbsp;</div></div><div class="modal-footer"><button class="btn btn-sm btn-outline-secondary" onclick="loadSectorSummary(${d.portfolio.id})"><i class="bi bi-pie-chart me-1"></i>Sectors</button></div></div></div></div>`;
+        document.body.appendChild(wrap);
+        const m=new bootstrap.Modal(wrap.querySelector('#viewImportedModal'));
+    m.show();
+    // Fetch live prices only if plan allows
+    if(importLimits && importLimits.live_price_integration){ fetchImportedLivePrices(h.map(o=>o.ticker)); }
+        wrap.addEventListener('hidden.bs.modal', ()=>wrap.remove());
+    }).catch(()=>alert('Network error'));
+}
+function deleteImportedPortfolio(id){
+    if(!confirm('Delete imported portfolio?')) return;
+    fetch(`/api/investor/portfolios/${id}`,{method:'DELETE'}).then(r=>r.json()).then(d=>{
+        if(d.ok){ loadImportedPortfolios(true); } else { alert(d.error||'Delete failed'); }
+    }).catch(()=>alert('Network error'));
+}
+
+// ---- Trading Connections ----
+function toggleConnectionForm(){ const w=document.getElementById('connectionFormWrapper'); if(!w) return; w.style.display = w.style.display==='none'?'block':'none'; }
+function submitConnection(e){ e.preventDefault(); const f=e.target; const data={provider:f.provider.value, account_label:f.account_label.value, api_key:f.api_key.value, api_secret:f.api_secret.value}; const btn=f.querySelector('button[type="submit"]'); const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Saving'; fetch('/api/investor/trading_connections',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)}).then(r=>r.json()).then(d=>{ if(d.ok){ toggleConnectionForm(); loadConnections(true); } else { alert(d.error||'Failed'); } }).catch(()=>alert('Network error')).finally(()=>{ btn.disabled=false; btn.innerHTML=orig; }); return false; }
+function loadConnections(force){
+    const body=document.getElementById('connectionsBody'); if(!body) return;
+    if(force){ body.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">Loading...</td></tr>'; }
+    fetch('/api/investor/trading_connections').then(r=>r.json()).then(d=>{
+        if(!d.ok){ body.innerHTML='<tr><td colspan="4" class="text-danger py-3">Error</td></tr>'; return; }
+        const conns=d.connections||[];
+        if(!conns.length){ body.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">No connections yet.</td></tr>'; }
+        else {
+            body.innerHTML=conns.map(c=>`<tr><td>${c.account_label}</td><td class="text-capitalize">${c.provider}</td><td><small>${new Date(c.created_at).toLocaleDateString()}</small></td><td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="deleteConnection(${c.id})"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+        }
+    }).catch(()=> body.innerHTML='<tr><td colspan="4" class="text-danger py-3">Network error</td></tr>');
+}
+function deleteConnection(id){ if(!confirm('Delete connection?')) return; fetch(`/api/investor/trading_connections/${id}`,{method:'DELETE'}).then(r=>r.json()).then(d=>{ if(d.ok){ loadConnections(true); } else { alert(d.error||'Delete failed'); } }).catch(()=>alert('Network error')); }
+
+// Initial loads
+function fetchImportedLivePrices(tickers){ if(!tickers||!tickers.length) return; fetch('/api/investor/live_prices',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tickers})}).then(r=>r.json()).then(d=>{ if(!d.ok) return; const tbl=document.getElementById('importedPortfolioTable'); if(!tbl) return; tickers.forEach(t=>{ const row=[...tbl.querySelectorAll('tbody tr')].find(r=>r.firstChild.textContent===t); if(row){ const val=d.prices[t]; row.querySelector('.live-price').textContent = (val||val===0)? val : '—'; } }); }).catch(()=>{}); }
+function loadSectorSummary(pid){ const box=document.getElementById('sectorSummary'); if(!box) return; box.innerHTML='<div class="text-center py-2"><span class="spinner-border spinner-border-sm"></span> Loading sectors...</div>'; fetch(`/api/investor/portfolios/${pid}/sector_summary`).then(r=>r.json()).then(d=>{ if(!d.ok){ box.textContent = d.error||'Error'; return; } if(!(d.sectors||[]).length){ box.textContent='No sector data available.'; return; } const rows=d.sectors.map(s=>`<div class='d-flex justify-content-between'><span>${s.sector}</span><span>${s.weight_pct.toFixed(1)}%</span></div>`).join(''); box.innerHTML=`<div class='fw-semibold mb-1'>Sector Allocation</div>${rows}`; }).catch(()=> box.textContent='Error loading sectors'); }
+function refreshUsage(){ fetch('/api/investor/portfolio_usage').then(r=>r.json()).then(d=>{ if(!d.ok) return; dailyAnalysisLimit=d.daily_analysis_limit; dailyAnalysisUsed=d.analysis_count_today; updateDailyUsageBadge(); }).catch(()=>{}); }
+function updateDailyUsageBadge(){ const el=document.getElementById('dailyUsageBadge'); if(!el || dailyAnalysisLimit==null) return; el.style.display='block'; const used=dailyAnalysisUsed||0; const limit=dailyAnalysisLimit||0; const pct = limit? Math.min(100, Math.round((used/limit)*100)) : 0; const remaining = limit? (limit-used) : 0; el.innerHTML = `<div class="progress" style="height:20px;"><div class="progress-bar ${pct>80?'bg-danger':pct>50?'bg-warning':'bg-success'}" role="progressbar" style="width:${pct}%;">${used}/${limit} Analyses Used</div></div><div class="small mt-1">Remaining: <strong>${remaining}</strong></div>`; }
+function showUpgradeCTA(){ const info=document.getElementById('importPlanInfo'); if(!info) return; if(info.innerHTML.includes('Upgrade') && !document.getElementById('upgradeCTA')){ const div=document.createElement('div'); div.id='upgradeCTA'; div.className='alert alert-warning mt-2'; div.innerHTML='<strong>Upgrade Needed:</strong> Your current plan limits live prices & higher usage. <a href="/pricing" class="alert-link">Upgrade Plan</a>'; info.appendChild(div); } }
+document.addEventListener('DOMContentLoaded', ()=>{ loadImportedPortfolios(true); refreshUsage(); setInterval(refreshUsage, 60000); setTimeout(showUpgradeCTA, 1200); });
+// -------- Support Tickets Frontend (Investor) ---------
+function toggleNewTicket(){ const f=document.getElementById('newTicketForm'); if(f) f.style.display = f.style.display==='none'?'block':'none'; }
+function statusBadge(st){ const map={pending:'secondary', in_progress:'warning', resolved:'success'}; return `<span class="badge bg-${map[st]||'secondary'}">${st.replace('_',' ')}</span>`; }
+function loadTickets(){ const body=document.getElementById('ticketsBody'); if(!body) return; body.innerHTML='<tr><td colspan="6" class="text-center py-3 text-muted">Loading...</td></tr>'; fetch('/api/support/tickets').then(r=>r.json()).then(d=>{ if(!d.ok){ body.innerHTML='<tr><td colspan="6" class="text-danger py-3">Error</td></tr>'; return;} const list=d.tickets||[]; if(!list.length){ body.innerHTML='<tr><td colspan="6" class="text-center py-3 text-muted">No tickets yet.</td></tr>'; return;} body.innerHTML=list.map(t=>`<tr><td>${t.id}</td><td>${t.subject}</td><td>${t.category}</td><td>${statusBadge(t.status)}</td><td><small>${new Date(t.created_at).toLocaleDateString()}</small></td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="viewTicket(${t.id})"><i class="bi bi-eye"></i></button></td></tr>`).join(''); }).catch(()=> body.innerHTML='<tr><td colspan="6" class="text-danger py-3">Network error</td></tr>'); }
+function submitTicket(e){ e.preventDefault(); const f=e.target; const btn=f.querySelector('button[type="submit"]'); const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Submitting'; const data={subject:f.subject.value, category:f.category.value, priority:f.priority.value, description:f.description.value, is_complaint:f.is_complaint.checked}; fetch('/api/support/tickets',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)}).then(r=>r.json()).then(d=>{ if(d.ok){ f.reset(); toggleNewTicket(); loadTickets(); } else { alert(d.error||'Failed'); } }).catch(()=>alert('Network error')).finally(()=>{ btn.disabled=false; btn.innerHTML=orig; }); return false; }
+function viewTicket(id){ fetch(`/api/support/tickets/${id}`).then(r=>r.json()).then(d=>{ if(!d.ok){ alert(d.error||'Not found'); return;} const t=d.ticket; const wrap=document.getElementById('ticketDetailModalWrapper'); wrap.innerHTML=`<div class="modal fade" id="ticketDetailModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ticket #${t.id}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-2"><strong>${t.subject}</strong></div><div class="small text-muted mb-2">Category: ${t.category} | Priority: ${t.priority}</div><div class="mb-3" style="white-space:pre-wrap;">${t.description}</div><div class="mb-2">Status: ${statusBadge(t.status)}</div>${t.admin_response?`<div class='border rounded p-2 bg-light'><strong>Admin Response:</strong><div style='white-space:pre-wrap;'>${t.admin_response}</div></div>`:''}</div></div></div></div>`; const m=new bootstrap.Modal(document.getElementById('ticketDetailModal')); m.show(); document.getElementById('ticketDetailModal').addEventListener('hidden.bs.modal',()=>{ wrap.innerHTML=''; }); }).catch(()=>alert('Network error')); }
+document.addEventListener('DOMContentLoaded', loadTickets);
+</script>
+
+{% endblock %}

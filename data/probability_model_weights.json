@@ -1,0 +1,14 @@
+{
+  "trained": true,
+  "weights": {
+    "impact": 0.6253066376478853,
+    "news_support": 0.09739028625578382,
+    "volatility": 0.0322458899889078,
+    "time_decay": 0.042248866962386784,
+    "recency_inverse": 0.2315319858129733,
+    "news_sentiment": 0.0,
+    "news_similarity": 0.0,
+    "base": 0.32245889988907817
+  },
+  "updated_at": "2025-08-30T12:53:14.716636"
+}

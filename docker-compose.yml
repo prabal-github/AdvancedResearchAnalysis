@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - ML_DATABASE_URL=${ML_DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - SES_ACCESS_KEY_ID=${SES_ACCESS_KEY_ID}
+      - SES_SECRET_ACCESS_KEY=${SES_SECRET_ACCESS_KEY}
+      - SES_SENDER_EMAIL=${SES_SENDER_EMAIL}
+      - SESSION_COOKIE_SECURE=true
+      - PREFERRED_URL_SCHEME=https
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

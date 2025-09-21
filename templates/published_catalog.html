@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Published Code Catalog - Predictive & ML Models</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+ :root {
+   --primary: #2563eb;
+   --primary-dark: #1d4ed8;
+   --primary-light: #3b82f6;
+   --success: #10b981;
+   --warning: #f59e0b;
+   --danger: #ef4444;
+   --bg-primary: #0f172a;
+   --bg-secondary: #1e293b;
+   --bg-card: #334155;
+   --bg-card-hover: #475569;
+   --text-primary: #f8fafc;
+   --text-secondary: #cbd5e1;
+   --text-muted: #94a3b8;
+   --border: #475569;
+   --border-light: #64748b;
+   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   --gradient-success: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+   --gradient-card: linear-gradient(145deg, #334155 0%, #1e293b 100%);
+ }
+ 
+ * { box-sizing: border-box; }
+ 
+ body { 
+   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; 
+   margin: 0; 
+   background: var(--bg-primary);
+   color: var(--text-primary); 
+   line-height: 1.6;
+   overflow-x: hidden;
+ }
+ 
+ /* Animated background */
+ body::before {
+   content: '';
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+               radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+               radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
+   z-index: -1;
+   animation: backgroundShift 20s ease-in-out infinite;
+ }
+ 
+ @keyframes backgroundShift {
+   0%, 100% { opacity: 1; }
+   50% { opacity: 0.7; }
+ }
+ 
+ header { 
+   padding: 24px 32px; 
+   background: rgba(30, 41, 59, 0.95);
+   backdrop-filter: blur(10px);
+   border-bottom: 1px solid var(--border);
+   display: flex; 
+   justify-content: space-between;
+   align-items: center;
+   position: sticky;
+   top: 0;
+   z-index: 100;
+   box-shadow: var(--shadow);
+ }
+ 
+ .header-content {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+ }
+ 
+ .logo {
+   width: 40px;
+   height: 40px;
+   background: var(--gradient-primary);
+   border-radius: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: white;
+   font-weight: 700;
+   font-size: 18px;
+ }
+ 
+ h1 { 
+   font-size: 28px; 
+   margin: 0; 
+   font-weight: 700;
+   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   background-clip: text;
+ }
+ 
+ .subtitle {
+   font-size: 14px;
+   color: var(--text-muted);
+   font-weight: 400;
+   margin-top: 4px;
+ }
+ 
+ .header-stats {
+   display: flex;
+   gap: 24px;
+   align-items: center;
+   font-size: 14px;
+   color: var(--text-secondary);
+ }
+ 
+ .stat-item {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+ }
+ 
+ .stat-item i {
+   color: var(--primary);
+ }
+ 
+ a { color: var(--primary-light); text-decoration: none; transition: color 0.2s; }
+ a:hover { color: var(--primary); }
+ 
+ .container { 
+   max-width: 1400px; 
+   margin: 0 auto; 
+   padding: 32px 24px; 
+ }
+ 
+ .controls { 
+   display: flex; 
+   flex-wrap: wrap; 
+   gap: 12px; 
+   margin-bottom: 32px;
+   padding: 24px;
+   background: rgba(51, 65, 85, 0.5);
+   backdrop-filter: blur(10px);
+   border-radius: 16px;
+   border: 1px solid var(--border);
+   box-shadow: var(--shadow);
+ }
+ 
+ .controls-section {
+   display: flex;
+   gap: 12px;
+   align-items: center;
+   flex-wrap: wrap;
+ }
+ 
+ .search-wrapper {
+   position: relative;
+   min-width: 300px;
+ }
+ 
+ .search-wrapper i {
+   position: absolute;
+   left: 12px;
+   top: 50%;
+   transform: translateY(-50%);
+   color: var(--text-muted);
+ }
+ 
+ .controls input { 
+   background: rgba(15, 23, 42, 0.8);
+   border: 1px solid var(--border);
+   color: var(--text-primary);
+   padding: 12px 16px 12px 40px;
+   border-radius: 10px;
+   font-size: 14px;
+   font-weight: 400;
+   transition: all 0.2s;
+   width: 100%;
+ }
+ 
+ .controls input:focus {
+   outline: none;
+   border-color: var(--primary);
+   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+ }
+ 
+ .controls select {
+   background: rgba(15, 23, 42, 0.8);
+   border: 1px solid var(--border);
+   color: var(--text-primary);
+   padding: 12px 16px;
+   border-radius: 10px;
+   font-size: 14px;
+   cursor: pointer;
+   transition: all 0.2s;
+ }
+ 
+ .controls button { 
+   background: var(--gradient-primary);
+   color: white;
+   border: none;
+   padding: 12px 20px;
+   font-size: 14px;
+   font-weight: 500;
+   border-radius: 10px;
+   cursor: pointer;
+   transition: all 0.2s;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   box-shadow: var(--shadow);
+ }
+ 
+ .controls button:hover { 
+   transform: translateY(-1px);
+   box-shadow: var(--shadow-lg);
+ }
+ 
+ .controls button.secondary {
+   background: rgba(71, 85, 105, 0.8);
+   color: var(--text-primary);
+ }
+ 
+ .controls button.secondary:hover {
+   background: rgba(71, 85, 105, 1);
+ }
+ 
+ .grid { 
+   display: grid; 
+   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); 
+   gap: 24px; 
+ }
+ 
+ .card { 
+   background: var(--gradient-card);
+   border: 1px solid var(--border);
+   border-radius: 16px;
+   padding: 24px;
+   display: flex;
+   flex-direction: column;
+   position: relative;
+   transition: all 0.3s ease;
+   box-shadow: var(--shadow);
+   overflow: hidden;
+ }
+ 
+ .card::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 3px;
+   background: var(--gradient-primary);
+   opacity: 0;
+   transition: opacity 0.3s;
+ }
+ 
+ .card:hover {
+   transform: translateY(-4px);
+   box-shadow: var(--shadow-lg);
+   border-color: var(--border-light);
+ }
+ 
+ .card:hover::before {
+   opacity: 1;
+ }
+ 
+ .card h3 { 
+   margin: 0 0 12px; 
+   font-size: 20px; 
+   font-weight: 600;
+   line-height: 1.3;
+   color: var(--text-primary);
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+ 
+ .meta { 
+   font-size: 13px; 
+   color: var(--text-muted); 
+   margin-bottom: 16px;
+   display: flex;
+   gap: 16px;
+   flex-wrap: wrap;
+ }
+ 
+ .meta-item {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+ }
+ 
+ .meta-item i {
+   font-size: 12px;
+   color: var(--primary);
+ }
+ 
+ .summary { 
+   font-size: 14px; 
+   line-height: 1.6; 
+   flex: 1; 
+   color: var(--text-secondary);
+   margin-bottom: 20px;
+ }
+ 
+ .actions { 
+   display: grid; 
+   grid-template-columns: 1fr 1fr;
+   gap: 8px; 
+   margin-top: auto;
+ }
+ 
+ .actions .primary-row {
+   grid-column: 1 / -1;
+   display: flex;
+   gap: 8px;
+   margin-bottom: 6px;
+ }
+ 
+ .actions .primary-row button {
+   padding: 12px 16px;
+   font-weight: 600;
+   font-size: 14px;
+ }
+ 
+ .actions .secondary-row {
+   grid-column: 1 / -1;
+   display: flex;
+   gap: 6px;
+   flex-wrap: wrap;
+ }
+ 
+ .actions .secondary-row button {
+   flex: 1;
+   min-width: 80px;
+   font-size: 11px;
+   padding: 8px 4px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 4px;
+   line-height: 1.2;
+ }
+ 
+ .actions .secondary-row button i {
+   font-size: 10px;
+   flex-shrink: 0;
+ }
+ 
+ .actions button { 
+   flex: 1; 
+   background: rgba(71, 85, 105, 0.6);
+   border: 1px solid var(--border);
+   color: var(--text-primary);
+   font-size: 13px;
+   font-weight: 500;
+   padding: 10px 12px;
+   border-radius: 8px;
+   cursor: pointer;
+   transition: all 0.2s;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 6px;
+ }
+ 
+ .actions button:hover { 
+   background: var(--bg-card-hover);
+   transform: translateY(-1px);
+ }
+ 
+ .actions button.primary {
+   background: var(--gradient-primary);
+   border-color: var(--primary);
+ }
+ 
+ .actions button.success {
+   background: var(--success);
+   border-color: var(--success);
+ }
+ 
+ .actions button.warning {
+   background: var(--warning);
+   border-color: var(--warning);
+   color: white;
+ }
+ 
+ .actions button.info {
+   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+   border-color: #3b82f6;
+   color: white;
+   font-weight: 600;
+   position: relative;
+   overflow: hidden;
+ }
+ 
+ .actions button.info::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+   transition: left 0.5s;
+ }
+ 
+ .actions button.info:hover::before {
+   left: 100%;
+ }
+ 
+ .actions button.info:hover {
+   background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+   transform: translateY(-1px);
+   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+ }
+ 
+ .pagination { 
+   margin-top: 48px; 
+   display: flex; 
+   gap: 12px; 
+   align-items: center; 
+   justify-content: center; 
+   font-size: 14px; 
+ }
+ 
+ .pagination button {
+   padding: 10px 16px;
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   color: var(--text-primary);
+   border-radius: 8px;
+   cursor: pointer;
+   transition: all 0.2s;
+ }
+ 
+ .pagination button:hover {
+   background: var(--bg-card-hover);
+ }
+ 
+ .hidden { display: none !important; }
+ 
+ /* Performance Metrics Styles */
+ .metric-card {
+   background: var(--gradient-card);
+   border: 1px solid var(--border);
+   border-radius: 12px;
+   padding: 16px;
+   text-align: center;
+   transition: all 0.2s;
+ }
+ 
+ .metric-card:hover {
+   transform: translateY(-2px);
+   box-shadow: var(--shadow);
+   border-color: var(--border-light);
+ }
+ 
+ .metric-label {
+   font-size: 11px;
+   color: var(--text-muted);
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+   margin-bottom: 8px;
+   font-weight: 500;
+ }
+ 
+ .metric-value {
+   font-size: 18px;
+   font-weight: 700;
+   color: var(--text-primary);
+ }
+ 
+ .metric-value.positive {
+   color: var(--success);
+ }
+ 
+ .metric-value.negative {
+   color: var(--danger);
+ }
+ 
+ dialog { 
+   background: var(--bg-secondary); 
+   border: 1px solid var(--border); 
+   color: var(--text-primary); 
+   width: min(800px, 90%);
+   border-radius: 16px;
+   box-shadow: var(--shadow-lg);
+ }
+ 
+ dialog::backdrop { 
+   background: rgba(0, 0, 0, 0.7);
+   backdrop-filter: blur(4px);
+ }
+ 
+ .dialog-body { 
+   max-height: 60vh; 
+   overflow: auto; 
+   font-size: 14px; 
+   line-height: 1.6; 
+   padding: 20px;
+ }
+ 
+ pre { 
+   background: var(--bg-primary); 
+   border: 1px solid var(--border); 
+   padding: 16px; 
+   border-radius: 10px; 
+   overflow: auto;
+   font-size: 13px;
+ }
+ 
+ .badge { 
+   position: absolute; 
+   top: 16px; 
+   right: 16px; 
+   font-size: 11px; 
+   background: var(--gradient-primary);
+   color: white;
+   padding: 4px 10px; 
+   border-radius: 20px; 
+   letter-spacing: 0.5px; 
+   text-transform: uppercase;
+   font-weight: 600;
+   box-shadow: var(--shadow);
+ }
+ 
+ .subscriber-badge { 
+   font-size: 12px; 
+   background: var(--gradient-success);
+   color: white;
+   padding: 4px 10px; 
+   border-radius: 20px; 
+   margin-left: 12px;
+   font-weight: 500;
+ }
+ 
+ #messageBar { 
+   position: fixed; 
+   top: 0; 
+   left: 0; 
+   right: 0; 
+   z-index: 900; 
+   display: none; 
+   background: var(--danger); 
+   color: white; 
+   padding: 12px 20px; 
+   font-size: 14px; 
+   box-shadow: var(--shadow);
+ }
+ 
+ #toastContainer { 
+   position: fixed; 
+   bottom: 24px; 
+   right: 24px; 
+   display: flex; 
+   flex-direction: column; 
+   gap: 12px; 
+   z-index: 1000; 
+ }
+ 
+ .toast { 
+   background: var(--bg-card); 
+   color: var(--text-primary); 
+   padding: 16px 20px; 
+   font-size: 14px; 
+   border-radius: 12px; 
+   box-shadow: var(--shadow-lg); 
+   animation: slideIn 0.3s ease; 
+   display: flex; 
+   align-items: center; 
+   gap: 12px; 
+   border: 1px solid var(--border);
+   min-width: 300px;
+ }
+ 
+ .toast.error { border-left: 4px solid var(--danger); }
+ .toast.success { border-left: 4px solid var(--success); }
+ .toast.info { border-left: 4px solid var(--primary); }
+ 
+ @keyframes slideIn { 
+   from { opacity: 0; transform: translateX(100%); } 
+   to { opacity: 1; transform: translateX(0); } 
+ }
+ 
+ .score-good { color: var(--success); font-weight: 600; }
+ .score-mid { color: var(--warning); font-weight: 600; }
+ .score-poor { color: var(--danger); font-weight: 600; }
+ 
+ #rationaleDialog pre { 
+   background: var(--bg-primary); 
+   padding: 16px; 
+   border: 1px solid var(--border); 
+   border-radius: 10px; 
+   white-space: pre-wrap; 
+ }
+ 
+ .sparkline {
+   height: 32px; 
+   width: 100%; 
+   display: flex; 
+   gap: 3px; 
+   align-items: flex-end;
+   margin-top: 16px;
+   padding: 4px 0;
+ }
+ 
+ .sparkline-bar {
+   flex: 1; 
+   background: var(--bg-card-hover); 
+   border-radius: 3px 3px 0 0; 
+   transition: all 0.3s ease;
+   min-height: 4px;
+ }
+ 
+ .sparkline-bar.good { background: var(--success); }
+ .sparkline-bar.mid { background: var(--warning); }
+ .sparkline-bar.poor { background: var(--danger); }
+ 
+ .evaluation-section {
+   margin-top: 16px;
+   padding: 16px;
+   background: rgba(15, 23, 42, 0.6);
+   border: 1px solid var(--border);
+   border-radius: 12px;
+   backdrop-filter: blur(10px);
+ }
+ 
+ .evaluation-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 12px;
+ }
+ 
+ .evaluation-title {
+   font-weight: 600;
+   font-size: 12px;
+   letter-spacing: 0.5px;
+   text-transform: uppercase;
+   color: var(--text-muted);
+ }
+ 
+ .evaluation-grid {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 8px 16px;
+   font-size: 12px;
+ }
+ 
+ .eval-item {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+ }
+ 
+ .eval-label {
+   color: var(--text-secondary);
+ }
+ 
+ .eval-score {
+   font-weight: 600;
+ }
+ 
+ .composite-score {
+   margin-top: 12px;
+   padding-top: 12px;
+   border-top: 1px solid var(--border);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-weight: 700;
+ }
+ 
+ .loading-skeleton {
+   background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+   background-size: 200% 100%;
+   animation: shimmer 1.5s infinite;
+   border-radius: 4px;
+   height: 12px;
+ }
+ 
+ @keyframes shimmer {
+   0% { background-position: -200% 0; }
+   100% { background-position: 200% 0; }
+ }
+ 
+ @media (max-width: 768px) {
+   .container { padding: 16px; }
+   .grid { grid-template-columns: 1fr; }
+   .controls { flex-direction: column; }
+   .search-wrapper { min-width: unset; width: 100%; }
+   header { padding: 16px 20px; }
+   h1 { font-size: 24px; }
+   .header-stats { display: none; }
+ }
+</style>
+</head>
+<body>
+  <!-- PredictRAM Brand Header (dark theme) -->
+  <div style="background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <div style="max-width:1200px; margin:0 auto; padding: 14px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <img src="https://predictram.com/images/logo.png" alt="PredictRAM Logo" style="height:44px; width:auto;" />
+        <div>
+          <div style="font-size:20px; font-weight:700;">PredictRAM</div>
+          <div style="font-size:12px; color:#cbd5e1;">Offering deep research & machine learning tools for better risk management</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        {% if not is_logged_in %}
+        <a href="/investor_login" style="background:#2563eb; color:white; padding:8px 12px; border-radius:10px; text-decoration:none; font-weight:600;">Investor Login</a>
+        <a href="/investor_register" style="border:1px solid #475569; color:#e2e8f0; padding:8px 12px; border-radius:10px; text-decoration:none; font-weight:600;">Investor Registration</a>
+        {% else %}
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="padding:8px 12px; border-radius:10px; background:rgba(16, 185, 129, 0.1); border:1px solid #10b981; color:#10b981; font-weight:600;">
+            <i class="fas fa-user-check"></i> Welcome, {{ user_name }}
+          </div>
+          <a href="/logout" style="background:#ef4444; color:white; padding:8px 12px; border-radius:10px; text-decoration:none; font-weight:600;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+<div id="messageBar"></div>
+<header> 
+  <div class="header-content">
+    <div class="logo" style="background:#ffffff; padding:6px; width:68px; height:68px; border-radius:14px; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center;">
+      <img src="https://predictram.com/images/logo2x.png" alt="PredictRAM" style="width:56px; height:56px; display:block; object-fit:contain;" />
+    </div>
+    <div>
+      <h1>Predictive & ML Models</h1>
+      <div class="subtitle">Discover, evaluate & deploy professional predictive models</div>
+      <div style="margin-top: 8px; padding: 8px 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; font-size: 13px; color: var(--primary);">
+        <i class="fas fa-lightbulb" style="margin-right: 6px;"></i>
+        <strong>For Investors:</strong> Click "View Details" on any model to see full documentation, methodology, and risk considerations.
+      </div>
+      <div style="margin-top: 8px;">
+        <a href="/options_analytics" class="btn btn-special" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);">
+          <i class="fas fa-chart-line" style="margin-right: 6px;"></i>
+          Options Analytics Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-item">
+      <i class="fas fa-chart-line"></i>
+      <span id="totalModels">-</span> Models
+    </div>
+    <div class="stat-item">
+      <i class="fas fa-users"></i>
+      <span id="totalUsers">-</span> Users
+    </div>
+    <div class="stat-item">
+      <i class="fas fa-play-circle"></i>
+      <span id="totalRuns">-</span> Runs
+    </div>
+  </div>
+</header>
+<!-- Admin Global AI Key Banner (hidden by default) -->
+<div id="adminKeyBanner" class="hidden" style="background:#1e293b;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+  <strong style="color:var(--warning);display:flex;align-items:center;gap:6px;"><i class="fa fa-key"></i> Anthropic AI Configuration</strong>
+  <input type="password" id="globalAnthropicKeyInput" placeholder="Enter Anthropic API Key for Run History Analysis" style="flex:1;min-width:300px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:var(--text-primary);" />
+  <select id="anthropicModelSelect" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:#0f172a;color:var(--text-primary);">
+    <option value="sonnet-3.5">Sonnet 3.5 (Recommended)</option>
+    <option value="sonnet-4">Sonnet 4 (Future)</option>
+    <option value="sonnet-legacy">Sonnet 3 (Legacy)</option>
+  </select>
+  <button id="saveGlobalKeyBtn" style="background:var(--gradient-primary);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;"><i class="fas fa-save"></i> Save</button>
+  <button id="testGlobalKeyBtn" style="background:#334155;color:#fff;border:1px solid var(--border);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;"><i class="fas fa-vial"></i> Test</button>
+  <span id="globalKeyStatus" style="font-size:12px;color:var(--text-muted);">Configure Anthropic for AI-powered analysis...</span>
+</div>
+<div class="container">
+  <div class="controls">
+    <div class="controls-section">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input id="searchBox" placeholder="Search models by name, author, or description..." onkeydown="if(event.key==='Enter'){currentPage=1;loadCatalog();}" />
+      </div>
+      <select id="sortSelect" onchange="currentPage=1;loadCatalog();">
+        <option value="recent">📅 Most Recent</option>
+        <option value="runs">🔥 Most Popular</option>
+        <option value="name">🔤 Name A-Z</option>
+        <option value="score">⭐ Highest Rated</option>
+      </select>
+      <select id="categoryFilter" onchange="currentPage=1;loadCatalog();" style="min-width: 180px;">
+        <option value="">🏷️ All Categories</option>
+        <option value="Ultra Short-Term">⚡ Ultra Short-Term</option>
+        <option value="Short-Term">🕐 Short-Term</option>
+        <option value="Medium-Term">📈 Medium-Term</option>
+        <option value="Long-Term">📊 Long-Term</option>
+        <option value="High Risk">🔴 High Risk</option>
+        <option value="Medium Risk">🟡 Medium Risk</option>
+        <option value="Low Risk">🟢 Low Risk</option>
+        <option value="Fundamental Models">🏛️ Fundamental Models</option>
+        <option value="Technical Models">📉 Technical Models</option>
+        <option value="Quantitative">🔢 Quantitative</option>
+        <option value="Hybrid Models">🔀 Hybrid Models</option>
+        <option value="Risk Management Models">🛡️ Risk Management</option>
+        <option value="Portfolio Optimization">💼 Portfolio Optimization</option>
+        <!-- Economic & Geopolitical Models -->
+        <option value="Central Bank Policy">🏦 Central Bank Policy</option>
+        <option value="Economic Indicators">📊 Economic Indicators</option>
+        <option value="Geopolitical Analysis">🌍 Geopolitical Analysis</option>
+        <option value="Geopolitical Risk">⚠️ Geopolitical Risk</option>
+        <option value="Political Events">🗳️ Political Events</option>
+        <option value="International Markets">🌏 International Markets</option>
+        <option value="Currency Impact">💱 Currency Impact</option>
+        <option value="Commodity Analysis">🛢️ Commodity Analysis</option>
+        <option value="Supply Chain Analysis">🔗 Supply Chain Analysis</option>
+        <option value="Sector Analysis">🏭 Sector Analysis</option>
+        <option value="Weather Impact">🌦️ Weather Impact</option>
+        <option value="Inflation Analysis">📈 Inflation Analysis</option>
+        <option value="International Crisis">🚨 International Crisis</option>
+        <option value="International Cooperation">🤝 International Cooperation</option>
+      </select>
+      <select id="pageSizeSelect" onchange="currentPage=1;loadCatalog();" style="min-width: 120px;" title="Models per page">
+        <option value="25">25 per page</option>
+        <option value="50">50 per page</option>
+        <option value="100" selected>100 per page</option>
+      </select>
+    </div>
+    <div class="controls-section">
+      <button onclick="currentPage=1;loadCatalog();" class="primary">
+        <i class="fas fa-search"></i> Search
+      </button>
+      <button onclick="resetSearch()" class="secondary">
+        <i class="fas fa-refresh"></i> Reset
+      </button>
+      <button id="toggleSubscribedBtn" onclick="toggleSubscribedMode()" title="Show only models you subscribed to (investor)" class="secondary">
+        <i class="fas fa-star"></i> My Subscribed
+      </button>
+      <button onclick="toggleWatchlistMode()" id="toggleWatchlistBtn" title="Show only watched models" class="secondary">
+        <i class="fas fa-eye"></i> Watchlist
+      </button>
+    </div>
+  </div>
+  <div id="catalog" class="grid"></div>
+  <div class="pagination" id="pager">
+    <button onclick="changePage(-1)">Prev</button>
+    <span id="pageInfo">-</span>
+    <button onclick="changePage(1)">Next</button>
+  </div>
+</div>
+
+<dialog id="readmeDialog">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+    <i class="fas fa-file-alt" style="color: var(--primary); font-size: 20px;"></i>
+    <h3 id="readmeTitle" style="margin: 0; font-size: 18px; flex: 1;">Model Documentation</h3>
+    <button onclick="readmeDialog.close()" style="background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 4px;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="dialog-body" id="readmeBody" style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; max-height: 70vh;">
+    <div style="display: flex; align-items: center; justify-content: center; padding: 40px;">
+      <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>
+      Loading documentation...
+    </div>
+  </div>
+  <div style="display: flex; gap: 8px; margin-top: 16px; justify-content: space-between; align-items: center;">
+    <div style="display: flex; gap: 8px;">
+      <button onclick="window.open('/api/published_models/' + activeModel + '/run', '_blank')" class="secondary">
+        <i class="fas fa-play"></i> Test Run
+      </button>
+      <button onclick="subscribeToModel(activeModel)" class="secondary">
+        <i class="fas fa-bell"></i> Subscribe
+      </button>
+    </div>
+    <button onclick="readmeDialog.close()" class="secondary">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+</dialog>
+
+<dialog id="runDialog">
+  <h3 id="runTitle" style="margin:0 0 8px; font-size:16px;">Run Script</h3>
+  <div class="dialog-body" id="runDialogBody">
+    
+    <div id="runInputsSection" style="margin-bottom:10px; display:none;">
+      <div style="font-size:12px; opacity:.85; margin-bottom:6px;">Provide values for script input() prompts:</div>
+      <div id="runInputsFields" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="runExecBtn" onclick="executeRun()" style="flex:1; background: var(--gradient-primary); color: white; 
+              border: none; padding: 10px 16px; border-radius: 6px; font-weight: 600;">
+        <i class="fas fa-play" style="margin-right: 6px;"></i>Run Model
+      </button>
+      <button onclick="runDialog.close()" style="flex:0 0 auto; background: var(--bg-secondary); color: var(--text-primary); 
+              border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px;">Close</button>
+    </div>
+    <pre id="runOutput" style="margin-top:12px; max-height:320px; background: var(--bg-primary); 
+         border: 1px solid var(--border); padding: 12px; border-radius: 6px; font-size: 11px; line-height: 1.4;">--</pre>
+  </div>
+</dialog>
+
+<dialog id="rationaleDialog">
+  <h3 style="margin:0 0 8px; font-size:16px;">Evaluation Rationale</h3>
+  <div id="rationaleBody" style="max-height:60vh; overflow:auto; font-size:12px; line-height:1.4;">Loading...</div>
+  <div style="display:flex; gap:8px; margin-top:12px;">
+    <button onclick="rationaleDialog.close()">Close</button>
+  </div>
+</dialog>
+
+<div id="toastContainer"></div>
+<script>
+// CSRF token injected by Flask route
+const CSRF_TOKEN = '{{ csrf_token }}';
+
+let currentPage = 1;
+let totalPages = 1;
+let catalogModels = [];
+let activeModel = null; let activeRunPrompts=[];
+let subscribedMode = false; // when true load from subscriptions endpoint
+let watchlistMode = false; // when true load only watched models
+
+function toggleSubscribedMode(){
+  subscribedMode = !subscribedMode;
+  watchlistMode = false; // clear other filter
+  updateFilterButtons();
+  currentPage = 1;
+  loadCatalog();
+}
+
+function toggleWatchlistMode(){
+  watchlistMode = !watchlistMode;
+  subscribedMode = false; // clear other filter
+  updateFilterButtons();
+  currentPage = 1;
+  loadCatalog();
+}
+
+function updateFilterButtons(){
+  const subBtn = document.getElementById('toggleSubscribedBtn');
+  const watchBtn = document.getElementById('toggleWatchlistBtn');
+  
+  subBtn.style.background = subscribedMode ? 'var(--primary)' : '';
+  subBtn.style.color = subscribedMode ? 'white' : '';
+  
+  watchBtn.style.background = watchlistMode ? 'var(--warning)' : '';
+  watchBtn.style.color = watchlistMode ? 'white' : '';
+}
+
+function resetSearch(){
+  document.getElementById('searchBox').value='';
+  document.getElementById('categoryFilter').value='';
+  subscribedMode = false;
+  watchlistMode = false;
+  updateFilterButtons();
+  currentPage=1; 
+  loadCatalog();
+}
+
+function scoreClass(v){ if(v==null||v==='-') return ''; if(v>=75) return 'score-good'; if(v>=50) return 'score-mid'; return 'score-poor'; }
+
+function renderModels(models, showCounts=false, totalCount=null) {
+  const container = document.getElementById('catalog');
+  container.innerHTML = '';
+  
+  // Update header stats
+  const displayedModels = models.length;
+  const totalModels = totalCount !== null ? totalCount : displayedModels;
+  const totalRuns = models.reduce((sum, m) => sum + (m.run_count || 0), 0);
+  const totalUsers = new Set(models.map(m => m.author_user_key)).size;
+  
+  document.getElementById('totalModels').textContent = totalModels;
+  document.getElementById('totalRuns').textContent = totalRuns.toLocaleString();
+  document.getElementById('totalUsers').textContent = totalUsers;
+  
+  if (models.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+        <i class="fas fa-search" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+        <h3 style="margin: 0 0 8px; font-weight: 500;">No models found</h3>
+        <p style="margin: 0; font-size: 14px;">Try adjusting your search criteria or browse all models.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  models.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const subscribed = !!m.subscribed;
+    const watched = !!m.watched;
+    const countBadge = showCounts && typeof m.subscriber_count === 'number' ? 
+      `<span class="subscriber-badge" title="Subscribers"><i class="fas fa-users"></i> ${m.subscriber_count}</span>` : '';
+    
+    const ev = m.evaluation || {};
+    const comp = ev.composite_score != null ? ev.composite_score : null;
+    
+    const evaluationHTML = ev && ev.composite_score != null ? `
+      <div class="evaluation-section">
+        <div class="evaluation-header">
+          <div class="evaluation-title">
+            <i class="fas fa-chart-bar"></i> Evaluation
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <button class='score-info-btn' onclick='showScoreMethodology()' style='background: var(--info); border: none; color: white; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer;' title='Score Methodology'>
+              <i class="fas fa-question-circle"></i> Scoring
+            </button>
+            <button class='view-rationale-btn' data-id='${m.id}' style='background: var(--primary); border: none; color: white; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer;'>
+              <i class="fas fa-info-circle"></i> Details
+            </button>
+          </div>
+        </div>
+        <div class="evaluation-grid">
+          ${evalItem('Risk & Return', ev.risk_return)}
+          ${evalItem('Data Quality', ev.data_quality)}
+          ${evalItem('Model Logic', ev.model_logic)}
+          ${evalItem('Code Quality', ev.code_quality)}
+          ${evalItem('Testing & Val.', ev.testing_validation)}
+          ${evalItem('Governance', ev.governance_compliance)}
+        </div>
+        <div class="composite-score">
+          <span>Overall Score</span>
+          <span class='${scoreClass(comp)}'>${comp != null ? comp + '/100' : '-'}</span>
+        </div>
+      </div>
+    ` : `
+      <div class="evaluation-section">
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px;">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Evaluating model quality...</span>
+        </div>
+        <div class="loading-skeleton" style="margin-top: 8px;"></div>
+      </div>
+    `;
+    
+    const riskLevel = comp >= 75 ? 'Low Risk' : comp >= 50 ? 'Medium Risk' : comp >= 25 ? 'High Risk' : 'Very High Risk';
+    const riskIcon = comp >= 75 ? 'fa-shield-alt' : comp >= 50 ? 'fa-exclamation-triangle' : 'fa-exclamation-circle';
+    const riskColor = comp >= 75 ? 'var(--success)' : comp >= 50 ? 'var(--warning)' : 'var(--danger)';
+    
+    card.innerHTML = `
+      <div class="badge">v${m.version}</div>
+      <h3>
+        <i class="fas fa-code" style="color: var(--primary); font-size: 16px;"></i>
+        ${escapeHtml(m.name)} 
+        ${countBadge}
+        ${watched ? '<i class="fas fa-eye" style="color: var(--warning); font-size: 14px;" title="Watching"></i>' : ''}
+      </h3>
+      <div class="meta">
+        <div class="meta-item">
+          <i class="fas fa-user"></i>
+          <span>${escapeHtml(m.author_user_key || 'Anonymous')}</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-play"></i>
+          <span>${(m.run_count || 0).toLocaleString()} runs</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-calendar"></i>
+          <span>${new Date(m.created_at || Date.now()).toLocaleDateString()}</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-tag" style="color: var(--primary);"></i>
+          <span style="color: var(--primary);">${escapeHtml(m.category || 'Quantitative')}</span>
+        </div>
+        ${comp ? `
+        <div class="meta-item">
+          <i class="fas ${riskIcon}" style="color: ${riskColor};"></i>
+          <span style="color: ${riskColor};">${riskLevel}</span>
+        </div>
+        ` : ''}
+      </div>
+      <div class="summary">${escapeHtml(m.summary || 'No description available for this model.')}</div>
+      ${evaluationHTML}
+      <div class="actions">
+        <div class="primary-row">
+          <button class="run-btn primary" data-id="${m.id}">
+            <i class="fas fa-play"></i> 
+            Run Model
+          </button>
+          <button class="details-btn info" data-id="${m.id}" data-name="${escapeHtml(m.name)}" title="View full model description and documentation">
+            <i class="fas fa-info-circle"></i> View Details
+          </button>
+        </div>
+        <div class="secondary-row">
+          <button class="sub-btn ${subscribed ? 'success' : 'secondary'}" data-id="${m.id}" data-subscribed="${subscribed}">
+            <i class="fas fa-${subscribed ? 'check' : 'plus'}"></i> ${subscribed ? 'Subscribed' : 'Subscribe'}
+          </button>
+          <button class="watch-btn ${watched ? 'warning' : 'secondary'}" data-id="${m.id}" data-watched="${watched ? 'true' : 'false'}">
+            <i class="fas fa-${watched ? 'eye-slash' : 'eye'}"></i> ${watched ? 'Unwatch' : 'Watch'}
+          </button>
+          <button class="perf-btn secondary" data-id="${m.id}" title="View stock recommendation performance">
+            <i class="fas fa-chart-area"></i> Performance
+          </button>
+          <button class="reval-btn secondary" data-id="${m.id}" title="Re-evaluate model (Shift+click for AI evaluation)">
+            <i class="fas fa-sync-alt"></i> Re-Eval
+          </button>
+          <button class="analyze-btn secondary" data-id="${m.id}" title="Analyze recent runs & compare history">
+            <i class="fas fa-chart-line"></i> Analyze
+          </button>
+        </div>
+      </div>
+      <div class="sparkline" id="spark-${m.id}"></div>
+    `;
+    container.appendChild(card);
+  });
+  attachCardHandlers();
+}
+
+function evalItem(label, value) {
+  return `
+    <div class="eval-item">
+      <span class="eval-label">${label}</span>
+      <span class="eval-score ${scoreClass(value)}">${value != null ? value : '-'}</span>
+    </div>
+  `;
+}
+
+async function loadCatalog() {
+  const params = new URLSearchParams();
+  if (subscribedMode) params.set('subscribed', '1');
+  if (watchlistMode) params.set('watched', '1');
+  const searchVal = document.getElementById('searchBox').value.trim();
+  if (searchVal) params.set('search', searchVal);
+  const categoryVal = document.getElementById('categoryFilter').value.trim();
+  if (categoryVal) params.set('category', categoryVal);
+  const sortVal = document.getElementById('sortSelect').value;
+  if (sortVal) params.set('sort', sortVal);
+  // Add page and page_size parameters
+  params.set('page', currentPage);
+  const pageSize = document.getElementById('pageSizeSelect')?.value || '100';
+  params.set('page_size', pageSize);
+  try {
+    const resp = await fetch(`/api/public/published_models?${params.toString()}`);
+    const data = await resp.json().catch(()=>({ok:false,error:'Bad JSON'}));
+    if (!data.ok) { notifyError(data.error||'Failed loading models'); return; }
+    renderModels(data.models, data.show_counts, data.total || 0);
+    // Update pagination info
+    totalPages = data.pages || 1;
+    updatePaginationInfo(data.total || 0, data.page || 1, data.page_size || parseInt(pageSize));
+  } catch(e){ notifyError('Network error loading models'); }
+}
+
+// Pagination functions
+function changePage(delta) {
+  const newPage = currentPage + delta;
+  if (newPage < 1 || newPage > totalPages) return;
+  currentPage = newPage;
+  loadCatalog();
+}
+
+function updatePaginationInfo(total, page, pageSize) {
+  const startItem = (page - 1) * pageSize + 1;
+  const endItem = Math.min(page * pageSize, total);
+  document.getElementById('pageInfo').textContent = `${startItem}-${endItem} of ${total} (Page ${page}/${totalPages})`;
+  
+  // Update pagination buttons
+  const prevBtn = document.querySelector('.pagination button:first-child');
+  const nextBtn = document.querySelector('.pagination button:last-child');
+  if (prevBtn) prevBtn.disabled = page <= 1;
+  if (nextBtn) nextBtn.disabled = page >= totalPages;
+}
+
+function attachCardHandlers() {
+  document.querySelectorAll('.reval-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      btn.disabled=true; btn.textContent='...';
+      try {
+        const r = await fetch(`/api/published_models/${id}/evaluate`, {method:'POST'}); 
+        const j = await r.json();
+        if(j.ok){ notifySuccess('Evaluation updated'); loadCatalog(); }
+        else notifyError(j.error||'Eval error');
+      } catch(e){ notifyError('Eval request failed'); }
+      btn.disabled=false; btn.textContent='Re-Eval';
+    };
+  });
+  document.querySelectorAll('.view-rationale-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id; rationaleDialog.showModal();
+      rationaleBody.textContent='Loading...';
+      try {
+        const r = await fetch(`/api/published_models/${id}`); const j = await r.json();
+        if(j.ok && j.model && j.model.evaluation){
+          const ev = j.model.evaluation;
+            rationaleBody.innerHTML = `<pre>${escapeHtml(ev.rationale_preview || ev.rationale || 'No rationale')}</pre>`;
+        } else { rationaleBody.textContent='No rationale'; }
+      } catch(e){ rationaleBody.textContent='Error loading'; }
+    };
+  });
+  // Add AI re-eval context menu (shift-click Re-Eval)
+  document.querySelectorAll('.reval-btn').forEach(btn => {
+    btn.oncontextmenu = (e)=>{ e.preventDefault(); aiReEval(btn.dataset.id, btn); };
+    btn.addEventListener('click', (e)=>{ if(e.shiftKey){ aiReEval(btn.dataset.id, btn); e.preventDefault(); }});
+  });
+  document.querySelectorAll('.sub-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const subscribed = btn.dataset.subscribed === 'true';
+      try {
+        if (subscribed) {
+          if (!confirm('Unsubscribe from this model?')) return;
+          const r = await fetch(`/api/published_models/${id}/unsubscribe`, {method:'POST', headers:{'X-CSRF-Token': CSRF_TOKEN}});
+          const j = await r.json();
+          if (j.ok) { btn.dataset.subscribed='false'; btn.textContent='Subscribe'; notifyInfo('Unsubscribed'); loadCatalog(); }
+          else notifyError(j.error||'Error');
+        } else {
+          const r = await fetch(`/api/published_models/${id}/subscribe`, {method:'POST', headers:{'X-CSRF-Token': CSRF_TOKEN}});
+          const j = await r.json();
+          if (j.ok) { btn.dataset.subscribed='true'; btn.textContent='Unsubscribe'; notifySuccess('Subscribed'); loadCatalog(); }
+          else notifyError(j.error||'Error');
+        }
+      } catch(err){ notifyError('Network issue'); }
+    };
+  });
+  document.querySelectorAll('.watch-btn').forEach(btn=>{
+    btn.onclick = async ()=>{
+      const id=btn.dataset.id; const watched=btn.dataset.watched==='true';
+      try {
+        const r = await fetch(`/api/published_models/${id}/${watched?'unwatch':'watch'}`, {method:'POST'});
+        const j = await r.json();
+        if(j.ok){ notifySuccess(watched?'Removed from watchlist':'Added to watchlist'); loadCatalog(); }
+        else notifyError(j.error||'Watchlist error');
+      } catch(e){ notifyError('Network'); }
+    };
+  });
+  // Analyze button handlers
+  document.querySelectorAll('.analyze-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const dialog = document.getElementById('analysisDialog');
+      const body = document.getElementById('analysisBody');
+      const histDiv = document.getElementById('analysisHistory');
+      body.textContent='Analyzing...';
+      histDiv.textContent='Loading history...';
+      try { dialog.showModal(); } catch(e) { /* already open */ }
+      const runAnalysis = async () => {
+        const providerSel = document.getElementById('analysisProvider').value;
+        const modelSel = document.getElementById('analysisModel').value.trim();
+        const analysisType = document.getElementById('analysisType').value;
+        
+        // Show loading state
+        body.textContent = `Analyzing with ${providerSel === 'anthropic' ? 'Anthropic Claude ' + modelSel : providerSel}...`;
+        
+        // Load run history each time for freshness
+        try {
+          const histResp = await fetch(`/api/published_models/${id}/run_history?limit=15`);
+          const histJson = await histResp.json();
+          if(histJson.ok){
+            histDiv.innerHTML = '<b>Recent Runs:</b><br>' + histJson.history.map(h=>{
+              const ts = h.created_at || 'NA';
+              const out = (h.output_preview||'').replace(/</g,'&lt;');
+              return `<div style="margin:4px 0; padding:4px; border-bottom:1px solid #334155;">${ts}<br><code style="font-size:11px;">${out}</code></div>`;
+            }).join('');
+          } else { histDiv.textContent='No history'; }
+        } catch(e){ histDiv.textContent='History load error'; }
+        
+        try {
+          if (providerSel === 'anthropic') {
+            // Use new Anthropic-powered analysis endpoint
+            const payload = {
+              model: modelSel || 'sonnet-3.5',
+              analysis_type: analysisType,
+              limit: 30
+            };
+            
+            const aResp = await fetch(`/api/published_models/${id}/run_history_analysis`, {
+              method: 'POST', 
+              headers: {'Content-Type': 'application/json'}, 
+              body: JSON.stringify(payload)
+            });
+            
+            const aJson = await aResp.json();
+            if(aJson.ok) { 
+              const analysis = aJson.analysis;
+              let displayContent = analysis.content;
+              
+              // Add metadata footer
+              displayContent += `\n\n---\n📊 Analysis Details:\n`;
+              displayContent += `• Type: ${analysis.analysis_type}\n`;
+              displayContent += `• Runs Analyzed: ${aJson.runs_analyzed}\n`;
+              displayContent += `• Generated: ${new Date(analysis.generated_at).toLocaleString()}\n`;
+              
+              if (analysis.token_usage) {
+                displayContent += `• Token Usage: ${analysis.token_usage}\n`;
+              }
+              if (analysis.error) {
+                displayContent += `• Note: ${analysis.error}\n`;
+              }
+              
+              body.innerHTML = `<div style="white-space: pre-wrap; line-height: 1.6;">${displayContent}</div>`;
+            } else { 
+              body.textContent = 'Analysis error: ' + (aJson.error || 'unknown'); 
+            }
+            
+          } else {
+            // Use legacy analysis endpoint for Ollama
+            const payload = {provider: providerSel, limit: 10};
+            if(modelSel) payload.model = modelSel;
+            const aResp = await fetch(`/api/published_models/${id}/analyze_history`, {
+              method:'POST', 
+              headers:{'Content-Type':'application/json'}, 
+              body: JSON.stringify(payload)
+            });
+            const aJson = await aResp.json();
+            if(aJson.ok){ body.textContent = aJson.analysis || '(no analysis)'; }
+            else { body.textContent = 'Analysis error: '+(aJson.error||'unknown'); }
+          }
+        } catch(e){ 
+          body.textContent = 'Analysis request failed: ' + e; 
+        }
+      };
+      // Attach analyzer button for re-run
+      const runBtn = document.getElementById('runAnalysisBtn');
+      runBtn.onclick = runAnalysis;
+      // Initial run
+      runAnalysis();
+    };
+  });
+  
+  // Performance button handlers
+  document.querySelectorAll('.perf-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const name = btn.closest('.card').querySelector('h3').textContent;
+      openPerformanceDialog(id, name);
+    };
+  });
+  
+  // Details button handlers - View full README/description
+  document.querySelectorAll('.details-btn').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const name = btn.dataset.name;
+      openReadme(id, name);
+    };
+  });
+  
+  // load sparkline history
+  document.querySelectorAll('.card').forEach(card=>{
+    const id = card.querySelector('.run-btn')?.dataset.id; if(!id) return;
+    const sparkEl = card.querySelector(`#spark-${id}`); if(!sparkEl) return;
+    fetch(`/api/published_models/${id}/evaluation_history`).then(r=>r.json()).then(d=>{
+      if(!d.ok) return;
+      const hist = d.history||[]; sparkEl.innerHTML='';
+      const max = 100; // scores out of 100
+      hist.forEach(h=>{
+        const v = h.score==null?0:h.score; const pct = Math.max(4, Math.min(100, (v/max)*100));
+        const bar=document.createElement('div');
+        bar.className='sparkline-bar '+(v>=75?'good':(v>=50?'mid':'poor'));
+        bar.style.height=pct+'%'; bar.title=`${v} @ ${h.ts}`;
+        sparkEl.appendChild(bar);
+      });
+    }).catch(()=>{});
+  });
+  document.querySelectorAll('.run-btn').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const name = btn.closest('.card').querySelector('h3').textContent;
+      openRun(id, name);
+    };
+  });
+}
+
+function sortModels(models, sort){
+  const arr = [...models];
+  if(sort==='runs') arr.sort((a,b)=>(b.run_count||0)-(a.run_count||0));
+  else if(sort==='name') arr.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+  // recent: assume already by created_at desc
+  return arr;
+}
+
+function openReadme(id, name){
+  activeModel = id;
+  document.getElementById('readmeTitle').textContent = name + ' – Documentation';
+  document.getElementById('readmeBody').innerHTML = `
+    <div style="display: flex; align-items: center; justify-content: center; padding: 40px;">
+      <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>
+      Loading documentation...
+    </div>
+  `;
+  readmeDialog.showModal();
+  
+  fetch('/api/published_models/'+id).then(r=>r.json()).then(d=>{
+    if(!d.ok){ 
+      document.getElementById('readmeBody').innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--danger);">
+          <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i>
+          <div>Error loading model information</div>
+        </div>
+      `;
+      return; 
+    }
+    
+    const model = d.model;
+    const md = model.readme_md || '';
+    const hasReadme = md && md.trim() !== '';
+    
+    // Create enhanced content for investors
+    let content = `
+      <div style="margin-bottom: 24px; padding: 20px; background: var(--bg-card); border-radius: 8px; border-left: 4px solid var(--primary);">
+        <h4 style="margin: 0 0 16px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-info-circle"></i>
+          Model Overview
+        </h4>
+        
+        <div style="color: var(--text); line-height: 1.6; font-size: 14px; margin-bottom: 16px;">
+          <p style="margin: 0 0 12px 0;">
+            This quantitative investment model was developed by <strong>${escapeHtml(model.author_user_key || 'Anonymous')}</strong> 
+            and is currently available as version <strong>v${escapeHtml(model.version || '1.0')}</strong>. 
+            The model has been successfully executed <strong>${(model.run_count || 0).toLocaleString()}</strong> times 
+            by investors and analysts on our platform.
+          </p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 16px; background: rgba(var(--primary-rgb), 0.05); border-radius: 6px;">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Category</span>
+            <span style="font-weight: 500;">${escapeHtml(model.category || 'Quantitative')}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Created</span>
+            <span style="font-weight: 500;">${new Date(model.created_at || Date.now()).toLocaleDateString()}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Last Updated</span>
+            <span style="font-weight: 500;">${new Date(model.updated_at || Date.now()).toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    if (hasReadme) {
+      content += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 16px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-file-alt"></i>
+            Model Documentation
+          </h4>
+          <div style="background: var(--bg-card); padding: 20px; border-radius: 8px; line-height: 1.7; font-size: 14px;">
+            <div style="color: var(--text); margin-bottom: 16px;">
+              ${renderMarkdown(md)}
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      content += `
+        <div style="margin-bottom: 24px;">
+          <h4 style="margin: 0 0 16px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-file-alt"></i>
+            Model Documentation
+          </h4>
+          <div style="text-align: center; padding: 32px; color: var(--text-muted); background: var(--bg-card); border-radius: 8px; border: 2px dashed var(--border);">
+            <i class="fas fa-file-alt" style="font-size: 32px; margin-bottom: 16px; opacity: 0.5;"></i>
+            <p style="font-size: 16px; margin: 0 0 8px 0; font-weight: 500;">No Documentation Available</p>
+            <p style="font-size: 14px; margin: 0; line-height: 1.5;">
+              The analyst hasn't provided detailed documentation for this model yet. 
+              You can contact the analyst directly or check back later for updates.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Add investment considerations section
+    content += `
+      <div style="margin-top: 24px; padding: 20px; background: var(--bg-card); border-radius: 8px; border-left: 4px solid var(--warning);">
+        <h4 style="margin: 0 0 16px 0; color: var(--warning); display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-exclamation-triangle"></i>
+          Important Investment Considerations
+        </h4>
+        
+        <div style="color: var(--text); line-height: 1.7; font-size: 14px;">
+          <p style="margin: 0 0 16px 0;">
+            <strong>Risk Disclosure:</strong> All investment models carry inherent risks and past performance 
+            does not guarantee future results. Please carefully review the model's evaluation score, 
+            backtesting data, and risk metrics before making any investment decisions.
+          </p>
+          
+          <p style="margin: 0 0 16px 0;">
+            <strong>Best Practices:</strong> We recommend starting with small position sizes to test the 
+            model's performance in current market conditions. Consider subscribing to receive notifications 
+            about model updates, performance changes, or important announcements from the analyst.
+          </p>
+          
+          <p style="margin: 0 0 0 0;">
+            <strong>Professional Advice:</strong> This model is provided for informational purposes only 
+            and should not be considered as personalized financial advice. Always consult with qualified 
+            financial advisors before making significant investment decisions based on algorithmic recommendations.
+          </p>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('readmeBody').innerHTML = content;
+  }).catch(()=>{ 
+    document.getElementById('readmeBody').innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--danger);">
+        <i class="fas fa-wifi" style="font-size: 24px; margin-bottom: 12px;"></i>
+        <div>Network error loading model information</div>
+      </div>
+    `;
+  });
+}
+
+function openRun(id, name){
+  activeModel=id; activeRunPrompts=[];
+  runOutput.textContent='--';
+  document.getElementById('runTitle').textContent='Run Script – '+name;
+  const inputsSection=document.getElementById('runInputsSection');
+  const fieldsBox=document.getElementById('runInputsFields');
+  inputsSection.style.display='none'; fieldsBox.innerHTML='';
+  runDialog.showModal();
+  // Fetch prompts
+  fetch(`/api/published_models/${id}/prepare_inputs`, {method:'POST'}).then(r=>r.json()).then(d=>{
+    if(!d.ok){ runOutput.textContent='(Could not scan inputs)'; return; }
+    const prompts=d.prompts||[];
+    activeRunPrompts=prompts;
+    if(prompts.length){
+      inputsSection.style.display='block';
+      prompts.forEach(p=>{
+        const wrap=document.createElement('div');
+        wrap.style.display='flex'; wrap.style.flexDirection='column';
+        wrap.innerHTML=`<label style='font-size:11px; color:#bbb; margin-bottom:2px;'>${escapeHtml(p)}</label><input data-prompt="${escapeHtml(p)}" style='background:#121212; color:#eee; border:1px solid #333; padding:6px 8px; border-radius:4px; font-size:12px;' placeholder='Value'>`;
+        fieldsBox.appendChild(wrap);
+      });
+    }
+  }).catch(()=>{ runOutput.textContent='(input scan error)'; });
+}
+
+function executeRun(){
+  if(!activeModel) return;
+  runOutput.textContent='Running...';
+  const inputs={};
+  document.querySelectorAll('#runInputsFields input[data-prompt]').forEach(inp=>{ inputs[inp.getAttribute('data-prompt')] = inp.value; });
+  
+  // Create AbortController for timeout handling
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 650000); // 10 minutes + buffer
+  
+  // Use standard API endpoint
+  const endpoint = `/api/published_models/${activeModel}/run_script`;
+  
+  const requestBody = {inputs, timeout: 600};
+  
+  fetch(endpoint, {
+    method:'POST', 
+    headers:{'Content-Type':'application/json'}, 
+    body:JSON.stringify(requestBody),
+    signal: controller.signal
+  })
+    .then(r=>r.json()).then(d=>{
+      clearTimeout(timeoutId);
+      if(!d.ok){
+        if(d.missing){ runOutput.textContent='Missing inputs: '+d.missing.join(', '); return; }
+        runOutput.textContent='Error: '+(d.error||'Unknown'); return;
+      }
+      
+      // Standard output
+      let out = d.output || '';
+      if(!out.trim()) out='(no output)';
+      
+      runOutput.textContent=out;
+    }).catch(e=>{ 
+      clearTimeout(timeoutId);
+      if (e.name === 'AbortError') {
+        runOutput.textContent='Execution timed out after 10 minutes. For longer analyses, try using individual functions or the async API.';
+      } else {
+        runOutput.textContent='Error: ' + e.message; 
+      }
+    });
+}
+
+async function aiReEval(id, btn){
+  const orig = btn.textContent; btn.disabled=true; btn.textContent='AI...';
+  try {
+    const r = await fetch(`/api/published_models/${id}/evaluate`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mode:'ai', async:true})});
+    const j = await r.json();
+    if(j.ok && j.job_id){
+      notifyInfo('AI evaluation queued');
+      await pollEvalJob(id, j.job_id, btn, orig);
+      return;
+    } else if(j.ok && j.evaluation){
+      notifySuccess('AI evaluation complete');
+      loadCatalog();
+    } else {
+      notifyError(j.error||'AI eval failed start');
+    }
+  } catch(e){ notifyError('Network AI eval error'); }
+  btn.disabled=false; btn.textContent=orig;
+}
+async function pollEvalJob(id, jobId, btn, orig){
+  let attempts=0; const maxAttempts=40; // ~20s if 500ms
+  while(attempts<maxAttempts){
+    await new Promise(res=>setTimeout(res,500));
+    try {
+      const r = await fetch(`/api/published_models/${id}/evaluation_job/${jobId}`); const j = await r.json();
+      if(!j.ok){ notifyError('Eval job error'); break; }
+      if(j.status==='done'){ notifySuccess('AI evaluation complete'); loadCatalog(); break; }
+      if(j.status==='error'){ notifyError(j.error||'Eval failed'); break; }
+    } catch(e){ /* ignore transient */ }
+    attempts++;
+  }
+  btn.disabled=false; btn.textContent=orig;
+}
+
+let searchDebounceTimer=null;
+const searchBox = document.getElementById('searchBox');
+searchBox.addEventListener('input', ()=>{
+  if(searchDebounceTimer) clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(()=>{ currentPage=1; loadCatalog(); }, 400);
+});
+
+function showMessageBar(msg, timeout=5000){
+  const bar=document.getElementById('messageBar');
+  bar.textContent=msg; bar.style.display='block';
+  if(timeout){ setTimeout(()=>{ if(bar.textContent===msg) bar.style.display='none'; }, timeout); }
+}
+function hideMessageBar(){ const bar=document.getElementById('messageBar'); bar.style.display='none'; }
+
+function showToast(msg, variant='info', timeout=3500){
+  const cont=document.getElementById('toastContainer');
+  const div=document.createElement('div');
+  div.className='toast'+(variant==='error'?' error':(variant==='success'?' success':''));
+  div.innerHTML = `<span style="flex:1;">${escapeHtml(msg)}</span><button style="background:transparent;border:none;color:#bbb;cursor:pointer;font-size:14px;">×</button>`;
+  div.querySelector('button').onclick=()=>{ cont.removeChild(div); };
+  cont.appendChild(div);
+  if(timeout){ setTimeout(()=>{ if(div.parentNode) cont.removeChild(div); }, timeout); }
+}
+
+// Replace alert usage wrappers
+function notifyError(msg){ showToast(msg,'error'); }
+function notifyInfo(msg){ showToast(msg,'info'); }
+function notifySuccess(msg){ showToast(msg,'success'); }
+
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+
+function renderMarkdown(md){
+  if(window.marked){ return window.marked.parse(md); }
+  // Very lightweight markdown rendering (headings, code blocks, bold/italics, links)
+  let html = escapeHtml(md);
+  html = html.replace(/^### (.*)$/gm,'<h3>$1</h3>')
+             .replace(/^## (.*)$/gm,'<h2>$1</h2>')
+             .replace(/^# (.*)$/gm,'<h1>$1</h1>')
+             .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+             .replace(/\*(.*?)\*/g,'<em>$1</em>')
+             .replace(/`([^`]+)`/g,'<code>$1</code>')
+             .replace(/\n```([\s\S]*?)```/g, (m, c)=>`<pre>${escapeHtml(c.trim())}</pre>`)
+             .replace(/\[(.+?)\]\((https?:\/\/[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return html;
+}
+
+// Performance Dialog Functions
+let currentModelId = null;
+
+function openPerformanceDialog(modelId, modelName) {
+  currentModelId = modelId;
+  const dialog = document.getElementById('performanceDialog');
+  dialog.querySelector('h3').innerHTML = `<i class="fas fa-chart-area" style="color:var(--success);"></i> Performance: ${escapeHtml(modelName)} <button id="closePerformanceBtn" style="background:#475569; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; margin-left:auto;" onclick="document.getElementById('performanceDialog').close()">Close</button>`;
+  
+  try { 
+    dialog.showModal(); 
+    loadPerformanceData();
+  } catch(e) { 
+    /* Dialog already open */ 
+  }
+  
+  // Attach event handlers
+  document.getElementById('performancePeriod').onchange = loadPerformanceData;
+  document.getElementById('refreshPerformanceBtn').onclick = loadPerformanceData;
+}
+
+async function loadPerformanceData() {
+  if (!currentModelId) return;
+  
+  const period = document.getElementById('performancePeriod').value;
+  const metricsContainer = document.getElementById('performanceMetrics');
+  const recsContainer = document.getElementById('recentRecommendations');
+  
+  // Show loading states
+  metricsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading performance data...</div>';
+  recsContainer.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</div>';
+  
+  try {
+    // Load performance metrics
+    const perfResp = await fetch(`/api/published_models/${currentModelId}/performance?period=${period}`);
+    const perfData = await perfResp.json();
+    
+    if (perfData.ok) {
+      renderPerformanceMetrics(perfData.metrics);
+      renderRecentRecommendations(perfData.recent_recommendations || []);
+    } else {
+      metricsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:20px;">No performance data available</div>';
+      recsContainer.innerHTML = '<div style="text-align:center; color:#ef4444; padding:20px;">No recommendations found</div>';
+    }
+    
+    // Load chart data
+    loadPerformanceCharts();
+    
+  } catch (error) {
+    console.error('Error loading performance data:', error);
+    metricsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:20px;">Error loading performance data</div>';
+    recsContainer.innerHTML = '<div style="text-align:center; color:#ef4444; padding:20px;">Error loading recommendations</div>';
+  }
+}
+
+function renderPerformanceMetrics(metrics) {
+  const container = document.getElementById('performanceMetrics');
+  
+  if (!metrics || Object.keys(metrics).length === 0) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding:20px;">No performance metrics available</div>';
+    return;
+  }
+  
+  const formatPercent = (val) => val ? `${(val * 100).toFixed(2)}%` : 'N/A';
+  const formatNumber = (val) => val ? val.toFixed(2) : 'N/A';
+  const formatCurrency = (val) => val ? `$${val.toLocaleString()}` : 'N/A';
+  
+  container.innerHTML = `
+    <div class="metric-card">
+      <div class="metric-label">Total Return</div>
+      <div class="metric-value ${(metrics.total_return || 0) >= 0 ? 'positive' : 'negative'}">${formatPercent(metrics.total_return)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Win Rate</div>
+      <div class="metric-value">${formatPercent(metrics.win_rate)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Sharpe Ratio</div>
+      <div class="metric-value">${formatNumber(metrics.sharpe_ratio)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Portfolio Value</div>
+      <div class="metric-value">${formatCurrency(metrics.portfolio_value)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Recommendations</div>
+      <div class="metric-value">${metrics.total_recommendations || 0}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Active Positions</div>
+      <div class="metric-value">${metrics.active_positions || 0}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Max Drawdown</div>
+      <div class="metric-value negative">${formatPercent(metrics.max_drawdown)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Alpha vs S&P 500</div>
+      <div class="metric-value ${(metrics.alpha || 0) >= 0 ? 'positive' : 'negative'}">${formatPercent(metrics.alpha)}</div>
+    </div>
+  `;
+}
+
+function renderRecentRecommendations(recommendations) {
+  const container = document.getElementById('recentRecommendations');
+  
+  if (!recommendations || recommendations.length === 0) {
+    container.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:20px;">No recent recommendations</div>';
+    return;
+  }
+  
+  const formatReturn = (ret) => {
+    if (ret === null || ret === undefined) return 'N/A';
+    const percent = (ret * 100).toFixed(2);
+    const color = ret >= 0 ? '#10b981' : '#ef4444';
+    return `<span style="color:${color};">${ret >= 0 ? '+' : ''}${percent}%</span>`;
+  };
+  
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'BUY': return '#10b981';
+      case 'SELL': return '#ef4444';
+      case 'HOLD': return '#f59e0b';
+      default: return '#94a3b8';
+    }
+  };
+  
+  container.innerHTML = `
+    <table style="width:100%; font-size:12px; border-collapse:collapse;">
+      <thead style="background:#334155;">
+        <tr>
+          <th style="padding:8px; text-align:left; border-bottom:1px solid #475569;">Symbol</th>
+          <th style="padding:8px; text-align:left; border-bottom:1px solid #475569;">Type</th>
+          <th style="padding:8px; text-align:right; border-bottom:1px solid #475569;">Entry Price</th>
+          <th style="padding:8px; text-align:right; border-bottom:1px solid #475569;">Current Price</th>
+          <th style="padding:8px; text-align:right; border-bottom:1px solid #475569;">Return</th>
+          <th style="padding:8px; text-align:left; border-bottom:1px solid #475569;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${recommendations.map(rec => `
+          <tr style="border-bottom:1px solid #475569;">
+            <td style="padding:8px; font-weight:600;">${escapeHtml(rec.symbol)}</td>
+            <td style="padding:8px;"><span style="color:${getTypeColor(rec.type)}; font-weight:600;">${rec.type}</span></td>
+            <td style="padding:8px; text-align:right;">$${(rec.price_at_rec || 0).toFixed(2)}</td>
+            <td style="padding:8px; text-align:right;">$${(rec.current_price || 0).toFixed(2)}</td>
+            <td style="padding:8px; text-align:right;">${formatReturn(rec.return)}</td>
+            <td style="padding:8px; color:#94a3b8;">${rec.created_at ? new Date(rec.created_at).toLocaleDateString() : 'N/A'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function loadPerformanceCharts() {
+  if (!currentModelId) return;
+  
+  try {
+    const chartsResp = await fetch(`/api/published_models/${currentModelId}/performance/charts`);
+    const chartsData = await chartsResp.json();
+    
+    if (chartsData.ok) {
+      renderPortfolioChart(chartsData.metrics_over_time);
+      renderSectorChart(chartsData.sector_performance);
+    }
+  } catch (error) {
+    console.error('Error loading chart data:', error);
+  }
+}
+
+function renderPortfolioChart(metricsData) {
+  const canvas = document.getElementById('portfolioChart');
+  const ctx = canvas.getContext('2d');
+  
+  // Simple chart rendering - you could integrate Chart.js here for better charts
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '12px Inter';
+  ctx.fillText('Portfolio Value Chart (Basic)', 10, 20);
+  ctx.fillText('(Chart.js integration recommended)', 10, 40);
+}
+
+function renderSectorChart(sectorData) {
+  const canvas = document.getElementById('sectorChart');
+  const ctx = canvas.getContext('2d');
+  
+  // Simple chart rendering
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '12px Inter';
+  ctx.fillText('Sector Performance Chart (Basic)', 10, 20);
+  ctx.fillText('(Chart.js integration recommended)', 10, 40);
+}
+
+// Initial load
+updateFilterButtons();
+loadCatalog();
+</script>
+<!-- Analysis Dialog -->
+<dialog id="analysisDialog" style="max-width:880px; width:92%; background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:12px; padding:20px;">
+  <h3 style="margin-top:0; display:flex; align-items:center; gap:8px; font-size:18px;">
+    <i class="fas fa-chart-line" style="color:var(--primary);"></i> Run History Analysis
+  </h3>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;">
+    <div style="flex:1; min-width:160px;">
+      <label for="analysisProvider" style="font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:#94a3b8;">Provider</label>
+      <select id="analysisProvider" style="width:100%; background:#0f172a; color:#f1f5f9; border:1px solid #334155; padding:6px 8px; border-radius:6px; font-size:13px;">
+        <option value="ollama">Ollama (local)</option>
+        <option value="anthropic">Anthropic Claude (AWS)</option>
+      </select>
+    </div>
+    <div style="flex:1; min-width:180px;">
+      <label for="analysisModel" style="font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:#94a3b8;">Model</label>
+      <select id="analysisModel" style="width:100%; background:#0f172a; color:#f1f5f9; border:1px solid #334155; padding:6px 8px; border-radius:6px; font-size:13px;">
+        <option value="sonnet-3.5">Sonnet 3.5 (Recommended)</option>
+        <option value="sonnet-4">Sonnet 4 (Future)</option>
+        <option value="sonnet-legacy">Sonnet 3 (Legacy)</option>
+      </select>
+    </div>
+    <div style="flex:1; min-width:160px;">
+      <label for="analysisType" style="font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:#94a3b8;">Analysis Type</label>
+      <select id="analysisType" style="width:100%; background:#0f172a; color:#f1f5f9; border:1px solid #334155; padding:6px 8px; border-radius:6px; font-size:13px;">
+        <option value="comprehensive">Comprehensive Report</option>
+        <option value="performance">Performance Analysis</option>
+        <option value="trends">Trends & Patterns</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="runAnalysisBtn" style="background:var(--primary); color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px;">
+        <i class="fas fa-brain"></i> Analyze AI
+      </button>
+      </button>
+      <button id="closeAnalysisBtn" style="background:#475569; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px;" onclick="document.getElementById('analysisDialog').close()">Close</button>
+    </div>
+  </div>
+  <div id="analysisBody" style="max-height:50vh; overflow:auto; font-size:13px; line-height:1.45; white-space:pre-wrap; background:#0f172a; padding:12px; border:1px solid #334155; border-radius:8px;">Loading...</div>
+  <div id="analysisHistory" style="margin-top:12px; font-size:12px; max-height:30vh; overflow:auto; background:#0f172a; padding:8px; border:1px solid #334155; border-radius:8px;"></div>
+</dialog>
+
+<!-- Performance Dialog -->
+<dialog id="performanceDialog" style="max-width:1000px; width:95%; background:#1e293b; color:#f1f5f9; border:1px solid #334155; border-radius:12px; padding:20px;">
+  <h3 style="margin-top:0; display:flex; align-items:center; gap:8px; font-size:18px;">
+    <i class="fas fa-chart-area" style="color:var(--success);"></i> Stock Recommendation Performance
+    <button id="closePerformanceBtn" style="background:#475569; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; margin-left:auto;" onclick="document.getElementById('performanceDialog').close()">Close</button>
+  </h3>
+  
+  <!-- Performance Period Selector -->
+  <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+    <label style="font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:#94a3b8; display:flex; align-items:center;">Period:</label>
+    <select id="performancePeriod" style="background:#0f172a; color:#f1f5f9; border:1px solid #334155; padding:4px 8px; border-radius:6px; font-size:13px;">
+      <option value="ALL">All Time</option>
+      <option value="1Y">1 Year</option>
+      <option value="6M">6 Months</option>
+      <option value="3M">3 Months</option>
+      <option value="1M">1 Month</option>
+      <option value="1W">1 Week</option>
+    </select>
+    <button id="refreshPerformanceBtn" style="background:var(--primary); color:white; border:none; padding:4px 12px; border-radius:6px; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:4px;">
+      <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+  </div>
+  
+  <!-- Performance Metrics Grid -->
+  <div id="performanceMetrics" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
+    <!-- Metrics will be populated here -->
+  </div>
+  
+  <!-- Recent Recommendations -->
+  <div style="margin-bottom:20px;">
+    <h4 style="font-size:16px; margin:0 0 12px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+      <i class="fas fa-list"></i> Recent Recommendations
+    </h4>
+    <div id="recentRecommendations" style="max-height:300px; overflow:auto; background:#0f172a; border:1px solid #334155; border-radius:8px;">
+      <!-- Recommendations will be populated here -->
+    </div>
+  </div>
+  
+  <!-- Performance Charts -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div>
+      <h4 style="font-size:14px; margin:0 0 8px; color:var(--text-primary);">Portfolio Value Over Time</h4>
+      <canvas id="portfolioChart" style="width:100%; max-height:200px; background:#0f172a; border:1px solid #334155; border-radius:8px;"></canvas>
+    </div>
+    <div>
+      <h4 style="font-size:14px; margin:0 0 8px; color:var(--text-primary);">Performance by Sector</h4>
+      <canvas id="sectorChart" style="width:100%; max-height:200px; background:#0f172a; border:1px solid #334155; border-radius:8px;"></canvas>
+    </div>
+  </div>
+</dialog>
+<script>
+// Admin key banner script
+(function(){
+  const banner = document.getElementById('adminKeyBanner');
+  if(!banner) return;
+  async function checkStatus(){
+    try {
+      const r = await fetch('/api/admin/anthropic/config');
+      if(r.status===401 || r.status===403) return; // not admin
+      const j = await r.json();
+      if(!j.success) return;
+      banner.classList.remove('hidden');
+      updateStatus(j.config);
+    } catch(e) { /* silent */ }
+  }
+  function updateStatus(config){
+    const el = document.getElementById('globalKeyStatus');
+    if(!config){ el.textContent='Status unavailable'; return; }
+    
+    let statusText = '';
+    if (config.api_key_configured) {
+      statusText += '🔑 API Key: Configured ✅';
+      if (config.last_tested) {
+        const testDate = new Date(config.last_tested).toLocaleDateString();
+        statusText += ` | Last tested: ${testDate}`;
+      }
+      if (config.test_result) {
+        statusText += ` | ${config.test_result}`;
+      }
+    } else {
+      statusText += '🔑 API Key: Not configured ❌';
+    }
+    
+    statusText += ` | Package: ${config.anthropic_available ? 'Available ✅' : 'Missing ❌'}`;
+    el.textContent = statusText;
+  }
+  document.getElementById('saveGlobalKeyBtn')?.addEventListener('click', async ()=>{
+    const key = document.getElementById('globalAnthropicKeyInput').value.trim();
+    if(!key){ notifyError('Enter an Anthropic API key'); return; }
+    const btn = document.getElementById('saveGlobalKeyBtn'); const prev=btn.textContent; btn.disabled=true; btn.textContent='Saving...';
+    try {
+      const r = await fetch('/api/admin/anthropic/config', {
+        method:'POST', 
+        headers:{'Content-Type':'application/json'}, 
+        body: JSON.stringify({action: 'configure', api_key: key})
+      });
+      const j = await r.json();
+      if(!j.success) throw new Error(j.error||'Failed');
+      notifySuccess('Anthropic API key configured successfully for run history analysis');
+      document.getElementById('globalKeyStatus').textContent = '✅ Configured: ' + j.test_result;
+      setTimeout(checkStatus, 600);
+    } catch(e){ 
+      notifyError('Save failed: '+ e.message); 
+      document.getElementById('globalKeyStatus').textContent = '❌ Failed: ' + e.message;
+    }
+    finally { btn.disabled=false; btn.textContent=prev; }
+  });
+  
+  document.getElementById('testGlobalKeyBtn')?.addEventListener('click', async ()=>{
+    const btn = document.getElementById('testGlobalKeyBtn'); const prev=btn.textContent; btn.disabled=true; btn.textContent='Testing...';
+    try {
+      const r = await fetch('/api/admin/anthropic/config', {
+        method:'POST', 
+        headers:{'Content-Type':'application/json'}, 
+        body: JSON.stringify({action: 'test'})
+      });
+      const j = await r.json();
+      if(!j.success) throw new Error(j.error||'No API key configured');
+      const statusText = j.test_success ? '✅ ' + j.test_result : '❌ ' + j.test_result;
+      document.getElementById('globalKeyStatus').textContent = statusText;
+      if (j.test_success) {
+        notifySuccess('Anthropic API test successful');
+      } else {
+        notifyError('Test failed: ' + j.test_result);
+      }
+    } catch(e){ 
+      document.getElementById('globalKeyStatus').textContent='❌ Test failed: '+ e.message; 
+      notifyError('Test failed: '+e.message); 
+    }
+    finally { btn.disabled=false; btn.textContent=prev; }
+  });
+  checkStatus();
+  
+  // Helper function for subscribing to a model from the details dialog
+  window.subscribeToModel = async function(modelId) {
+    try {
+      const response = await fetch(`/api/published_models/${modelId}/subscribe`, {
+        method: 'POST',
+        headers: {'X-CSRF-Token': CSRF_TOKEN}
+      });
+      const result = await response.json();
+      if (result.ok) {
+        notifySuccess('Successfully subscribed to model updates!');
+      } else {
+        notifyError(result.error || 'Failed to subscribe');
+      }
+    } catch (error) {
+      notifyError('Network error during subscription');
+    }
+  };
+})();
+
+// Score Methodology Modal
+function showScoreMethodology() {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.7); z-index: 10000; display: flex; 
+    align-items: center; justify-content: center; padding: 20px;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background: white; border-radius: 12px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+      <div style="padding: 24px; border-bottom: 1px solid #eee;">
+        <div style="display: flex; justify-content: between; align-items: center;">
+          <h3 style="margin: 0; color: #333; font-size: 24px; font-weight: 600;">
+            <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 8px;"></i>
+            Model Scoring Methodology
+          </h3>
+          <button onclick="this.closest('div').parentElement.remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0; margin-left: auto;">×</button>
+        </div>
+        <p style="margin: 8px 0 0 0; color: #666; font-size: 16px;">Professional 6-category evaluation system for ML model assessment</p>
+      </div>
+      
+      <div style="padding: 24px;">
+        <div style="display: grid; gap: 20px;">
+          
+          <!-- Risk & Return -->
+          <div style="border-left: 4px solid #e74c3c; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #e74c3c; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-chart-line" style="margin-right: 8px;"></i>Risk & Return (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Evaluates profit probability, risk-reward ratios, stress testing capabilities, drawdown management, and performance consistency across different market conditions.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Sharpe ratio, maximum drawdown, volatility management, scenario testing
+            </div>
+          </div>
+          
+          <!-- Data Quality -->
+          <div style="border-left: 4px solid #3498db; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #3498db; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-database" style="margin-right: 8px;"></i>Data Quality (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Assesses data source reliability, integrity checks, gap handling, missing data management, and real-time vs historical data quality standards.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Data completeness, accuracy, timeliness, source credibility, cleansing procedures
+            </div>
+          </div>
+          
+          <!-- Model Logic -->
+          <div style="border-left: 4px solid #f39c12; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #f39c12; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-brain" style="margin-right: 8px;"></i>Model Logic (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Reviews algorithm sophistication, mathematical foundation, signal generation methodology, factor integration, and correlation analysis approaches.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Algorithm complexity, statistical validity, feature engineering, predictive power
+            </div>
+          </div>
+          
+          <!-- Code Quality -->
+          <div style="border-left: 4px solid #9b59b6; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #9b59b6; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-code" style="margin-right: 8px;"></i>Code Quality (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Evaluates code readability, maintainability, error handling robustness, documentation quality, and structural organization standards.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Code structure, documentation, error handling, maintainability, best practices
+            </div>
+          </div>
+          
+          <!-- Testing & Validation -->
+          <div style="border-left: 4px solid #1abc9c; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #1abc9c; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-flask" style="margin-right: 8px;"></i>Testing & Validation (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Assesses backtesting methodology, forward testing results, live performance tracking, scenario testing coverage, and stress validation procedures.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Backtesting rigor, out-of-sample testing, cross-validation, stress testing
+            </div>
+          </div>
+          
+          <!-- Governance & Compliance -->
+          <div style="border-left: 4px solid #34495e; padding-left: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #34495e; font-size: 18px; font-weight: 600;">
+              <i class="fas fa-shield-alt" style="margin-right: 8px;"></i>Governance & Compliance (1-5 Scale)
+            </h4>
+            <p style="margin: 0; color: #555; line-height: 1.6;">
+              Reviews audit trail capabilities, logging standards, regulatory compliance measures, risk management protocols, and change management processes.
+            </p>
+            <div style="margin-top: 8px; font-size: 14px; color: #777;">
+              <strong>Key Factors:</strong> Audit trails, regulatory compliance, risk controls, change management, documentation
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Overall Score Calculation -->
+        <div style="margin-top: 24px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+          <h4 style="margin: 0 0 12px 0; color: #333; font-size: 18px; font-weight: 600;">
+            <i class="fas fa-calculator" style="margin-right: 8px; color: var(--primary);"></i>Overall Score Calculation
+          </h4>
+          <p style="margin: 0; color: #555; line-height: 1.6;">
+            <strong>Formula:</strong> Overall Score = (Sum of all 6 category scores ÷ 6) × 20
+          </p>
+          <p style="margin: 8px 0 0 0; color: #555; line-height: 1.6;">
+            <strong>Scale:</strong> 0-100 points where 100 represents the highest quality across all evaluation dimensions.
+          </p>
+          
+          <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+            <div style="text-align: center; padding: 8px; border-radius: 6px; background: #dc3545; color: white;">
+              <div style="font-weight: 600;">0-40</div>
+              <div style="font-size: 12px;">Needs Work</div>
+            </div>
+            <div style="text-align: center; padding: 8px; border-radius: 6px; background: #fd7e14; color: white;">
+              <div style="font-weight: 600;">41-60</div>
+              <div style="font-size: 12px;">Fair</div>
+            </div>
+            <div style="text-align: center; padding: 8px; border-radius: 6px; background: #ffc107; color: black;">
+              <div style="font-weight: 600;">61-75</div>
+              <div style="font-size: 12px;">Good</div>
+            </div>
+            <div style="text-align: center; padding: 8px; border-radius: 6px; background: #20c997; color: white;">
+              <div style="font-weight: 600;">76-90</div>
+              <div style="font-size: 12px;">Excellent</div>
+            </div>
+            <div style="text-align: center; padding: 8px; border-radius: 6px; background: #198754; color: white;">
+              <div style="font-weight: 600;">91-100</div>
+              <div style="font-size: 12px;">Outstanding</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Professional Note -->
+        <div style="margin-top: 20px; padding: 16px; background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 0 8px 8px 0;">
+          <p style="margin: 0; color: #004499; font-weight: 500; line-height: 1.6;">
+            <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+            <strong>Professional Note:</strong> These scores are designed to help investors make informed decisions. Higher scores indicate more robust, well-tested, and professionally managed models. Always review individual model documentation and consider your risk tolerance.
+          </p>
+        </div>
+        
+      </div>
+      
+      <div style="padding: 20px 24px; border-top: 1px solid #eee; text-align: right;">
+        <button onclick="this.closest('div').parentElement.remove()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">
+          <i class="fas fa-check" style="margin-right: 6px;"></i>Got it
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Close on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+  
+  // Close on Escape key
+  document.addEventListener('keydown', function escapeHandler(e) {
+    if (e.key === 'Escape') {
+      modal.remove();
+      document.removeEventListener('keydown', escapeHandler);
+    }
+  });
+}
+</script>
+</body>
+</html>

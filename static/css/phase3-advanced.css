@@ -1,0 +1,440 @@
+/* ================================
+   PHASE 3: ADVANCED FEATURES STYLES
+   ================================ */
+
+/* Progressive Web App Styles */
+.pwa-install-banner {
+    background: linear-gradient(135deg, #6f42c1, #0d6efd);
+    color: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    transform: translateY(-20px);
+    opacity: 0;
+    animation: slideInFade 0.6s ease-out forwards;
+}
+
+.pwa-install-banner.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.pwa-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.pwa-feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.pwa-feature-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s;
+    opacity: 0;
+}
+
+.pwa-feature-card:hover::before {
+    animation: shimmer 1.5s ease-in-out;
+}
+
+.pwa-feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* D3.js Visualization Container */
+.d3-visualization {
+    background: var(--bs-body-bg);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 1rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.d3-chart-container {
+    min-height: 400px;
+    position: relative;
+}
+
+.d3-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.d3-tooltip.show {
+    opacity: 1;
+}
+
+/* Real-time Updates */
+.realtime-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--bs-success);
+}
+
+.realtime-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--bs-success);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.realtime-counter {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    animation: countUp 0.5s ease-out;
+}
+
+/* Mobile-First Responsive Enhancements */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0.5rem;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1050;
+        background: var(--bs-dark);
+        width: 280px;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .mobile-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: var(--bs-dark);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+    }
+    
+    .mobile-menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        cursor: pointer;
+    }
+    
+    .d3-visualization {
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .pwa-features {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .pwa-feature-card {
+        padding: 1rem;
+    }
+}
+
+/* Advanced Data Visualization Styles */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.chart-control {
+    background: var(--bs-light);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.chart-control:hover,
+.chart-control.active {
+    background: var(--bs-primary);
+    color: white;
+    border-color: var(--bs-primary);
+}
+
+/* Enhanced Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 8px;
+}
+
+.loading-skeleton.chart {
+    height: 300px;
+    margin: 1rem 0;
+}
+
+.loading-skeleton.card {
+    height: 150px;
+    margin-bottom: 1rem;
+}
+
+.loading-skeleton.text {
+    height: 20px;
+    margin-bottom: 0.5rem;
+}
+
+.loading-skeleton.text.short {
+    width: 60%;
+}
+
+/* Performance Optimization Classes */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.will-change {
+    will-change: transform, opacity;
+}
+
+/* Animations */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInFade {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes countUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Advanced Responsive Grid */
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .responsive-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+}
+
+/* Enhanced Card Components */
+.advanced-card {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.advanced-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-color: var(--bs-primary);
+}
+
+.advanced-card-header {
+    background: linear-gradient(135deg, var(--bs-primary), var(--bs-info));
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.advanced-card-body {
+    padding: 1.5rem;
+}
+
+/* Connection Status Indicators */
+.connection-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    /* Fixed position to avoid overlapping with profile */
+    position: fixed;
+    top: 70px !important; /* Move below the navbar */
+    right: 20px;
+    z-index: 1030;
+    padding: 0;
+}
+
+.connection-status.connected {
+    background: transparent;
+}
+
+.connection-status.disconnected {
+    background: transparent;
+}
+
+.connection-status.connecting {
+    background: transparent;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+    background: var(--bs-success);
+    box-shadow: 0 0 5px 1px var(--bs-success);
+}
+
+.status-dot.disconnected {
+    background: var(--bs-danger);
+    box-shadow: 0 0 5px 1px var(--bs-danger);
+}
+
+.status-dot.connecting {
+    background: var(--bs-warning);
+}
+
+/* Mobile adjustments for connection status */
+@media (max-width: 768px) {
+    .connection-status {
+        top: auto !important;
+        bottom: 20px;
+        right: 20px;
+    }
+}

@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Terminal ML Class - Portfolio Management Terminal</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.js"></script>
+    
+    <style>
+        /* VS Code Theme Variables */
+        :root {
+            /* Dark Theme Colors matching VS Code */
+            --vscode-bg: #1e1e1e;
+            --vscode-sidebar-bg: #252526;
+            --vscode-editor-bg: #1e1e1e;
+            --vscode-terminal-bg: #0c0c0c;
+            --vscode-panel-bg: #181818;
+            --vscode-border: #2d2d30;
+            --vscode-hover: #2a2d2e;
+            --vscode-active: #37373d;
+            --vscode-focus: #007acc;
+            --vscode-text: #cccccc;
+            --vscode-text-muted: #969696;
+            --vscode-text-dim: #6a6a6a;
+            --vscode-accent: #0078d4;
+            --vscode-success: #16825d;
+            --vscode-warning: #ffcc02;
+            --vscode-error: #f44747;
+            --vscode-info: #75beff;
+            
+            /* Terminal Colors */
+            --terminal-black: #000000;
+            --terminal-red: #cd3131;
+            --terminal-green: #0dbc79;
+            --terminal-yellow: #e5e510;
+            --terminal-blue: #2472c8;
+            --terminal-magenta: #bc3fbc;
+            --terminal-cyan: #11a8cd;
+            --terminal-white: #e5e5e5;
+            --terminal-bright-black: #666666;
+            --terminal-bright-red: #f14c4c;
+            --terminal-bright-green: #23d18b;
+            --terminal-bright-yellow: #f5f543;
+            --terminal-bright-blue: #3b8eea;
+            --terminal-bright-magenta: #d670d6;
+            --terminal-bright-cyan: #29b8db;
+            --terminal-bright-white: #e5e5e5;
+            
+            /* Font Settings */
+            --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--vscode-bg);
+            color: var(--vscode-text);
+            height: 100vh;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        /* VS Code Layout Structure */
+        .vscode-container {
+            display: grid;
+            grid-template-areas: 
+                "titlebar titlebar titlebar"
+                "activitybar sidebar editor"
+                "activitybar sidebar panel";
+            grid-template-columns: 48px 300px 1fr;
+            grid-template-rows: 30px 1fr 300px;
+            height: 100vh;
+            background: var(--vscode-bg);
+        }
+
+        /* Title Bar */
+        .title-bar {
+            grid-area: titlebar;
+            background: var(--vscode-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--vscode-border);
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-logo {
+            color: var(--vscode-accent);
+            font-weight: 600;
+        }
+
+        .title-menu {
+            display: flex;
+            gap: 16px;
+        }
+
+        .title-menu-item {
+            color: var(--vscode-text);
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            transition: background 0.1s;
+        }
+
+        .title-menu-item:hover {
+            background: var(--vscode-hover);
+        }
+
+        .title-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 1px;
+        }
+
+        .window-control {
+            width: 46px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vscode-text);
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .window-control:hover {
+            background: var(--vscode-hover);
+        }
+
+        .window-control.close:hover {
+            background: var(--vscode-error);
+            color: white;
+        }
+
+        /* Activity Bar */
+        .activity-bar {
+            grid-area: activitybar;
+            background: var(--vscode-sidebar-bg);
+            border-right: 1px solid var(--vscode-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .activity-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vscode-text-muted);
+            cursor: pointer;
+            position: relative;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            transition: all 0.1s;
+        }
+
+        .activity-item:hover {
+            color: var(--vscode-text);
+        }
+
+        .activity-item.active {
+            color: var(--vscode-text);
+            background: var(--vscode-hover);
+        }
+
+        .activity-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 16px;
+            background: var(--vscode-accent);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--vscode-sidebar-bg);
+            border-right: 1px solid var(--vscode-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 8px 12px;
+            background: var(--vscode-sidebar-bg);
+            border-bottom: 1px solid var(--vscode-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--vscode-text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--vscode-text-dim) var(--vscode-sidebar-bg);
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: var(--vscode-sidebar-bg);
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: var(--vscode-text-dim);
+            border-radius: 4px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: var(--vscode-text-muted);
+        }
+
+        /* Tree View */
+        .tree-view {
+            padding: 4px 0;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--vscode-text);
+            user-select: none;
+            position: relative;
+        }
+
+        .tree-item:hover {
+            background: var(--vscode-hover);
+        }
+
+        .tree-item.selected {
+            background: var(--vscode-active);
+        }
+
+        .tree-item-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .tree-item-expand {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 4px;
+            cursor: pointer;
+            color: var(--vscode-text-muted);
+        }
+
+        .tree-item-expand:hover {
+            color: var(--vscode-text);
+        }
+
+        .tree-item-expand.expanded {
+            transform: rotate(90deg);
+        }
+
+        .tree-children {
+            padding-left: 20px;
+            display: none;
+        }
+
+        .tree-item.expanded + .tree-children {
+            display: block;
+        }
+
+        /* Portfolio Items */
+        .portfolio-item {
+            border-left: 3px solid transparent;
+            transition: all 0.1s;
+        }
+
+        .portfolio-item.active {
+            border-left-color: var(--vscode-accent);
+            background: var(--vscode-active);
+        }
+
+        .portfolio-value {
+            font-size: 11px;
+            color: var(--vscode-text-muted);
+            margin-left: auto;
+        }
+
+        .portfolio-change {
+            font-size: 11px;
+            margin-left: 4px;
+        }
+
+        .portfolio-change.positive {
+            color: var(--terminal-green);
+        }
+
+        .portfolio-change.negative {
+            color: var(--terminal-red);
+        }
+
+        /* Editor Area */
+        .editor-area {
+            grid-area: editor;
+            background: var(--vscode-editor-bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .editor-tabs {
+            display: flex;
+            background: var(--vscode-bg);
+            border-bottom: 1px solid var(--vscode-border);
+            height: 35px;
+            align-items: center;
+        }
+
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 35px;
+            background: var(--vscode-panel-bg);
+            border-right: 1px solid var(--vscode-border);
+            color: var(--vscode-text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            min-width: 120px;
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        .editor-tab:hover {
+            color: var(--vscode-text);
+            background: var(--vscode-hover);
+        }
+
+        .editor-tab.active {
+            color: var(--vscode-text);
+            background: var(--vscode-editor-bg);
+            border-bottom: 2px solid var(--vscode-accent);
+        }
+
+        .editor-tab-icon {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        .editor-tab-close {
+            margin-left: auto;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .editor-tab:hover .editor-tab-close {
+            opacity: 1;
+        }
+
+        .editor-tab-close:hover {
+            background: var(--vscode-hover);
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: var(--vscode-editor-bg);
+        }
+
+        /* Charts and Data Visualization */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background: var(--vscode-panel-bg);
+            border: 1px solid var(--vscode-border);
+            border-radius: 6px;
+            padding: 16px;
+            min-height: 300px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--vscode-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Panel Area (Bottom) */
+        .panel-area {
+            grid-area: panel;
+            background: var(--vscode-panel-bg);
+            border-top: 1px solid var(--vscode-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: var(--vscode-panel-bg);
+            height: 35px;
+            align-items: center;
+            border-bottom: 1px solid var(--vscode-border);
+        }
+
+        .panel-tab {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 35px;
+            color: var(--vscode-text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            border-right: 1px solid var(--vscode-border);
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        .panel-tab:hover {
+            color: var(--vscode-text);
+            background: var(--vscode-hover);
+        }
+
+        .panel-tab.active {
+            color: var(--vscode-text);
+            border-bottom: 2px solid var(--vscode-accent);
+            background: var(--vscode-panel-bg);
+        }
+
+        .panel-tab-icon {
+            margin-right: 6px;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Terminal */
+        .terminal {
+            flex: 1;
+            background: var(--vscode-terminal-bg);
+            color: var(--terminal-white);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.4;
+            padding: 8px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--vscode-text-dim) var(--vscode-terminal-bg);
+        }
+
+        .terminal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal::-webkit-scrollbar-track {
+            background: var(--vscode-terminal-bg);
+        }
+
+        .terminal::-webkit-scrollbar-thumb {
+            background: var(--vscode-text-dim);
+            border-radius: 4px;
+        }
+
+        .terminal-line {
+            margin-bottom: 2px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .terminal-prompt {
+            color: var(--terminal-green);
+        }
+
+        .terminal-path {
+            color: var(--terminal-blue);
+        }
+
+        .terminal-command {
+            color: var(--terminal-white);
+        }
+
+        .terminal-output {
+            color: var(--terminal-white);
+            margin-left: 0;
+        }
+
+        .terminal-error {
+            color: var(--terminal-red);
+        }
+
+        .terminal-success {
+            color: var(--terminal-green);
+        }
+
+        .terminal-warning {
+            color: var(--terminal-yellow);
+        }
+
+        .terminal-info {
+            color: var(--terminal-cyan);
+        }
+
+        .terminal-input {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .terminal-input-prompt {
+            color: var(--terminal-green);
+            margin-right: 8px;
+        }
+
+        .terminal-input-field {
+            background: transparent;
+            border: none;
+            color: var(--terminal-white);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+            caret-color: var(--terminal-white);
+        }
+
+        .terminal-cursor {
+            background: var(--terminal-white);
+            color: var(--vscode-terminal-bg);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 22px;
+            background: var(--vscode-accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-size: 12px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .status-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 40px;
+            right: 12px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .notification {
+            background: var(--vscode-panel-bg);
+            border: 1px solid var(--vscode-border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--terminal-green);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--terminal-red);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--terminal-yellow);
+        }
+
+        .notification.info {
+            border-left: 4px solid var(--terminal-cyan);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--vscode-panel-bg);
+            border: 1px solid var(--vscode-border);
+            border-radius: 4px;
+            padding: 4px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--vscode-text);
+            transition: background 0.1s;
+        }
+
+        .context-menu-item:hover {
+            background: var(--vscode-hover);
+        }
+
+        .context-menu-item.disabled {
+            color: var(--vscode-text-dim);
+            cursor: not-allowed;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: var(--vscode-border);
+            margin: 4px 0;
+        }
+
+        /* ML Commands Panel */
+        .ml-commands {
+            padding: 12px;
+            background: var(--vscode-panel-bg);
+            border-top: 1px solid var(--vscode-border);
+        }
+
+        .command-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .command-input {
+            flex: 1;
+            background: var(--vscode-terminal-bg);
+            border: 1px solid var(--vscode-border);
+            color: var(--vscode-text);
+            padding: 6px 8px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .command-input:focus {
+            outline: none;
+            border-color: var(--vscode-accent);
+        }
+
+        .command-btn {
+            background: var(--vscode-accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.1s;
+        }
+
+        .command-btn:hover {
+            background: #106ebe;
+        }
+
+        .quick-commands {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .quick-cmd {
+            background: var(--vscode-hover);
+            border: 1px solid var(--vscode-border);
+            color: var(--vscode-text);
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.1s;
+        }
+
+        .quick-cmd:hover {
+            background: var(--vscode-active);
+            border-color: var(--vscode-accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .vscode-container {
+                grid-template-columns: 48px 250px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .vscode-container {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "titlebar"
+                    "editor"
+                    "panel";
+                grid-template-rows: 30px 1fr 200px;
+            }
+
+            .activity-bar,
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--vscode-text-dim);
+            border-top: 2px solid var(--vscode-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dark scrollbars for webkit browsers */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--vscode-text-dim) var(--vscode-bg);
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--vscode-bg);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--vscode-text-dim);
+            border-radius: 4px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--vscode-text-muted);
+        }
+
+        *::-webkit-scrollbar-corner {
+            background: var(--vscode-bg);
+        }
+    </style>
+</head>
+<body>
+    <!-- VS Code Container -->
+    <div class="vscode-container">
+        
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-left">
+                <div class="title-logo">
+                    <i class="fas fa-code"></i> VS Terminal ML Class
+                </div>
+                <div class="title-menu">
+                    <a href="#" class="title-menu-item">File</a>
+                    <a href="#" class="title-menu-item">Edit</a>
+                    <a href="#" class="title-menu-item">Selection</a>
+                    <a href="#" class="title-menu-item">View</a>
+                    <a href="#" class="title-menu-item">Terminal</a>
+                </div>
+            </div>
+            <div class="title-right">
+                <span style="font-size: 11px; color: var(--vscode-text-muted);">
+                    Portfolio Management & AI Trading Terminal
+                </span>
+                <div class="window-controls">
+                    <div class="window-control minimize"><i class="fas fa-minus"></i></div>
+                    <div class="window-control maximize"><i class="far fa-square"></i></div>
+                    <div class="window-control close"><i class="fas fa-times"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Bar -->
+        <div class="activity-bar">
+            <div class="activity-item active" data-view="explorer" title="Explorer">
+                <i class="far fa-folder"></i>
+            </div>
+            <div class="activity-item" data-view="search" title="Search">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="activity-item" data-view="source-control" title="Source Control">
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <div class="activity-item" data-view="debug" title="Debug">
+                <i class="fas fa-bug"></i>
+            </div>
+            <div class="activity-item" data-view="extensions" title="Extensions">
+                <i class="fas fa-th-large"></i>
+            </div>
+            <div style="margin-top: auto;">
+                <div class="activity-item" data-view="settings" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>Portfolio Explorer</span>
+                <div style="display: flex; gap: 4px;">
+                    <i class="fas fa-plus" title="New Portfolio" style="cursor: pointer; padding: 2px;"></i>
+                    <i class="fas fa-refresh" title="Refresh" style="cursor: pointer; padding: 2px;"></i>
+                </div>
+            </div>
+            <div class="sidebar-content">
+                <div class="tree-view">
+                    
+                    <!-- Portfolios Section -->
+                    <div class="tree-item expanded" data-expandable="true">
+                        <div class="tree-item-expand expanded">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tree-item-icon">
+                            <i class="fas fa-briefcase" style="color: var(--terminal-blue);"></i>
+                        </div>
+                        <span>My Portfolios</span>
+                    </div>
+                    <div class="tree-children" style="display: block;">
+                        {% if portfolios %}
+                            {% for portfolio in portfolios %}
+                            <div class="tree-item portfolio-item" data-portfolio-id="{{ portfolio.id }}">
+                                <div class="tree-item-icon">
+                                    <i class="fas fa-chart-pie" style="color: var(--terminal-green);"></i>
+                                </div>
+                                <span>{{ portfolio.name }}</span>
+                                <div class="portfolio-value">${{ "%.2f"|format(portfolio.total_value or 0) }}</div>
+                                <div class="portfolio-change positive">+2.3%</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="tree-item">
+                                <div class="tree-item-icon">
+                                    <i class="fas fa-plus" style="color: var(--vscode-text-dim);"></i>
+                                </div>
+                                <span style="color: var(--vscode-text-dim);">Create your first portfolio</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- AI Models Section -->
+                    <div class="tree-item expanded" data-expandable="true">
+                        <div class="tree-item-expand expanded">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tree-item-icon">
+                            <i class="fas fa-robot" style="color: var(--terminal-cyan);"></i>
+                        </div>
+                        <span>AI Models</span>
+                    </div>
+                    <div class="tree-children" style="display: block;">
+                        <div class="tree-item">
+                            <div class="tree-item-icon">
+                                <i class="fas fa-brain" style="color: var(--terminal-magenta);"></i>
+                            </div>
+                            <span>Portfolio Optimizer</span>
+                            <div style="margin-left: auto; color: var(--terminal-green); font-size: 10px;">●</div>
+                        </div>
+                        <div class="tree-item">
+                            <div class="tree-item-icon">
+                                <i class="fas fa-chart-line" style="color: var(--terminal-yellow);"></i>
+                            </div>
+                            <span>Risk Analyzer</span>
+                            <div style="margin-left: auto; color: var(--terminal-green); font-size: 10px;">●</div>
+                        </div>
+                        <div class="tree-item">
+                            <div class="tree-item-icon">
+                                <i class="fas fa-magic" style="color: var(--terminal-blue);"></i>
+                            </div>
+                            <span>Claude Assistant</span>
+                            <div style="margin-left: auto; color: var(--terminal-red); font-size: 10px;">●</div>
+                        </div>
+                    </div>
+
+                    <!-- Watchlists Section -->
+                    <div class="tree-item expanded" data-expandable="true">
+                        <div class="tree-item-expand expanded">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tree-item-icon">
+                            <i class="fas fa-eye" style="color: var(--terminal-yellow);"></i>
+                        </div>
+                        <span>Watchlists</span>
+                    </div>
+                    <div class="tree-children" style="display: block;">
+                        <div class="tree-item">
+                            <div class="tree-item-icon">
+                                <i class="fas fa-star" style="color: var(--terminal-yellow);"></i>
+                            </div>
+                            <span>Tech Stocks</span>
+                        </div>
+                        <div class="tree-item">
+                            <div class="tree-item-icon">
+                                <i class="fas fa-industry" style="color: var(--terminal-blue);"></i>
+                            </div>
+                            <span>Blue Chips</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="editor-area">
+            <div class="editor-tabs">
+                <div class="editor-tab active">
+                    <div class="editor-tab-icon">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <span>Portfolio Analysis</span>
+                    <div class="editor-tab-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="editor-tab">
+                    <div class="editor-tab-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <span>AI Insights</span>
+                    <div class="editor-tab-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="editor-tab">
+                    <div class="editor-tab-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <span>Strategy.py</span>
+                    <div class="editor-tab-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-content">
+                
+                <!-- Portfolio Overview Charts -->
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Portfolio Allocation
+                        </div>
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-line"></i>
+                            Performance Trend
+                        </div>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Holdings Table -->
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-table"></i>
+                        Current Holdings
+                        <div style="margin-left: auto; display: flex; gap: 8px;">
+                            <button class="quick-cmd">Export CSV</button>
+                            <button class="quick-cmd">Rebalance</button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--vscode-border);">
+                                    <th style="text-align: left; padding: 8px; color: var(--vscode-text-muted); font-size: 12px;">Symbol</th>
+                                    <th style="text-align: left; padding: 8px; color: var(--vscode-text-muted); font-size: 12px;">Quantity</th>
+                                    <th style="text-align: right; padding: 8px; color: var(--vscode-text-muted); font-size: 12px;">Price</th>
+                                    <th style="text-align: right; padding: 8px; color: var(--vscode-text-muted); font-size: 12px;">Value</th>
+                                    <th style="text-align: right; padding: 8px; color: var(--vscode-text-muted); font-size: 12px;">Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--vscode-border);">
+                                    <td style="padding: 8px; font-family: var(--font-mono);">AAPL</td>
+                                    <td style="padding: 8px;">100</td>
+                                    <td style="padding: 8px; text-align: right;">$150.25</td>
+                                    <td style="padding: 8px; text-align: right;">$15,025</td>
+                                    <td style="padding: 8px; text-align: right; color: var(--terminal-green);">+2.5%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--vscode-border);">
+                                    <td style="padding: 8px; font-family: var(--font-mono);">MSFT</td>
+                                    <td style="padding: 8px;">50</td>
+                                    <td style="padding: 8px; text-align: right;">$280.10</td>
+                                    <td style="padding: 8px; text-align: right;">$14,005</td>
+                                    <td style="padding: 8px; text-align: right; color: var(--terminal-red);">-1.2%</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; font-family: var(--font-mono);">GOOGL</td>
+                                    <td style="padding: 8px;">25</td>
+                                    <td style="padding: 8px; text-align: right;">$125.75</td>
+                                    <td style="padding: 8px; text-align: right;">$3,144</td>
+                                    <td style="padding: 8px; text-align: right; color: var(--terminal-green);">+0.8%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Panel Area (Terminal) -->
+        <div class="panel-area">
+            <div class="panel-tabs">
+                <div class="panel-tab active">
+                    <div class="panel-tab-icon">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <span>Terminal</span>
+                </div>
+                <div class="panel-tab">
+                    <div class="panel-tab-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <span>Problems (2)</span>
+                </div>
+                <div class="panel-tab">
+                    <div class="panel-tab-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <span>Output</span>
+                </div>
+                <div class="panel-tab">
+                    <div class="panel-tab-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <span>Debug Console</span>
+                </div>
+            </div>
+            <div class="panel-content">
+                <div class="terminal" id="terminal">
+                    <!-- Terminal content will be populated by JavaScript -->
+                </div>
+                <div class="ml-commands">
+                    <div class="command-input-group">
+                        <input type="text" class="command-input" id="commandInput" placeholder="Enter ML command or portfolio query..." autocomplete="off">
+                        <button class="command-btn" onclick="executeCommand()">
+                            <i class="fas fa-play"></i> Run
+                        </button>
+                    </div>
+                    <div class="quick-commands">
+                        <button class="quick-cmd" onclick="insertCommand('portfolio.analyze()')">Analyze Portfolio</button>
+                        <button class="quick-cmd" onclick="insertCommand('ai.optimize_allocation()')">Optimize Allocation</button>
+                        <button class="quick-cmd" onclick="insertCommand('risk.calculate_var()')">Calculate VaR</button>
+                        <button class="quick-cmd" onclick="insertCommand('market.get_signals()')">Get Signals</button>
+                        <button class="quick-cmd" onclick="insertCommand('backtest.run_strategy()')">Backtest Strategy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-item">
+                <i class="fab fa-git-alt"></i>
+                <span>main</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>2 Problems</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-wifi"></i>
+                <span>Connected</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <div class="status-item">
+                <span>Python 3.9.7</span>
+            </div>
+            <div class="status-item">
+                <span>UTF-8</span>
+            </div>
+            <div class="status-item">
+                <span>Ln 42, Col 16</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-bell"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div class="notifications" id="notifications"></div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item">
+            <i class="fas fa-copy" style="margin-right: 8px;"></i>
+            Copy
+        </div>
+        <div class="context-menu-item">
+            <i class="fas fa-paste" style="margin-right: 8px;"></i>
+            Paste
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item">
+            <i class="fas fa-download" style="margin-right: 8px;"></i>
+            Export Data
+        </div>
+        <div class="context-menu-item">
+            <i class="fas fa-refresh" style="margin-right: 8px;"></i>
+            Refresh
+        </div>
+    </div>
+
+    <script>
+        // VS Code Terminal ML Class JavaScript
+        let terminal;
+        let commandHistory = [];
+        let historyIndex = -1;
+        let currentCommand = '';
+
+        // Initialize the terminal
+        function initTerminal() {
+            terminal = document.getElementById('terminal');
+            
+            // Add welcome message
+            addTerminalLine('Welcome to VS Terminal ML Class - Portfolio Management Terminal', 'terminal-success');
+            addTerminalLine('Type "help" for available commands or use the quick commands below.', 'terminal-info');
+            addTerminalLine('', '');
+            
+            // Add initial prompt
+            addPrompt();
+            
+            // Setup command input
+            setupCommandInput();
+        }
+
+        function addTerminalLine(text, className = 'terminal-output') {
+            const line = document.createElement('div');
+            line.className = `terminal-line ${className}`;
+            line.textContent = text;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function addPrompt() {
+            const promptLine = document.createElement('div');
+            promptLine.className = 'terminal-line';
+            promptLine.innerHTML = `<span class="terminal-prompt">portfolio@mlclass:</span><span class="terminal-path">~/workspace</span><span class="terminal-command">$ </span>`;
+            terminal.appendChild(promptLine);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function setupCommandInput() {
+            const commandInput = document.getElementById('commandInput');
+            
+            commandInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    executeCommand();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        commandInput.value = commandHistory[historyIndex];
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        commandInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = commandHistory.length;
+                        commandInput.value = '';
+                    }
+                }
+            });
+        }
+
+        function executeCommand() {
+            const commandInput = document.getElementById('commandInput');
+            const command = commandInput.value.trim();
+            
+            if (!command) return;
+            
+            // Add command to terminal
+            const commandLine = document.createElement('div');
+            commandLine.className = 'terminal-line';
+            commandLine.innerHTML = `<span class="terminal-prompt">portfolio@mlclass:</span><span class="terminal-path">~/workspace</span><span class="terminal-command">$ ${command}</span>`;
+            terminal.appendChild(commandLine);
+            
+            // Add to history
+            commandHistory.push(command);
+            historyIndex = commandHistory.length;
+            
+            // Clear input
+            commandInput.value = '';
+            
+            // Process command
+            processCommand(command);
+            
+            // Add new prompt
+            setTimeout(() => {
+                addPrompt();
+            }, 100);
+        }
+
+        function processCommand(command) {
+            const cmd = command.toLowerCase();
+            
+            if (cmd === 'help') {
+                addTerminalLine('Available commands:', 'terminal-info');
+                addTerminalLine('  portfolio.analyze()        - Analyze current portfolio performance', 'terminal-output');
+                addTerminalLine('  ai.optimize_allocation()   - AI-powered portfolio optimization', 'terminal-output');
+                addTerminalLine('  risk.calculate_var()       - Calculate Value at Risk', 'terminal-output');
+                addTerminalLine('  market.get_signals()       - Get AI trading signals', 'terminal-output');
+                addTerminalLine('  backtest.run_strategy()    - Run strategy backtesting', 'terminal-output');
+                addTerminalLine('  clear                      - Clear terminal', 'terminal-output');
+                addTerminalLine('', '');
+            } else if (cmd === 'clear') {
+                terminal.innerHTML = '';
+                addTerminalLine('Terminal cleared.', 'terminal-success');
+            } else if (cmd.includes('portfolio.analyze')) {
+                addTerminalLine('Running portfolio analysis...', 'terminal-info');
+                setTimeout(() => {
+                    addTerminalLine('✓ Portfolio analysis complete', 'terminal-success');
+                    addTerminalLine('  Total Value: $32,174', 'terminal-output');
+                    addTerminalLine('  1-Day Return: +1.2%', 'terminal-output');
+                    addTerminalLine('  30-Day Return: +5.7%', 'terminal-output');
+                    addTerminalLine('  Sharpe Ratio: 1.45', 'terminal-output');
+                    addTerminalLine('  Max Drawdown: -8.3%', 'terminal-output');
+                }, 1000);
+            } else if (cmd.includes('ai.optimize_allocation')) {
+                addTerminalLine('Initializing AI optimization engine...', 'terminal-info');
+                setTimeout(() => {
+                    addTerminalLine('✓ AI optimization complete', 'terminal-success');
+                    addTerminalLine('Recommended allocation changes:', 'terminal-output');
+                    addTerminalLine('  AAPL: 45% → 38% (-7%)', 'terminal-warning');
+                    addTerminalLine('  MSFT: 35% → 42% (+7%)', 'terminal-success');
+                    addTerminalLine('  GOOGL: 20% → 20% (no change)', 'terminal-output');
+                    addTerminalLine('Expected improvement: +2.1% annual return', 'terminal-success');
+                }, 1500);
+            } else if (cmd.includes('risk.calculate_var')) {
+                addTerminalLine('Calculating Value at Risk...', 'terminal-info');
+                setTimeout(() => {
+                    addTerminalLine('✓ VaR calculation complete', 'terminal-success');
+                    addTerminalLine('95% Confidence Level:', 'terminal-output');
+                    addTerminalLine('  1-Day VaR: -$487 (-1.51%)', 'terminal-error');
+                    addTerminalLine('  5-Day VaR: -$1,092 (-3.39%)', 'terminal-error');
+                    addTerminalLine('  30-Day VaR: -$2,389 (-7.42%)', 'terminal-error');
+                }, 1200);
+            } else if (cmd.includes('market.get_signals')) {
+                addTerminalLine('Fetching AI trading signals...', 'terminal-info');
+                setTimeout(() => {
+                    addTerminalLine('✓ AI signals generated', 'terminal-success');
+                    addTerminalLine('Active signals for your portfolio:', 'terminal-output');
+                    addTerminalLine('  AAPL: HOLD (Confidence: 78%)', 'terminal-warning');
+                    addTerminalLine('  MSFT: BUY (Confidence: 85%)', 'terminal-success');
+                    addTerminalLine('  GOOGL: SELL (Confidence: 72%)', 'terminal-error');
+                    addTerminalLine('Signal strength: High', 'terminal-info');
+                }, 1300);
+            } else if (cmd.includes('backtest.run_strategy')) {
+                addTerminalLine('Running strategy backtest...', 'terminal-info');
+                setTimeout(() => {
+                    addTerminalLine('✓ Backtest complete (2020-2025)', 'terminal-success');
+                    addTerminalLine('Strategy Performance:', 'terminal-output');
+                    addTerminalLine('  Total Return: +127.3%', 'terminal-success');
+                    addTerminalLine('  Annual Return: +17.8%', 'terminal-success');
+                    addTerminalLine('  Max Drawdown: -12.4%', 'terminal-warning');
+                    addTerminalLine('  Win Rate: 64.2%', 'terminal-output');
+                    addTerminalLine('  Sharpe Ratio: 1.89', 'terminal-success');
+                }, 2000);
+            } else {
+                addTerminalLine(`Command not found: ${command}`, 'terminal-error');
+                addTerminalLine('Type "help" for available commands.', 'terminal-info');
+            }
+        }
+
+        function insertCommand(command) {
+            const commandInput = document.getElementById('commandInput');
+            commandInput.value = command;
+            commandInput.focus();
+        }
+
+        // Activity bar functionality
+        document.querySelectorAll('.activity-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                document.querySelectorAll('.activity-item').forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Show notification
+                showNotification(`Switched to ${this.getAttribute('data-view')} view`, 'info');
+            });
+        });
+
+        // Tab functionality
+        document.querySelectorAll('.editor-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+            });
+        });
+
+        // Tree view expand/collapse
+        document.querySelectorAll('.tree-item[data-expandable]').forEach(item => {
+            item.addEventListener('click', function() {
+                const expand = this.querySelector('.tree-item-expand');
+                const children = this.nextElementSibling;
+                
+                if (children && children.classList.contains('tree-children')) {
+                    if (children.style.display === 'none') {
+                        children.style.display = 'block';
+                        expand.classList.add('expanded');
+                        this.classList.add('expanded');
+                    } else {
+                        children.style.display = 'none';
+                        expand.classList.remove('expanded');
+                        this.classList.remove('expanded');
+                    }
+                }
+            });
+        });
+
+        // Portfolio selection
+        document.querySelectorAll('.portfolio-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all portfolios
+                document.querySelectorAll('.portfolio-item').forEach(p => p.classList.remove('active'));
+                // Add active class to clicked portfolio
+                this.classList.add('active');
+                
+                const portfolioId = this.getAttribute('data-portfolio-id');
+                showNotification(`Selected portfolio: ${this.querySelector('span').textContent}`, 'success');
+            });
+        });
+
+        // Context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = e.pageX + 'px';
+            contextMenu.style.top = e.pageY + 'px';
+        });
+
+        document.addEventListener('click', function() {
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.display = 'none';
+        });
+
+        // Notifications
+        function showNotification(message, type = 'info') {
+            const notifications = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div style="font-weight: 500; margin-bottom: 4px;">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                <div style="font-size: 12px; color: var(--vscode-text-muted);">${message}</div>
+            `;
+            
+            notifications.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Portfolio Allocation Chart
+            const allocCtx = document.getElementById('allocationChart').getContext('2d');
+            new Chart(allocCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['AAPL', 'MSFT', 'GOOGL', 'Cash'],
+                    datasets: [{
+                        data: [45, 35, 15, 5],
+                        backgroundColor: [
+                            'var(--terminal-blue)',
+                            'var(--terminal-green)',
+                            'var(--terminal-yellow)',
+                            'var(--terminal-cyan)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'var(--vscode-text)',
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [30000, 31200, 29800, 32100, 31500, 32174],
+                        borderColor: 'var(--terminal-green)',
+                        backgroundColor: 'rgba(13, 188, 121, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'var(--vscode-border)'
+                            },
+                            ticks: {
+                                color: 'var(--vscode-text)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'var(--vscode-border)'
+                            },
+                            ticks: {
+                                color: 'var(--vscode-text)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'var(--vscode-text)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initTerminal();
+            initCharts();
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('VS Terminal ML Class loaded successfully!', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

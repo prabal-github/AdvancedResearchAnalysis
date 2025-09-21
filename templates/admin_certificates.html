@@ -1,0 +1,212 @@
+{% extends "layout.html" %}
+{% block title %}Certificate Management{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Certificate Management</h1>
+        <p class="text-muted mb-0">Review and approve certificate requests</p>
+    </div>
+    <div>
+        <a href="/admin_dashboard" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Admin Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Pending Requests -->
+    <div class="col-12 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning bg-opacity-10">
+                <h5 class="mb-0"><i class="bi bi-clock me-2"></i>Pending Requests ({{ pending_requests|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_requests %}
+                    {% for req in pending_requests %}
+                    <div class="row border-bottom pb-4 mb-4 {% if loop.last %}border-bottom-0 mb-0 pb-0{% endif %}">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <h6 class="mb-0 me-3">{{ req.analyst_name }}</h6>
+                                <span class="badge bg-warning">Pending Review</span>
+                            </div>
+                            
+                            <div class="row text-muted small mb-3">
+                                <div class="col-sm-6">
+                                    <i class="bi bi-calendar-range me-1"></i>
+                                    Internship: {{ req.internship_start_date.strftime('%d %b %Y') }} - {{ req.internship_end_date.strftime('%d %b %Y') }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    Requested: {{ req.requested_at.strftime('%d %b %Y') }}
+                                </div>
+                            </div>
+                            
+                            <div class="row text-muted small mb-3">
+                                <div class="col-sm-6">
+                                    <i class="bi bi-envelope me-1"></i>
+                                    {{ req.analyst_email }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi bi-calendar-check me-1"></i>
+                                    Issue Date: {{ req.requested_issue_date.strftime('%d %b %Y') }}
+                                </div>
+                            </div>
+                            
+                            {% if req.request_message %}
+                            <div class="bg-light p-3 rounded mb-3">
+                                <strong>Analyst Message:</strong><br>
+                                {{ req.request_message }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <form method="POST" action="/admin/certificate/{{ req.id }}/approve" class="mb-2">
+                                <div class="mb-2">
+                                    <label class="form-label small">Performance Score (0-100)</label>
+                                    <input type="number" class="form-control" name="performance_score" 
+                                           min="0" max="100" value="85" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Admin Notes</label>
+                                    <textarea class="form-control" name="admin_notes" rows="2" 
+                                              placeholder="Optional notes for the analyst..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-sm w-100 mb-2">
+                                    <i class="bi bi-check-circle me-1"></i>Approve
+                                </button>
+                            </form>
+                            
+                            <form method="POST" action="/admin/certificate/{{ req.id }}/reject">
+                                <div class="mb-2">
+                                    <textarea class="form-control" name="admin_notes" rows="2" 
+                                              placeholder="Reason for rejection..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    <i class="bi bi-x-circle me-1"></i>Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">No Pending Requests</h5>
+                        <p class="text-muted">All certificate requests have been reviewed.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- All Requests History -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>All Requests History</h5>
+            </div>
+            <div class="card-body">
+                {% if all_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Analyst</th>
+                                <th>Internship Period</th>
+                                <th>Requested</th>
+                                <th>Status</th>
+                                <th>Performance Score</th>
+                                <th>Approved By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in all_requests %}
+                            <tr>
+                                <td>
+                                    <strong>{{ req.analyst_name }}</strong><br>
+                                    <small class="text-muted">{{ req.analyst_email }}</small>
+                                </td>
+                                <td>
+                                    {{ req.internship_start_date.strftime('%d %b %Y') }}<br>
+                                    <small class="text-muted">to {{ req.internship_end_date.strftime('%d %b %Y') }}</small>
+                                </td>
+                                <td>{{ req.requested_at.strftime('%d %b %Y') }}</td>
+                                <td>
+                                    <span class="badge bg-{% if req.status == 'approved' %}success{% elif req.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                                        {{ req.status.title() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if req.performance_score %}
+                                        <strong>{{ req.performance_score }}/100</strong>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if req.approved_by %}
+                                        {{ req.approved_by }}<br>
+                                        <small class="text-muted">{{ req.approved_at.strftime('%d %b %Y') if req.approved_at else '' }}</small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if req.status == 'approved' and req.certificate_generated %}
+                                        <a href="/admin/certificate/{{ req.id }}/download" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download me-1"></i>Download
+                                        </a>
+                                    {% elif req.status == 'approved' %}
+                                        <button class="btn btn-sm btn-outline-warning" disabled>
+                                            <i class="bi bi-hourglass-split me-1"></i>Generating...
+                                        </button>
+                                    {% else %}
+                                        <span class="text-muted small">No actions</span>
+                                    {% endif %}
+                                    
+                                    {% if req.certificate_unique_id %}
+                                        <br><small class="text-muted">ID: {{ req.certificate_unique_id }}</small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: #dee2e6;"></i>
+                        <h5 class="mt-3">No Certificate Requests</h5>
+                        <p class="text-muted">No certificate requests have been submitted yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto refresh page every 30 seconds if there are pending requests
+{% if pending_requests %}
+setTimeout(function() {
+    location.reload();
+}, 30000);
+{% endif %}
+
+// Confirmation for actions
+document.querySelectorAll('form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        const action = this.action.includes('/approve') ? 'approve' : 'reject';
+        const analystName = this.closest('.row').querySelector('h6').textContent;
+        
+        if (!confirm(`Are you sure you want to ${action} the certificate request for ${analystName}?`)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

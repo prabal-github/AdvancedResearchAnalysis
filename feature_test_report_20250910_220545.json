@@ -1,0 +1,152 @@
+{
+  "timestamp": "2025-09-10T22:05:45.897618",
+  "summary": {
+    "total_tests": 22,
+    "working": 19,
+    "not_working": 3,
+    "errors": 0,
+    "success_rate": 86.36363636363636
+  },
+  "results": {
+    "working": [
+      {
+        "name": "Main Page",
+        "url": "/",
+        "status": 200,
+        "response_size": 68432
+      },
+      {
+        "name": "VS Terminal AClass",
+        "url": "/vs_terminal_AClass",
+        "status": 200,
+        "response_size": 168349
+      },
+      {
+        "name": "Health Check",
+        "url": "/health",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "API Health",
+        "url": "/api/health",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Risk Management Dashboard",
+        "url": "/api/vs_terminal_AClass/risk_management/dashboard",
+        "status": 200,
+        "response_size": 36912
+      },
+      {
+        "name": "AI Advisor Query",
+        "url": "/api/vs_terminal_AClass/risk_management/advisor_query",
+        "status": 200,
+        "response_size": 1313
+      },
+      {
+        "name": "Market Data",
+        "url": "/api/market_data",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Portfolio Summary",
+        "url": "/api/portfolio/summary",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Enhanced Analytics",
+        "url": "/api/enhanced/dashboard",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Model Catalog",
+        "url": "/api/models/catalog",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Predictions",
+        "url": "/api/enhanced/predict_events",
+        "status": 200,
+        "response_size": 21006
+      },
+      {
+        "name": "Investor Login Page",
+        "url": "/investor_login",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Investor Register Page",
+        "url": "/investor_register",
+        "status": 200,
+        "response_size": 68506
+      },
+      {
+        "name": "User Profile",
+        "url": "/api/user/profile",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Analysis Report",
+        "url": "/api/analysis/report",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Performance Analytics",
+        "url": "/api/performance/analytics",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Real-time Events",
+        "url": "/api/realtime/events",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Export Portfolio",
+        "url": "/api/export/portfolio",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Data Export",
+        "url": "/api/data/export",
+        "status": 200,
+        "response_size": 9017
+      }
+    ],
+    "not_working": [
+      {
+        "name": "Events Current",
+        "url": "/api/events/current",
+        "status": 500,
+        "error": "Expected 200, got 500",
+        "response_preview": "<!doctype html>\n<html lang=en>\n  <head>\n    <title>TypeError: The view function for &#39;api_events_current&#39; did not return a valid response. The function either returned None or ended without a r"
+      },
+      {
+        "name": "Risk Management Status",
+        "url": "/api/vs_terminal_AClass/risk_management/status",
+        "status": 404,
+        "error": "Expected 200, got 404",
+        "response_preview": "<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try agai"
+      },
+      {
+        "name": "Comprehensive Risk Analysis",
+        "url": "/api/vs_terminal_AClass/risk_management/comprehensive_analysis",
+        "status": 500,
+        "error": "Expected 200, got 500",
+        "response_preview": "{\n  \"error\": \"Object of type RiskLevel is not JSON serializable\"\n}\n"
+      }
+    ],
+    "errors": []
+  }
+}

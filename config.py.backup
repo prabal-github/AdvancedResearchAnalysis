@@ -1,0 +1,101 @@
+import os
+
+
+def _bool(name: str, default: bool = False):
+    val = os.getenv(name)
+    if val is None:
+        return default
+    return val.lower() in ("1", "true", "yes", "on")
+
+
+def _to_int(val, default=None):
+    try:
+        return int(val)
+    except (TypeError, ValueError):
+        return default
+
+
+class Config:
+    # Core / DB
+    # Accept DATABASE_URL in common forms (postgres://..., postgresql://..., sqlite:///...)
+    # Allow dedicated RDS variable to override (so we don't have to rewrite existing deployment scripts)
+    # Ensure absolute path for SQLite database to avoid working directory issues
+    _default_db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "investment_research.db")
+    _raw_db_url = os.getenv("RDS_DATABASE_URL") or os.getenv("DATABASE_URL", f"sqlite:///{_default_db_path}")
+    # Heroku-style fix: upgrade postgres:// to postgresql:// for SQLAlchemy
+    if _raw_db_url.startswith("postgres://"):
+        _raw_db_url = _raw_db_url.replace("postgres://", "postgresql://", 1)
+
+    # Optional convenience: if DATABASE_URL not provided, but POSTGRES_* env vars exist, build the URL
+    if _raw_db_url.startswith("sqlite") and os.getenv("POSTGRES_HOST"):
+        pg_user = os.getenv("POSTGRES_USER", "postgres")
+        pg_pass = os.getenv("POSTGRES_PASSWORD", "")
+        pg_host = os.getenv("POSTGRES_HOST", "localhost")
+        pg_port = int(os.getenv("POSTGRES_PORT", "5432"))
+        pg_db = os.getenv("POSTGRES_DB", "postgres")
+        pg_ssl = os.getenv("POSTGRES_SSLMODE")  # e.g. require, verify-full
+        auth = f"{pg_user}:{pg_pass}@" if pg_pass else f"{pg_user}@"
+        _raw_db_url = f"postgresql+psycopg2://{auth}{pg_host}:{pg_port}/{pg_db}"
+        if pg_ssl:
+            _raw_db_url += f"?sslmode={pg_ssl}"
+    SQLALCHEMY_DATABASE_URI = _raw_db_url
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Sensible engine options for AWS/RDS (with safe env parsing)
+    _pool_recycle = _to_int(os.getenv("DB_POOL_RECYCLE_SECONDS"), 280)
+    _pool_size = _to_int(os.getenv("DB_POOL_SIZE"))
+    _max_overflow = _to_int(os.getenv("DB_MAX_OVERFLOW"))
+
+    _engine_opts = {
+        "pool_pre_ping": True,
+        "pool_recycle": _pool_recycle,
+    }
+    if _pool_size is not None:
+        _engine_opts["pool_size"] = _pool_size
+    if _max_overflow is not None:
+        _engine_opts["max_overflow"] = _max_overflow
+
+    SQLALCHEMY_ENGINE_OPTIONS = _engine_opts
+    DEBUG = _bool("FLASK_DEBUG", False)
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-insecure-change-me")  # override in production
+
+    # Session / Cookie Security
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
+    SESSION_COOKIE_SECURE = _bool("SESSION_COOKIE_SECURE", False)  # set True behind HTTPS (ALB / Nginx)
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SECURE = SESSION_COOKIE_SECURE
+    PERMANENT_SESSION_LIFETIME = int(os.getenv("SESSION_LIFETIME_SECONDS", str(60 * 60 * 8)))  # 8h default
+    PREFERRED_URL_SCHEME = os.getenv("PREFERRED_URL_SCHEME", "https")
+
+    # LLM / Model gateway
+    LLM_MODEL = os.getenv("LLM_MODEL", "mistral:latest")
+    LLM_PORT = int(os.getenv("LLM_PORT", "8000"))
+
+    # GitHub Integration (tokens must NOT be committed)
+    GITHUB_TOKEN = os.getenv("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")
+    GITHUB_USERNAME = os.getenv("sbrsingh20")
+    GITHUB_REPO_PREFIX = os.getenv("GITHUB_REPO_PREFIX", "analyst-reports")
+
+    # Razorpay (all via env in production)
+    RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+    RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
+    RAZORPAY_CURRENCY = os.getenv("RAZORPAY_CURRENCY", "INR")
+    RAZORPAY_PRICE_RETAIL = int(os.getenv("RAZORPAY_PRICE_RETAIL", str(1769 * 100)))
+    RAZORPAY_PRICE_PRO = int(os.getenv("RAZORPAY_PRICE_PRO", str(5899 * 100)))
+    RAZORPAY_PRICE_PRO_PLUS = int(os.getenv("RAZORPAY_PRICE_PRO_PLUS", str(9439 * 100)))
+
+    # AWS SES (NEVER commit real keys; use IAM role or env vars)
+    SES_REGION = os.getenv("SES_REGION", "us-east-1")
+    SES_ACCESS_KEY_ID = os.getenv("SES_ACCESS_KEY_ID")
+    SES_SECRET_ACCESS_KEY = os.getenv("SES_SECRET_ACCESS_KEY")
+    SES_SENDER_EMAIL = os.getenv("SES_SENDER_EMAIL", "support@example.com")
+
+    # Jitsi / Video
+    JITSI_BASE_URL = os.getenv("JITSI_BASE_URL", "https://meet.jit.si")
+    JITSI_JWT_APP_ID = os.getenv("JITSI_JWT_APP_ID")
+    JITSI_JWT_APP_SECRET = os.getenv("JITSI_JWT_APP_SECRET")
+    DEBUG_BOOKING_ERRORS = _bool("DEBUG_BOOKING_ERRORS", True)
+
+
+current_config = Config

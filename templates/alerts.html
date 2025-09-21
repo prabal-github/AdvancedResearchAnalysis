@@ -1,0 +1,263 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio Alerts{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Portfolio Alert System</h1>
+        <p class="text-muted mb-0">Real-time price and technical indicator alerts</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAlertModal">
+            <i class="bi bi-bell-fill me-1"></i> Create Alert
+        </button>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Alert Status Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-bell text-primary fs-1"></i>
+                <h4 class="mt-2">{{ alerts|length }}</h4>
+                <p class="text-muted mb-0">Active Alerts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success fs-1"></i>
+                <h4 class="mt-2" id="triggeredToday">0</h4>
+                <p class="text-muted mb-0">Triggered Today</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up text-info fs-1"></i>
+                <h4 class="mt-2">5</h4>
+                <p class="text-muted mb-0">Price Alerts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-speedometer text-warning fs-1"></i>
+                <h4 class="mt-2">3</h4>
+                <p class="text-muted mb-0">RSI Alerts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time Alerts -->
+<div id="alertNotifications" class="mb-4"></div>
+
+<!-- Active Alerts Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">Active Alerts</h5>
+    </div>
+    <div class="card-body">
+        {% if alerts %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Stock</th>
+                        <th>Alert Type</th>
+                        <th>Condition</th>
+                        <th>Current Value</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                    <tr data-alert-id="{{ alert.id }}">
+                        <td>
+                            <span class="badge bg-light text-dark">{{ alert.ticker }}</span>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if alert.alert_type.startswith('price') %}bg-primary
+                                {% elif alert.alert_type.startswith('rsi') %}bg-warning
+                                {% else %}bg-info{% endif %}">
+                                {{ alert.alert_type.replace('_', ' ').title() }}
+                            </span>
+                        </td>
+                        <td><code>{{ alert.condition }}</code></td>
+                        <td>
+                            <span class="fw-bold">
+                                {% if alert.current_value %}
+                                    {{ "%.2f"|format(alert.current_value) }}
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>{{ "%.2f"|format(alert.target_value) }}</td>
+                        <td>
+                            <span class="badge {% if alert.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                {% if alert.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleAlert({{ alert.id }})">
+                                {% if alert.is_active %}Disable{% else %}Enable{% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-bell-slash fs-1 text-muted"></i>
+            <h5 class="mt-3">No Active Alerts</h5>
+            <p class="text-muted">Create your first alert to get real-time notifications</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Create Alert Modal -->
+<div class="modal fade" id="createAlertModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Alert</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="alertForm">
+                    <div class="mb-3">
+                        <label class="form-label">Stock Ticker</label>
+                        <select class="form-select" name="ticker" required>
+                            <option value="">Select a stock...</option>
+                            <option value="RELIANCE.NS">RELIANCE.NS - Reliance Industries</option>
+                            <option value="TCS.NS">TCS.NS - Tata Consultancy Services</option>
+                            <option value="INFY.NS">INFY.NS - Infosys</option>
+                            <option value="HDFCBANK.NS">HDFCBANK.NS - HDFC Bank</option>
+                            <option value="ICICIBANK.NS">ICICIBANK.NS - ICICI Bank</option>
+                            <option value="KOTAKBANK.NS">KOTAKBANK.NS - Kotak Mahindra Bank</option>
+                            <option value="ITC.NS">ITC.NS - ITC Ltd</option>
+                            <option value="BHARTIARTL.NS">BHARTIARTL.NS - Bharti Airtel</option>
+                            <option value="ASIANPAINTS.NS">ASIANPAINTS.NS - Asian Paints</option>
+                            <option value="LT.NS">LT.NS - Larsen & Toubro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alert Type</label>
+                        <select class="form-select" name="alert_type" required>
+                            <option value="">Select alert type...</option>
+                            <option value="price_above">Price Above Target</option>
+                            <option value="price_below">Price Below Target</option>
+                            <option value="rsi_overbought">RSI Overbought (>70)</option>
+                            <option value="rsi_oversold">RSI Oversold (<30)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Target Value</label>
+                        <input type="number" class="form-control" name="target_value" step="0.01" required>
+                        <div class="form-text">Enter price for price alerts, or RSI threshold (0-100) for RSI alerts</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condition Description</label>
+                        <input type="text" class="form-control" name="condition" placeholder="e.g., price > 1500">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createAlert()">Create Alert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+<script>
+// Initialize Socket.IO
+const socket = io();
+
+// Listen for real-time alerts
+socket.on('alert_triggered', function(data) {
+    showAlertNotification(data);
+});
+
+function showAlertNotification(alertData) {
+    const alertHtml = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Alert Triggered!</strong> ${alertData.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    document.getElementById('alertNotifications').innerHTML = alertHtml;
+    
+    // Update triggered count
+    const currentCount = parseInt(document.getElementById('triggeredToday').textContent);
+    document.getElementById('triggeredToday').textContent = currentCount + 1;
+}
+
+function createAlert() {
+    const form = document.getElementById('alertForm');
+    const formData = new FormData(form);
+    
+    const alertData = {
+        ticker: formData.get('ticker'),
+        alert_type: formData.get('alert_type'),
+        target_value: formData.get('target_value'),
+        condition: formData.get('condition') || `${formData.get('alert_type')} ${formData.get('target_value')}`
+    };
+    
+    fetch('/create_alert', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(alertData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error creating alert: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating alert');
+    });
+}
+
+function toggleAlert(alertId) {
+    fetch(`/toggle_alert/${alertId}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error toggling alert: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error toggling alert');
+    });
+}
+</script>
+
+{% endblock %}

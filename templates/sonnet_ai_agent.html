@@ -1,0 +1,426 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% include 'partials/_brand_header.html' %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-dark text-white border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-2">
+                                <i class="bi bi-robot me-2"></i>Claude Sonnet AI Agent
+                            </h2>
+                            <p class="card-text mb-0">
+                                Professional-grade financial analysis with Claude Sonnet 3.5/4, enhanced web scraping, and PDF processing.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="text-end me-3">
+                                    <small class="opacity-75">Powered by</small><br>
+                                    <strong>Claude Sonnet AI</strong>
+                                </div>
+                                <i class="bi bi-lightning-charge-fill" style="font-size: 2.5rem; opacity: 0.8;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Model Selection & Status -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-cpu me-2"></i>AI Model Configuration
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Select AI Model</label>
+                            <select class="form-select" id="aiModelSelect">
+                                <option value="sonnet-3.5" selected>Claude 3.5 Sonnet (Recommended)</option>
+                                <option value="sonnet-4">Claude Sonnet 4 (Preview)</option>
+                                <option value="sonnet-legacy">Claude 3 Sonnet (Legacy)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">API Status</label>
+                            <div class="d-flex align-items-center">
+                                <span id="apiStatus" class="badge bg-warning">Checking...</span>
+                                <button type="button" class="btn btn-sm btn-outline-primary ms-2" id="configureApiBtn">
+                                    <i class="bi bi-gear"></i> Configure
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Enhanced Capabilities</h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="bi bi-globe text-primary" style="font-size: 1.5rem;"></i>
+                            <small class="d-block">Web Scraping</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 1.5rem;"></i>
+                            <small class="d-block">PDF Analysis</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-brain text-success" style="font-size: 1.5rem;"></i>
+                            <small class="d-block">AI Analysis</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Generation Interface -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-file-earmark-text me-2"></i>Generate Professional AI Report
+                    </h5>
+                    
+                    <form id="sonnetReportForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Report Subject <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="reportSubject" 
+                                       placeholder="e.g., TCS Stock Analysis, IT Sector Review, HDFC Bank Earnings">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Output Format</label>
+                                <select class="form-select" id="outputFormat">
+                                    <option value="pdf">PDF Report</option>
+                                    <option value="docx">Word Document</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Analysis Requirements <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="reportRequirements" rows="4" 
+                                     placeholder="Describe what you want analyzed:
+• Financial performance analysis
+• Technical analysis and price targets  
+• Risk assessment and recommendations
+• Competitive landscape analysis
+• Future outlook and catalysts"></textarea>
+                        </div>
+
+                        <!-- Enhanced Content Sources -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">URLs to Scrape (Optional)</label>
+                                <textarea class="form-control" id="urlsToScrape" rows="3" 
+                                         placeholder="Add URLs for enhanced analysis:
+https://example.com/financial-report
+https://example.com/earnings-analysis"></textarea>
+                                <small class="text-muted">One URL per line. Include financial websites, earnings reports, news articles.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">PDF Files to Analyze (Optional)</label>
+                                <input type="file" class="form-control" id="pdfFiles" multiple accept=".pdf">
+                                <small class="text-muted">Upload PDFs like annual reports, research papers, financial statements.</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted">
+                                <small>
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Reports are generated using advanced AI analysis with professional formatting
+                                </small>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg" id="generateReportBtn">
+                                <i class="bi bi-magic me-2"></i>Generate AI Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress & Results -->
+    <div class="row mt-4" id="progressSection" style="display: none;">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-hourglass-split me-2"></i>Report Generation Progress
+                    </h6>
+                    <div class="progress mb-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <div id="progressStatus">Initializing AI analysis...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="resultsSection" style="display: none;">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>Report Generated Successfully
+                    </h6>
+                    <div id="resultContent">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Configuration Modal -->
+<div class="modal fade" id="apiConfigModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configure Claude API</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Anthropic API Key</label>
+                    <input type="password" class="form-control" id="apiKeyInput" 
+                           placeholder="sk-ant-api03-...">
+                    <small class="text-muted">
+                        Get your API key from <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a>
+                    </small>
+                </div>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Your API key is used only for this session and is not stored permanently.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveApiKeyBtn">
+                    <i class="bi bi-check me-2"></i>Test & Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Check AI model status on load
+    checkAiModelsStatus();
+    
+    // Event handlers
+    $('#configureApiBtn').on('click', function() {
+        $('#apiConfigModal').modal('show');
+    });
+    
+    $('#saveApiKeyBtn').on('click', function() {
+        saveApiKey();
+    });
+    
+    $('#aiModelSelect').on('change', function() {
+        setAiModel($(this).val());
+    });
+    
+    $('#sonnetReportForm').on('submit', function(e) {
+        e.preventDefault();
+        generateReport();
+    });
+    
+    function checkAiModelsStatus() {
+        $.get('/api/ai_models')
+            .done(function(response) {
+                if (response.ok) {
+                    updateModelStatus(response.data);
+                }
+            })
+            .fail(function() {
+                $('#apiStatus').removeClass('bg-warning').addClass('bg-danger').text('Error');
+            });
+    }
+    
+    function updateModelStatus(data) {
+        if (data.api_status.api_key_configured) {
+            $('#apiStatus').removeClass('bg-warning bg-danger').addClass('bg-success').text('Connected');
+        } else if (data.api_status.anthropic_available) {
+            $('#apiStatus').removeClass('bg-success bg-danger').addClass('bg-warning').text('API Key Required');
+        } else {
+            $('#apiStatus').removeClass('bg-success bg-warning').addClass('bg-danger').text('Library Missing');
+        }
+        
+        // Update model selection
+        $('#aiModelSelect').val(data.current_model);
+    }
+    
+    function saveApiKey() {
+        const apiKey = $('#apiKeyInput').val().trim();
+        if (!apiKey) {
+            alert('Please enter an API key');
+            return;
+        }
+        
+        $('#saveApiKeyBtn').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i>Testing...');
+        
+        $.ajax({
+            url: '/api/claude_config',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({api_key: apiKey}),
+            success: function(response) {
+                if (response.ok) {
+                    $('#apiConfigModal').modal('hide');
+                    $('#apiStatus').removeClass('bg-warning bg-danger').addClass('bg-success').text('Connected');
+                    alert('API key configured successfully!');
+                } else {
+                    alert('API key test failed: ' + response.error);
+                }
+            },
+            error: function(xhr) {
+                const error = xhr.responseJSON ? xhr.responseJSON.error : 'Configuration failed';
+                alert('Error: ' + error);
+            },
+            complete: function() {
+                $('#saveApiKeyBtn').prop('disabled', false).html('<i class="bi bi-check me-2"></i>Test & Save');
+            }
+        });
+    }
+    
+    function setAiModel(modelName) {
+        $.ajax({
+            url: '/api/ai_models/set',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({model: modelName}),
+            success: function(response) {
+                if (response.ok) {
+                    console.log('Model set to:', modelName);
+                } else {
+                    alert('Failed to set model: ' + response.error);
+                }
+            }
+        });
+    }
+    
+    function generateReport() {
+        const subject = $('#reportSubject').val().trim();
+        const requirements = $('#reportRequirements').val().trim();
+        const format = $('#outputFormat').val();
+        const aiModel = $('#aiModelSelect').val();
+        
+        if (!subject || !requirements) {
+            alert('Please fill in the subject and requirements fields');
+            return;
+        }
+        
+        // Parse URLs
+        const urlsText = $('#urlsToScrape').val().trim();
+        const urls = urlsText ? urlsText.split('\n').map(url => url.trim()).filter(url => url) : [];
+        
+        // TODO: Handle PDF file uploads
+        const pdfFiles = [];
+        
+        // Show progress
+        $('#progressSection').show();
+        $('#resultsSection').hide();
+        $('#generateReportBtn').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i>Generating...');
+        
+        updateProgress(10, 'Initializing AI analysis...');
+        
+        $.ajax({
+            url: '/api/ai_report_agent',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                subject: subject,
+                requirements: requirements,
+                format: format,
+                ai_model: aiModel,
+                urls: urls,
+                pdf_files: pdfFiles
+            }),
+            success: function(response) {
+                updateProgress(100, 'Report generated successfully!');
+                
+                if (response.ok) {
+                    showResults(response);
+                } else {
+                    alert('Report generation failed: ' + response.error);
+                }
+            },
+            error: function(xhr) {
+                const error = xhr.responseJSON ? xhr.responseJSON.error : 'Generation failed';
+                alert('Error: ' + error);
+                updateProgress(0, 'Report generation failed');
+            },
+            complete: function() {
+                $('#generateReportBtn').prop('disabled', false).html('<i class="bi bi-magic me-2"></i>Generate AI Report');
+            }
+        });
+        
+        // Simulate progress updates
+        setTimeout(() => updateProgress(30, 'Extracting content from sources...'), 1000);
+        setTimeout(() => updateProgress(50, 'Running AI analysis...'), 3000);
+        setTimeout(() => updateProgress(70, 'Generating professional report...'), 5000);
+        setTimeout(() => updateProgress(90, 'Finalizing document...'), 7000);
+    }
+    
+    function updateProgress(percent, status) {
+        $('#progressBar').css('width', percent + '%');
+        $('#progressStatus').text(status);
+    }
+    
+    function showResults(response) {
+        $('#resultsSection').show();
+        $('#resultContent').html(`
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="mb-1">${response.filename}</h6>
+                    <small class="text-muted">Professional AI-generated report</small>
+                </div>
+                <div>
+                    <a href="${response.download_url}" class="btn btn-success btn-sm">
+                        <i class="bi bi-download me-1"></i>Download Report
+                    </a>
+                </div>
+            </div>
+        `);
+    }
+});
+</script>
+
+<style>
+.progress-bar {
+    transition: width 0.5s ease;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+</style>
+
+{% endblock %}

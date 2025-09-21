@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Form Submissions: {{ form.form_title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2><i class="fas fa-inbox"></i> Submissions: {{ form.form_title }}</h2>
+          <p class="text-muted mb-0">Subject: {{ form.form_subject }}</p>
+        </div>
+        <div>
+          <a href="{{ url_for('admin_contact_forms') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Forms
+          </a>
+          <a href="{{ url_for('admin_edit_contact_form', form_id=form.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit Form
+          </a>
+        </div>
+      </div>
+
+      <!-- Submissions Stats -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+              <h4 class="mb-0">{{ submissions|length }}</h4>
+              <small>Total Submissions</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-success text-white">
+            <div class="card-body text-center">
+              <h4 class="mb-0">{{ submissions|selectattr('is_contacted')|list|length }}</h4>
+              <small>Contacted</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-info text-white">
+            <div class="card-body text-center">
+              <h4 class="mb-0">{{ submissions|selectattr('is_read')|list|length }}</h4>
+              <small>Read</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+              <h4 class="mb-0">{{ submissions|rejectattr('is_read')|list|length }}</h4>
+              <small>Pending Review</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submissions List -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">All Submissions</h5>
+        </div>
+        <div class="card-body">
+          {% if submissions %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Contact Info</th>
+                  <th>Message</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for submission in submissions %}
+                <tr class="{% if not submission.is_read %}table-warning{% endif %}">
+                  <td>
+                    <div class="d-flex flex-column">
+                      {% if submission.is_read %}
+                      <span class="badge bg-info mb-1">Read</span>
+                      {% else %}
+                      <span class="badge bg-warning mb-1">Unread</span>
+                      {% endif %}
+                      
+                      {% if submission.is_contacted %}
+                      <span class="badge bg-success">Contacted</span>
+                      {% else %}
+                      <span class="badge bg-secondary">Not Contacted</span>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td>
+                    <strong>{{ submission.name }}</strong><br>
+                    <a href="mailto:{{ submission.email }}">{{ submission.email }}</a><br>
+                    {% if submission.phone %}
+                    <a href="tel:{{ submission.phone }}">{{ submission.phone }}</a>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if submission.message %}
+                    <div class="message-text" style="max-width: 300px;">
+                      {{ submission.message[:100] }}
+                      {% if submission.message|length > 100 %}
+                      <span class="text-muted">...</span>
+                      <button class="btn btn-sm btn-link p-0" type="button" data-bs-toggle="modal" 
+                              data-bs-target="#messageModal{{ submission.id }}">
+                        Read More
+                      </button>
+                      {% endif %}
+                    </div>
+                    {% else %}
+                    <em class="text-muted">No message</em>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <small>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') if submission.submitted_at else 'N/A' }}</small>
+                    {% if submission.contacted_at %}
+                    <br><small class="text-success">Contacted: {{ submission.contacted_at.strftime('%Y-%m-%d') }}</small>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="btn-group-vertical btn-group-sm" role="group">
+                      <button class="btn btn-outline-primary" onclick="markAsRead({{ submission.id }}, {{ not submission.is_read|tojson }})">
+                        {% if submission.is_read %}Mark Unread{% else %}Mark Read{% endif %}
+                      </button>
+                      <button class="btn btn-outline-success" onclick="markAsContacted({{ submission.id }}, {{ not submission.is_contacted|tojson }})">
+                        {% if submission.is_contacted %}Mark Not Contacted{% else %}Mark Contacted{% endif %}
+                      </button>
+                      <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#notesModal{{ submission.id }}">
+                        Notes
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5>No Submissions Yet</h5>
+            <p class="text-muted">Submissions for this form will appear here once users start filling it out.</p>
+            <a href="{{ url_for('public_contact_form', form_slug=form.form_slug) }}" target="_blank" class="btn btn-primary">
+              <i class="fas fa-external-link-alt"></i> View Form
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Modals -->
+{% for submission in submissions %}
+{% if submission.message and submission.message|length > 100 %}
+<div class="modal fade" id="messageModal{{ submission.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Message from {{ submission.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ submission.message }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Notes Modal -->
+<div class="modal fade" id="notesModal{{ submission.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Admin Notes - {{ submission.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control" id="notes{{ submission.id }}" rows="4" 
+                  placeholder="Add internal notes about this submission...">{{ submission.admin_notes or '' }}</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="updateNotes({{ submission.id }})">Save Notes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+function markAsRead(submissionId, isRead) {
+  updateSubmission(submissionId, { is_read: isRead });
+}
+
+function markAsContacted(submissionId, isContacted) {
+  updateSubmission(submissionId, { is_contacted: isContacted });
+}
+
+function updateNotes(submissionId) {
+  const notes = document.getElementById('notes' + submissionId).value;
+  updateSubmission(submissionId, { admin_notes: notes });
+  bootstrap.Modal.getInstance(document.getElementById('notesModal' + submissionId)).hide();
+}
+
+function updateSubmission(submissionId, data) {
+  fetch(`/admin/contact_forms/submissions/${submissionId}/update`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      location.reload();
+    } else {
+      alert('Error updating submission: ' + (result.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error updating submission');
+  });
+}
+</script>
+{% endblock %}

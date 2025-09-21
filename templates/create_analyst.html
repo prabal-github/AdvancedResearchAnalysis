@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Analyst Account{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create New Analyst Account
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" id="createAnalystForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Username *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <div class="form-text">This will be used for login</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password *</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <div class="form-text">Minimum 6 characters</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <select class="form-select" id="specialization" name="specialization">
+                                        <option value="">Select Specialization</option>
+                                        <option value="Technical Analysis">Technical Analysis</option>
+                                        <option value="Fundamental Analysis">Fundamental Analysis</option>
+                                        <option value="Quantitative Analysis">Quantitative Analysis</option>
+                                        <option value="Sector Analysis">Sector Analysis</option>
+                                        <option value="Macro Economics">Macro Economics</option>
+                                        <option value="ESG Research">ESG Research</option>
+                                        <option value="Risk Analysis">Risk Analysis</option>
+                                        <option value="Portfolio Management">Portfolio Management</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="experience_years" class="form-label">Experience (Years)</label>
+                                    <input type="number" class="form-control" id="experience_years" name="experience_years" min="0" max="50">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-user-plus me-2"></i>Create Analyst Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Analyst Guidelines Card -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Analyst Account Guidelines
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Account Features:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Research task management</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Report submission portal</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Performance tracking</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Skill development tools</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Default Permissions:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Submit research reports</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Access research templates</li>
+                                <li><i class="fas fa-check text-success me-2"></i>View assigned tasks</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Track personal metrics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('createAnalystForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    if (password.length < 6) {
+        e.preventDefault();
+        alert('Password must be at least 6 characters long');
+        return;
+    }
+});
+</script>
+{% endblock %}

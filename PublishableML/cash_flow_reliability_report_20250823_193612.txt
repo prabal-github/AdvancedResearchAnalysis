@@ -1,0 +1,29 @@
+Cash Flow Reliability Score Analysis Report
+=============================================
+Generated: 2025-08-23 19:36:12
+
+Model Components:
+-----------------
+Ocf Conversion: 25.0%
+Cash Flow Stability: 20.0%
+Working Capital Efficiency: 20.0%
+Accruals Quality: 15.0%
+Free Cash Flow Generation: 20.0%
+
+Top 15 Stocks by Cash Flow Reliability Score:
+-----------------------------------------------
+ 1. TCS.NS          | Score: 0.802 | Rating: Excellent | Sector: Technology
+ 2. HEROMOTOCO.NS   | Score: 0.800 | Rating: Excellent | Sector: Consumer Cyclical
+ 3. BRITANNIA.NS    | Score: 0.796 | Rating: Strong    | Sector: Consumer Defensive
+ 4. TECHM.NS        | Score: 0.795 | Rating: Strong    | Sector: Technology
+ 5. CIPLA.NS        | Score: 0.780 | Rating: Strong    | Sector: Healthcare
+ 6. APOLLOHOSP.NS   | Score: 0.776 | Rating: Strong    | Sector: Healthcare
+ 7. ADANIPORTS.NS   | Score: 0.753 | Rating: Strong    | Sector: Industrials
+ 8. ONGC.NS         | Score: 0.752 | Rating: Strong    | Sector: Energy
+ 9. HDFCBANK.NS     | Score: 0.748 | Rating: Strong    | Sector: Financial Services
+10. ULTRACEMCO.NS   | Score: 0.740 | Rating: Strong    | Sector: Basic Materials
+11. HINDUNILVR.NS   | Score: 0.731 | Rating: Strong    | Sector: Consumer Defensive
+12. ASIANPAINT.NS   | Score: 0.731 | Rating: Strong    | Sector: Basic Materials
+13. COALINDIA.NS    | Score: 0.730 | Rating: Strong    | Sector: Energy
+14. TATACONSUM.NS   | Score: 0.728 | Rating: Strong    | Sector: Consumer Defensive
+15. MARUTI.NS       | Score: 0.722 | Rating: Strong    | Sector: Consumer Cyclical

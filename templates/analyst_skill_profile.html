@@ -1,0 +1,351 @@
+{% extends "layout.html" %}
+{% block title %}{{ analyst_name }} - Skill Profile - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">
+            <i class="bi bi-person-badge me-2 text-primary"></i>
+            {{ analyst_name }}
+        </h1>
+        <p class="text-muted mb-0">Skill Development Profile & Learning Progress</p>
+    </div>
+    <div>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Skill Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-primary mb-2">
+                    <i class="bi bi-trophy fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.total_skills_completed if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">Total Skills Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-info mb-2">
+                    <i class="bi bi-code-slash fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.python_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">Python Skills</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-warning mb-2">
+                    <i class="bi bi-database fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.sql_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">SQL Skills</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-success mb-2">
+                    <i class="bi bi-robot fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.ai_ml_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">AI/ML Skills</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skill Level & Rating -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-award me-2"></i>Skill Level
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    {% set skill_level = summary.skill_level if summary else 'beginner' %}
+                    <span class="badge fs-4 bg-{{ 'success' if skill_level == 'advanced' else 'warning' if skill_level == 'intermediate' else 'primary' }}">
+                        {{ skill_level.title() }}
+                    </span>
+                </div>
+                <div class="progress mb-2" style="height: 10px;">
+                    {% set total_skills = summary.total_skills_completed if summary else 0 %}
+                    {% set progress = (total_skills / 25 * 100) if total_skills < 25 else 100 %}
+                    <div class="progress-bar bg-{{ 'success' if skill_level == 'advanced' else 'warning' if skill_level == 'intermediate' else 'primary' }}" 
+                         style="width: {{ progress }}%"></div>
+                </div>
+                <small class="text-muted">
+                    {% if skill_level == 'beginner' %}
+                        Complete 8+ skills to reach Intermediate
+                    {% elif skill_level == 'intermediate' %}
+                        Complete 20+ skills to reach Advanced
+                    {% else %}
+                        Advanced Level Achieved! 🎉
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-star me-2"></i>Average Rating
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    {% set avg_rating = summary.avg_rating if summary else 0 %}
+                    <div class="fs-2">
+                        {% for i in range(1, 6) %}
+                            {% if i <= avg_rating %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-star text-muted"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="mt-2">
+                        <span class="fs-4 fw-bold">{{ "%.1f"|format(avg_rating) }}</span>
+                        <span class="text-muted">/ 5.0</span>
+                    </div>
+                </div>
+                <small class="text-muted">Based on self-assessment ratings</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skills by Category -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-check me-2"></i>Completed Skills by Category
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="skillTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="python-tab" data-bs-toggle="tab" data-bs-target="#python" type="button">
+                            <i class="bi bi-code-slash me-2"></i>Python ({{ skills_by_category.python|length }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sql-tab" data-bs-toggle="tab" data-bs-target="#sql" type="button">
+                            <i class="bi bi-database me-2"></i>SQL ({{ skills_by_category.sql|length }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="aiml-tab" data-bs-toggle="tab" data-bs-target="#aiml" type="button">
+                            <i class="bi bi-robot me-2"></i>AI/ML ({{ skills_by_category.ai_ml|length }})
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content mt-3" id="skillTabContent">
+                    <!-- Python Skills -->
+                    <div class="tab-pane fade show active" id="python" role="tabpanel">
+                        {% if skills_by_category.python %}
+                            <div class="row">
+                                {% for skill in skills_by_category.python %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-start border-4 border-primary">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ skill.skill_title }}</h6>
+                                            <p class="card-text small text-muted">{{ skill.analysis_type.replace('_', ' ').title() }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {% for i in range(1, 6) %}
+                                                        {% if skill.rating and i <= skill.rating %}
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <small class="text-muted">{{ skill.completed_at.strftime('%b %d, %Y') }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-code-slash fs-1 mb-3"></i>
+                                <p>No Python skills completed yet. Start learning from your reports!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- SQL Skills -->
+                    <div class="tab-pane fade" id="sql" role="tabpanel">
+                        {% if skills_by_category.sql %}
+                            <div class="row">
+                                {% for skill in skills_by_category.sql %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-start border-4 border-info">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ skill.skill_title }}</h6>
+                                            <p class="card-text small text-muted">{{ skill.analysis_type.replace('_', ' ').title() }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {% for i in range(1, 6) %}
+                                                        {% if skill.rating and i <= skill.rating %}
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <small class="text-muted">{{ skill.completed_at.strftime('%b %d, %Y') }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-database fs-1 mb-3"></i>
+                                <p>No SQL skills completed yet. Start learning from your reports!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- AI/ML Skills -->
+                    <div class="tab-pane fade" id="aiml" role="tabpanel">
+                        {% if skills_by_category.ai_ml %}
+                            <div class="row">
+                                {% for skill in skills_by_category.ai_ml %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-start border-4 border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ skill.skill_title }}</h6>
+                                            <p class="card-text small text-muted">{{ skill.analysis_type.replace('_', ' ').title() }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {% for i in range(1, 6) %}
+                                                        {% if skill.rating and i <= skill.rating %}
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <small class="text-muted">{{ skill.completed_at.strftime('%b %d, %Y') }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-robot fs-1 mb-3"></i>
+                                <p>No AI/ML skills completed yet. Start learning from your reports!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reports with Skill Learning -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-text me-2"></i>Your Reports with Skill Learning
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if reports_with_skills %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Report Date</th>
+                                    <th>Report ID</th>
+                                    <th>Available Skills</th>
+                                    <th>Completed Skills</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in reports_with_skills %}
+                                <tr>
+                                    <td>{{ item.report.created_at.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        <span class="font-monospace small">{{ item.report.id[:12] }}...</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ item.skill_count }} skills</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">{{ item.completed_skills }} completed</span>
+                                    </td>
+                                    <td>
+                                        {% if item.skill_count > 0 %}
+                                            {% set progress = (item.completed_skills / item.skill_count * 100) %}
+                                            <div class="progress" style="height: 6px; width: 80px;">
+                                                <div class="progress-bar bg-success" style="width: {{ progress }}%"></div>
+                                            </div>
+                                            <small class="text-muted">{{ "%.0f"|format(progress) }}%</small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="/report/{{ item.report.id }}" class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            {% if item.skill_count > 0 %}
+                                                <a href="/skill_learning/{{ item.report.id }}" class="btn btn-outline-success">
+                                                    <i class="bi bi-mortarboard"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-file-text fs-1 mb-3"></i>
+                        <p>No reports found. Submit your first financial analysis to start learning!</p>
+                        <a href="/" class="btn btn-primary">
+                            <i class="bi bi-plus me-2"></i>Submit Report
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

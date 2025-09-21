@@ -1,0 +1,702 @@
+{% extends "layout.html" %}
+{% block title %}Analyst Dashboard - {{ analyst_name }}{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Welcome, {{ analyst_name }}</h1>
+        <p class="text-muted mb-0">Your research assignments and deadlines</p>
+    </div>
+    <div>
+        <a href="/analyst/{{ analyst_name }}/performance" class="btn btn-primary me-2">
+            <i class="bi bi-graph-up me-1"></i> My Performance
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-house me-1"></i> Main Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Quick Navigation -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="fas fa-compass me-2"></i>Quick Access
+                </h6>
+                <div class="row g-2">
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analyst_research_tasks') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-tasks d-block mb-1"></i>
+                            <small>Research Tasks</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('report_hub') }}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-folder-open d-block mb-1"></i>
+                            <small>My Reports</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('research_templates') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-clipboard-list d-block mb-1"></i>
+                            <small>Templates</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analyst_skill_profile_page', analyst_name=analyst.name) }}" class="btn btn-outline-purple w-100">
+                            <i class="fas fa-graduation-cap d-block mb-1"></i>
+                            <small>Skill Dev</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('edit_analyst_profile', analyst_name=analyst.name) }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-user-edit d-block mb-1"></i>
+                            <small>Edit Profile</small>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Additional Analyst Tools Row -->
+                <div class="row g-2 mt-2">
+                    <div class="col-md-2">
+                        <a href="{{ url_for('report_hub') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-database d-block mb-1"></i>
+                            <small>Report Hub</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analyze_new') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search d-block mb-1"></i>
+                            <small>Analyze New</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('compare_reports') }}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-balance-scale d-block mb-1"></i>
+                            <small>Compare Reports</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analyst_vs_terminal') }}" class="btn btn-outline-dark w-100">
+                            <i class="fas fa-terminal d-block mb-1"></i>
+                            <small>VS Terminal</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analysts_list') }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-users d-block mb-1"></i>
+                            <small>Analyst Directory</small>
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('analyst_performance_view') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-chart-line d-block mb-1"></i>
+                            <small>My Performance</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-outline-purple {
+    color: #6f42c1;
+    border-color: #6f42c1;
+}
+.btn-outline-purple:hover {
+    color: #fff;
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+}
+</style>
+
+<!-- Alert for overdue topics -->
+{% if overdue_topics %}
+<div class="alert alert-danger" role="alert">
+    <h5><i class="bi bi-exclamation-triangle me-2"></i>Overdue Topics</h5>
+    <ul class="mb-0">
+        {% for topic in overdue_topics %}
+        <li><strong>{{ topic.title }}</strong> - Due: {{ topic.deadline.strftime('%Y-%m-%d') }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-warning mb-2">{{ assigned_topics|length }}</div>
+                <h6 class="text-muted">Assigned Topics</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-info mb-2">{{ in_progress_topics|length }}</div>
+                <h6 class="text-muted">In Progress</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-success mb-2">{{ completed_topics|length }}</div>
+                <h6 class="text-muted">Completed</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-danger mb-2">{{ overdue_topics|length }}</div>
+                <h6 class="text-muted">Overdue</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Certificate Status Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-certificate me-2 text-warning"></i>Certificate Status</h5>
+        {% if certificate_eligible %}
+        <button class="btn btn-success btn-sm" onclick="generateCertificate('{{ analyst.analyst_id }}')">
+            <i class="fas fa-plus me-1"></i>Generate Certificate
+        </button>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        {% if certificate_eligible %}
+                        <div class="badge bg-success fs-6 p-2">
+                            <i class="fas fa-check-circle me-1"></i>Eligible
+                        </div>
+                        {% else %}
+                        <div class="badge bg-warning fs-6 p-2">
+                            <i class="fas fa-clock me-1"></i>In Progress
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>Certification Eligibility</strong><br>
+                        <small class="text-muted">
+                            {% if certificate_eligible %}
+                                You've completed {{ completed_topics|length }} topics and are eligible for certification!
+                            {% else %}
+                                Complete {{ 5 - completed_topics|length }} more topics to earn your certificate
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="progress" style="height: 20px;">
+                    {% set progress_percent = (completed_topics|length / 5 * 100)|round|int %}
+                    <div class="progress-bar bg-gradient" 
+                         role="progressbar" 
+                         style="width: {{ progress_percent }}%"
+                         aria-valuenow="{{ progress_percent }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ progress_percent }}%
+                    </div>
+                </div>
+                <small class="text-muted">{{ completed_topics|length }}/5 topics completed</small>
+            </div>
+        </div>
+        
+        <!-- Existing Certificates -->
+        {% if certificates %}
+        <h6 class="mb-3"><i class="fas fa-award me-2"></i>Your Certificates</h6>
+        <div class="row">
+            {% for cert in certificates %}
+            <div class="col-md-4 mb-3">
+                <div class="card border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-certificate text-warning mb-2" style="font-size: 2rem;"></i>
+                        <h6 class="card-title">{{ cert.certificate_name }}</h6>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Issued: {{ cert.issue_date.strftime('%B %d, %Y') if cert.issue_date else 'N/A' }}<br>
+                                Status: <span class="badge bg-{{ 'success' if cert.status == 'active' else 'secondary' }}">{{ cert.status|title }}</span>
+                            </small>
+                        </p>
+                        {% if cert.skills_gained %}
+                        <p class="card-text">
+                            <small><strong>Skills:</strong> {{ cert.skills_gained }}</small>
+                        </p>
+                        {% endif %}
+                        <a href="{{ url_for('download_certificate_by_id', cert_id=cert.certificate_id) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download me-1"></i>Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-award text-muted mb-3" style="font-size: 3rem;"></i>
+            <h6 class="text-muted">No certificates yet</h6>
+            <p class="text-muted">Complete more research topics to earn your first certificate!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Assigned Topics -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Assigned Topics</h5>
+    </div>
+    <div class="card-body">
+        {% if assigned_topics %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Deadline</th>
+                        <th>Days Left</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in assigned_topics %}
+                    <tr>
+                        <td>
+                            <strong>{{ topic.title }}</strong>
+                            {% if topic.description %}
+                            <br><small class="text-muted">{{ topic.description[:100] }}...</small>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-info">{{ topic.category }}</span></td>
+                        <td>
+                            {% if topic.deadline %}
+                                {{ topic.deadline.strftime('%Y-%m-%d') }}
+                            {% else %}
+                                No deadline
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if topic.deadline %}
+                                {% set days_left = (topic.deadline - moment.utcnow()).days %}
+                                {% if days_left < 0 %}
+                                    <span class="badge bg-danger">{{ abs(days_left) }} days overdue</span>
+                                {% elif days_left <= 3 %}
+                                    <span class="badge bg-warning">{{ days_left }} days left</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ days_left }} days left</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">No deadline</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="startTopic({{ topic.id }})">
+                                <i class="bi bi-play"></i> Start
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-clipboard-check display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">No assigned topics</h5>
+            <p class="text-muted">You're all caught up!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- In Progress Topics -->
+{% if in_progress_topics %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-hourglass-split me-2"></i>In Progress</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Started</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in in_progress_topics %}
+                    <tr>
+                        <td>
+                            <strong>{{ topic.title }}</strong>
+                            {% if topic.description %}
+                            <br><small class="text-muted">{{ topic.description[:100] }}...</small>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-warning">{{ topic.category }}</span></td>
+                        <td>{{ topic.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if topic.deadline %}
+                                {{ topic.deadline.strftime('%Y-%m-%d') }}
+                            {% else %}
+                                No deadline
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="completeTopic({{ topic.id }})">
+                                <i class="bi bi-check"></i> Complete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Completed Topics -->
+{% if completed_topics %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Recently Completed</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Completed</th>
+                        <th>Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in completed_topics %}
+                    <tr>
+                        <td>{{ topic.title }}</td>
+                        <td><span class="badge bg-success">{{ topic.category }}</span></td>
+                        <td>{{ topic.completed_at.strftime('%Y-%m-%d') if topic.completed_at else 'N/A' }}</td>
+                        <td>
+                            {% if topic.report_id %}
+                                <a href="/report/{{ topic.report_id }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View Report
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No report linked</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Support & Feedback (Analyst) START -->
+<div class="card border-0 shadow-sm mb-4" id="analystSupportCard">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="bi bi-life-preserver me-2"></i>Support & Feedback</h5>
+    <button class="btn btn-sm btn-outline-primary" type="button" onclick="toggleAnalystTicketForm()"><i class="bi bi-plus-circle me-1"></i> New Ticket</button>
+  </div>
+  <div class="card-body">
+    <div id="analystTicketForm" style="display:none;" class="mb-3">
+        <div class="row g-2">
+            <div class="col-md-4"><input type="text" id="analystTicketSubject" class="form-control" placeholder="Subject"></div>
+            <div class="col-md-3">
+                <select id="analystTicketCategory" class="form-select">
+                    <option value="general">General</option>
+                    <option value="technical">Technical</option>
+                    <option value="billing">Billing</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="complaint">Complaint</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="analystTicketPriority" class="form-select">
+                    <option value="low">Low</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <textarea id="analystTicketDescription" class="form-control" rows="3" placeholder="Describe your issue or feedback..."></textarea>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-success btn-sm" type="button" onclick="submitAnalystTicket()"><i class="bi bi-send me-1"></i>Submit</button>
+                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleAnalystTicketForm(false)">Cancel</button>
+            </div>
+        </div>
+        <div class="small text-muted mt-2" id="analystTicketHint">Max 5 tickets per 24h. Please avoid duplicates.</div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead class="table-light"><tr><th>ID</th><th>Subject</th><th>Status</th><th>Category</th><th>Priority</th><th>Created</th><th></th></tr></thead>
+        <tbody id="analystTicketsBody"><tr><td colspan="7" class="text-center text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- Support & Feedback (Analyst) END -->
+<script>
+// Fallback toast if not already defined (ensures calendar errors can display)
+if(typeof window.showToast !== 'function'){
+    (function(){
+        const wrap=document.createElement('div'); wrap.id='toastContainer'; wrap.style.cssText='position:fixed;top:1rem;right:1rem;z-index:1080;'; document.body.appendChild(wrap);
+        window.showToast=(msg,type='info')=>{const color= type==='success'?'bg-success':(type==='error'?'bg-danger':(type==='warning'?'bg-warning text-dark':'bg-secondary')); const el=document.createElement('div'); el.className=`toast align-items-center text-white ${color} border-0 show mb-2`; el.innerHTML=`<div class='d-flex'><div class='toast-body'>${msg}</div><button type='button' class='btn-close btn-close-white me-2 m-auto' data-bs-dismiss='toast'></button></div>`; wrap.appendChild(el); setTimeout(()=>el.remove(),4000); };
+    })();
+}
+function toggleAnalystTicketForm(force){
+  const el = document.getElementById('analystTicketForm');
+  if(force===false){ el.style.display='none'; return; }
+  el.style.display = (el.style.display==='none'||!el.style.display)?'block':'none';
+}
+function submitAnalystTicket(){
+  const subject = analystTicketSubject.value.trim();
+  const description = analystTicketDescription.value.trim();
+  const category = analystTicketCategory.value;
+  const priority = analystTicketPriority.value;
+  if(!subject||!description){ return alert('Subject & description required'); }
+  fetch('/api/support/tickets',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({subject, description, category, priority, is_complaint: category==='complaint'})})
+  .then(r=>r.json()).then(j=>{ if(!j.ok){ alert(j.error||'Error'); } else { toggleAnalystTicketForm(false); loadAnalystTickets(); }}).catch(()=>alert('Error')); }
+function loadAnalystTickets(){
+  fetch('/api/support/tickets').then(r=>r.json()).then(j=>{ if(!j.ok){ return; } const body=document.getElementById('analystTicketsBody'); body.innerHTML=''; if(!j.tickets.length){ body.innerHTML='<tr><td colspan="7" class="text-center text-muted">No tickets</td></tr>'; return;} j.tickets.forEach(t=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${t.id}</td><td><button class='btn btn-link p-0' type='button' onclick='viewAnalystTicket(${t.id})'>${t.subject}</button></td><td><span class='badge bg-${t.status==='resolved'?'success':(t.status==='in_progress'?'warning':'secondary')}'>${t.status}</span></td><td>${t.category}</td><td>${t.priority}</td><td>${new Date(t.created_at).toLocaleDateString()}</td><td><button class='btn btn-sm btn-outline-info' type='button' onclick='viewAnalystTicket(${t.id})'>View</button></td>`; body.appendChild(tr); }); }); }
+function viewAnalystTicket(id){ fetch(`/api/support/tickets/${id}`).then(r=>r.json()).then(j=>{ if(!j.ok){return;} const t=j.ticket; fetch(`/api/support/tickets/${id}/history`).then(r=>r.json()).then(h=>{ const historyRows=(h.history||[]).map(x=>`<tr><td>${new Date(x.created_at).toLocaleString()}</td><td>${x.from_status||'-'}</td><td>${x.to_status}</td><td>${x.note||''}</td></tr>`).join(''); const modalHtml=`<div class='modal fade' id='ticketModal'><div class='modal-dialog modal-lg'><div class='modal-content'><div class='modal-header'><h5 class='modal-title'>Ticket #${t.id} - ${t.subject}</h5><button type='button' class='btn-close' data-bs-dismiss='modal'></button></div><div class='modal-body'><p><strong>Status:</strong> ${t.status}</p><p><strong>Category:</strong> ${t.category} | <strong>Priority:</strong> ${t.priority}</p><p style='white-space:pre-wrap'>${t.description}</p><hr><h6>History</h6><div class='table-responsive'><table class='table table-sm'><thead><tr><th>Time</th><th>From</th><th>To</th><th>Note</th></tr></thead><tbody>${historyRows||'<tr><td colspan=4 class=text-muted>No history</td></tr>'}</tbody></table></div></div><div class='modal-footer'><button class='btn btn-secondary' data-bs-dismiss='modal'>Close</button></div></div></div></div>`; document.body.insertAdjacentHTML('beforeend', modalHtml); const m=new bootstrap.Modal(document.getElementById('ticketModal')); document.getElementById('ticketModal').addEventListener('hidden.bs.modal',()=>document.getElementById('ticketModal').remove()); m.show(); }); }); }
+if(document.getElementById('analystSupportCard')){ loadAnalystTickets(); }
+</script>
+
+<script>
+function startTopic(topicId) {
+    fetch(`/api/topic/${topicId}/start`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            location.reload();
+        } else {
+            alert('Error starting topic');
+        }
+    });
+}
+
+function completeTopic(topicId) {
+    const reportId = prompt('Enter Report ID (if available):');
+    fetch(`/api/topic/${topicId}/complete`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({report_id: reportId})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            location.reload();
+        } else {
+            alert('Error completing topic');
+        }
+    });
+}
+
+function generateCertificate(analystId) {
+    if (!confirm('Generate a new certificate for your completed work?')) {
+        return;
+    }
+    
+    fetch('/admin/certificates/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            analyst_id: analystId,
+            certificate_name: 'Research Analyst Certification',
+            skills_gained: 'Financial Analysis, Report Writing, Market Research'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Certificate generated successfully!');
+            location.reload();
+        } else {
+            alert('Error generating certificate: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error generating certificate');
+    });
+}
+</script>
+
+<!-- Analyst Connect Availability & Sessions (New) -->
+<div class="card border-0 shadow-sm mb-4" id="connectAvailabilityCard">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="bi bi-camera-video me-2"></i>Session Availability</h5>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-primary" onclick="showAddAvailability()"><i class="bi bi-plus-circle"></i> Window</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="refreshAvailability()"><i class="bi bi-arrow-repeat"></i></button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="availabilityForm" class="border rounded p-3 mb-3" style="display:none;">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-2">
+          <label class="form-label small mb-1">Weekday</label>
+          <select class="form-select form-select-sm" id="avWeekday">
+            <option value="0">Mon</option><option value="1">Tue</option><option value="2">Wed</option><option value="3">Thu</option><option value="4">Fri</option><option value="5">Sat</option><option value="6">Sun</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small mb-1">Start (HH:MM)</label>
+          <input type="time" class="form-control form-control-sm" id="avStart" value="09:00">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small mb-1">End (HH:MM)</label>
+            <input type="time" class="form-control form-control-sm" id="avEnd" value="12:00">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small mb-1">Slot (min)</label>
+          <input type="number" class="form-control form-control-sm" id="avSlot" value="30" min="5" max="240">
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-sm btn-success" onclick="submitAvailability()"><i class="bi bi-save"></i> Save</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="hideAddAvailability()">Cancel</button>
+        </div>
+      </div>
+      <div class="small text-muted mt-2">Avoid overlapping windows; system enforces this.</div>
+    </div>
+    <div class="table-responsive mb-3">
+      <table class="table table-sm">
+        <thead class="table-light"><tr><th>Weekday</th><th>Start</th><th>End</th><th>Slot</th><th></th></tr></thead>
+        <tbody id="availabilityBody"><tr><td colspan="5" class="text-muted text-center">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="d-flex align-items-center mb-2">
+      <h6 class="mb-0 me-2"><i class="bi bi-slash-circle me-1"></i>Time Off</h6>
+      <button class="btn btn-sm btn-outline-primary" onclick="showAddTimeOff()"><i class="bi bi-plus"></i></button>
+    </div>
+    <div id="timeOffForm" class="row g-2 mb-2" style="display:none;">
+      <div class="col-md-3"><input type="date" id="timeOffDate" class="form-control form-control-sm"></div>
+      <div class="col-md-5"><input type="text" id="timeOffReason" maxlength="120" placeholder="Reason (optional)" class="form-control form-control-sm"></div>
+      <div class="col-md-4 d-flex gap-2">
+        <button class="btn btn-sm btn-success" onclick="submitTimeOff()">Add</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="hideAddTimeOff()">Cancel</button>
+      </div>
+    </div>
+    <ul class="list-group small mb-3" id="timeOffList"><li class="list-group-item text-muted">Loading...</li></ul>
+    <hr>
+    <h6 class="mb-2"><i class="bi bi-calendar-event me-1"></i>Your Sessions</h6>
+    <div class="table-responsive">
+            <table class="table table-sm" id="sessionsTable">
+                <thead class="table-light"><tr><th>Start</th><th>End</th><th>Investor</th><th>Meeting</th><th>Status</th><th></th></tr></thead>
+                <tbody id="sessionsBody"><tr><td colspan="6" class="text-center text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+const weekdayMap=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+function minsToHHMM(m){const h=Math.floor(m/60).toString().padStart(2,'0');const mm=(m%60).toString().padStart(2,'0');return `${h}:${mm}`;}
+function showAddAvailability(){availabilityForm.style.display='block';}
+function hideAddAvailability(){availabilityForm.style.display='none';}
+function showAddTimeOff(){timeOffForm.style.display='flex';}
+function hideAddTimeOff(){timeOffForm.style.display='none';}
+function submitAvailability(){
+  const wd=parseInt(avWeekday.value); const [sh,sm]=avStart.value.split(':').map(Number); const [eh,em]=avEnd.value.split(':').map(Number);
+  if(isNaN(sh)||isNaN(eh)){return showToast('Start & end required','error');}
+  const start=sh*60+sm; const end=eh*60+em; if(end<=start){return showToast('End must be after start','warning');}
+  const slot=parseInt(avSlot.value)||30; if(slot>(end-start)){return showToast('Slot longer than window','warning');}
+  fetch('/api/availability/recurring',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({weekday:wd,start_minute:start,end_minute:end,slot_minutes:slot})})
+    .then(r=>r.json()).then(j=>{if(!j.ok){showToast(j.error||'Error','error');}else{hideAddAvailability();refreshAvailability();showToast('Window added','success');}}).catch(()=>showToast('Network error','error'));}
+
+function refreshAvailability(){
+  fetch('/api/availability/recurring').then(r=>r.json()).then(j=>{const body=document.getElementById('availabilityBody');body.innerHTML=''; if(!j.availability.length){body.innerHTML='<tr><td colspan=5 class="text-center text-muted">None</td></tr>';return;} j.availability.forEach(a=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${weekdayMap[a.weekday]}</td><td>${minsToHHMM(a.start_minute)}</td><td>${minsToHHMM(a.end_minute)}</td><td>${a.slot_minutes}</td><td><button class='btn btn-sm btn-outline-danger' onclick='deleteAvailability(${a.id})'>&times;</button></td>`;body.appendChild(tr);});}); refreshTimeOff(); refreshSessions();
+}
+function deleteAvailability(id){if(!confirm('Delete window?')) return; fetch(`/api/availability/recurring/${id}`,{method:'DELETE'}).then(r=>r.json()).then(()=>refreshAvailability());}
+function submitTimeOff(){const date=timeOffDate.value; if(!date){return alert('Pick a date');} const reason=timeOffReason.value; fetch('/api/availability/time_off',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,reason})}).then(r=>r.json()).then(()=>{hideAddTimeOff(); refreshTimeOff();});}
+function refreshTimeOff(){fetch('/api/availability/time_off').then(r=>r.json()).then(j=>{const list=document.getElementById('timeOffList'); list.innerHTML=''; if(!j.time_off.length){list.innerHTML='<li class="list-group-item text-muted">None</li>'; return;} j.time_off.forEach(t=>{const li=document.createElement('li'); li.className='list-group-item d-flex justify-content-between align-items-center'; li.innerHTML=`<span>${t.date} <small class='text-muted'>${t.reason||''}</small></span><button class='btn btn-sm btn-outline-danger' onclick='deleteTimeOff(${t.id})'>&times;</button>`; list.appendChild(li);});});}
+function deleteTimeOff(id){if(!confirm('Remove day off?')) return; fetch(`/api/availability/time_off/${id}`,{method:'DELETE'}).then(()=>refreshTimeOff());}
+function refreshSessions(){fetch('/api/analyst_sessions/incoming').then(r=>r.json()).then(j=>{const body=document.getElementById('sessionsBody'); body.innerHTML=''; if(!j.sessions.length){body.innerHTML='<tr><td colspan=6 class="text-center text-muted">No sessions</td></tr>';return;} j.sessions.forEach(s=>{const start=new Date(s.start_utc); const end=new Date(s.end_utc); const actions=[]; if(s.status==='requested'){actions.push(`<button class='btn btn-sm btn-success me-1' onclick='confirmSession(${s.id})'>Confirm</button>`); actions.push(`<button class='btn btn-sm btn-outline-danger me-1' onclick='declineSession(${s.id})'>Decline</button>`);} if(s.status==='confirmed'){actions.push(`<button class='btn btn-sm btn-outline-secondary me-1' onclick='completeSession(${s.id})'>Done</button>`);} actions.push(`<button class='btn btn-sm btn-outline-info me-1' onclick='viewSession(${s.id})'>View</button>`); actions.push(`<button class='btn btn-sm btn-outline-primary' onclick='pushSession(${s.id})' title='Push to Google Calendar'>➜ Cal</button>`); const invDisplay = s.investor_name || s.investor_id || '-'; const meet = s.video_host_url || s.video_join_url ? `<a href='${s.video_host_url || s.video_join_url}' target='_blank' class='text-decoration-none'>Join</a>` : '<span class="text-muted small">—</span>'; body.insertAdjacentHTML('beforeend',`<tr><td>${start.toLocaleString()}</td><td>${end.toLocaleTimeString()}</td><td>${invDisplay}</td><td>${meet}</td><td><span class='badge bg-${s.status==='confirmed'?'success':(s.status==='requested'?'warning':'secondary')}'>${s.status}</span></td><td>${actions.join('')}</td></tr>`);});});}
+// Auto-refresh sessions every 60 seconds
+setInterval(()=>{try{refreshSessions();}catch(e){}},60000);
+function pushSession(id){fetch(`/api/analyst/calendar/push_session/${id}`,{method:'POST'}).then(r=>r.json()).then(j=>{if(!j.ok){showToast(j.error||'Failed','error');} else {showToast('Added to Calendar','success');}})}
+function checkGcal(){fetch('/api/analyst/calendar/status').then(r=>r.json()).then(j=>{if(j.ok){const txt=document.getElementById('gcalStatusTxt'); const btn=document.getElementById('gcalStatusBtn'); if(j.connected){txt.textContent='Calendar ✓'; btn.classList.remove('btn-outline-primary'); btn.classList.add('btn-success');} else {txt.textContent='Connect Cal';}}});}
+function initGcalConnect(){fetch('/api/analyst/calendar/status').then(r=>r.json()).then(j=>{ if(j.connected){showToast('Already connected','info'); return;} fetch('/api/analyst/calendar/connect').then(r=>r.json()).then(k=>{ if(k.ok && k.auth_url){ window.location=k.auth_url; } else { showToast(k.error||'Cannot start connect','error'); } }); });}
+checkGcal();
+</script>
+
+<!-- Analyst Connect Profile (New) -->
+<div class="card border-0 shadow-sm mb-4" id="connectProfileCard">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="bi bi-person-video3 me-2"></i>Session Profile</h5>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-primary" id="gcalStatusBtn" onclick="initGcalConnect()"><i class="bi bi-calendar-event"></i> <span id="gcalStatusTxt">Calendar</span></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="loadConnectProfile()"><i class="bi bi-arrow-repeat"></i></button>
+    </div>
+  </div>
+  <div class="card-body">
+    <form id="connectProfileForm" class="row g-2">
+      <div class="col-md-4">
+        <label class="form-label small mb-1">Headline</label>
+        <input type="text" class="form-control form-control-sm" id="cpHeadline" maxlength="120">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small mb-1">Hourly Rate (optional)</label>
+        <input type="number" class="form-control form-control-sm" id="cpRate" step="0.01" min="0">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small mb-1">Max Daily Sessions</label>
+        <input type="number" class="form-control form-control-sm" id="cpMaxDaily" min="1" value="6">
+      </div>
+      <div class="col-md-8">
+        <label class="form-label small mb-1">Short Bio</label>
+        <textarea class="form-control form-control-sm" rows="2" id="cpBio" maxlength="500"></textarea>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small mb-1">Specialties (comma separated)</label>
+        <input type="text" class="form-control form-control-sm" id="cpSpecialties" placeholder="Equities, Options">
+      </div>
+      <div class="col-md-3 d-flex align-items-center mt-2">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="cpAutoConfirm" checked>
+          <label class="form-check-label small" for="cpAutoConfirm">Auto Confirm</label>
+        </div>
+      </div>
+      <div class="col-md-9 d-flex justify-content-end mt-2 gap-2">
+        <button type="button" class="btn btn-sm btn-primary" onclick="saveConnectProfile()"><i class="bi bi-save me-1"></i>Save</button>
+        <span id="cpStatus" class="small text-muted"></span>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function loadConnectProfile(){fetch('/api/analyst/connect_profile').then(r=>r.json()).then(j=>{if(!j.ok){return showToast(j.error,'error');} const p=j.profile; if(!p){cpStatus.textContent='Not set yet'; return;} cpHeadline.value=p.headline||''; cpBio.value=p.bio_short||''; cpRate.value=p.hourly_rate||''; cpMaxDaily.value=p.max_daily_sessions||6; cpAutoConfirm.checked=!!p.auto_confirm; cpSpecialties.value=(p.specialties||[]).join(', '); cpStatus.textContent=p.avg_rating?`Rating ${p.avg_rating} (${p.ratings_count})`:'No ratings'; });}
+function saveConnectProfile(){const specialties=cpSpecialties.value.split(',').map(s=>s.trim()).filter(Boolean); const payload={headline:cpHeadline.value.trim(), bio_short:cpBio.value.trim(), hourly_rate:parseFloat(cpRate.value)||null, max_daily_sessions:parseInt(cpMaxDaily.value)||6, auto_confirm:cpAutoConfirm.checked, specialties}; fetch('/api/analyst/connect_profile',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(r=>r.json()).then(j=>{ if(!j.ok){showToast(j.error,'error');} else {showToast('Profile saved','success'); loadConnectProfile(); }}); }
+if(document.getElementById('connectProfileCard')){ loadConnectProfile(); }
+</script>
+
+{% endblock %}

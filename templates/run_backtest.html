@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+{% block title %}Run New Backtest{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Run New Backtest</h1>
+        <p class="text-muted mb-0">Execute backtesting on existing reports and recommendations</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/backtest_dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-warning text-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-play-circle me-2"></i>Backtest Configuration
+        </h5>
+    </div>
+    <div class="card-body">
+        <form id="backtestForm">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Select Report to Backtest</label>
+                    <select class="form-select form-select-lg" id="reportSelect" required>
+                        <option value="">Choose a report...</option>
+                        {% for report in reports %}
+                        <option value="{{ report.id }}" data-analyst="{{ report.analyst }}" data-tickers="{{ report.tickers }}" data-title="{{ report.title or report.topic or 'Untitled' }}">
+                            {{ report.title or report.topic or ('Report ' ~ report.id[:8]) }} — {{ report.analyst }} ({{ report.created_at.strftime('%m/%d/%Y') }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Backtest Period</label>
+                    <select class="form-select form-select-lg" id="backtestPeriod" required>
+                        <option value="">Select period...</option>
+                        <option value="1M">1 Month</option>
+                        <option value="3M">3 Months</option>
+                        <option value="6M">6 Months</option>
+                        <option value="1Y">1 Year</option>
+                        <option value="2Y">2 Years</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Benchmark</label>
+                    <select class="form-select" id="benchmark">
+                        <option value="NIFTY50">NIFTY 50</option>
+                        <option value="SENSEX">SENSEX</option>
+                        <option value="NIFTY500">NIFTY 500</option>
+                        <option value="BANKNIFTY">BANK NIFTY</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Risk-Free Rate (%)</label>
+                    <input type="number" class="form-control" id="riskFreeRate" value="6.5" step="0.1" min="0" max="15">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Additional Options</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="includeTransactionCosts" checked>
+                    <label class="form-check-label" for="includeTransactionCosts">
+                        Include transaction costs (0.1%)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="adjustForDividends" checked>
+                    <label class="form-check-label" for="adjustForDividends">
+                        Adjust for dividends
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="generateReport">
+                    <label class="form-check-label" for="generateReport">
+                        Generate detailed report
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-warning btn-lg">
+                <i class="bi bi-play-circle me-2"></i>Start Backtest
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Report Preview -->
+<div id="reportPreview" class="card border-0 shadow-sm" style="display: none;">
+    <div class="card-header bg-light py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-eye me-2"></i>Selected Report Preview
+        </h5>
+    </div>
+    <div class="card-body">
+        <div id="previewContent"></div>
+    </div>
+</div>
+
+<!-- Backtest Results -->
+<div id="backtestResults" class="card border-0 shadow-sm mt-4" style="display: none;">
+    <div class="card-header bg-success text-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-graph-up me-2"></i>Backtest Results
+        </h5>
+    </div>
+    <div class="card-body">
+        <div id="resultsContent"></div>
+    </div>
+</div>
+
+<!-- Available Reports Table -->
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-header bg-light py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-list-task me-2"></i>Available Reports for Backtesting
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Report ID</th>
+                        <th>Report Name</th>
+                        <th>Analyst</th>
+                        <th>Tickers</th>
+                        <th>Created</th>
+                        <th class="pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td class="ps-4 fw-semibold text-muted">{{ report.id[:8] }}...</td>
+                        <td>
+                            {% set title = report.title or report.topic or 'Untitled' %}
+                            <span class="fw-semibold">{{ title }}</span>
+                        </td>
+                        <td>{{ report.analyst }}</td>
+                        <td>
+                            {% if report.tickers %}
+                                {% set tickers = report.tickers.split(',') %}
+                                <div class="d-flex gap-1 flex-wrap">
+                                    {% for ticker in tickers[:3] %}
+                                    <span class="badge bg-light text-dark border">{{ ticker.strip() }}</span>
+                                    {% endfor %}
+                                    {% if tickers|length > 3 %}
+                                    <span class="badge bg-secondary">+{{ tickers|length - 3 }} more</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">No tickers</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ report.created_at.strftime('%m/%d/%Y %H:%M') }}</small>
+                        </td>
+                        <td class="pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning" onclick="selectReport('{{ report.id }}')">
+                                    <i class="bi bi-check-circle"></i> Select
+                                </button>
+                                <a href="/report/{{ report.id }}" class="btn btn-outline-primary" target="_blank">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('reportSelect').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        const analyst = selectedOption.dataset.analyst;
+        const tickers = selectedOption.dataset.tickers;
+    const title = selectedOption.dataset.title;
+        
+        document.getElementById('previewContent').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+            <strong>Report Title:</strong> ${title}<br>
+                    <strong>Report ID:</strong> ${selectedOption.value}<br>
+                    <strong>Analyst:</strong> ${analyst}
+                </div>
+                <div class="col-md-6">
+                    <strong>Tickers:</strong> ${tickers || 'N/A'}
+                </div>
+            </div>
+        `;
+        document.getElementById('reportPreview').style.display = 'block';
+    } else {
+        document.getElementById('reportPreview').style.display = 'none';
+    }
+});
+
+document.getElementById('backtestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const reportId = document.getElementById('reportSelect').value;
+    const period = document.getElementById('backtestPeriod').value;
+    const benchmark = document.getElementById('benchmark').value;
+    const riskFreeRate = document.getElementById('riskFreeRate').value;
+    
+    if (!reportId || !period) {
+        alert('Please select a report and backtest period');
+        return;
+    }
+    
+    // Simulate backtest results (in real implementation, this would call the backend)
+    setTimeout(() => {
+        const results = {
+            reportId: reportId,
+            period: period,
+            totalReturn: (Math.random() * 40 - 20).toFixed(2), // -20% to +20%
+            benchmarkReturn: (Math.random() * 20 - 10).toFixed(2),
+            alpha: (Math.random() * 10 - 5).toFixed(2),
+            sharpeRatio: (Math.random() * 3).toFixed(2),
+            maxDrawdown: (Math.random() * 25).toFixed(2),
+            winRate: (50 + Math.random() * 30).toFixed(1)
+        };
+        
+        displayResults(results);
+    }, 2000);
+    
+    // Show loading state
+    document.getElementById('resultsContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-warning mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5>Running Backtest...</h5>
+            <p class="text-muted">This may take a few moments</p>
+        </div>
+    `;
+    document.getElementById('backtestResults').style.display = 'block';
+});
+
+function displayResults(results) {
+    const returnClass = results.totalReturn > 0 ? 'success' : 'danger';
+    const alphaClass = results.alpha > 0 ? 'success' : 'danger';
+    
+    document.getElementById('resultsContent').innerHTML = `
+        <div class="row g-3">
+            <div class="col-md-3 text-center">
+                <div class="bg-light p-3 rounded">
+                    <h4 class="text-${returnClass} mb-1">${results.totalReturn}%</h4>
+                    <small class="text-muted">Total Return</small>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-light p-3 rounded">
+                    <h4 class="text-info mb-1">${results.benchmarkReturn}%</h4>
+                    <small class="text-muted">Benchmark</small>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-light p-3 rounded">
+                    <h4 class="text-${alphaClass} mb-1">${results.alpha}</h4>
+                    <small class="text-muted">Alpha</small>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-light p-3 rounded">
+                    <h4 class="text-warning mb-1">${results.sharpeRatio}</h4>
+                    <small class="text-muted">Sharpe Ratio</small>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="my-4">
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Risk Metrics</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Max Drawdown:</strong> ${results.maxDrawdown}%</li>
+                    <li><strong>Win Rate:</strong> ${results.winRate}%</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>Performance Summary</h6>
+                <p class="text-muted">
+                    The backtest shows ${results.totalReturn > results.benchmarkReturn ? 'outperformance' : 'underperformance'} 
+                    against the benchmark with an alpha of ${results.alpha}.
+                </p>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <button class="btn btn-outline-primary me-2" onclick="downloadResults()">
+                <i class="bi bi-download me-1"></i>Download Results
+            </button>
+            <button class="btn btn-outline-success" onclick="saveToDatabase()">
+                <i class="bi bi-save me-1"></i>Save to Database
+            </button>
+        </div>
+    `;
+}
+
+function selectReport(reportId) {
+    document.getElementById('reportSelect').value = reportId;
+    document.getElementById('reportSelect').dispatchEvent(new Event('change'));
+}
+
+function downloadResults() {
+    alert('Downloading backtest results...');
+}
+
+function saveToDatabase() {
+    alert('Saving results to database...');
+}
+</script>
+
+{% endblock %}

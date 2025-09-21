@@ -1,0 +1,343 @@
+PredictRAM Deployment Guide (AWS) - 19 Aug 2025
+================================================
+
+Contents
+1. Overview / Architecture
+2. Prerequisites
+3. Environment Variables & Secrets
+4. Infrastructure Options
+5. Build & Install
+6. Database Setup / Migration Strategy
+7. Running the App (Gunicorn + Eventlet / Gevent)
+8. WebSockets / Socket.IO Considerations
+9. SSL / HTTPS
+10. Background Tasks & Scheduling
+11. Payments (Razorpay)
+12. Email (AWS SES)
+13. AI / LLM Integration
+14. GitHub Integration
+15. Security Hardening Checklist
+16. Observability (Logging / Metrics / Alerts)
+17. Backup & Disaster Recovery
+18. Zero-Downtime Deployment Strategy
+19. Post-Deployment Smoke Tests
+20. Ongoing Maintenance
+
+-------------------------------------------------------------------
+1. Overview / Architecture
+-------------------------------------------------------------------
+Stack: Flask + Flask-SocketIO (real-time), SQLAlchemy, Razorpay, AWS SES, optional Anthropic / local LLM.
+Recommended split:
+- ALB / Nginx reverse proxy -> Gunicorn (eventlet or gevent worker class) -> Flask app
+- RDS (PostgreSQL or MySQL) instead of local SQLite
+- S3 for large static/user uploads (future enhancement)
+- CloudWatch Logs & Metrics + optional OpenSearch for log search
+
+-------------------------------------------------------------------
+2. Prerequisites
+-------------------------------------------------------------------
+- AWS Account (IAM user or role with least privilege)
+- Domain + Route53 (optional but recommended)
+- SSL certificate issued via AWS Certificate Manager (for ALB / CloudFront)
+- Razorpay account + keys
+- Verified SES sender email or domain (Production SES access if sending to arbitrary recipients)
+
+-------------------------------------------------------------------
+3. Environment Variables & Secrets
+-------------------------------------------------------------------
+Use AWS Systems Manager Parameter Store *or* Secrets Manager. NEVER commit real keys.
+Copy `.env.example` -> real environment variables (in ECS task definition, EC2 user-data export, or SSM references).
+
+Core (MANDATORY)
+DATABASE_URL=postgresql+psycopg2://user:pass@hostname:5432/predictram
+SECRET_KEY=GENERATE_STRONG_64_CHARS
+APP_PORT=8000
+
+Razorpay
+RAZORPAY_KEY_ID=...
+RAZORPAY_KEY_SECRET=...
+RAZORPAY_WEBHOOK_SECRET=...
+
+SES / Email (if not using IAM role)
+SES_REGION=us-east-1
+SES_ACCESS_KEY_ID=...
+SES_SECRET_ACCESS_KEY=...
+SES_SENDER_EMAIL=support@yourdomain.tld
+
+Optional
+GITHUB_TOKEN=... (only if needed)
+GITHUB_USERNAME=...
+LLM_MODEL=mistral:latest
+LLM_PORT=8000
+SESSION_COOKIE_SECURE=true
+SESSION_COOKIE_SAMESITE=Lax (or Strict)
+
+-------------------------------------------------------------------
+4. Infrastructure Options
+-------------------------------------------------------------------
+A. Simpler (EC2)
+- One EC2 instance (Amazon Linux 2023), Nginx reverse proxy, systemd unit for Gunicorn.
+- Pros: Fast to set up. Cons: Manual scaling / single point of failure.
+
+B. Containerized (ECS + Fargate)
+- Build Docker image, push to ECR, run ECS Service (Fargate) behind ALB.
+- Pros: Easier scaling, managed.
+
+C. Kubernetes (EKS) (future)
+- For advanced scaling & microservices plans.
+
+Choose A or B initially.
+
+-------------------------------------------------------------------
+5. Build & Install (EC2 path)
+-------------------------------------------------------------------
+sudo yum update -y
+sudo yum install -y git python3-pip
+python3 -m venv /opt/predictram-venv
+source /opt/predictram-venv/bin/activate
+pip install --upgrade pip wheel
+pip install -r requirements.txt
+
+Create a non-root user to run the service.
+
+-------------------------------------------------------------------
+6. Database Setup / Migration Strategy
+-------------------------------------------------------------------
+Initial phase: auto create tables via db.create_all(). For production, adopt Alembic later.
+Migration plan: introduce Alembic -> generate revision -> run `alembic upgrade head` during deploy.
+Switch DATABASE_URL to RDS before going live.
+
+-------------------------------------------------------------------
+7. Running the App (Gunicorn + Eventlet / Gevent)
+-------------------------------------------------------------------
+Because Flask-SocketIO is used, pick an async worker (eventlet or gevent). Eventlet is simplest.
+
+Install extras (if not already):
+pip install gunicorn eventlet
+
+Example (single instance):
+GUNICORN_CMD_ARGS="--log-level info --timeout 120" \
+  gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 wsgi:application
+
+Scaling workers: WebSockets prefer a single process unless using a message queue (Redis) for pub/sub.
+To scale horizontally: add Redis and start multiple workers with `--worker-class eventlet --workers N --worker-connections 1000` plus `--env SOCKETIO_REDIS_URL=redis://...`. (Code will need minor adjustments if not already using a message queue.)
+
+Systemd unit example (/etc/systemd/system/predictram.service):
+[Unit]
+Description=PredictRAM
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/srv/predictram
+Environment="APP_PORT=8000" "DATABASE_URL=postgresql+psycopg2://..." "SECRET_KEY=..."
+ExecStart=/opt/predictram-venv/bin/gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 wsgi:application
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+Enable & start:
+sudo systemctl daemon-reload
+sudo systemctl enable predictram
+sudo systemctl start predictram
+
+-------------------------------------------------------------------
+8. WebSockets / Socket.IO Considerations
+-------------------------------------------------------------------
+- Behind ALB: enable sticky sessions or use Redis message queue for multi-instance.
+- Timeout: Set idle timeout >= typical client duration (60s+). ALB default 60s; may raise.
+- If using CloudFront, consider WebSocket pass-through (supported) or route dynamic traffic via ALB directly.
+
+-------------------------------------------------------------------
+9. SSL / HTTPS
+-------------------------------------------------------------------
+Option 1: Terminate TLS at ALB (recommended). Application listens on HTTP internally.
+Option 2: Nginx reverse proxy on EC2 with Certbot or ACM-managed cert via ALB.
+Force HTTPS redirect at proxy layer (preferred) or inside Flask (check request.is_secure).
+
+-------------------------------------------------------------------
+10. Background Tasks & Scheduling
+-------------------------------------------------------------------
+If cron-like tasks exist (not detailed here), use:
+- systemd timers, or
+- CloudWatch EventBridge Scheduler calling an internal management endpoint (secured), or
+- Separate worker container.
+
+-------------------------------------------------------------------
+11. Payments (Razorpay)
+-------------------------------------------------------------------
+- Set RAZORPAY_* env vars.
+- Secure webhook endpoint with signature verification (ensure implemented; add if missing).
+- In production, log order_id, payment_id correlation (mask sensitive data).
+
+-------------------------------------------------------------------
+12. Email (AWS SES)
+-------------------------------------------------------------------
+- Prefer IAM role with ses:SendEmail.* permissions.
+- Move away from embedding credentials; rely on boto3 default credential chain.
+- Warm-up: stay within sending limits; request increase if needed.
+
+-------------------------------------------------------------------
+13. AI / LLM Integration
+-------------------------------------------------------------------
+- If calling external APIs (Anthropic), store API key in Secrets Manager.
+- For local model (OLLAMA or similar), ensure inbound security group restricted to internal sources only.
+
+-------------------------------------------------------------------
+14. GitHub Integration
+-------------------------------------------------------------------
+- Use fine-scoped PAT stored in Secrets Manager.
+- Rate limit awareness; implement exponential backoff.
+
+-------------------------------------------------------------------
+15. Security Hardening Checklist
+-------------------------------------------------------------------
+[ ] SECRET_KEY set (not default)
+[ ] DEBUG = False
+[ ] SESSION_COOKIE_SECURE = True (HTTPS)
+[ ] CSRF protection (consider Flask-WTF or manual tokens) for forms/postbacks
+[ ] Strict-Transport-Security header via proxy (HSTS)
+[ ] Content Security Policy (restrict script origins) (Nginx add_header or Flask after_request)
+[ ] X-Frame-Options SAMEORIGIN (or DENY) for clickjacking
+[ ] X-Content-Type-Options nosniff
+[ ] Referrer-Policy strict-origin-when-cross-origin
+[ ] Log rotation & retention (CloudWatch or journald)
+[ ] Dependency scan (pip-audit / safety)
+[ ] Webhook signature verification enforced (Razorpay)
+[ ] Principle of least privilege for IAM roles
+[ ] Database credentials not hard-coded
+[ ] Regular backups configured (RDS automated snapshots)
+[ ] Rate limiting (consider Flask-Limiter + Redis) for auth-sensitive endpoints
+[ ] Input validation on dynamic routes
+[ ] Remove unused admin/debug routes before prod
+
+-------------------------------------------------------------------
+16. Observability (Logging / Metrics / Alerts)
+-------------------------------------------------------------------
+- Structured logs (JSON) optional: integrate `structlog` later.
+- CloudWatch Alarms: high 5xx count, elevated latency, CPU, memory.
+- Optional APM: AWS X-Ray / OpenTelemetry collector.
+
+-------------------------------------------------------------------
+17. Backup & Disaster Recovery
+-------------------------------------------------------------------
+- RDS automated backups + snapshots prior to deploy.
+- Store S3 assets (if any) with lifecycle + versioning.
+- Export critical config (infrastructure-as-code) via Terraform / CloudFormation.
+
+-------------------------------------------------------------------
+18. Zero-Downtime Deployment Strategy
+-------------------------------------------------------------------
+- ECS: rolling updates with minHealthyPercent 100 / maxPercent 200.
+- EC2: blue/green (two ASGs or two instances behind ALB) -> swap target group.
+- DB migrations: run before switching traffic (idempotent, backward compatible).
+
+-------------------------------------------------------------------
+19. Post-Deployment Smoke Tests
+-------------------------------------------------------------------
+curl -f https://app.yourdomain.tld/health || fail
+Check pricing pages (/pricing/investor, /pricing/analyst)
+Test login, signup, payment sandbox flow, email send, Socket.IO connection.
+Verify no errors in logs for first 10 minutes.
+
+-------------------------------------------------------------------
+20. Ongoing Maintenance
+-------------------------------------------------------------------
+- Monthly dependency updates & security scans
+- Rotate secrets every 90 days (if not IAM role)
+- Review CloudWatch metrics weekly
+- Capture & analyze payment anomalies
+
+-------------------------------------------------------------------
+Quick Command Reference (EC2)
+-------------------------------------------------------------------
+# Run (dev quick test)
+python app.py
+
+# Run (production style)
+GUNICORN_CMD_ARGS="--log-level info" gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 wsgi:application
+
+# Safety checks
+pip install safety && safety check
+pip install pip-audit && pip-audit
+
+-------------------------------------------------------------------
+21. Third-Party App Integrations
+-------------------------------------------------------------------
+Summary table
+Razorpay (Payments): order creation, signature verification, plan upgrades.
+AWS SES (Email): transactional mail (receipts, notifications).
+GitHub (Content Publishing): optional report repo creation.
+Google Calendar / OAuth (Scheduling): booking & meeting links (ensure OAuth credentials in env/SSM).
+Jitsi (Video Meetings): embed meeting rooms; optional JWT auth for locked rooms.
+Anthropic / External LLM APIs: advanced AI responses (fallback to local model gateway).
+Local LLM Gateway (Ollama / custom): on-prem or EC2 GPU inference.
+Redis (Optional): Socket.IO horizontal scale, rate limiting, caching model responses.
+Monitoring (Sentry / Rollbar) (Optional): error tracking.
+Analytics (PostHog / Amplitude) (Optional): product usage metrics.
+
+Razorpay
+- Set RAZORPAY_* env vars.
+- Enforce webhook signature: compute HMAC SHA256 with webhook secret over payload + compare constant time.
+- Sandbox vs live keys: keep distinct Parameter Store paths.
+- Log minimal (order_id, status) – never log full card/token details.
+
+AWS SES
+- Prefer IAM role with least privilege: ses:SendEmail, ses:SendRawEmail.
+- Production access request if sending to unverified emails.
+- DKIM + SPF + DMARC configured on domain.
+
+GitHub
+- Store PAT in Secrets Manager; scope: repo (and workflow if needed) – avoid full admin.
+- Rotate token; enable Dependabot or native security advisories.
+
+Google OAuth / Calendar
+- Create GCP project; enable Calendar API.
+- Store CLIENT_ID, CLIENT_SECRET, REDIRECT_URI as secrets.
+- Restrict OAuth consent screen scopes to minimum.
+- Refresh tokens encrypted at rest (KMS or Secrets Manager).
+
+Jitsi
+- For self-hosted + JWT: set JITSI_JWT_APP_ID / JITSI_JWT_APP_SECRET via secrets.
+- Enforce room name entropy; optionally sign short-lived JWT (exp <= 5m).
+
+Anthropic / External LLMs
+- Store API key (e.g., ANTHROPIC_API_KEY) in Secrets Manager.
+- Implement timeout + retry (exponential backoff, jitter).
+- Add circuit breaker to fall back to local model if remote unavailable.
+
+Local LLM Gateway
+- Isolate service network; restrict inbound to app security group.
+- Monitor memory / model load time; pre-warm on deploy.
+
+Redis (Horizontal Scaling)
+- Use ElastiCache Redis. Provide REDIS_URL (e.g., redis://host:6379/0).
+- Configure Socket.IO with message queue to allow >1 Gunicorn worker/instance.
+- Also leverage for: rate limiting buckets, caching plan limits, ephemeral AI results.
+
+Monitoring (Sentry Example)
+- pip install sentry-sdk
+- SENTRY_DSN in env; init early in app.py.
+- Scrub PII fields (emails, payment IDs) via before_send hook.
+
+Analytics (Optional)
+- Load client SDK via CSP-allowed domain only on authenticated pages where allowed.
+- Provide user anonymized ID (hash) to respect privacy.
+
+General Integration Hardening
+[ ] All third-party secrets from SSM / Secrets Manager
+[ ] Network egress restricted (VPC endpoints where possible)
+[ ] Timeouts & retries implemented (no infinite waits)
+[ ] Structured logging of integration failures
+[ ] Alert on elevated 4xx/5xx from external APIs
+[ ] Backoff w/ jitter to avoid thundering herd
+[ ] Use async/background queue for slow external calls
+
+Future Enhancements
+- Introduce Celery or RQ worker for asynchronous heavy tasks.
+- Add unified integration health endpoint (/health/integrations) performing lightweight checks.
+- Implement canary tests hitting payment sandbox & email test address hourly.
+
+-------------------------------------------------------------------
+END OF DOCUMENT

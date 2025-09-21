@@ -1,0 +1,409 @@
+{% extends "layout.html" %}
+{% block title %}Script Results - Investor{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center animate__animated animate__fadeInLeft">
+    <div>
+        <h1 class="mb-0 animate__animated animate__zoomIn">
+            <i class="bi bi-chart-line me-2"></i>Python Script Results
+        </h1>
+        <p class="text-muted mb-0 animate__animated animate__fadeInUp animate__delay-1s">View analysis results from executed scripts</p>
+    </div>
+    <div class="animate__animated animate__fadeInRight">
+        <button class="btn btn-enhanced me-2" onclick="refreshResults()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </button>
+        <button class="btn btn-primary me-2" onclick="loadEnhancedAnalysis()">
+            <i class="bi bi-speedometer2 me-1"></i> Performance
+        </button>
+        <a href="/investor/dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Performance Analysis Modal -->
+<div class="modal fade" id="performanceModal" tabindex="-1" aria-labelledby="performanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="performanceModalLabel"><i class="bi bi-bar-chart-line"></i> Performance Dashboard</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="performanceDashboardContent">
+                    <!-- Dashboard content will be loaded here by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="100">
+            <div class="metric-value" data-value="{{ stats.total_results }}">{{ stats.total_results }}</div>
+            <h6 class="text-muted mt-2">Available Results</h6>
+            <small class="text-info">
+                <i class="bi bi-file-earmark-text"></i> Last 30 Days
+            </small>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="200">
+            <div class="metric-value text-success" data-value="{{ stats.recent_results }}">{{ stats.recent_results }}</div>
+            <h6 class="text-muted mt-2">Recent Results</h6>
+            <small class="text-success">
+                <i class="bi bi-clock"></i> Last 7 Days
+            </small>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="300">
+            <div class="metric-value text-primary" data-value="{{ '%.2f' % stats.avg_execution_time }}">{{ '%.2f' % stats.avg_execution_time }}s</div>
+            <h6 class="text-muted mt-2">Avg Execution Time</h6>
+            <small class="text-primary">
+                <i class="bi bi-speedometer2"></i> Performance
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Grouped Script Insights Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm border-0 animate__animated animate__fadeInUp" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul me-2"></i>Script Performance & Insights
+                </h5>
+                <small>
+                    <i class="bi bi-info-circle me-1"></i> Grouped by script name, showing performance and AI/statistical insights
+                </small>
+            </div>
+            <div class="card-body">
+                <div id="resultsContainer">
+                    {% if script_insights %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Script Name</th>
+                                        <th>Program Name</th>
+                                        <th>Total Runs</th>
+                                        <th>Success Rate</th>
+                                        <th>Avg Return</th>
+                                        <th>Last Run</th>
+                                        <th>AI/Stats Insight</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for insight in script_insights %}
+                                    <tr>
+                                        <td><strong class="text-primary">{{ insight.script_name }}</strong></td>
+                                        <td>{{ insight.program_name }}</td>
+                                        <td>{{ insight.total_runs }}</td>
+                                        <td>
+                                            <span class="badge bg-success">{{ '%.1f' % insight.success_rate }}%</span>
+                                            <br><small>{{ insight.success_count }} / {{ insight.total_runs }}</small>
+                                        </td>
+                                        <td>
+                                            {% if insight.avg_return is not none %}
+                                                <span class="badge bg-info">{{ '%.2f' % insight.avg_return }}</span>
+                                            {% else %}
+                                                <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ insight.last_run }}</td>
+                                        <td>
+                                            <small class="text-muted">{{ insight.ai_insight }}</small>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-primary" href="/investor/scripts/{{ insight.script_name }}">
+                                                <i class="bi bi-box-arrow-up-right"></i> Open
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                Showing {{ script_insights|length }} unique scripts from the last 30 days
+                            </small>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-clipboard-data" style="font-size: 4rem; color: #dee2e6;"></i>
+                            <h4 class="text-muted mt-3">No Results Available</h4>
+                            <p class="text-muted">There are no script execution results to display at the moment.</p>
+                            <p class="text-muted">
+                                <small>Check back later or contact the admin if you're expecting results.</small>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JSON Results and AI Insights -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-braces-asterisk me-2"></i>Recent JSON Results</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="loadJsonResults()">
+                        <i class="bi bi-arrow-repeat"></i> Load JSON Results
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="loadAiJsonInsights()">
+                        <i class="bi bi-robot"></i> AI Summary
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="jsonResultsList" class="small text-muted">Click "Load JSON Results" to view recent structured outputs.</div>
+                <div id="aiSummaryContainer" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+<!-- Removed investor popup modal by request -->
+
+<!-- Info Panel -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-info">
+            <div class="card-body">
+                <h6 class="card-title text-info">
+                    <i class="bi bi-info-circle me-2"></i>About Script Results
+                </h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="bi bi-check text-success me-2"></i>Only successful script executions are displayed</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Results are automatically updated when new scripts run</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Data includes analysis outputs and computational results</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="bi bi-info text-info me-2"></i>Results are kept for 30 days</li>
+                            <li><i class="bi bi-info text-info me-2"></i>Click "View Results" to see detailed output</li>
+                            <li><i class="bi bi-info text-info me-2"></i>Use the refresh button to check for new results</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Auto-refresh every 30 seconds
+    setInterval(refreshResults, 30000);
+});
+
+// Refresh results
+function refreshResults() {
+    fetch('/api/script_executions/refresh')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateResultsTable(data.executions);
+            showAlert('Results updated successfully', 'success');
+        } else {
+            console.error('Error refreshing results:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error refreshing results:', error);
+    });
+}
+
+// Update results table
+function updateResultsTable(executions) {
+    const tbody = document.getElementById('resultsTableBody');
+    if (!tbody || executions.length === 0) {
+        const container = document.getElementById('resultsContainer');
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-clipboard-data" style="font-size: 4rem; color: #dee2e6;"></i>
+                <h4 class="text-muted mt-3">No Results Available</h4>
+                <p class="text-muted">There are no script execution results to display at the moment.</p>
+                <p class="text-muted">
+                    <small>Check back later or contact the admin if you're expecting results.</small>
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = executions.map(execution => `
+        <tr data-execution-id="${execution.id}">
+            <td>
+                <strong class="text-primary">${execution.program_name}</strong>
+                <br><small class="text-muted">
+                    <i class="bi bi-file-code"></i> ${execution.script_name}
+                </small>
+            </td>
+            <td>
+                ${execution.description ? 
+                    (execution.description.length > 150 ? 
+                        execution.description.substring(0, 150) + '...' : 
+                        execution.description) : 
+                    '<em class="text-muted">No description</em>'}
+            </td>
+            <td>
+                <span class="badge bg-info">${execution.execution_time.toFixed(2)}s</span>
+            </td>
+            <td>
+                <span class="text-muted">${execution.timestamp}</span>
+            </td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary" href="/investor/scripts/${encodeURIComponent(execution.script_name)}">
+                    <i class="bi bi-box-arrow-up-right"></i> Open
+                </a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Popup analytics and result modal removed. Navigation opens details page per script.
+
+// Load recent JSON results for investor view
+async function loadJsonResults() {
+    try {
+        const resp = await fetch('/api/investor/json_results');
+        const data = await resp.json();
+        const container = document.getElementById('jsonResultsList');
+        if (!data.success) {
+            container.innerHTML = `<div class="alert alert-warning">${data.error || 'Failed to load JSON results'}</div>`;
+            return;
+        }
+        if (!data.items || data.items.length === 0) {
+            container.innerHTML = '<div class="text-muted">No JSON results found.</div>';
+            return;
+        }
+        container.innerHTML = data.items.map(item => `
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="text-primary">${item.script_name}</strong>
+                        <small class="text-muted ms-2">${item.program_name}</small>
+                    </div>
+                    <small class="text-muted">${item.timestamp}</small>
+                </div>
+                <pre class="bg-light p-2 border rounded" style="max-height: 250px; overflow: auto; white-space: pre-wrap;"><code>${item.json_output || ''}</code></pre>
+            </div>
+        `).join('');
+    } catch (err) {
+        document.getElementById('jsonResultsList').innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+    }
+}
+
+// Load AI summary/insights over JSON results
+async function loadAiJsonInsights() {
+    const container = document.getElementById('aiSummaryContainer');
+    container.innerHTML = '<div class="text-info"><span class="spinner-border spinner-border-sm me-2"></span>Generating AI summary...</div>';
+    try {
+        const resp = await fetch('/api/investor/json_insights');
+        const data = await resp.json();
+        if (!data.success) {
+            container.innerHTML = `<div class="alert alert-warning">${data.error || 'Failed to generate AI insights'}</div>`;
+            return;
+        }
+        container.innerHTML = `
+            <div class="card">
+                <div class="card-header">
+                    <strong>AI Insights Summary</strong>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2"><small class="text-muted">Samples analyzed: ${data.sample_count}</small></div>
+                    <pre class="bg-light p-3 border rounded" style="white-space: pre-wrap;">${data.insights}</pre>
+                    <div class="mt-2">
+                        <strong>Top Keys:</strong>
+                        ${data.top_keys.map(k => `<span class=\"badge bg-secondary me-1\">${k[0]}: ${k[1]}</span>`).join('')}
+                    </div>
+                </div>
+            </div>`;
+    } catch (err) {
+        container.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+    }
+}
+
+// Show alert message
+function showAlert(message, type) {
+    const alertContainer = document.createElement('div');
+    alertContainer.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertContainer.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertContainer.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertContainer);
+    
+    // Auto-dismiss after 3 seconds for success, 5 seconds for others
+    const timeout = type === 'success' ? 3000 : 5000;
+    setTimeout(() => {
+        if (alertContainer.parentNode) {
+            alertContainer.remove();
+        }
+    }, timeout);
+}
+</script>
+{% endblock %}
+
+function loadEnhancedAnalysis() {
+    // Example: Load JSON result and show dashboard in modal
+    const modal = new bootstrap.Modal(document.getElementById('performanceModal'));
+    document.getElementById('performanceDashboardContent').innerHTML = `
+        <div class='row'>
+            <div class='col-md-6'>
+                <h5>Returns (Weekly/Monthly/Yearly)</h5>
+                <div id='returnsIndicators'>Loading...</div>
+            </div>
+            <div class='col-md-6'>
+                <h5>Claude AI Summary</h5>
+                <div id='aiSummary'>Loading...</div>
+            </div>
+        </div>
+        <hr>
+        <div class='row'>
+            <div class='col-md-6'>
+                <h5>AI Insights</h5>
+                <div id='aiInsights'>Loading...</div>
+            </div>
+            <div class='col-md-6'>
+                <h5>Stock Breakdown</h5>
+                <div id='stockBreakdown'>Loading...</div>
+            </div>
+        </div>
+        <hr>
+        <div class='row'>
+            <div class='col-12'>
+                <h5>Strategy Analysis</h5>
+                <div id='strategyAnalysis'>Loading...</div>
+            </div>
+        </div>
+    `;
+    // TODO: Fetch and render actual data from backend/JSON
+    modal.show();
+}

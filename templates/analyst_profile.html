@@ -1,0 +1,1125 @@
+{% extends "layout.html" %}
+{% block title %}{{ analyst_name }} - Skill Profile - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <!-- PredictRAM Analyst Logo -->
+        <div class="me-3">
+            <img src="{{ url_for('static', filename='images/predictram-analyst-logo.png') }}" 
+                 alt="PredictRAM Analyst" 
+                 class="rounded-3 shadow-sm" 
+                 style="height: 50px; width: auto; object-fit: contain;">
+        </div>
+        <div>
+            <h1 class="mb-0">
+                <i class="bi bi-person-badge me-2 text-primary"></i>
+                {{ analyst_name }}
+            </h1>
+            <p class="text-muted mb-0">Skill Development Profile & Learning Progress</p>
+        </div>
+    </div>
+    <div>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 1rem;">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>{{ profile.name if profile else analyst_name }}
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Navigation Menu -->
+                    <div class="list-group list-group-flush">
+                        <a href="#overview" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-bar me-2"></i>Overview
+                        </a>
+                        <a href="#certificates" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-certificate me-2"></i>Certificates
+                        </a>
+                        <a href="/analyst/certificate_request" class="list-group-item list-group-item-action" target="_blank">
+                            <i class="fas fa-file-signature me-2"></i>Request Certificate
+                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                        </a>
+                        <a href="/analyst/certificate_status" class="list-group-item list-group-item-action" target="_blank">
+                            <i class="fas fa-clipboard-check me-2"></i>Certificate Status
+                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                        </a>
+                        <a href="#improvements" class="list-group-item list-group-item-action">
+                            <i class="fas fa-arrow-up me-2"></i>Improvements
+                        </a>
+                        <a href="#reports" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-alt me-2"></i>Reports
+                        </a>
+                        <a href="#backtesting" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line me-2"></i>Backtesting
+                        </a>
+                        <a href="/referral/dashboard" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users me-2"></i>Refer & Earn
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Referral Section -->
+                <div class="card-footer bg-gradient-light">
+                    <div class="text-center">
+                        <h6 class="mb-3">
+                            <i class="fas fa-gift text-primary me-2"></i>Refer & Earn Credits
+                        </h6>
+                        <p class="small text-muted mb-3">Share the platform and earn credits for premium features!</p>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="/referral/dashboard" class="btn btn-primary btn-sm">
+                                <i class="fas fa-share-alt me-1"></i>View Referral Dashboard
+                            </a>
+                            <button class="btn btn-outline-primary btn-sm" onclick="copyReferralLink('analyst')">
+                                <i class="fas fa-copy me-1"></i>Copy Referral Link
+                            </button>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-check-circle me-1"></i>Can refer both Analysts & Investors
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Certificate Status in Sidebar -->
+                <div class="card-footer bg-light">
+                    <div class="text-center">
+                        {% set certificate_eligible = (improvement_metrics.total_reports or 0) >= 5 %}
+                        <div class="mb-3">
+                            <div class="position-relative d-inline-block">
+                                <div class="progress-circle-sidebar">
+                                    <div class="progress-fill-sidebar" style="width: {{ ((improvement_metrics.total_reports or 0) / 5 * 100)|round(0) }}%"></div>
+                                </div>
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <small class="fw-bold">{{ improvement_metrics.total_reports or 0 }}/5</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if certificate_eligible %}
+                        <div class="mb-2">
+                            <span class="badge bg-success mb-2">
+                                <i class="fas fa-check me-1"></i>Eligible for Certificate
+                            </span>
+                        </div>
+                        <button class="btn btn-success btn-sm w-100" onclick="generateCertificate('{{ profile.analyst_id or profile.name }}')">
+                            <i class="fas fa-plus me-1"></i>Generate Certificate
+                        </button>
+                        {% else %}
+                        <div class="mb-2">
+                            <span class="badge bg-warning text-dark mb-2">
+                                <i class="fas fa-clock me-1"></i>{{ 5 - (improvement_metrics.total_reports or 0) }} more needed
+                            </span>
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                            <i class="fas fa-lock me-1"></i>Certificate Locked
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+
+<!-- Skill Summary Cards -->
+<div class="row mb-4" id="overview">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-primary mb-2">
+                    <i class="bi bi-trophy fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.total_skills_completed if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">Total Skills Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-info mb-2">
+                    <i class="bi bi-code-slash fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.python_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">Python Skills</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-warning mb-2">
+                    <i class="bi bi-database fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.sql_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">SQL Skills</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-success mb-2">
+                    <i class="bi bi-robot fs-1"></i>
+                </div>
+                <h3 class="mb-1">{{ summary.ai_ml_skills if summary else 0 }}</h3>
+                <p class="text-muted mb-0 small">AI/ML Skills</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Certificate Details Section (Referenced from Sidebar) -->
+<div id="certificates" class="mb-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0">
+            <h5 class="mb-0"><i class="fas fa-certificate me-2 text-warning"></i>Certificate Management</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    {% set certificate_eligible = (improvement_metrics.total_reports or 0) >= 5 %}
+                    {% if certificate_eligible %}
+                    <div class="alert alert-success" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-trophy me-2"></i>Congratulations!</h6>
+                        <p class="mb-0">You've completed enough reports to earn your research analyst certificate.</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Certificate Progress</h6>
+                        <p class="mb-0">Complete {{ 5 - (improvement_metrics.total_reports or 0) }} more reports to earn your certificate.</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Certificate List -->
+                    <h6 class="mb-3 mt-4"><i class="fas fa-award me-2"></i>Your Certificates</h6>
+                    {% set certificates = [] %}
+                    {% if certificates %}
+                        <div class="row">
+                            {% for cert in certificates %}
+                            <div class="col-md-6">
+                                <div class="card border-1 mb-3">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-certificate text-warning mb-2" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title">{{ cert.name }}</h6>
+                                        <p class="text-muted small">{{ cert.date }}</p>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-certificate text-muted fa-3x mb-3"></i>
+                            <h6 class="text-muted">No certificates yet</h6>
+                            <p class="text-muted">Complete more research reports to earn your first certificate!</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light border-0">
+                        <div class="card-body text-center">
+                            <h6 class="mb-3">Certificate Progress</h6>
+                            <div class="position-relative d-inline-block mb-3">
+                                <div class="progress-circle">
+                                    <div class="progress-fill" style="width: {{ ((improvement_metrics.total_reports or 0) / 5 * 100)|round(0) }}%"></div>
+                                </div>
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <h6 class="mb-0">{{ improvement_metrics.total_reports or 0 }}/5</h6>
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-3">Reports Completed</p>
+                            
+                            {% if certificate_eligible %}
+                            <button class="btn btn-success btn-sm w-100" onclick="generateCertificate('{{ profile.analyst_id or profile.name }}')">
+                                <i class="fas fa-plus me-1"></i>Generate Certificate
+                            </button>
+                            {% else %}
+                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                <i class="fas fa-lock me-1"></i>Certificate Locked
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress-circle {
+    width: 80px;
+    height: 80px;
+    border: 4px solid #e9ecef;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #ffc107, #fd7e14);
+    transition: width 0.3s ease;
+}
+.progress-circle-sidebar {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #e9ecef;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+.progress-fill-sidebar {
+    height: 100%;
+    background: linear-gradient(45deg, #ffc107, #fd7e14);
+    transition: width 0.3s ease;
+}
+    height: 60px;
+    border: 3px solid #e9ecef;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #ffc107, #fd7e14);
+    transition: width 0.3s ease;
+}
+</style>
+
+<!-- Profile Overview Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-primary mb-2">{{ improvement_metrics.total_reports }}</div>
+                <h6 class="text-muted">Total Reports</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-success mb-2">{{ improvement_metrics.resolved_issues }}</div>
+                <h6 class="text-muted">Issues Resolved</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-info mb-2">{{ improvement_metrics.avg_improvement_score|round(0) }}%</div>
+                <h6 class="text-muted">Avg Improvement</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 mb-2">
+                    {% if improvement_metrics.improvement_trend == 'Excellent' %}
+                        <span class="text-success">🏆</span>
+                    {% elif improvement_metrics.improvement_trend == 'Good' %}
+                        <span class="text-info">📈</span>
+                    {% else %}
+                        <span class="text-warning">⚠️</span>
+                    {% endif %}
+                </div>
+                <h6 class="text-muted">{{ improvement_metrics.improvement_trend }}</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Improvements -->
+<div class="row mb-4" id="improvements">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Recent Improvements</h5>
+            </div>
+            <div class="card-body">
+                {% if improvement_metrics.recent_improvements %}
+                <div class="timeline">
+                    {% for improvement in improvement_metrics.recent_improvements %}
+                    <div class="timeline-item mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="timeline-marker bg-{% if improvement.improvement_score >= 0.8 %}success{% elif improvement.improvement_score >= 0.6 %}info{% elif improvement.improvement_score >= 0.4 %}warning{% else %}danger{% endif %}">
+                                    <i class="bi bi-check"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="mb-0">Report {{ improvement.report_id[:8] }}...</h6>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-{% if improvement.improvement_score >= 0.8 %}success{% elif improvement.improvement_score >= 0.6 %}info{% elif improvement.improvement_score >= 0.4 %}warning{% else %}danger{% endif %} me-2">
+                                            {{ (improvement.improvement_score * 100)|round(0) }}%
+                                        </span>
+                                        <small class="text-muted">{{ improvement.date }}</small>
+                                    </div>
+                                </div>
+                                <ul class="list-unstyled mb-0">
+                                    {% for summary_item in improvement.summary[:3] %}
+                                    <li class="small text-muted">{{ summary_item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up display-1 text-muted"></i>
+                    <h5 class="text-muted mt-3">No Improvement Data</h5>
+                    <p class="text-muted">Submit more reports to track improvements!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- Talent Program Path -->
+        {% if talent_mapping %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Talent Program Path</h6>
+            </div>
+            <div class="card-body">
+                <div class="talent-program-path text-center mb-3">
+                    <div class="path-step bg-light border rounded p-2 mb-2">
+                        <strong>🎯 Talent Program</strong>
+                    </div>
+                    <div class="path-arrow text-muted">↓</div>
+                    <div class="path-step bg-info text-white rounded p-2 mb-2">
+                        <strong>{{ profile.corporate_field }}</strong>
+                    </div>
+                    <div class="path-arrow text-muted">↓</div>
+                    <div class="path-step bg-success text-white rounded p-2 mb-2">
+                        <strong>{{ profile.field_specialization }}</strong>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info alert-sm">
+                    <strong>Level:</strong> {{ talent_mapping.level }}<br>
+                    <small>{{ talent_mapping.description }}</small>
+                </div>
+                
+                {% if talent_mapping.next_steps %}
+                <div class="mt-3">
+                    <h6 class="text-muted">Next Steps:</h6>
+                    <ul class="list-unstyled">
+                        {% for step in talent_mapping.next_steps %}
+                        <li class="small mb-1">• {{ step }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-person me-2"></i>Profile Details</h5>
+            </div>
+            <div class="card-body">
+                {% if profile.full_name %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Full Name</label>
+                    <p class="mb-0">{{ profile.full_name }}</p>
+                </div>
+                {% endif %}
+                {% if profile.email %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <p class="mb-0">{{ profile.email }}</p>
+                </div>
+                {% endif %}
+                {% if profile.university_name %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">University</label>
+                    <p class="mb-0">{{ profile.university_name }}</p>
+                </div>
+                {% endif %}
+                {% if profile.age %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Age</label>
+                    <p class="mb-0">{{ profile.age }} years</p>
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Department</label>
+                    <p class="mb-0">{{ profile.department or 'Research' }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Specialization</label>
+                    <p class="mb-0">{{ profile.specialization or 'Equity Research' }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Experience</label>
+                    <p class="mb-0">{{ profile.experience_years or 0 }} years</p>
+                </div>
+                {% if profile.certifications %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Certifications</label>
+                    {% set certs = profile.certifications|loads %}
+                    {% for cert in certs %}
+                    <span class="badge bg-info me-1 mb-1">{{ cert }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if profile.specializations %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Additional Specializations</label>
+                    {% set specs = profile.specializations|loads %}
+                    {% for spec in specs %}
+                    <span class="badge bg-secondary me-1 mb-1">{{ spec }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Member Since</label>
+                    <p class="mb-0">{{ profile.created_at.strftime('%B %Y') }}</p>
+                </div>
+                {% if profile.bio %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Bio</label>
+                    <p class="mb-0 small">{{ profile.bio }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flagged Alerts History -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Flagged Alerts History</h5>
+    </div>
+    <div class="card-body">
+        {% if improvement_metrics.flagged_alerts_history %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Report</th>
+                        <th>Date</th>
+                        <th>Total Alerts</th>
+                        <th>Critical</th>
+                        <th>Top Issues</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert_history in improvement_metrics.flagged_alerts_history %}
+                    <tr>
+                        <td><code>{{ alert_history.report_id[:8] }}...</code></td>
+                        <td>{{ alert_history.date }}</td>
+                        <td>
+                            <span class="badge bg-{% if alert_history.alerts_count > 5 %}danger{% elif alert_history.alerts_count > 2 %}warning{% else %}info{% endif %}">
+                                {{ alert_history.alerts_count }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if alert_history.critical_alerts > 0 %}
+                                <span class="badge bg-danger">{{ alert_history.critical_alerts }}</span>
+                            {% else %}
+                                <span class="text-muted">0</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small">
+                                {% for alert in alert_history.alerts %}
+                                <div class="mb-1">
+                                    <span class="badge bg-light text-dark">{{ alert.category }}</span>
+                                    {{ alert.message[:50] }}...
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <!-- Check if issues were resolved in later reports -->
+                            {% set resolved = false %}
+                            {% set resolved = false %}
+                            {% for improvement in improvements %}
+                                {% if improvement.previous_report_id == alert_history.report_id %}
+                                    {% set resolved_alerts = improvement.flagged_alerts_resolved|loads if improvement.flagged_alerts_resolved else [] %}
+                                    {% if resolved_alerts %}
+                                        <span class="badge bg-success">{{ resolved_alerts|length }} Resolved</span>
+                                        {% set resolved = true %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not resolved %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-shield-check display-1 text-success"></i>
+            <h5 class="text-success mt-3">Clean Record</h5>
+            <p class="text-muted">No flagged alerts in recent reports!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Reports -->
+<div class="card border-0 shadow-sm mb-4" id="reports">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>Recent Reports</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Report ID</th>
+                        <th>Date</th>
+                        <th>Quality Score</th>
+                        <th>AI Detection</th>
+                        <th>Improvements</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports[:10] %}
+                    <tr>
+                        <td><code>{{ report.id[:8] }}...</code></td>
+                        <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% set quality = report.analysis.get('composite_quality_score', 0) %}
+                            <div class="progress" style="height: 20px; width: 100px;">
+                                <div class="progress-bar {% if quality >= 0.8 %}bg-success{% elif quality >= 0.6 %}bg-info{% elif quality >= 0.4 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     style="width: {{ (quality * 100) }}%">
+                                    {{ (quality * 100)|round(0) }}%
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if report.ai_probability >= 0.7 %}
+                                <span class="badge bg-danger">AI</span>
+                            {% elif report.ai_probability >= 0.4 %}
+                                <span class="badge bg-warning">Uncertain</span>
+                            {% else %}
+                                <span class="badge bg-success">Human</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set improvement_found = false %}
+                            {% set improvement_found = false %}
+                            {% for improvement in improvements %}
+                                {% if improvement.report_id == report.id and not improvement_found %}
+                                    <span class="badge bg-info">{{ (improvement.improvement_score * 100)|round(0) }}%</span>
+                                    {% set improvement_found = true %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not improvement_found %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/report/{{ report.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="/improvement_analysis/{{ report.id }}" class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-graph-up"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline-item {
+    position: relative;
+}
+
+.timeline-marker {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+}
+
+.symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.symbol.symbol-circle {
+    border-radius: 50%;
+}
+
+.symbol.symbol-80px {
+    width: 80px;
+    height: 80px;
+}
+
+.symbol-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+<!-- Fundamental Analysis Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom-0">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Fundamental Analysis Coverage</h5>
+                <small class="text-muted">Detailed fundamental analysis for stocks covered by {{ profile.name }}</small>
+            </div>
+            <div class="card-body">
+                {% if fundamental_analyses %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Stock</th>
+                                <th>Company</th>
+                                <th>Recommendation</th>
+                                <th>Target Price</th>
+                                <th>Fundamental Score</th>
+                                <th>PE Ratio</th>
+                                <th>ROE</th>
+                                <th>Revenue Growth</th>
+                                <th>Analysis Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analysis in fundamental_analyses[:10] %}
+                            <tr>
+                                <td><strong>{{ analysis.ticker }}</strong></td>
+                                <td>{{ analysis.company_name or 'N/A' }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if analysis.recommendation == 'BUY' else 'warning' if analysis.recommendation == 'HOLD' else 'danger' }}">
+                                        {{ analysis.recommendation }}
+                                    </span>
+                                </td>
+                                <td>₹{{ "%.2f"|format(analysis.target_price) if analysis.target_price else 'N/A' }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-{{ 'success' if analysis.fundamental_score >= 80 else 'warning' if analysis.fundamental_score >= 60 else 'danger' }}" 
+                                             style="width: {{ analysis.fundamental_score if analysis.fundamental_score else 0 }}%">
+                                            {{ "%.1f"|format(analysis.fundamental_score) if analysis.fundamental_score else 0 }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ "%.2f"|format(analysis.pe_ratio) if analysis.pe_ratio else 'N/A' }}</td>
+                                <td>{{ "%.2f"|format(analysis.roe) if analysis.roe else 'N/A' }}%</td>
+                                <td>{{ "%.2f"|format(analysis.revenue_growth_yoy) if analysis.revenue_growth_yoy else 'N/A' }}%</td>
+                                <td><small>{{ analysis.analysis_date.strftime('%Y-%m-%d') }}</small></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewFundamentalDetails('{{ analysis.ticker }}')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">No fundamental analysis data available yet.</p>
+                    <button class="btn btn-outline-primary" onclick="generateFundamentalAnalysis()">
+                        Generate Analysis for Recent Reports
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Backtesting Results Section -->
+<div class="row mb-4" id="backtesting">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom-0">
+                <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Backtesting Performance</h5>
+                <small class="text-muted">Track the performance of {{ profile.name }}'s recommendations</small>
+            </div>
+            <div class="card-body">
+                {% if backtesting_results %}
+                <!-- Performance Metrics -->
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-primary">{{ backtesting_performance.total_trades }}</div>
+                            <small class="text-muted">Total Trades</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-{{ 'success' if backtesting_performance.win_rate >= 60 else 'warning' if backtesting_performance.win_rate >= 40 else 'danger' }}">
+                                {{ "%.1f"|format(backtesting_performance.win_rate) }}%
+                            </div>
+                            <small class="text-muted">Win Rate</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-{{ 'success' if backtesting_performance.avg_return >= 10 else 'warning' if backtesting_performance.avg_return >= 0 else 'danger' }}">
+                                {{ "%.1f"|format(backtesting_performance.avg_return) }}%
+                            </div>
+                            <small class="text-muted">Avg Return</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-success">{{ "%.1f"|format(backtesting_performance.best_trade) }}%</div>
+                            <small class="text-muted">Best Trade</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-{{ 'success' if backtesting_performance.sharpe_ratio >= 1.5 else 'warning' if backtesting_performance.sharpe_ratio >= 1.0 else 'danger' }}">
+                                {{ "%.2f"|format(backtesting_performance.sharpe_ratio) }}
+                            </div>
+                            <small class="text-muted">Sharpe Ratio</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <div class="h3 text-info">{{ "%.1f"|format(backtesting_performance.avg_holding_period) }}</div>
+                            <small class="text-muted">Avg Days</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Backtesting Results -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Stock</th>
+                                <th>Recommendation</th>
+                                <th>Entry Price</th>
+                                <th>Current/Exit Price</th>
+                                <th>Return</th>
+                                <th>Holding Period</th>
+                                <th>Status</th>
+                                <th>Entry Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in backtesting_results[:15] %}
+                            <tr>
+                                <td><strong>{{ result.ticker }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if result.recommendation == 'BUY' else 'warning' if result.recommendation == 'HOLD' else 'danger' }}">
+                                        {{ result.recommendation }}
+                                    </span>
+                                </td>
+                                <td>₹{{ "%.2f"|format(result.entry_price) if result.entry_price else 'N/A' }}</td>
+                                <td>₹{{ "%.2f"|format(result.exit_price) if result.exit_price else 'N/A' }}</td>
+                                <td>
+                                    {% if result.percentage_return %}
+                                    <span class="text-{{ 'success' if result.percentage_return >= 0 else 'danger' }} fw-bold">
+                                        {{ "%.2f"|format(result.percentage_return) }}%
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ result.holding_period_days or 0 }} days</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if result.status == 'closed' else 'primary' if result.status == 'active' else 'warning' }}">
+                                        {{ result.status.title() }}
+                                    </span>
+                                </td>
+                                <td><small>{{ result.entry_date.strftime('%Y-%m-%d') if result.entry_date else 'N/A' }}</small></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" onclick="viewBacktestDetails('{{ result.id }}')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-activity text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">No backtesting results available yet.</p>
+                    <p class="text-muted">Backtesting results will appear automatically as recommendations are tracked over time.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewFundamentalDetails(ticker) {
+    // Fetch and display fundamental analysis details
+    fetch(`/api/fundamental_analysis/${ticker}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error loading fundamental analysis: ' + data.error);
+                return;
+            }
+            
+            let details = `
+                <strong>${data.company_name || ticker}</strong><br>
+                <strong>Fundamental Score:</strong> ${data.fundamental_score || 'N/A'}/100<br>
+                <strong>PE Ratio:</strong> ${data.pe_ratio || 'N/A'}<br>
+                <strong>PB Ratio:</strong> ${data.pb_ratio || 'N/A'}<br>
+                <strong>ROE:</strong> ${data.roe || 'N/A'}%<br>
+                <strong>Debt to Equity:</strong> ${data.debt_to_equity || 'N/A'}<br>
+                <strong>Revenue Growth:</strong> ${data.revenue_growth_yoy || 'N/A'}%<br>
+                <strong>Net Margin:</strong> ${data.net_margin || 'N/A'}%<br>
+                <strong>Recommendation:</strong> ${data.recommendation || 'N/A'}<br>
+                <strong>Target Price:</strong> ₹${data.target_price || 'N/A'}<br>
+                <strong>Analysis Date:</strong> ${new Date(data.analysis_date).toLocaleDateString()}
+            `;
+            
+            // Show in a modal or alert (simplified for demo)
+            alert('Fundamental Analysis for ' + ticker + ':\n\n' + details.replace(/<br>/g, '\n').replace(/<strong>|<\/strong>/g, ''));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load fundamental analysis details');
+        });
+}
+
+function viewBacktestDetails(resultId) {
+    alert('Backtesting details view for result ID: ' + resultId + '\n\nDetailed view coming soon...');
+}
+
+function generateFundamentalAnalysis() {
+    const analystName = '{{ profile.name }}';
+    
+    if (confirm('Generate fundamental analysis for all stocks covered by ' + analystName + '? This may take a few minutes.')) {
+        // Fetch analyst's reports and generate analysis
+        fetch(`/api/generate_analyst_fundamental_analysis/${analystName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error: ' + data.error);
+            } else {
+                alert('Fundamental analysis generation started! Refresh the page in a few minutes to see results.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to start fundamental analysis generation');
+        });
+    }
+}
+
+// Sidebar Navigation
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle sidebar navigation clicks
+    const sidebarLinks = document.querySelectorAll('.list-group-item-action');
+    
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Skip external links (those that don't start with #)
+            if (!href || !href.startsWith('#')) {
+                return; // Let the browser handle the navigation
+            }
+            
+            e.preventDefault();
+            
+            // Remove active class from all internal links only
+            sidebarLinks.forEach(l => {
+                const linkHref = l.getAttribute('href');
+                if (linkHref && linkHref.startsWith('#')) {
+                    l.classList.remove('active');
+                }
+            });
+            
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Get target section
+            const target = this.getAttribute('href');
+            if (target && target.startsWith('#')) {
+                const section = document.querySelector(target);
+                if (section) {
+                    section.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+    
+    // Handle scroll to update active navigation (only for internal sections)
+    window.addEventListener('scroll', function() {
+        const sections = ['overview', 'certificates', 'improvements', 'reports', 'backtesting'];
+        const scrollPos = window.scrollY + 100;
+        
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            const link = document.querySelector(`.list-group-item-action[href="#${sectionId}"]`);
+            
+            if (section && link) {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    // Remove active from all internal navigation links only
+                    const internalLinks = document.querySelectorAll('.list-group-item-action[href^="#"]');
+                    internalLinks.forEach(l => l.classList.remove('active'));
+                    // Add active to current
+                    link.classList.add('active');
+                }
+            }
+        });
+    });
+});
+
+// Certificate Generation Function
+function generateCertificate(analystId) {
+    if (!confirm('Generate a new certificate for your completed work?')) {
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+    
+    // Make API call to generate certificate
+    fetch('/admin/certificates/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            analyst_id: analystId,
+            analyst_name: '{{ profile.name if profile else analyst_name }}',
+            analyst_email: '{{ profile.email if profile else "" }}',
+            performance_score: {{ improvement_metrics.avg_quality_score or 75 }}
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Certificate generated successfully! You can download it from your certificates section.');
+            // Refresh the page to show the new certificate
+            location.reload();
+        } else {
+            alert('Error generating certificate: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate certificate. Please try again.');
+    })
+    .finally(() => {
+        // Reset button state
+        button.disabled = false;
+        button.innerHTML = originalText;
+    });
+}
+
+// Referral Link Function
+async function copyReferralLink(userType) {
+    try {
+        // Get the referral code from the API
+        const response = await fetch('/api/referral/code');
+        const data = await response.json();
+        
+        if (data.success) {
+            const baseUrl = window.location.origin;
+            const referralLink = `${baseUrl}/register_investor?ref=${data.code}`;
+            
+            // Copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(referralLink);
+                // Show success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check me-1"></i>Copied!';
+                button.classList.remove('btn-outline-primary');
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-primary');
+                }, 2000);
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = referralLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Referral link copied to clipboard!');
+            }
+        } else {
+            alert('Error getting referral link: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to copy referral link. Please try again.');
+    }
+}
+</script>
+
+        </div>  <!-- End Main Content col-md-9 -->
+    </div>      <!-- End Row -->
+</div>          <!-- End Container -->
+
+{% endblock %}

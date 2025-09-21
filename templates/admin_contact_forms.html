@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Forms Management - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-forms"></i> Contact Forms Management</h2>
+        <a href="{{ url_for('admin_create_contact_form') }}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Create New Form
+        </a>
+      </div>
+
+      <!-- Forms Overview -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">All Contact Forms</h5>
+        </div>
+        <div class="card-body">
+          {% if forms %}
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Form Title</th>
+                  <th>Subject</th>
+                  <th>Form URL</th>
+                  <th>Status</th>
+                  <th>Submissions</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for form in forms %}
+                <tr>
+                  <td>
+                    <strong>{{ form.form_title }}</strong>
+                    {% if form.form_description %}
+                    <br><small class="text-muted">{{ form.form_description[:100] }}{% if form.form_description|length > 100 %}...{% endif %}</small>
+                    {% endif %}
+                  </td>
+                  <td>{{ form.form_subject }}</td>
+                  <td>
+                    <code>/form/{{ form.form_slug }}</code>
+                    <br>
+                    <a href="{{ url_for('public_contact_form', form_slug=form.form_slug) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-external-link-alt"></i> View
+                    </a>
+                  </td>
+                  <td>
+                    {% if form.is_active %}
+                    <span class="badge bg-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin_view_submissions', form_id=form.id) }}" class="btn btn-sm btn-info">
+                      {{ form.submission_count }} submissions
+                    </a>
+                  </td>
+                  <td>{{ form.created_at.strftime('%Y-%m-%d') if form.created_at else 'N/A' }}</td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="{{ url_for('admin_edit_contact_form', form_id=form.id) }}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                      </a>
+                      <a href="{{ url_for('admin_view_submissions', form_id=form.id) }}" class="btn btn-sm btn-info">
+                        <i class="fas fa-list"></i> Submissions
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-forms fa-3x text-muted mb-3"></i>
+            <h5>No Contact Forms Created</h5>
+            <p class="text-muted">Create your first contact form to start collecting user inquiries.</p>
+            <a href="{{ url_for('admin_create_contact_form') }}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Create First Form
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <div class="card bg-primary text-white">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <h6 class="card-title">Total Forms</h6>
+                  <h3 class="mb-0">{{ forms|length }}</h3>
+                </div>
+                <div class="ms-3">
+                  <i class="fas fa-forms fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-success text-white">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <h6 class="card-title">Active Forms</h6>
+                  <h3 class="mb-0">{{ forms|selectattr('is_active')|list|length }}</h3>
+                </div>
+                <div class="ms-3">
+                  <i class="fas fa-check-circle fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-info text-white">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <h6 class="card-title">Total Submissions</h6>
+                  <h3 class="mb-0">{{ total_submissions|default(0) }}</h3>
+                </div>
+                <div class="ms-3">
+                  <i class="fas fa-paper-plane fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-warning text-white">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <h6 class="card-title">Pending Review</h6>
+                  <h3 class="mb-0">{{ total_unread|default(0) }}</h3>
+                </div>
+                <div class="ms-3">
+                  <i class="fas fa-clock fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

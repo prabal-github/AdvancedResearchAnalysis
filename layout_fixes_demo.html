@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed ML Models Layout + Past Month Returns</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        .demo-container { max-width: 1000px; margin: 0 auto; }
+        
+        /* Fixed layout styles */
+        .catalog-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 20px; 
+            margin: 20px 0;
+        }
+        .item-card { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            border-radius: 8px; 
+            padding: 16px; 
+            position: relative; 
+            overflow: visible; 
+            z-index: 1; 
+        }
+        .model-title { 
+            color: #60a5fa; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+        }
+        
+        /* Fixed backtesting styles */
+        .backtest-section { 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            border-radius: 6px; 
+            padding: 12px; 
+            margin-top: 8px; 
+            position: relative; 
+            z-index: 2; 
+        }
+        .backtest-controls { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            margin-bottom: 8px; 
+        }
+        .stock-selection-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+        }
+        .period-and-button { 
+            display: flex; 
+            gap: 8px; 
+            align-items: flex-start; 
+        }
+        .stock-multiselect { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            color: #e2e8f0; 
+            padding: 6px 8px; 
+            font-size: 11px; 
+            border-radius: 4px; 
+            min-height: 60px; 
+            width: 100%; 
+        }
+        .stock-multiselect option:checked { background: #2563eb; color: #fff; }
+        .selected-stocks { 
+            font-size: 10px; 
+            color: #94a3b8; 
+            margin-top: 2px; 
+            max-height: 40px; 
+            overflow-y: auto; 
+        }
+        .past-month-return { 
+            font-size: 10px; 
+            color: #10b981; 
+            margin-top: 2px; 
+            font-weight: 600; 
+        }
+        .backtest-controls select { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            color: #e2e8f0; 
+            padding: 6px 8px; 
+            font-size: 11px; 
+            border-radius: 4px; 
+            height: 32px; 
+            min-width: 70px; 
+        }
+        .backtest-controls button { 
+            background: #2563eb; 
+            color: #fff; 
+            border: none; 
+            padding: 8px 12px; 
+            font-size: 11px; 
+            border-radius: 4px; 
+            font-weight: 600; 
+            height: 32px; 
+            min-width: 80px; 
+            cursor: pointer;
+        }
+        .backtest-controls button:hover { background: #1d4ed8; }
+        .backtest-controls button:disabled { background: #374151; cursor: not-allowed; }
+        
+        .improvement { background: #065f46; border: 1px solid #10b981; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .issue-fixed { background: #7f1d1d; border: 1px solid #dc2626; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .highlight { background: #fbbf24; color: #000; padding: 2px 4px; border-radius: 3px; }
+        .multi-stock-label { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🔧 Fixed ML Models Layout + Past Month Returns</h1>
+        
+        <div class="issue-fixed">
+            <h2>❌ Issues Fixed</h2>
+            <ul>
+                <li><strong>Overlapping Elements:</strong> Backtest buttons and period selectors appearing behind other ML model cards</li>
+                <li><strong>Layout Problems:</strong> Grid layout causing elements to overlap</li>
+                <li><strong>Missing Feature:</strong> No past month return calculation for selected stocks</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h2>✅ Solutions Implemented</h2>
+            <ul>
+                <li><strong>🎯 Fixed Grid Layout:</strong> Increased card width from 260px to <span class="highlight">320px</span></li>
+                <li><strong>🔧 Fixed Z-Index:</strong> Added proper <span class="highlight">z-index: 2</span> to backtest sections</li>
+                <li><strong>📐 Changed Layout:</strong> Switched from horizontal grid to <span class="highlight">vertical flex layout</span></li>
+                <li><strong>📈 Added Past Month Returns:</strong> Real-time calculation for selected stocks</li>
+                <li><strong>📊 Portfolio Returns:</strong> Combined past month return for multiple stocks</li>
+            </ul>
+        </div>
+
+        <div class="catalog-grid">
+            <div class="item-card">
+                <div class="model-title">🧠 Intraday Price Drift Model</div>
+                <div style="margin-bottom: 8px; font-size: 12px; color: #cbd5e1;">Short horizon drift estimation with momentum signals</div>
+                <div class="backtest-section">
+                    <div class="backtest-controls">
+                        <div class="stock-selection-container">
+                            <div class="multi-stock-label">Select Stocks (Hold Ctrl/Cmd for multiple):</div>
+                            <select class="stock-multiselect" multiple>
+                                <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                                <option value="TCS.NS" selected>Tata Consultancy Services Ltd</option>
+                                <option value="HDFCBANK.NS" selected>HDFC Bank Ltd</option>
+                                <option value="INFY.NS">Infosys Ltd</option>
+                                <option value="ICICIBANK.NS">ICICI Bank Ltd</option>
+                            </select>
+                            <div class="selected-stocks">Selected (2): Tata Consultancy Services Ltd, HDFC Bank Ltd</div>
+                            <div class="past-month-return">Portfolio Past Month (2/2): +3.45%</div>
+                        </div>
+                        <div class="period-and-button">
+                            <select>
+                                <option value="3mo">3M</option>
+                                <option value="6mo">6M</option>
+                                <option value="1y" selected>1Y</option>
+                                <option value="2y">2Y</option>
+                            </select>
+                            <button>Backtest</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <div class="model-title">🧠 Volatility Estimator (GARCH)</div>
+                <div style="margin-bottom: 8px; font-size: 12px; color: #cbd5e1;">Conditional volatility forecast with low-vol regime trading</div>
+                <div class="backtest-section">
+                    <div class="backtest-controls">
+                        <div class="stock-selection-container">
+                            <div class="multi-stock-label">Select Stocks (Hold Ctrl/Cmd for multiple):</div>
+                            <select class="stock-multiselect" multiple>
+                                <option value="RELIANCE.NS" selected>Reliance Industries Ltd</option>
+                                <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                                <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                                <option value="INFY.NS">Infosys Ltd</option>
+                                <option value="ICICIBANK.NS">ICICI Bank Ltd</option>
+                            </select>
+                            <div class="selected-stocks">Selected (1): Reliance Industries Ltd</div>
+                            <div class="past-month-return">Past Month: +2.18%</div>
+                        </div>
+                        <div class="period-and-button">
+                            <select>
+                                <option value="3mo">3M</option>
+                                <option value="6mo">6M</option>
+                                <option value="1y" selected>1Y</option>
+                                <option value="2y">2Y</option>
+                            </select>
+                            <button>Backtest</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="improvement">
+            <h3>🔧 Layout Fixes Applied</h3>
+            
+            <h4>1. Grid Layout Enhancement</h4>
+            <ul>
+                <li><strong>Card Width:</strong> Increased from <code>minmax(260px,1fr)</code> to <code>minmax(320px,1fr)</code></li>
+                <li><strong>Gap:</strong> Increased from <code>14px</code> to <code>20px</code> for better spacing</li>
+                <li><strong>Overflow:</strong> Added <code>overflow: visible</code> to prevent clipping</li>
+                <li><strong>Z-Index:</strong> Proper layering with <code>z-index: 1</code> for cards and <code>z-index: 2</code> for backtest sections</li>
+            </ul>
+            
+            <h4>2. Backtest Controls Layout</h4>
+            <ul>
+                <li><strong>Direction:</strong> Changed from <code>display: grid</code> to <code>display: flex; flex-direction: column</code></li>
+                <li><strong>Period & Button:</strong> Grouped in separate container with <code>display: flex</code></li>
+                <li><strong>Stock Selection:</strong> Takes full width with proper vertical spacing</li>
+                <li><strong>No Overlapping:</strong> Elements properly contained within card boundaries</li>
+            </ul>
+            
+            <h4>3. Past Month Returns Feature</h4>
+            <ul>
+                <li><strong>Real-time Calculation:</strong> Uses yfinance to get latest month data</li>
+                <li><strong>Single Stock:</strong> Shows <code>Past Month: +X.XX%</code></li>
+                <li><strong>Multiple Stocks:</strong> Shows <code>Portfolio Past Month (X/Y): +X.XX%</code></li>
+                <li><strong>Color Coding:</strong> Green for positive, red for negative returns</li>
+                <li><strong>Error Handling:</strong> Graceful handling of data fetching errors</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h3>📊 Past Month Return Calculation</h3>
+            <div style="background: #374151; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin: 10px 0;">
+POST /api/catalog/past_month_return
+{
+  "symbols": ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS"]
+}
+
+Response:
+{
+  "success": true,
+  "results": [
+    {"symbol": "RELIANCE.NS", "return": 0.0218, "start_price": 2847.5, "end_price": 2909.6},
+    {"symbol": "TCS.NS", "return": 0.0472, "start_price": 3654.2, "end_price": 3826.7},
+    {"symbol": "HDFCBANK.NS", "return": 0.0345, "start_price": 1583.8, "end_price": 1638.5}
+  ],
+  "average_return": 0.0345,
+  "valid_count": 3,
+  "total_count": 3
+}
+            </div>
+        </div>
+
+        <div style="background: #10b981; color: #000; padding: 15px; border-radius: 8px; font-weight: bold; text-align: center; margin: 30px 0;">
+            ✅ LAYOUT FIXED + PAST MONTH RETURNS ADDED
+            <br>
+            <span style="font-size: 14px;">No more overlapping elements! Real-time past month returns for portfolio analysis!</span>
+        </div>
+
+        <h3>🚀 How to Use</h3>
+        <ol>
+            <li><strong>Navigate to:</strong> <code>http://127.0.0.1:5008/integrated_ml_models_and_agentic_ai</code></li>
+            <li><strong>Click:</strong> "ML Models" tab</li>
+            <li><strong>For each model:</strong>
+                <ul>
+                    <li>Select stocks (single or multiple with Ctrl/Cmd)</li>
+                    <li>See real-time <strong>past month return</strong> calculation</li>
+                    <li>Choose time period and click <strong>Backtest</strong> (no overlapping!)</li>
+                    <li>View comprehensive results</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options Analytics Dashboard - Advanced Strike Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .options-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .strategy-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .strategy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+        
+        .strategy-support { border-left-color: #28a745; }
+        .strategy-volume { border-left-color: #007bff; }
+        .strategy-iv { border-left-color: #ffc107; }
+        .strategy-atm { border-left-color: #17a2b8; }
+        .strategy-greeks { border-left-color: #6f42c1; }
+        .strategy-liquidity { border-left-color: #dc3545; }
+        
+        .model-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .strike-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .action-buy { color: #28a745; font-weight: bold; }
+        .action-sell { color: #dc3545; font-weight: bold; }
+        .action-hold { color: #6c757d; font-weight: bold; }
+        .action-avoid { color: #fd7e14; font-weight: bold; }
+        
+        .confidence-high { background: linear-gradient(90deg, #28a745, #20c997); }
+        .confidence-medium { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .confidence-low { background: linear-gradient(90deg, #dc3545, #e83e8c); }
+        
+        .confidence-bar {
+            height: 10px;
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            font-size: 0.8rem;
+            line-height: 10px;
+        }
+        
+        .market-overview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .strategy-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+        
+        .recommendations-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="options-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-chart-line"></i> Options Analytics Dashboard</h1>
+                    <p class="lead mb-0">Advanced Strike Analysis with Professional Trading Strategies</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="btn-group">
+                        <a href="/published" class="btn btn-outline-light">
+                            <i class="fas fa-arrow-left"></i> Back to Models
+                        </a>
+                        <button class="btn btn-light" onclick="refreshAnalysis()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Model Selector -->
+        <div class="model-selector">
+            <h3><i class="fas fa-cogs"></i> Select Options ML Model</h3>
+            <div class="row">
+                <div class="col-md-8">
+                    <select id="modelSelector" class="form-select form-select-lg" onchange="loadModel()">
+                        <option value="">Select an Options ML Model...</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button id="runAnalysis" class="btn btn-primary btn-lg w-100" onclick="runOptionsAnalysis()" disabled>
+                        <i class="fas fa-play"></i> Run Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4 class="mt-3">Analyzing Options Chain...</h4>
+            <p>Fetching real-time data from Upstox API and processing 80+ strikes</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" style="display: none;">
+            <!-- Market Overview -->
+            <div class="market-overview">
+                <h3><i class="fas fa-chart-area"></i> Market Overview</h3>
+                <div class="row" id="marketMetrics">
+                    <!-- Metrics will be populated here -->
+                </div>
+            </div>
+
+            <!-- Trading Strategies -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-support">
+                        <div class="strategy-icon text-success">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <h5>Support/Resistance Analysis</h5>
+                        <p>High OI imbalances → directional trades</p>
+                        <div id="supportResistanceSignals"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-volume">
+                        <div class="strategy-icon text-primary">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5>Volume Surge Detection</h5>
+                        <p>Put/Call writing activity analysis</p>
+                        <div id="volumeSurgeSignals"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-iv">
+                        <div class="strategy-icon text-warning">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h5>IV Arbitrage</h5>
+                        <p>Overpriced options identification</p>
+                        <div id="ivArbitrageSignals"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-atm">
+                        <div class="strategy-icon text-info">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h5>ATM Strategies</h5>
+                        <p>Straddle/Strangle optimization</p>
+                        <div id="atmStrategiesSignals"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-greeks">
+                        <div class="strategy-icon text-purple">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h5>Greeks Momentum</h5>
+                        <p>Delta-Gamma based signals</p>
+                        <div id="greeksMomentumSignals"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="strategy-card strategy-liquidity">
+                        <div class="strategy-icon text-danger">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <h5>Liquidity Filters</h5>
+                        <p>Avoid low-volume strikes</p>
+                        <div id="liquidityFilterSignals"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Recommendations -->
+            <div class="recommendations-section">
+                <h3><i class="fas fa-star"></i> Top Trading Recommendations</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Strike</th>
+                                <th>Action</th>
+                                <th>Strategy</th>
+                                <th>Confidence</th>
+                                <th>Target</th>
+                                <th>Stop Loss</th>
+                                <th>Risk:Reward</th>
+                                <th>Reasoning</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topRecommendationsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Complete Strike Analysis -->
+            <div class="strike-table">
+                <div class="card-header bg-dark text-white">
+                    <h4><i class="fas fa-table"></i> Complete Strike Analysis</h4>
+                    <p class="mb-0">Detailed analysis of all strikes with OI, Volume, Greeks, and Recommendations</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Strike</th>
+                                <th>Call LTP</th>
+                                <th>Call OI</th>
+                                <th>Call Vol</th>
+                                <th>Put LTP</th>
+                                <th>Put OI</th>
+                                <th>Put Vol</th>
+                                <th>Action</th>
+                                <th>Confidence</th>
+                                <th>Strategy</th>
+                            </tr>
+                        </thead>
+                        <tbody id="strikeAnalysisTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentModelId = null;
+        let analysisData = null;
+
+        // Load options models on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOptionsModels();
+        });
+
+        function loadOptionsModels() {
+            try {
+                const selector = document.getElementById('modelSelector');
+                selector.innerHTML = '<option value="">Select an Options ML Model...</option>';
+                
+                // Use server-side data instead of AJAX
+                {% if options_models %}
+                    {% for model in options_models %}
+                        const option = document.createElement('option');
+                        option.value = '{{ model.id }}';
+                        option.textContent = '{{ model.name }} ({{ model.accuracy }})';
+                        selector.appendChild(option);
+                    {% endfor %}
+                {% else %}
+                    const noModelOption = document.createElement('option');
+                    noModelOption.value = '';
+                    noModelOption.textContent = 'No Options models found';
+                    noModelOption.disabled = true;
+                    selector.appendChild(noModelOption);
+                {% endif %}
+                
+            } catch (error) {
+                console.error('Error loading models:', error);
+                showError('Failed to load options models');
+            }
+        }
+
+        function loadModel() {
+            const selector = document.getElementById('modelSelector');
+            currentModelId = selector.value;
+            document.getElementById('runAnalysis').disabled = !currentModelId;
+        }
+
+        async function runOptionsAnalysis() {
+            if (!currentModelId) return;
+
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            try {
+                const response = await fetch(`/api/published_models/${currentModelId}/run`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        function: 'predict',
+                        args: [],
+                        kwargs: {}
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to run analysis');
+                }
+
+                const result = await response.json();
+                
+                if (result.ok) {
+                    // Parse the result (it comes as a string representation)
+                    try {
+                        analysisData = JSON.parse(result.result.replace(/'/g, '"'));
+                        displayAnalysisResults(analysisData);
+                    } catch (parseError) {
+                        // If JSON parsing fails, try to extract from string
+                        analysisData = result.result;
+                        displayRawResults(analysisData);
+                    }
+                } else {
+                    throw new Error(result.error || 'Analysis failed');
+                }
+                
+            } catch (error) {
+                console.error('Error running analysis:', error);
+                showError('Failed to run options analysis: ' + error.message);
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        function displayAnalysisResults(data) {
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Display market overview
+            displayMarketOverview(data.market_overview || {});
+            
+            // Display strategy-specific signals
+            displayStrategySignals(data.strike_analysis || []);
+            
+            // Display top recommendations
+            displayTopRecommendations(data.top_recommendations || []);
+            
+            // Display complete strike analysis
+            displayStrikeAnalysis(data.strike_analysis || []);
+        }
+
+        function displayRawResults(data) {
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Show raw data in a formatted way
+            const container = document.createElement('div');
+            container.className = 'alert alert-info';
+            container.innerHTML = `
+                <h4>Analysis Results:</h4>
+                <pre style="max-height: 400px; overflow-y: auto;">${data}</pre>
+            `;
+            
+            document.getElementById('resultsSection').prepend(container);
+        }
+
+        function displayMarketOverview(overview) {
+            const metrics = document.getElementById('marketMetrics');
+            metrics.innerHTML = `
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <h5>${overview.current_nifty_level || 'N/A'}</h5>
+                        <small>Current NIFTY Level</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <h5>${overview.max_pain_level || 'N/A'}</h5>
+                        <small>Max Pain Level</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <h5>${(overview.put_call_ratio_oi || 0).toFixed(3)}</h5>
+                        <small>PCR (OI)</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <h5>${overview.market_sentiment || 'NEUTRAL'}</h5>
+                        <small>Market Sentiment</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayStrategySignals(strikeAnalysis) {
+            const strategies = {
+                'Support Level Play': 'supportResistanceSignals',
+                'Resistance Level Play': 'supportResistanceSignals',
+                'Put Writing': 'volumeSurgeSignals',
+                'Call Writing': 'volumeSurgeSignals',
+                'IV Arbitrage': 'ivArbitrageSignals',
+                'Short Straddle': 'atmStrategiesSignals',
+                'Long Straddle': 'atmStrategiesSignals',
+                'Delta Momentum': 'greeksMomentumSignals',
+                'Liquidity Filter': 'liquidityFilterSignals',
+                'Volume Filter': 'liquidityFilterSignals'
+            };
+
+            // Clear all strategy containers
+            Object.values(strategies).forEach(containerId => {
+                document.getElementById(containerId).innerHTML = '';
+            });
+
+            // Group signals by strategy
+            const strategyGroups = {};
+            strikeAnalysis.forEach(strike => {
+                const strategy = strike.recommendation?.strategy || 'Other';
+                if (!strategyGroups[strategy]) {
+                    strategyGroups[strategy] = [];
+                }
+                if (strike.recommendation?.confidence > 60) {
+                    strategyGroups[strategy].push(strike);
+                }
+            });
+
+            // Display signals for each strategy
+            Object.entries(strategyGroups).forEach(([strategy, signals]) => {
+                const containerId = strategies[strategy];
+                if (containerId && signals.length > 0) {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = `
+                        <div class="mb-2">
+                            <strong>${signals.length} signals found</strong>
+                        </div>
+                        ${signals.slice(0, 3).map(signal => `
+                            <div class="small mb-1">
+                                <span class="badge bg-primary">${signal.strike}</span>
+                                <span class="action-${signal.recommendation.action.toLowerCase().includes('buy') ? 'buy' : 'sell'}">
+                                    ${signal.recommendation.action}
+                                </span>
+                                (${signal.recommendation.confidence}%)
+                            </div>
+                        `).join('')}
+                        ${signals.length > 3 ? `<div class="small text-muted">+${signals.length - 3} more...</div>` : ''}
+                    `;
+                }
+            });
+        }
+
+        function displayTopRecommendations(recommendations) {
+            const table = document.getElementById('topRecommendationsTable');
+            table.innerHTML = recommendations.slice(0, 10).map(rec => `
+                <tr>
+                    <td><strong>${rec.strike}</strong></td>
+                    <td><span class="action-${rec.action.toLowerCase().includes('buy') ? 'buy' : 'sell'}">${rec.action}</span></td>
+                    <td><span class="badge bg-secondary">${rec.strategy}</span></td>
+                    <td>
+                        <div class="confidence-bar ${getConfidenceClass(rec.confidence)}">
+                            ${rec.confidence}%
+                        </div>
+                    </td>
+                    <td>${rec.target ? rec.target.toFixed(0) : 'N/A'}</td>
+                    <td>${rec.stop_loss ? rec.stop_loss.toFixed(0) : 'N/A'}</td>
+                    <td><span class="badge bg-info">${rec.risk_reward || 'N/A'}</span></td>
+                    <td class="small">${rec.reasoning}</td>
+                </tr>
+            `).join('');
+        }
+
+        function displayStrikeAnalysis(strikeAnalysis) {
+            const table = document.getElementById('strikeAnalysisTable');
+            table.innerHTML = strikeAnalysis.map(strike => `
+                <tr>
+                    <td><strong>${strike.strike}</strong></td>
+                    <td>${strike.call_data?.ltp || 'N/A'}</td>
+                    <td>${(strike.call_data?.oi || 0).toLocaleString()}</td>
+                    <td>${(strike.call_data?.volume || 0).toLocaleString()}</td>
+                    <td>${strike.put_data?.ltp || 'N/A'}</td>
+                    <td>${(strike.put_data?.oi || 0).toLocaleString()}</td>
+                    <td>${(strike.put_data?.volume || 0).toLocaleString()}</td>
+                    <td><span class="action-${getActionClass(strike.recommendation?.action)}">${strike.recommendation?.action || 'HOLD'}</span></td>
+                    <td>
+                        <div class="confidence-bar ${getConfidenceClass(strike.recommendation?.confidence || 50)}" style="width: 60px;">
+                            ${strike.recommendation?.confidence || 50}%
+                        </div>
+                    </td>
+                    <td><span class="badge bg-secondary small">${strike.recommendation?.strategy || 'N/A'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function getConfidenceClass(confidence) {
+            if (confidence >= 80) return 'confidence-high';
+            if (confidence >= 60) return 'confidence-medium';
+            return 'confidence-low';
+        }
+
+        function getActionClass(action) {
+            if (!action) return 'hold';
+            if (action.includes('BUY')) return 'buy';
+            if (action.includes('SELL')) return 'sell';
+            if (action.includes('AVOID')) return 'avoid';
+            return 'hold';
+        }
+
+        function refreshAnalysis() {
+            if (currentModelId) {
+                runOptionsAnalysis();
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger alert-dismissible fade show';
+            errorDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container-fluid').prepend(errorDiv);
+        }
+    </script>
+</body>
+</html>

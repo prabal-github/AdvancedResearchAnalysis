@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Research Quality App - Accessible Hero Section</title>
+    <meta name="description" content="Professional investment research analysis platform with AI-powered quality assessment and portfolio insights.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Hero Section Styles */
+        :root {
+            /* High contrast color scheme for accessibility */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --primary-blue-light: #0066cc;
+            --secondary-gray: #495057;
+            --success-green: #155724;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-light: #ffffff;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --background-primary: linear-gradient(135deg, #0056b3 0%, #0066cc 100%);
+            --border-color: #ced4da;
+            --focus-outline: #0066cc;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Base accessibility styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+            font-size: 0.9rem;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Hero section */
+        .hero-section {
+            background: var(--background-primary);
+            color: var(--text-light);
+            padding: 4rem 0 5rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            line-height: 1.4;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            max-width: 600px;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 700px;
+        }
+        
+        /* CTA buttons */
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .btn {
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border: 2px solid;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            min-height: 48px; /* Minimum touch target size */
+            justify-content: center;
+        }
+        
+        .btn-light {
+            background: var(--text-light);
+            border-color: var(--text-light);
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-light:hover,
+        .btn-light:focus {
+            background: var(--background-light);
+            border-color: var(--background-light);
+            color: var(--primary-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            text-decoration: none;
+        }
+        
+        .btn-outline-light {
+            background: transparent;
+            border-color: var(--text-light);
+            color: var(--text-light);
+        }
+        
+        .btn-outline-light:hover,
+        .btn-outline-light:focus {
+            background: var(--text-light);
+            border-color: var(--text-light);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Feature highlights */
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover,
+        .feature-card:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .feature-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0;
+        }
+        
+        /* Statistics */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-item {
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            display: block;
+            line-height: 1.1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        /* Trust indicators */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .trust-badge i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 3rem 0 4rem;
+                min-height: 500px;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                padding: 1rem 1.5rem;
+                justify-content: center;
+            }
+            
+            .hero-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .feature-card {
+                padding: 1.25rem;
+            }
+            
+            .hero-stats {
+                gap: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .trust-badges {
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .trust-badges {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .hero-section {
+                background: #000080;
+                color: #ffffff;
+            }
+            
+            .btn-light {
+                background: #ffffff;
+                color: #000000;
+                border-color: #ffffff;
+            }
+            
+            .btn-outline-light {
+                border-color: #ffffff;
+                color: #ffffff;
+            }
+            
+            .feature-card {
+                border-color: #ffffff;
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            .hero-section::before {
+                animation: none;
+            }
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        .sr-only-focusable:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            padding: inherit !important;
+            margin: inherit !important;
+            overflow: visible !important;
+            clip: auto !important;
+            white-space: normal !important;
+        }
+        
+        /* Print styles */
+        @media print {
+            .hero-section {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 2rem 0 !important;
+            }
+            
+            .hero-section::before {
+                display: none !important;
+            }
+            
+            .btn {
+                border: 2px solid #000000 !important;
+                color: #000000 !important;
+                background: #ffffff !important;
+            }
+            
+            .feature-card {
+                border: 1px solid #000000 !important;
+                background: #ffffff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link sr-only-focusable">Skip to main content</a>
+    
+    <!-- ARIA live regions for announcements -->
+    <div id="announcement-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    <div id="status-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section" aria-labelledby="hero-title" role="banner">
+        <div class="container">
+            <main id="main-content" class="hero-content" role="main">
+                
+                <!-- Main heading and introduction -->
+                <header class="text-center text-md-start">
+                    <h1 id="hero-title" class="hero-title">
+                        Professional Investment Research Analysis
+                    </h1>
+                    <p class="hero-subtitle">
+                        AI-powered quality assessment for smarter investment decisions
+                    </p>
+                    <p class="hero-description">
+                        Transform your investment strategy with our advanced research quality scoring system. 
+                        Get instant analysis of research reports, portfolio insights, and data-driven recommendations 
+                        to maximize your investment potential.
+                    </p>
+                </header>
+                
+                <!-- Call to action buttons -->
+                <div class="hero-actions text-center text-md-start" role="group" aria-label="Primary actions">
+                    <a href="{{ url_for('investor_login') }}" 
+                       class="btn btn-light"
+                       aria-describedby="login-desc">
+                        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                        Start Analyzing Now
+                    </a>
+                    <div id="login-desc" class="sr-only">Access your investor dashboard to analyze research reports</div>
+                    
+                    <a href="{{ url_for('investor_registration') }}" 
+                       class="btn btn-outline-light"
+                       aria-describedby="register-desc">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        Create Free Account
+                    </a>
+                    <div id="register-desc" class="sr-only">Register for a free account to get started with research analysis</div>
+                </div>
+                
+                <!-- Key features -->
+                <section aria-labelledby="features-heading" class="hero-features">
+                    <h2 id="features-heading" class="sr-only">Key Features</h2>
+                    
+                    <article class="feature-card">
+                        <i class="fas fa-brain feature-icon" aria-hidden="true"></i>
+                        <h3 class="feature-title">AI-Powered Analysis</h3>
+                        <p class="feature-description">
+                            Advanced machine learning algorithms analyze research quality and provide actionable insights.
+                        </p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <i class="fas fa-chart-line feature-icon" aria-hidden="true"></i>
+                        <h3 class="feature-title">Real-time Portfolio Tracking</h3>
+                        <p class="feature-description">
+                            Monitor your investments with live data and comprehensive performance analytics.
+                        </p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <i class="fas fa-shield-check feature-icon" aria-hidden="true"></i>
+                        <h3 class="feature-title">Risk Assessment</h3>
+                        <p class="feature-description">
+                            Comprehensive risk profiling and personalized investment recommendations.
+                        </p>
+                    </article>
+                </section>
+                
+                <!-- Performance statistics -->
+                <section aria-labelledby="stats-heading" class="hero-stats">
+                    <h2 id="stats-heading" class="sr-only">Platform Statistics</h2>
+                    
+                    <div class="stat-item">
+                        <span class="stat-number" aria-label="10,000 plus">10K+</span>
+                        <span class="stat-label">Reports Analyzed</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-number" aria-label="95 percent">95%</span>
+                        <span class="stat-label">Accuracy Rate</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-number" aria-label="500 plus">500+</span>
+                        <span class="stat-label">Active Investors</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-number" aria-label="24/7">24/7</span>
+                        <span class="stat-label">Real-time Data</span>
+                    </div>
+                </section>
+                
+                <!-- Trust indicators -->
+                <section aria-labelledby="trust-heading" class="trust-badges">
+                    <h2 id="trust-heading" class="sr-only">Trust and Security</h2>
+                    
+                    <div class="trust-badge">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <span>Bank-level Security</span>
+                    </div>
+                    
+                    <div class="trust-badge">
+                        <i class="fas fa-certificate" aria-hidden="true"></i>
+                        <span>SEC Compliant</span>
+                    </div>
+                    
+                    <div class="trust-badge">
+                        <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                        <span>Real-time Data</span>
+                    </div>
+                    
+                    <div class="trust-badge">
+                        <i class="fas fa-headset" aria-hidden="true"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                </section>
+                
+            </main>
+        </div>
+    </section>
+    
+    <!-- Additional content sections would go here -->
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant Hero Section JavaScript
+        (function() {
+            'use strict';
+            
+            const announcementRegion = document.getElementById('announcement-region');
+            const statusRegion = document.getElementById('status-region');
+            
+            // Announce messages to screen readers
+            function announce(message, isStatus = false) {
+                const region = isStatus ? statusRegion : announcementRegion;
+                region.textContent = message;
+                setTimeout(() => region.textContent = '', 5000);
+            }
+            
+            // Enhanced button interactions
+            function enhanceButtons() {
+                const buttons = document.querySelectorAll('.btn');
+                
+                buttons.forEach(button => {
+                    // Add loading state capability
+                    button.addEventListener('click', function(e) {
+                        if (this.href && this.href.includes('login')) {
+                            // Add subtle feedback for login button
+                            this.style.transform = 'scale(0.98)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 150);
+                        }
+                    });
+                    
+                    // Enhanced keyboard interaction
+                    button.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.click();
+                        }
+                    });
+                });
+            }
+            
+            // Animate statistics on scroll (with reduced motion respect)
+            function animateStats() {
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (prefersReducedMotion) return;
+                
+                const stats = document.querySelectorAll('.stat-number');
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                animateNumber(entry.target);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    },
+                    { threshold: 0.5 }
+                );
+                
+                stats.forEach(stat => observer.observe(stat));
+            }
+            
+            // Animate number counting
+            function animateNumber(element) {
+                const text = element.textContent;
+                const number = parseInt(text.replace(/[^0-9]/g, ''));
+                
+                if (isNaN(number)) return;
+                
+                const duration = 2000;
+                const start = Date.now();
+                const suffix = text.replace(/[0-9]/g, '');
+                
+                function updateNumber() {
+                    const elapsed = Date.now() - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentNumber = Math.floor(number * progress);
+                    
+                    element.textContent = currentNumber + suffix;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateNumber);
+                    }
+                }
+                
+                updateNumber();
+            }
+            
+            // Keyboard navigation enhancements
+            function setupKeyboardNavigation() {
+                document.addEventListener('keydown', function(e) {
+                    // Alt + Enter to trigger primary CTA
+                    if (e.altKey && e.key === 'Enter') {
+                        e.preventDefault();
+                        const primaryBtn = document.querySelector('.btn-light');
+                        if (primaryBtn) {
+                            primaryBtn.focus();
+                            primaryBtn.click();
+                            announce('Navigating to login page');
+                        }
+                    }
+                    
+                    // Escape key to return focus to main content
+                    if (e.key === 'Escape') {
+                        const mainContent = document.getElementById('main-content');
+                        if (mainContent) {
+                            mainContent.focus();
+                            announce('Focus returned to main content');
+                        }
+                    }
+                });
+            }
+            
+            // Feature card interactions
+            function enhanceFeatureCards() {
+                const featureCards = document.querySelectorAll('.feature-card');
+                
+                featureCards.forEach((card, index) => {
+                    // Make cards focusable for keyboard users
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('role', 'article');
+                    
+                    // Add keyboard interaction
+                    card.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            // Could trigger modal or navigation
+                            const title = this.querySelector('.feature-title').textContent;
+                            announce(`Selected feature: ${title}`);
+                        }
+                    });
+                    
+                    // Add focus management
+                    card.addEventListener('focus', function() {
+                        this.style.transform = 'translateY(-4px)';
+                    });
+                    
+                    card.addEventListener('blur', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
+            
+            // Accessibility announcements for dynamic content
+            function setupAccessibilityAnnouncements() {
+                // Announce page load completion
+                setTimeout(() => {
+                    announce('Investment research analysis platform loaded. Use tab key to navigate options.');
+                }, 1000);
+                
+                // Announce important interactions
+                const primaryBtn = document.querySelector('.btn-light');
+                if (primaryBtn) {
+                    primaryBtn.addEventListener('focus', () => {
+                        setTimeout(() => {
+                            announce('Primary action: Start analyzing investment reports');
+                        }, 100);
+                    });
+                }
+            }
+            
+            // Progress indication for long operations
+            function setupProgressIndication() {
+                const buttons = document.querySelectorAll('.btn[href]');
+                
+                buttons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const text = this.textContent.trim();
+                        announce(`Loading ${text.toLowerCase()}...`);
+                    });
+                });
+            }
+            
+            // Initialize all accessibility features
+            function initializeAccessibility() {
+                enhanceButtons();
+                animateStats();
+                setupKeyboardNavigation();
+                enhanceFeatureCards();
+                setupAccessibilityAnnouncements();
+                setupProgressIndication();
+                
+                // Set initial focus management
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.setAttribute('tabindex', '-1');
+                    // Don't auto-focus on page load to avoid screen reader confusion
+                }
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeAccessibility);
+            } else {
+                initializeAccessibility();
+            }
+            
+            // Handle focus management for SPA navigation
+            window.addEventListener('popstate', function() {
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.focus();
+                    announce('Page content updated');
+                }
+            });
+            
+        })();
+    </script>
+</body>
+</html>

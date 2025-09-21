@@ -1,0 +1,9 @@
+name,email,password,full_name,specialization,experience_years,phone,bio
+,invalid1@test.com,password123,Missing Username,Technical Analysis,2,555-0001,This row has missing username
+invalid_user2,,password123,Missing Email User,Fundamental Analysis,3,555-0002,This row has missing email
+invalid_user3,invalid3@test.com,short,Short Password User,Risk Assessment,1,555-0003,This row has password too short (less than 6 chars)
+invalid_user4,not-an-email,password123,Invalid Email Format,Quantitative Analysis,2,555-0004,This row has invalid email format
+special!chars,special@test.com,password123,Special Characters,Industry Analysis,3,555-0005,This username contains special characters
+toolongusernamethatexceedsmaximumlength,toolong@test.com,password123,Too Long Username,Derivatives Analysis,1,555-0006,This username is too long for the database field
+duplicate_test,duplicate@test.com,password123,Duplicate Test User,Macro Economics,2,555-0007,This will test duplicate detection
+migration_test,migration_duplicate@test.com,password123,Migration Duplicate,Credit Analysis,1,555-0008,This should be caught as duplicate with existing migration_test user

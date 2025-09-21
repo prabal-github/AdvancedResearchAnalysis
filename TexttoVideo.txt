@@ -1,0 +1,70 @@
+Great idea—yes, it’s possible. You can build it two ways: a fast-to-market hosted API route, or an in-house open-source pipeline. Here’s how to approach it in your Flask app.
+
+Checklist
+
+Generate a clean spoken script from the report (summary).
+Convert script to natural voice (TTS).
+Animate an avatar from a front-face image lip-synced to the audio.
+Add brand overlays/captions; export video (MP4).
+Run it as a background job; show progress and deliverable in the dashboard.
+Ensure consent, watermarking, and plan-based usage controls.
+Option A: Hosted “avatar video” APIs (simplest, production-ready)
+
+Services: D-ID, HeyGen, Synthesia, Colossyan.
+Flow:
+Summary script: Use your existing summarizer to produce ~120–180 words (60–90s).
+TTS: Either the provider’s built-in voices or your own (e.g., Azure TTS/ElevenLabs) and upload audio.
+Avatar video: Send the uploaded face image + audio or script to the provider’s API.
+Poll for job completion; store the returned MP4 URL; display in dashboard.
+Pros: Best quality/fidelity, no GPU required, least maintenance.
+Cons: Cost per minute, vendor lock-in, data governance considerations.
+Option B: Open-source pipeline (fully in-house)
+
+Components:
+Summarization: Your existing report summarizer (already in the app).
+TTS: Azure Cognitive Services / Amazon Polly / Google TTS / ElevenLabs (best naturalness).
+Lip-sync avatar: Wav2Lip (classic lip-sync) or SadTalker (more realistic head motion).
+Video assembly: ffmpeg/MoviePy to add lower-third, logo/watermark, captions.
+Flow:
+Analyst uploads a frontal image (good lighting, straight face).
+Generate a short, speaker-friendly script from the report.
+Generate TTS: Save as WAV/MP3 with a target sample rate (e.g., 16 kHz/22.05 kHz).
+Lip-sync:
+Wav2Lip: image + audio -> talking head (512x512). Fast and simple.
+SadTalker: better head motion; more compute and setup.
+Compose: Add title card, lower-third (Analyst name/role), subtle background, brand watermark.
+Export MP4; store path; show in dashboard.
+Infra:
+GPU strongly recommended (CUDA) for Wav2Lip/SadTalker. CPU will be slow.
+Windows compatible with proper PyTorch/CUDA setup and ffmpeg.
+Pros: Full control, no per-minute fees.
+Cons: Setup/maintenance, GPU requirement, quality tuning.
+How to wire it into your Flask app
+
+Data model:
+AvatarVideoJob(id, analyst_id, report_id, status, script_text, audio_path, video_path, duration, error, created_at).
+Endpoints:
+POST /analyst/avatar_video (image upload + report_id) → returns job_id.
+GET /api/avatar_video/<job_id>/status → progress/state.
+GET /analyst/videos → list of generated videos with thumbnails.
+Worker:
+Use Celery or RQ to run the pipeline asynchronously (summarize → TTS → lip-sync → compose → save).
+UI:
+On report page: “Generate AI Avatar Summary” button.
+Show status chip (Queued/Processing/Ready); show preview player in modal when done.
+Add usage plan gating and a soft-limit notice (you already have soft-limit logic).
+Quality and UX tips
+
+Script: Keep sentences short; add pauses; target 120–140 words per minute.
+Voices: Offer 2–3 voices; support Hindi/English if needed.
+Safety: Show consent checkbox; watermark “AI-generated”; log who generated what and when.
+Performance: Cache the report’s summary; avoid regenerating if text unchanged.
+Cost control: Mark this as a Pro/Pro+ feature; include length caps (e.g., max 90s).
+Recommended stacks
+
+Hosted: D-ID or HeyGen (both have Python/REST SDKs).
+Open-source: Wav2Lip + Azure/ElevenLabs TTS + MoviePy + ffmpeg; GPU with PyTorch.
+Next steps (quick)
+
+Decide API vs OSS based on budget and infra.
+I can scaffold the Job model, routes, and a background worker, plus a simple UI button and status ribbon.

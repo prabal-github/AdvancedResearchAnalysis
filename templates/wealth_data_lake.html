@@ -1,0 +1,855 @@
+{% extends 'base.html' %}
+{% block title %}Wealth Data Lake{% endblock %}
+{% block head %}
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    .kpi-card { min-height: 120px; }
+    .placeholder-box { border: 1px dashed #bbb; border-radius: 8px; padding: 24px; text-align: center; color: #777; }
+    .subnav {
+      position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,0.85);
+      backdrop-filter: saturate(120%) blur(6px);
+      border-bottom: 1px solid #eee;
+    }
+    .subnav .nav-link { padding: .5rem .75rem; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+      <div class="d-flex align-items-center gap-2">
+        <h3 class="mb-0">Wealth Data Lake</h3>
+        <span class="badge bg-secondary">Admin</span>
+      </div>
+      <div class="d-flex gap-2 align-items-center">
+        <input type="date" id="startDate" class="form-control form-control-sm" />
+        <input type="date" id="endDate" class="form-control form-control-sm" />
+        <input type="text" id="filterModel" class="form-control form-control-sm" placeholder="Model (optional)" />
+        <input type="text" id="filterAnalyst" class="form-control form-control-sm" placeholder="Analyst (optional)" />
+        <button id="applyFilters" class="btn btn-outline-secondary btn-sm">Apply</button>
+        <div class="form-check form-switch ms-2">
+          <input class="form-check-input" type="checkbox" role="switch" id="autoRefreshToggle">
+          <label class="form-check-label small" for="autoRefreshToggle">Auto-refresh</label>
+        </div>
+        <select id="refreshInterval" class="form-select form-select-sm" style="width: 110px;">
+          <option value="15000">15s</option>
+          <option value="30000" selected>30s</option>
+          <option value="60000">60s</option>
+        </select>
+        <button id="refreshBtn" class="btn btn-primary btn-sm">Refresh</button>
+      </div>
+    </div>
+
+    <ul class="nav nav-pills subnav mb-3 px-2">
+      <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+      <li class="nav-item"><a class="nav-link" href="#charts">Charts</a></li>
+      <li class="nav-item"><a class="nav-link" href="#activity">Recent</a></li>
+      <li class="nav-item"><a class="nav-link" href="#common">Common</a></li>
+      <li class="nav-item"><a class="nav-link" href="#advanced">Advanced</a></li>
+  <li class="nav-item"><a class="nav-link" href="#insights">Insights</a></li>
+    </ul>
+
+    <div id="overview" class="row g-3 mb-3">
+      <div class="col-md-3">
+        <div class="card kpi-card">
+          <div class="card-body">
+            <div class="text-muted">Reports</div>
+            <div id="kpiReports" class="h4 mb-0">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card">
+          <div class="card-body">
+            <div class="text-muted">ML Results</div>
+            <div id="kpiML" class="h4 mb-0">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card">
+          <div class="card-body">
+            <div class="text-muted">Backtests</div>
+            <div id="kpiBT" class="h4 mb-0">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card">
+          <div class="card-body">
+            <div class="text-muted">Script Runs</div>
+            <div id="kpiSC" class="h4 mb-0">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="charts" class="row g-3">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Reports by Type</div>
+          <div class="card-body">
+            <div id="chartReportsByType" class="placeholder-box"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Model Mix</div>
+          <div class="card-body">
+            <div id="chartModelMix" class="placeholder-box"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Backtest Quality</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6 text-center">
+                <div class="text-muted">Avg Return %</div>
+                <div id="kpiAvgReturn" class="h4">—</div>
+              </div>
+              <div class="col-6 text-center">
+                <div class="text-muted">Win Rate %</div>
+                <div id="kpiWinRate" class="h4">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Script Success Rate</div>
+          <div class="card-body text-center">
+            <div class="text-muted">Success %</div>
+            <div id="kpiScriptSuccess" class="h4">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="activity" class="row g-3 mt-1">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">Recent Activity</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Recent Reports</h6>
+                <ul id="recentReports" class="list-group small"></ul>
+                <div class="d-flex justify-content-between mt-2">
+                  <button id="prevReports" class="btn btn-outline-secondary btn-sm">Prev</button>
+                  <button id="nextReports" class="btn btn-outline-secondary btn-sm">Next</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>Recent ML Results</h6>
+                <ul id="recentML" class="list-group small"></ul>
+                <div class="d-flex justify-content-between mt-2">
+                  <button id="prevML" class="btn btn-outline-secondary btn-sm">Prev</button>
+                  <button id="nextML" class="btn btn-outline-secondary btn-sm">Next</button>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <h6>Recent Backtests</h6>
+                <ul id="recentBT" class="list-group small"></ul>
+                <div class="d-flex justify-content-between mt-2">
+                  <button id="prevBT" class="btn btn-outline-secondary btn-sm">Prev</button>
+                  <button id="nextBT" class="btn btn-outline-secondary btn-sm">Next</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>Recent Scripts</h6>
+                <ul id="recentSC" class="list-group small"></ul>
+                <div class="d-flex justify-content-between mt-2">
+                  <button id="prevSC" class="btn btn-outline-secondary btn-sm">Prev</button>
+                  <button id="nextSC" class="btn btn-outline-secondary btn-sm">Next</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="common" class="row g-3 mt-1">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">Common Stocks across Reports, ML, and Scripts</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Avg Then</th>
+                    <th>Now</th>
+                    <th>Change %</th>
+                    <th>Occurrences (R/ML/S)</th>
+                  </tr>
+                </thead>
+                <tbody id="tblCommon"></tbody>
+              </table>
+            </div>
+            <button id="refreshCommon" class="btn btn-outline-primary btn-sm">Refresh Common</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="advanced" class="row g-3 mt-1">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Top Performers</span>
+            <div>
+              <button id="downloadCsv" class="btn btn-outline-success btn-sm">Download CSV</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblTopPerformers">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Metric</th>
+                    <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header">Correlation Heatmap</div>
+          <div class="card-body">
+            <div id="chartCorr" class="placeholder-box" style="height:320px;"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Sector/Industry Performance Treemap</div>
+          <div class="card-body">
+            <div id="chartTreemap" class="placeholder-box" style="height:360px;"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Alert Rules</div>
+          <div class="card-body">
+            <form id="formAlert" class="row g-2">
+              <div class="col-md-3">
+                <select class="form-select form-select-sm" id="alertType">
+                  <option value="price_above">Price Above</option>
+                  <option value="price_below">Price Below</option>
+                  <option value="price_pct_change">Price % Change</option>
+                  <option value="rsi_overbought">RSI Overbought</option>
+                  <option value="rsi_oversold">RSI Oversold</option>
+                  <option value="iv_rank_above">IV Rank Above</option>
+                  <option value="iv_rank_below">IV Rank Below</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <input type="text" class="form-control form-control-sm" id="alertTicker" placeholder="Ticker (if needed)" />
+              </div>
+              <div class="col-md-3">
+                <input type="number" step="0.01" class="form-control form-control-sm" id="alertValue" placeholder="Target / %" />
+              </div>
+              <div class="col-md-3">
+                <input type="text" class="form-control form-control-sm" id="alertCondition" placeholder="condition e.g. window=5d" />
+              </div>
+              <div class="col-12">
+                <button class="btn btn-primary btn-sm" type="submit">Add Rule</button>
+              </div>
+            </form>
+            <div class="table-responsive mt-3">
+              <table class="table table-sm" id="tblRules">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Ticker</th>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Active</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="insights" class="row g-3 mt-1">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>KPI Trends</span>
+            <div class="d-flex align-items-center gap-2">
+              <select id="tsFreq" class="form-select form-select-sm" style="width: 110px;">
+                <option value="D" selected>Daily</option>
+                <option value="W">Weekly</option>
+              </select>
+              <button id="refreshTs" class="btn btn-outline-primary btn-sm">Refresh</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="chartKpiTrends" class="placeholder-box" style="height: 300px;"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Rolling Performance (Analysts)</span>
+            <select id="rollWindow" class="form-select form-select-sm" style="width: 120px;">
+              <option value="30" selected>30d</option>
+              <option value="60">60d</option>
+              <option value="90">90d</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblRollAnalysts">
+                <thead>
+                  <tr><th>Analyst</th><th>Win %</th><th>Avg Ret %</th><th>Trades</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Rolling Model Stability</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblRollModels">
+                <thead>
+                  <tr><th>Model</th><th>Count</th><th>Avg Confidence</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Risk Metrics by Analyst</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblRisk">
+                <thead>
+                  <tr><th>Analyst</th><th>Sharpe</th><th>Volatility</th><th>Max DD %</th><th>Trades</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">Regime Breakdown</div>
+          <div class="card-body">
+            <div id="chartRegimes" class="placeholder-box" style="height:300px;"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Waiting for data…</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Sector Coverage vs Win Rate</span>
+            <div>Concentration (HHI): <span id="hhiValue" class="badge bg-secondary">—</span></div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblSectorCoverage">
+                <thead>
+                  <tr><th>Sector</th><th>Coverage</th><th>Win %</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="card">
+          <div class="card-header">Correlation Pairs to Avoid</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm" id="tblCorrPairs">
+                <thead>
+                  <tr><th>Ticker A</th><th>Ticker B</th><th>|Corr|</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">Data Freshness</div>
+          <div class="card-body">
+            <div id="freshnessPanel" class="d-flex flex-wrap gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+  const apiSummaryUrl = '/api/wealth/summary';
+    const apiPerfUrl = '/api/wealth/performance';
+  const apiCommonUrl = '/api/wealth/common_stocks';
+  const apiPerfCsvUrl = '/api/wealth/performance.csv';
+  const apiCorrUrl = '/api/wealth/correlation';
+  const apiSectorUrl = '/api/wealth/sector_treemap';
+  const apiListRulesUrl = '/api/alerts/list_rules';
+  const apiCreateRuleUrl = '/api/alerts/create_rule';
+  const apiTsUrl = '/api/wealth/timeseries';
+  const apiRollUrl = '/api/wealth/rolling_performance';
+  const apiRiskUrl = '/api/wealth/risk_metrics';
+  const apiRegimeUrl = '/api/wealth/regime_breakdown';
+  const apiCoverageUrl = '/api/wealth/sector_coverage';
+  const apiCorrPairsUrl = '/api/wealth/correlation_insights';
+  const apiFreshnessUrl = '/api/wealth/freshness';
+    let timer = null;
+    const paging = { reports: 1, ml: 1, backtests: 1, scripts: 1, per_page: 5 };
+
+    function buildParams(pageOverrides={}) {
+      const params = new URLSearchParams();
+      const s = document.getElementById('startDate').value;
+      const e = document.getElementById('endDate').value;
+      const m = document.getElementById('filterModel').value;
+      const a = document.getElementById('filterAnalyst').value;
+      if (s) params.set('start', s);
+      if (e) params.set('end', e);
+      if (m) params.set('model', m);
+      if (a) params.set('analyst', a);
+      params.set('per_page', paging.per_page);
+      params.set('page', pageOverrides.page || 1);
+      return params.toString();
+    }
+
+    async function fetchSummary() {
+      try {
+        const res = await fetch(apiSummaryUrl, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        render(data);
+      } catch (err) {
+        console.error('Wealth Data Lake fetch failed:', err);
+      }
+    }
+
+    async function fetchPerformance(pageOverrides={}) {
+      try {
+        const url = `${apiPerfUrl}?${buildParams(pageOverrides)}`;
+        const res = await fetch(url, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        renderPerformance(data);
+      } catch (err) {
+        console.error('Wealth Data Lake performance fetch failed:', err);
+      }
+    }
+
+    async function fetchCommon() {
+      try {
+        // use date filters if provided
+        const s = document.getElementById('startDate').value;
+        const e = document.getElementById('endDate').value;
+        const params = new URLSearchParams();
+        if (s) params.set('start', s);
+        if (e) params.set('end', e);
+  params.set('limit', 10);
+  // Require presence in all three sources by default; change to 2 to be more inclusive if needed
+  params.set('min_sources', 3);
+        const res = await fetch(`${apiCommonUrl}?${params.toString()}`, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const tb = document.getElementById('tblCommon');
+        tb.innerHTML = '';
+        (data.items || []).forEach(row => {
+          const tr = document.createElement('tr');
+          const occ = row.occurrences || {reports:0,ml:0,scripts:0};
+          tr.innerHTML = `
+            <td>${row.symbol}</td>
+            <td>${row.avg_then ?? '—'}</td>
+            <td>${row.price_now ?? '—'}</td>
+            <td>${row.change_pct ?? '—'}</td>
+            <td>${occ.reports}/${occ.ml}/${occ.scripts}</td>
+          `;
+          tb.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Common stocks fetch failed:', err);
+      }
+    }
+
+      async function fetchTimeseries() {
+        try {
+          const s = document.getElementById('startDate').value;
+          const e = document.getElementById('endDate').value;
+          const f = document.getElementById('tsFreq').value || 'D';
+          const params = new URLSearchParams();
+          if (s) params.set('start', s); if (e) params.set('end', e); params.set('freq', f);
+          const res = await fetch(`${apiTsUrl}?${params.toString()}`, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const x = (d.items||[]).map(i => i.date);
+          const traces = [
+            { x, y: (d.items||[]).map(i => i.reports), name: 'Reports', type:'scatter', mode:'lines', line:{color:'#0d6efd'} },
+            { x, y: (d.items||[]).map(i => i.ml_results), name: 'ML Results', type:'scatter', mode:'lines', line:{color:'#6f42c1'} },
+            { x, y: (d.items||[]).map(i => i.backtests), name: 'Backtests', type:'scatter', mode:'lines', line:{color:'#20c997'} },
+            { x, y: (d.items||[]).map(i => i.script_success_rate), name: 'Script Success %', yaxis:'y2', type:'scatter', mode:'lines', line:{dash:'dot', color:'#fd7e14'} }
+          ];
+          Plotly.newPlot('chartKpiTrends', traces, {
+            margin:{t:10},
+            yaxis:{ title:'Counts' },
+            yaxis2:{ overlaying:'y', side:'right', title:'Success %' }
+          }, {displayModeBar:false});
+        } catch(e) { console.error('Timeseries fetch failed:', e); }
+      }
+
+      async function fetchRolling() {
+        try {
+          const w = document.getElementById('rollWindow').value || '30';
+          const res = await fetch(`${apiRollUrl}?window=${encodeURIComponent(w)}`, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const ta = document.querySelector('#tblRollAnalysts tbody');
+          ta.innerHTML = '';
+          (d.analysts||[]).forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${r.analyst}</td><td>${r.win_rate?.toFixed?.(2) ?? r.win_rate}</td><td>${r.avg_return?.toFixed?.(2) ?? r.avg_return}</td><td>${r.trades}</td>`;
+            ta.appendChild(tr);
+          });
+          const tm = document.querySelector('#tblRollModels tbody');
+          tm.innerHTML = '';
+          (d.models||[]).forEach(m => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${m.model}</td><td>${m.count}</td><td>${m.avg_confidence ?? '—'}</td>`;
+            tm.appendChild(tr);
+          });
+        } catch(e) { console.error('Rolling fetch failed:', e); }
+      }
+
+      async function fetchRisk() {
+        try {
+          const res = await fetch(apiRiskUrl, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const tb = document.querySelector('#tblRisk tbody');
+          tb.innerHTML = '';
+          (d.items||[]).forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${r.analyst}</td><td>${r.sharpe ?? '—'}</td><td>${r.volatility}</td><td>${r.max_drawdown}</td><td>${r.n}</td>`;
+            tb.appendChild(tr);
+          });
+        } catch(e) { console.error('Risk fetch failed:', e); }
+      }
+
+      async function fetchRegime() {
+        try {
+          const res = await fetch(apiRegimeUrl, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const labels = (d.items||[]).map(i => i.regime);
+          const vals = (d.items||[]).map(i => i.avg_return);
+          Plotly.newPlot('chartRegimes', [{type:'bar', x:labels, y:vals, marker:{color:['#20c997','#6c757d','#dc3545']}}], {margin:{t:10}}, {displayModeBar:false});
+        } catch(e) { console.error('Regime fetch failed:', e); }
+      }
+
+      async function fetchCoverage() {
+        try {
+          const res = await fetch(apiCoverageUrl, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const tb = document.querySelector('#tblSectorCoverage tbody');
+          tb.innerHTML = '';
+          let total = 0; (d.items||[]).forEach(i => total += i.coverage||0);
+          let hhi = 0; (d.items||[]).forEach(i => { const p = total? (i.coverage/total):0; hhi += p*p; });
+          document.getElementById('hhiValue').textContent = (hhi*10000).toFixed(0);
+          (d.items||[]).forEach(i => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${i.sector}</td><td>${i.coverage}</td><td>${i.win_rate}</td>`;
+            tb.appendChild(tr);
+          });
+        } catch(e) { console.error('Coverage fetch failed:', e); }
+      }
+
+      async function fetchCorrPairs() {
+        try {
+          const res = await fetch(`${apiCorrPairsUrl}?threshold=0.85`, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const tb = document.querySelector('#tblCorrPairs tbody');
+          tb.innerHTML = '';
+          (d.pairs||[]).forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${p.a}</td><td>${p.b}</td><td>${Math.abs(p.corr).toFixed(3)}</td>`;
+            tb.appendChild(tr);
+          });
+        } catch(e) { console.error('Corr pairs failed:', e); }
+      }
+
+      async function fetchFreshness() {
+        try {
+          const res = await fetch(apiFreshnessUrl, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const d = await res.json();
+          const panel = document.getElementById('freshnessPanel');
+          panel.innerHTML = '';
+          function badge(lag) {
+            if (lag == null) return '<span class=\"badge bg-secondary\">N/A</span>';
+            if (lag <= 60) return `<span class=\"badge bg-success\">${lag}m</span>`;
+            if (lag <= 180) return `<span class=\"badge bg-warning text-dark\">${lag}m</span>`;
+            return `<span class=\"badge bg-danger\">${lag}m</span>`;
+          }
+          const items = [
+            ['Reports', d.reports],
+            ['ML Results', d.ml_results],
+            ['Backtests', d.backtests],
+            ['Scripts', d.scripts]
+          ];
+          items.forEach(([name, obj]) => {
+            const card = document.createElement('div');
+            card.className = 'd-flex align-items-center gap-2';
+            card.innerHTML = `<strong>${name}:</strong> <span class=\"text-muted\">${obj?.last || '—'}</span> ${badge(obj?.lag_min)}`;
+            panel.appendChild(card);
+          });
+        } catch(e) { console.error('Freshness fetch failed:', e); }
+      }
+
+    function render(data) {
+      // KPIs
+      document.getElementById('kpiReports').textContent = data.reports?.total ?? 0;
+      document.getElementById('kpiML').textContent = data.ml?.total ?? 0;
+      document.getElementById('kpiBT').textContent = data.backtests?.total ?? 0;
+      document.getElementById('kpiSC').textContent = data.scripts?.total ?? 0;
+      document.getElementById('kpiAvgReturn').textContent = (data.backtests?.avg_return_percent ?? 0).toFixed(2);
+      document.getElementById('kpiWinRate').textContent = (data.backtests?.win_rate_percent ?? 0).toFixed(1);
+      document.getElementById('kpiScriptSuccess').textContent = (data.scripts?.success_rate_percent ?? 0).toFixed(1);
+
+      // Reports by Type chart
+      const rpt = data.reports?.by_type || {};
+      const rptKeys = Object.keys(rpt);
+      if (rptKeys.length) {
+        Plotly.newPlot('chartReportsByType', [{
+          type: 'bar', x: rptKeys, y: rptKeys.map(k => rpt[k]), marker: { color: '#0d6efd' }
+        }], { margin: { t: 24 } }, { displayModeBar: false });
+      } else {
+        document.getElementById('chartReportsByType').innerHTML = '<div class="placeholder-box">No report data available.</div>';
+      }
+
+      // Model Mix chart
+      const mix = data.ml?.by_model || {};
+      const mixKeys = Object.keys(mix);
+      if (mixKeys.length) {
+        Plotly.newPlot('chartModelMix', [{
+          type: 'pie', labels: mixKeys, values: mixKeys.map(k => mix[k])
+        }], { margin: { t: 24 } }, { displayModeBar: false });
+      } else {
+        document.getElementById('chartModelMix').innerHTML = '<div class="placeholder-box">No ML data available.</div>';
+      }
+
+      // Recent lists
+  const rr = document.getElementById('recentReports');
+      rr.innerHTML = '';
+      (data.reports?.recent || []).forEach(r => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between';
+        li.textContent = `${r.type || 'Report'} — ${r.analyst || 'N/A'}`;
+        const small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = r.created_at || '';
+        li.appendChild(small);
+        rr.appendChild(li);
+      });
+
+      const rm = document.getElementById('recentML');
+      rm.innerHTML = '';
+      (data.ml?.recent || []).forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between';
+        li.textContent = `${m.model || 'Model'} — actionable: ${m.actionable ?? 0}`;
+        const small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = m.created_at || '';
+        li.appendChild(small);
+        rm.appendChild(li);
+      });
+    }
+
+    function renderPerformance(p) {
+      // Fill paginated recents
+      const bt = document.getElementById('recentBT');
+      bt.innerHTML = '';
+      (p.recent?.backtests || []).forEach(b => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between';
+        li.textContent = `${b.ticker} — ${b.analyst || ''}`;
+        const small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = (b.ret_pct ?? 0).toFixed(2) + '%';
+        li.appendChild(small);
+        bt.appendChild(li);
+      });
+
+      const sc = document.getElementById('recentSC');
+      sc.innerHTML = '';
+      (p.recent?.scripts || []).forEach(s => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between';
+        li.textContent = `${s.script} — ${s.status}`;
+        const small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = s.timestamp || '';
+        li.appendChild(small);
+        sc.appendChild(li);
+      });
+
+      // Enable/disable next/prev based on page info if needed (basic impl)
+    }
+
+    function startAutoRefresh() {
+      stopAutoRefresh();
+      if (!document.getElementById('autoRefreshToggle').checked) return;
+      const interval = parseInt(document.getElementById('refreshInterval').value, 10) || 30000;
+      timer = setInterval(() => {
+        fetchSummary();
+        fetchPerformance({ page: 1 });
+      }, interval);
+    }
+
+    function stopAutoRefresh() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+  document.getElementById('refreshBtn').addEventListener('click', () => { fetchSummary(); fetchPerformance({ page: 1 }); fetchCommon(); });
+  document.getElementById('applyFilters').addEventListener('click', () => { fetchPerformance({ page: 1 }); fetchCommon(); });
+    document.getElementById('autoRefreshToggle').addEventListener('change', startAutoRefresh);
+    document.getElementById('refreshInterval').addEventListener('change', startAutoRefresh);
+    document.getElementById('prevReports').addEventListener('click', () => { paging.reports = Math.max(1, paging.reports - 1); fetchPerformance({ page: paging.reports }); });
+    document.getElementById('nextReports').addEventListener('click', () => { paging.reports += 1; fetchPerformance({ page: paging.reports }); });
+    document.getElementById('prevML').addEventListener('click', () => { paging.ml = Math.max(1, paging.ml - 1); fetchPerformance({ page: paging.ml }); });
+    document.getElementById('nextML').addEventListener('click', () => { paging.ml += 1; fetchPerformance({ page: paging.ml }); });
+    document.getElementById('prevBT').addEventListener('click', () => { paging.backtests = Math.max(1, paging.backtests - 1); fetchPerformance({ page: paging.backtests }); });
+    document.getElementById('nextBT').addEventListener('click', () => { paging.backtests += 1; fetchPerformance({ page: paging.backtests }); });
+    document.getElementById('prevSC').addEventListener('click', () => { paging.scripts = Math.max(1, paging.scripts - 1); fetchPerformance({ page: paging.scripts }); });
+    document.getElementById('nextSC').addEventListener('click', () => { paging.scripts += 1; fetchPerformance({ page: paging.scripts }); });
+
+    // Initial load
+  fetchSummary();
+  fetchPerformance({ page: 1 });
+  fetchCommon();
+    // CSV download
+    document.getElementById('downloadCsv').addEventListener('click', () => {
+      const url = `${apiPerfCsvUrl}?${buildParams({ page: 1 })}`;
+      window.open(url, '_blank');
+    });
+    async function fetchCorrelation() {
+      try {
+        const res = await fetch(`${apiCorrUrl}?days=60&limit=20`, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const labels = data.tickers || [];
+        const mat = data.matrix || [];
+        if (!labels.length || !mat.length) {
+          document.getElementById('chartCorr').innerHTML = '<div class="placeholder-box">No correlation data.</div>';
+          return;
+        }
+        const z = mat;
+        const heat = [{ z, x: labels, y: labels, type: 'heatmap', colorscale: 'RdBu', reversescale: true }];
+        Plotly.newPlot('chartCorr', heat, { margin: { t: 10, r: 10, b: 50, l: 80 } }, { displayModeBar: false });
+      } catch (e) { console.error('Correlation fetch failed:', e); }
+    }
+    async function fetchTreemap() {
+      try {
+        const res = await fetch(apiSectorUrl, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const d = await res.json();
+        const trace = [{
+          type: 'treemap',
+          labels: d.labels || [],
+          parents: d.parents || [],
+          values: d.values || [],
+          textinfo: 'label+value',
+          hovertext: d.hover || [],
+          hoverinfo: 'text'
+        }];
+        Plotly.newPlot('chartTreemap', trace, { margin: { t: 10, l: 10, r: 10, b: 10 } }, { displayModeBar: false });
+      } catch (e) { console.error('Treemap fetch failed:', e); }
+    }
+    async function loadRules() {
+      try {
+        const res = await fetch(apiListRulesUrl, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const d = await res.json();
+        const tb = document.querySelector('#tblRules tbody');
+        tb.innerHTML = '';
+        (d.items || []).forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.id}</td><td>${r.ticker||''}</td><td>${r.alert_type}</td><td>${r.target_value}</td><td>${r.is_active? 'Yes':'No'}</td><td>${r.created_at||''}</td>`;
+          tb.appendChild(tr);
+        });
+      } catch (e) { console.error('Load rules failed:', e); }
+    }
+    document.getElementById('formAlert').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const payload = {
+        alert_type: document.getElementById('alertType').value,
+        ticker: document.getElementById('alertTicker').value,
+        target_value: parseFloat(document.getElementById('alertValue').value),
+        condition: document.getElementById('alertCondition').value
+      };
+      try {
+        const res = await fetch(apiCreateRuleUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(payload) });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        await loadRules();
+        (ev.target).reset();
+      } catch (e) { console.error('Create rule failed:', e); }
+    });
+    fetchCorrelation();
+    fetchTreemap();
+    loadRules();
+    startAutoRefresh();
+  document.getElementById('refreshCommon').addEventListener('click', fetchCommon);
+  document.getElementById('refreshTs').addEventListener('click', fetchTimeseries);
+  document.getElementById('tsFreq').addEventListener('change', fetchTimeseries);
+  document.getElementById('rollWindow').addEventListener('change', fetchRolling);
+  // Insights initial load
+  fetchTimeseries();
+  fetchRolling();
+  fetchRisk();
+  fetchRegime();
+  fetchCoverage();
+  fetchCorrPairs();
+  fetchFreshness();
+  </script>
+{% endblock %}

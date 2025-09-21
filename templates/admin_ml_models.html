@@ -1,0 +1,1082 @@
+{% extends "layout.html" %}
+{% block title %}Admin ML Models{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">ML Models Dashboard</h1>
+        <p class="text-muted mb-0">Advanced Machine Learning Models for Stock Analysis</p>
+    </div>
+    <div>
+        <a href="/admin_dashboard" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Admin
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Model Cards -->
+<div class="row mb-4">
+    <!-- Advanced Stock Recommender -->
+    <div class="col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary rounded-circle p-3 me-3">
+                        <i class="bi bi-graph-up-arrow text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Advanced Stock Recommender</h5>
+                        <p class="text-muted mb-0">AI-powered stock analysis with technical indicators and price forecasting</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Technical Analysis | Price Targets | Risk Assessment</small>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockRecommenderModal">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Options ML Analyzer -->
+    <div class="col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-warning rounded-circle p-3 me-3">
+                        <i class="bi bi-currency-exchange text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Options ML Analyzer</h5>
+                        <p class="text-muted mb-0">Comprehensive options chain analysis with ML predictions and Greek calculations</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Options Chain | Greeks | Max Pain | Trade Recommendations</small>
+                </div>
+                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#optionsAnalyzerModal">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sector ML Analyzer -->
+    <div class="col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-info rounded-circle p-3 me-3">
+                        <i class="bi bi-pie-chart text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Sector ML Analyzer</h5>
+                        <p class="text-muted mb-0">Comprehensive sector-wise analysis with ML forecasts and technical indicators</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Sector Analysis | Return Forecasting | Technical Indicators</small>
+                </div>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#sectorAnalyzerModal">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overnight Edge BTST Analyzer -->
+    <div class="col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success rounded-circle p-3 me-3">
+                        <i class="bi bi-clock-history text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Overnight Edge BTST Analyzer</h5>
+                        <p class="text-muted mb-0">Buy Today Sell Tomorrow analysis with advanced risk management and gap analysis</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">BTST Score Calculation | Overnight Gap Analysis | Volume Spike Detection</small>
+                </div>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#btstAnalyzerModal">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Results -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="bi bi-clock-history me-2"></i> Recent Model Results
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Run Date</th>
+                        <th>Category</th>
+                        <th>Total Analyzed</th>
+                        <th>Actionable</th>
+                        <th>Avg Confidence</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-results">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            <i class="bi bi-info-circle me-1"></i> No recent results found. Run a model to see results.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- BTST Analyzer Modal -->
+<div class="modal fade" id="btstAnalyzerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-clock-history me-2"></i> Overnight Edge BTST Analyzer
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="btstAnalyzerForm">
+                    <div class="mb-3">
+                        <label for="btstStockCategory" class="form-label">Choose Stock Category</label>
+                        <select class="form-select" id="btstStockCategory" name="stock_category" required>
+                            <option value="">Select Category...</option>
+                            <!-- Categories will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="btstMinConfidence" class="form-label">
+                            Minimum Confidence (%): <span id="btstConfidenceValue">70</span>%
+                        </label>
+                        <input type="range" class="form-range" id="btstMinConfidence" name="min_confidence" 
+                               min="50" max="90" value="70" oninput="updateBtstConfidenceValue(this.value)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="btstMinScore" class="form-label">
+                            BTST Minimum Score: <span id="btstScoreValue">75</span>
+                        </label>
+                        <input type="range" class="form-range" id="btstMinScore" name="btst_min_score" 
+                               min="50" max="100" value="75" oninput="updateBtstScoreValue(this.value)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="btstKeyParams" class="form-label">Key User Parameters</label>
+                        <select class="form-select" id="btstKeyParams" name="selected_key_user_parameters">
+                            <option value="">Auto (from guidance)</option>
+                        </select>
+                        <small class="text-muted">Pulled from model_parameter_impact_table.xlsx</small>
+                    </div>
+                    <div class="alert alert-success">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>BTST Analysis Features:</strong><br>
+                        • BTST Score Calculation (0-100)<br>
+                        • Overnight Gap Analysis<br>
+                        • Volume Spike Detection<br>
+                        • Close Near High Analysis<br>
+                        • Advanced Risk-Reward Calculation
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="runBtstAnalyzer()">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Recommender Modal -->
+<div class="modal fade" id="stockRecommenderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-graph-up-arrow me-2"></i> Advanced Stock Recommender
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="stockRecommenderForm">
+                    <div class="mb-3">
+                        <label for="stockStockCategory" class="form-label">Choose Stock Category</label>
+                        <select class="form-select" id="stockStockCategory" name="stock_category" required>
+                            <option value="">Select Category...</option>
+                            <!-- Categories will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stockMinConfidence" class="form-label">
+                            Minimum Confidence (%): <span id="stockConfidenceValue">70</span>%
+                        </label>
+                        <input type="range" class="form-range" id="stockMinConfidence" name="min_confidence" 
+                               min="50" max="90" value="70" oninput="updateStockConfidenceValue(this.value)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stockKeyParams" class="form-label">Key User Parameters</label>
+                        <select class="form-select" id="stockKeyParams" name="selected_key_user_parameters">
+                            <option value="">Auto (from guidance)</option>
+                        </select>
+                        <small class="text-muted">Pulled from model_parameter_impact_table.xlsx</small>
+                    </div>
+                    <div class="alert alert-primary">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>Stock Recommender Features:</strong><br>
+                        • Technical Indicator Analysis<br>
+                        • Price Target Calculation<br>
+                        • Risk Assessment<br>
+                        • Buy/Sell Recommendations<br>
+                        • Confidence Scoring
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="runStockRecommender()">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Options Analyzer Modal -->
+<div class="modal fade" id="optionsAnalyzerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-currency-exchange me-2"></i> Options ML Analyzer
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="optionsAnalyzerForm">
+                    <div class="mb-3">
+                        <label for="optionsAssetKey" class="form-label">Underlying Asset</label>
+                        <select class="form-select" id="optionsAssetKey" name="asset_key" required>
+                            <option value="NSE_INDEX|Nifty 50">Nifty 50</option>
+                            <option value="NSE_INDEX|Bank Nifty">Bank Nifty</option>
+                            <option value="NSE_INDEX|Fin Nifty">Fin Nifty</option>
+                            <option value="NSE_INDEX|IT Nifty">IT Nifty</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="optionsExpiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="optionsExpiryDate" name="expiry_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="optionsSelectedStrike" class="form-label">Selected Strike Price</label>
+                        <input type="number" class="form-control" id="optionsSelectedStrike" name="selected_strike" value="22000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="optionsDaysToExpiry" class="form-label">Days to Expiry</label>
+                        <input type="number" class="form-control" id="optionsDaysToExpiry" name="days_to_expiry" value="7" min="1" max="30" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="optionsRiskFreeRate" class="form-label">Risk-Free Rate (%)</label>
+                        <input type="number" class="form-control" id="optionsRiskFreeRate" name="risk_free_rate" value="5.0" step="0.1" min="0" max="10" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="optionsKeyParams" class="form-label">Key User Parameters</label>
+                        <select class="form-select" id="optionsKeyParams" name="selected_key_user_parameters">
+                            <option value="">Auto (from guidance)</option>
+                        </select>
+                        <small class="text-muted">Pulled from model_parameter_impact_table.xlsx</small>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>Options Analysis Features:</strong><br>
+                        • Options Chain Analysis<br>
+                        • Greeks Calculation (Delta, Gamma, Theta, Vega)<br>
+                        • Max Pain Analysis<br>
+                        • Trade Recommendations<br>
+                        • Probability of Profit Calculation
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="runOptionsAnalyzer()">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sector Analyzer Modal -->
+<div class="modal fade" id="sectorAnalyzerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-pie-chart me-2"></i> Sector ML Analyzer
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sectorAnalyzerForm">
+                    <div class="mb-3">
+                        <label for="sectorAnalysisType" class="form-label">Analysis Type</label>
+                        <select class="form-select" id="sectorAnalysisType" name="analysis_type" onchange="toggleSectorSelection()" required>
+                            <option value="all_sectors">All Sectors Analysis</option>
+                            <option value="specific_sector">Specific Sector Analysis</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="specificSectorDiv" style="display: none;">
+                        <label for="sectorSpecificSector" class="form-label">Choose Specific Sector</label>
+                        <select class="form-select" id="sectorSpecificSector" name="specific_sector">
+                            <option value="">Select Sector...</option>
+                            <option value="Banking">Banking</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Financial Services">Financial Services</option>
+                            <option value="Pharmaceuticals">Pharmaceuticals</option>
+                            <option value="FMCG">FMCG</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Metals">Metals</option>
+                            <option value="Telecommunications">Telecommunications</option>
+                            <option value="Utilities">Utilities</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sectorPeriod" class="form-label">Analysis Period</label>
+                        <select class="form-select" id="sectorPeriod" name="period" required>
+                            <option value="1mo">1 Month</option>
+                            <option value="3mo">3 Months</option>
+                            <option value="6mo" selected>6 Months</option>
+                            <option value="1y">1 Year</option>
+                            <option value="2y">2 Years</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sectorKeyParams" class="form-label">Key User Parameters</label>
+                        <select class="form-select" id="sectorKeyParams" name="selected_key_user_parameters">
+                            <option value="">Auto (from guidance)</option>
+                        </select>
+                        <small class="text-muted">Pulled from model_parameter_impact_table.xlsx</small>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>Sector Analysis Features:</strong><br>
+                        • Comprehensive Sector Performance<br>
+                        • Technical Indicators Analysis<br>
+                        • ML-Based Return Forecasting<br>
+                        • Risk Assessment<br>
+                        • Investment Recommendations
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-info" onclick="runSectorAnalyzer()">
+                    <i class="bi bi-play-circle me-1"></i> Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Display Modal -->
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultsModalTitle">Analysis Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="resultsContent">
+                    <!-- Results will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadResults">
+                    <i class="bi bi-download me-1"></i> Download Results
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h6 id="loadingMessage">Running ML Model Analysis...</h6>
+                <small class="text-muted">This may take a few minutes</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load stock categories on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadStockCategories();
+    loadRecentResults();
+    // Populate HML parameters for each model
+    loadHmlParams('overnight_edge_btst', 'btstKeyParams');
+    loadHmlParams('advanced_stock_recommender', 'stockKeyParams');
+    loadHmlParams('options_ml_analyzer', 'optionsKeyParams');
+    loadHmlParams('sector_ml_analyzer', 'sectorKeyParams');
+});
+
+function loadStockCategories() {
+    // Load from stocklist.xlsx sheets instead of database categories
+    fetch('/api/admin/stocklist_sheets')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const sheets = data.sheets || [];
+                const btstStockCategorySelect = document.getElementById('btstStockCategory');
+                const stockStockCategorySelect = document.getElementById('stockStockCategory');
+                
+                // Clear existing options for both dropdowns
+                if (btstStockCategorySelect) {
+                    btstStockCategorySelect.innerHTML = '<option value="">Select Category...</option>';
+                    
+                    // Add sheets as categories
+                    sheets.forEach(sheet => {
+                        const option = document.createElement('option');
+                        option.value = sheet.sheet_name;
+                        option.textContent = `${sheet.sheet_name} (${sheet.stock_count} stocks)`;
+                        btstStockCategorySelect.appendChild(option);
+                    });
+                }
+                
+                if (stockStockCategorySelect) {
+                    stockStockCategorySelect.innerHTML = '<option value="">Select Category...</option>';
+                    
+                    // Add sheets as categories
+                    sheets.forEach(sheet => {
+                        const option = document.createElement('option');
+                        option.value = sheet.sheet_name;
+                        option.textContent = `${sheet.sheet_name} (${sheet.stock_count} stocks)`;
+                        stockStockCategorySelect.appendChild(option);
+                    });
+                }
+            } else {
+                throw new Error(data.error || 'Failed to load stocklist sheets');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            showAlert('Error loading stock categories: ' + error.message, 'danger');
+            
+            // Fallback to database categories
+            loadDatabaseCategories();
+        });
+}
+
+function loadDatabaseCategories() {
+    fetch('/api/admin/stock_categories')
+        .then(response => response.json())
+        .then(data => {
+            const categories = data.categories || [];
+            const btstStockCategorySelect = document.getElementById('btstStockCategory');
+            
+            // Clear existing options
+            if (btstStockCategorySelect) {
+                btstStockCategorySelect.innerHTML = '<option value="">Select Category...</option>';
+                
+                // Add categories
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.category_name;
+                    option.textContent = `${category.category_name} (${category.stock_count} stocks)`;
+                    btstStockCategorySelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            showAlert('Error loading stock categories', 'danger');
+        });
+}
+
+function loadRecentResults() {
+    fetch('/api/admin/ml_results/recent')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('recent-results');
+            tbody.innerHTML = '';
+            
+            if (data.results && data.results.length > 0) {
+                data.results.forEach(result => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><span class="badge bg-success">${result.model_name.replace('_', ' ').toUpperCase()}</span></td>
+                        <td>${new Date(result.created_at).toLocaleString()}</td>
+                        <td>${result.stock_category || 'N/A'}</td>
+                        <td>${result.total_analyzed}</td>
+                        <td><span class="badge bg-info">${result.actionable_count}</span></td>
+                        <td>${result.avg_confidence ? result.avg_confidence.toFixed(1) + '%' : 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewResults('${result.id}')">
+                                <i class="bi bi-eye"></i> View
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="downloadResults('${result.id}')">
+                                <i class="bi bi-download"></i> API
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            <i class="bi bi-info-circle me-1"></i> No recent results found. Run a model to see results.
+                        </td>
+                    </tr>
+                `;
+            }
+        })
+        .catch(error => console.error('Error loading recent results:', error));
+}
+
+function loadHmlParams(modelKey, selectId) {
+    fetch(`/api/admin/hml_parameters?model=${encodeURIComponent(modelKey)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) return;
+            const sel = document.getElementById(selectId);
+            if (!sel) return;
+            // Keep the first default option
+            const keepFirst = sel.firstElementChild ? [sel.firstElementChild] : [];
+            sel.innerHTML = '';
+            keepFirst.forEach(o => sel.appendChild(o));
+            (data.rows || []).forEach(row => {
+                const opt = document.createElement('option');
+                opt.value = row.key_user_parameters || '';
+                opt.textContent = row.key_user_parameters || row.situation || 'Parameters';
+                sel.appendChild(opt);
+            });
+        })
+        .catch(() => {});
+}
+
+function updateBtstConfidenceValue(value) {
+    document.getElementById('btstConfidenceValue').textContent = value;
+}
+
+function updateBtstScoreValue(value) {
+    document.getElementById('btstScoreValue').textContent = value;
+}
+
+function runBtstAnalyzer() {
+    const form = document.getElementById('btstAnalyzerForm');
+    const formData = new FormData(form);
+    
+    if (!formData.get('stock_category')) {
+        showAlert('Please select a stock category', 'warning');
+        return;
+    }
+    
+    // Show loading modal
+    const btstModal = bootstrap.Modal.getInstance(document.getElementById('btstAnalyzerModal'));
+    btstModal.hide();
+    
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    document.getElementById('loadingMessage').textContent = 'Running BTST Analyzer...';
+    loadingModal.show();
+    
+    fetch('/api/admin/ml_models/run_btst_analyzer', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingModal.hide();
+        if (data.success) {
+            displayResults(data.result, 'BTST Analyzer Results');
+            loadRecentResults();
+        } else {
+            showAlert('Error: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        loadingModal.hide();
+        console.error('Error:', error);
+        showAlert('An error occurred while running the analysis', 'danger');
+    });
+}
+
+function displayResults(result, title) {
+    document.getElementById('resultsModalTitle').textContent = title;
+    
+    let html = `
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-primary">${result.total_analyzed}</h5>
+                        <small class="text-muted">Total Analyzed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-success">${result.actionable_count}</h5>
+                        <small class="text-muted">Actionable</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-info">${result.avg_confidence ? result.avg_confidence.toFixed(1) + '%' : 'N/A'}</h5>
+                        <small class="text-muted">Avg Confidence</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-warning">${result.execution_time_seconds ? result.execution_time_seconds.toFixed(2) + 's' : 'N/A'}</h5>
+                        <small class="text-muted">Execution Time</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <strong>Summary:</strong> ${result.summary}
+        </div>
+    `;
+    
+    if (result.results && result.results.length > 0) {
+        html += `
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>Change %</th>
+                            <th>BTST Score</th>
+                            <th>RSI</th>
+                            <th>Volume Spike</th>
+                            <th>Recommendation</th>
+                            <th>Confidence</th>
+                            <th>Risk-Reward</th>
+                            <th>Stop Loss</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        result.results.forEach(stock => {
+            html += `
+                    <tr>
+                        <td><strong>${stock.Symbol}</strong></td>
+                        <td>₹${stock['Current Price']}</td>
+                        <td class="${stock['Change (%)'] >= 0 ? 'text-success' : 'text-danger'}">${stock['Change (%)'].toFixed(2)}%</td>
+                        <td><span class="badge bg-${stock['BTST Score'] >= 80 ? 'success' : stock['BTST Score'] >= 60 ? 'warning' : 'secondary'}">${stock['BTST Score']}</span></td>
+                        <td>${stock['RSI (14)']}</td>
+                        <td>${stock['Volume Spike']}</td>
+                        <td><span class="badge bg-${stock.Recommendation.includes('BUY') ? 'success' : stock.Recommendation === 'SELL' ? 'danger' : 'secondary'}">${stock.Recommendation}</span></td>
+                        <td>${stock['Confidence (%)']}%</td>
+                        <td>${stock['Risk-Reward Ratio'] || 'N/A'}</td>
+                        <td>₹${stock['Stop Loss'] || 'N/A'}</td>
+                        <td>₹${stock.Target || 'N/A'}</td>
+                    </tr>
+                `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    document.getElementById('resultsContent').innerHTML = html;
+    
+    // Store result ID for download
+    document.getElementById('downloadResults').onclick = () => downloadResults(result.id);
+    
+    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    resultsModal.show();
+}
+
+function viewResults(resultId) {
+    fetch(`/api/admin/ml_results/${resultId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayResults(data.result, `${data.result.model_name.replace('_', ' ').toUpperCase()} Results`);
+            } else {
+                showAlert('Error loading results: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while loading results', 'danger');
+        });
+}
+
+function downloadResults(resultId) {
+    window.open(`/api/admin/ml_results/${resultId}/download`, '_blank');
+}
+
+// New functions for additional ML models
+
+function updateStockConfidenceValue(value) {
+    document.getElementById('stockConfidenceValue').textContent = value;
+}
+
+function runStockRecommender() {
+    const form = document.getElementById('stockRecommenderForm');
+    const formData = new FormData(form);
+    
+    if (!formData.get('stock_category')) {
+        showAlert('Please select a stock category', 'warning');
+        return;
+    }
+    
+    // Show loading modal
+    const stockModal = bootstrap.Modal.getInstance(document.getElementById('stockRecommenderModal'));
+    stockModal.hide();
+    
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    document.getElementById('loadingMessage').textContent = 'Running Advanced Stock Recommender...';
+    loadingModal.show();
+    
+    fetch('/api/admin/ml_models/run_stock_recommender', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingModal.hide();
+        if (data.success) {
+            displayResults(data.result, 'Advanced Stock Recommender Results');
+            loadRecentResults();
+        } else {
+            showAlert('Error: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        loadingModal.hide();
+        console.error('Error:', error);
+        showAlert('An error occurred while running the analysis', 'danger');
+    });
+}
+
+function runOptionsAnalyzer() {
+    const form = document.getElementById('optionsAnalyzerForm');
+    const formData = new FormData(form);
+    
+    if (!formData.get('expiry_date')) {
+        showAlert('Please select an expiry date', 'warning');
+        return;
+    }
+    
+    // Show loading modal
+    const optionsModal = bootstrap.Modal.getInstance(document.getElementById('optionsAnalyzerModal'));
+    optionsModal.hide();
+    
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    document.getElementById('loadingMessage').textContent = 'Running Options ML Analyzer...';
+    loadingModal.show();
+    
+    fetch('/api/admin/ml_models/run_options_analyzer', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingModal.hide();
+        if (data.success) {
+            displayOptionsResults(data.result, 'Options ML Analyzer Results');
+            loadRecentResults();
+        } else {
+            showAlert('Error: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        loadingModal.hide();
+        console.error('Error:', error);
+        showAlert('An error occurred while running the analysis', 'danger');
+    });
+}
+
+function runSectorAnalyzer() {
+    const form = document.getElementById('sectorAnalyzerForm');
+    const formData = new FormData(form);
+    
+    const analysisType = formData.get('analysis_type');
+    if (analysisType === 'specific_sector' && !formData.get('specific_sector')) {
+        showAlert('Please select a specific sector', 'warning');
+        return;
+    }
+    
+    // Show loading modal
+    const sectorModal = bootstrap.Modal.getInstance(document.getElementById('sectorAnalyzerModal'));
+    sectorModal.hide();
+    
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    document.getElementById('loadingMessage').textContent = 'Running Sector ML Analyzer...';
+    loadingModal.show();
+    
+    fetch('/api/admin/ml_models/run_sector_analyzer', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingModal.hide();
+        if (data.success) {
+            displaySectorResults(data.result, 'Sector ML Analyzer Results');
+            loadRecentResults();
+        } else {
+            showAlert('Error: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        loadingModal.hide();
+        console.error('Error:', error);
+        showAlert('An error occurred while running the analysis', 'danger');
+    });
+}
+
+function toggleSectorSelection() {
+    const analysisType = document.getElementById('sectorAnalysisType').value;
+    const specificSectorDiv = document.getElementById('specificSectorDiv');
+    
+    if (analysisType === 'specific_sector') {
+        specificSectorDiv.style.display = 'block';
+    } else {
+        specificSectorDiv.style.display = 'none';
+    }
+}
+
+function displayOptionsResults(result, title) {
+    document.getElementById('resultsModalTitle').textContent = title;
+    
+    let html = `
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-primary">${result.summary?.total_strikes || 0}</h5>
+                        <small class="text-muted">Total Strikes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-success">${result.summary?.actionable_trades || 0}</h5>
+                        <small class="text-muted">Actionable Trades</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-info">${result.summary?.pcr_ratio ? result.summary.pcr_ratio.toFixed(2) : 'N/A'}</h5>
+                        <small class="text-muted">PCR Ratio</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-warning">${result.execution_time_seconds ? result.execution_time_seconds.toFixed(2) + 's' : 'N/A'}</h5>
+                        <small class="text-muted">Execution Time</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    if (result.trade_recommendations && result.trade_recommendations.length > 0) {
+        html += `
+            <h6>Trade Recommendations</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Strategy</th>
+                            <th>Strike</th>
+                            <th>Premium</th>
+                            <th>OI Change</th>
+                            <th>IV (%)</th>
+                            <th>POP (%)</th>
+                            <th>Risk/Reward</th>
+                            <th>Confidence (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        result.trade_recommendations.forEach(trade => {
+            html += `
+                <tr>
+                    <td><span class="badge bg-${trade.strategy.includes('BUY') ? 'success' : 'danger'}">${trade.strategy}</span></td>
+                    <td>${trade.strike}</td>
+                    <td>₹${trade.premium}</td>
+                    <td>${trade.oi_change}</td>
+                    <td>${trade.iv}%</td>
+                    <td>${trade.probability_of_profit}%</td>
+                    <td>${trade.risk_reward}</td>
+                    <td>${trade.confidence}%</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    document.getElementById('resultsContent').innerHTML = html;
+    
+    // Store result ID for download
+    document.getElementById('downloadResults').onclick = () => downloadResults(result.id);
+    
+    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    resultsModal.show();
+}
+
+function displaySectorResults(result, title) {
+    document.getElementById('resultsModalTitle').textContent = title;
+    
+    let html = `
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-primary">${result.total_sectors || 0}</h5>
+                        <small class="text-muted">Sectors Analyzed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-success">${result.comprehensive_report?.bullish_sectors_count || 0}</h5>
+                        <small class="text-muted">Bullish Sectors</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-danger">${result.comprehensive_report?.bearish_sectors_count || 0}</h5>
+                        <small class="text-muted">Bearish Sectors</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="text-warning">${result.execution_time_seconds ? result.execution_time_seconds.toFixed(2) + 's' : 'N/A'}</h5>
+                        <small class="text-muted">Execution Time</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    if (result.comprehensive_report?.top_performing_sectors) {
+        html += `
+            <h6>Top Performing Sectors</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Sector</th>
+                            <th>Return (%)</th>
+                            <th>Volatility</th>
+                            <th>Recommendation</th>
+                            <th>Confidence (%)</th>
+                            <th>Outlook</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        result.comprehensive_report.top_performing_sectors.forEach(sector => {
+            html += `
+                <tr>
+                    <td><strong>${sector.sector}</strong></td>
+                    <td><span class="badge bg-${sector.return > 0 ? 'success' : 'danger'}">${sector.return.toFixed(2)}%</span></td>
+                    <td>${sector.volatility.toFixed(2)}</td>
+                    <td><span class="badge bg-${sector.recommendation.includes('BUY') ? 'success' : sector.recommendation.includes('SELL') ? 'danger' : 'secondary'}">${sector.recommendation}</span></td>
+                    <td>${sector.confidence}%</td>
+                    <td><span class="badge bg-${sector.outlook === 'bullish' ? 'success' : sector.outlook === 'bearish' ? 'danger' : 'secondary'}">${sector.outlook}</span></td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    document.getElementById('resultsContent').innerHTML = html;
+    
+    // Store result ID for download
+    document.getElementById('downloadResults').onclick = () => downloadResults(result.id);
+    
+    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    resultsModal.show();
+}
+
+function showAlert(message, type) {
+    // Create and show bootstrap alert
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Insert at top of page
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+
+{% endblock %}

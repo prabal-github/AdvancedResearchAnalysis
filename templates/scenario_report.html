@@ -1,0 +1,376 @@
+{% extends "layout.html" %}
+{% block title %}Scenario Analysis Report - {{ scenario.scenario_title }}{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Scenario Analysis Report</h1>
+        <p class="text-muted mb-0">{{ scenario.scenario_title }} by {{ scenario.analyst }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/scenario_backtest/{{ report.id }}" class="btn btn-primary">
+            <i class="bi bi-graph-up me-1"></i> View Backtest Results
+        </a>
+        <a href="/report_hub" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Hub
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="alert alert-info">
+    <h5><i class="bi bi-exclamation-triangle me-2"></i>Template Error Fixed</h5>
+    <p>The scenario report template has been updated. Please use the enhanced version for better functionality.</p>
+    <a href="/scenario_report/{{ report.id }}" class="btn btn-primary">View Enhanced Report</a>
+</div>
+
+{% endblock %}
+                                        Not specified
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Model Used:</strong></td>
+                                <td>{{ scenario.predictive_model or 'Not specified' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Macroeconomic Impact</h6>
+                        <table class="table table-sm">
+                            {% if scenario.interest_rate_change %}
+                            <tr>
+                                <td><strong>Interest Rate Change:</strong></td>
+                                <td>{{ scenario.interest_rate_change }} bps</td>
+                            </tr>
+                            {% endif %}
+                            {% if scenario.inflation_rate %}
+                            <tr>
+                                <td><strong>Inflation Rate:</strong></td>
+                                <td>{{ scenario.inflation_rate }}%</td>
+                            </tr>
+                            {% endif %}
+                            {% if scenario.usd_inr_change %}
+                            <tr>
+                                <td><strong>USD/INR Change:</strong></td>
+                                <td>{{ scenario.usd_inr_change }} INR</td>
+                            </tr>
+                            {% endif %}
+                            {% if scenario.crude_oil_price %}
+                            <tr>
+                                <td><strong>Crude Oil Price:</strong></td>
+                                <td>${{ scenario.crude_oil_price }} per barrel</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>Scenario Description</h6>
+                    <p class="text-muted">{{ scenario.scenario_description or 'No description provided' }}</p>
+                </div>
+                
+                {% if scenario.sectoral_sentiment %}
+                <div class="mt-3">
+                    <h6>Sectoral Sentiment</h6>
+                    <div class="bg-light p-3 rounded">
+                        <pre class="mb-0">{{ scenario.sectoral_sentiment }}</pre>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-trophy me-2"></i>Performance Summary</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <h2 class="text-success mb-1">{{ "%.1f"|format(scenario.scenario_score or 0) }}/100</h2>
+                    <small class="text-muted">Scenario Prediction Score</small>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body py-2">
+                                <h6 class="text-primary mb-1">{{ "%.1f"|format(scenario.backtest_accuracy or 0) }}%</h6>
+                                <small class="text-muted">Model Accuracy</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body py-2">
+                                <h6 class="text-info mb-1">{{ "%.2f"|format(scenario.sharpe_ratio or 0) }}</h6>
+                                <small class="text-muted">Sharpe Ratio</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card bg-light border-0">
+                            <div class="card-body py-2">
+                                <h6 class="text-warning mb-1">{{ "%.1f"|format(scenario.alpha_vs_benchmark or 0) }}%</h6>
+                                <small class="text-muted">Alpha vs Benchmark</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Recommendations -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-gradient-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Stock Recommendations & Analysis</h5>
+    </div>
+    <div class="card-body">
+        {% if stock_recommendations %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Stock</th>
+                        <th>Action</th>
+                        <th>Expected Return</th>
+                        <th>Rationale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stock_recommendations %}
+                    <tr>
+                        <td>
+                            <strong>{{ stock.ticker }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if stock.action == 'buy' else ('danger' if stock.action == 'sell' else 'secondary') }}">
+                                {{ stock.action.upper() }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-bold {{ 'text-success' if stock.expected_return > 0 else ('text-danger' if stock.expected_return < 0 else 'text-muted') }}">
+                                {{ "%.1f"|format(stock.expected_return) }}%
+                            </span>
+                        </td>
+                        <td class="text-muted">{{ stock.rationale or 'Not specified' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-info-circle fs-1 mb-2"></i>
+            <p>No stock recommendations provided</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Additional Stock Recommendations -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-stars me-2"></i>Additional Stock Recommendations</h5>
+        <small>Based on scenario analysis - connect with other opportunities</small>
+    </div>
+    <div class="card-body">
+        <!-- Search for New Stocks Section -->
+        <div class="mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-search me-2"></i>Search for Additional Stocks (Max 3)
+                    </label>
+                    <input type="text" id="stockSearchInput" class="form-control" 
+                           placeholder="Search for stocks to analyze based on current scenario...">
+                    <div class="form-text mt-1">
+                        <strong>Sample format:</strong> Enter stock symbols separated by commas (e.g., RELIANCE.NS, TATASTEEL.NS, BAJAJFINSV.NS)
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="searchAndAnalyzeStocks()">
+                        <i class="bi bi-search me-1"></i> Search & Analyze
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Results Area -->
+            <div id="searchResults" class="mt-3" style="display: none;">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Search Results:</strong> Stock recommendations based on scenario analysis
+                </div>
+                <div id="searchResultsContent"></div>
+            </div>
+        </div>
+
+        <!-- Existing Additional Stocks -->
+        {% if additional_stocks %}
+        <h6 class="mb-3"><i class="bi bi-cpu me-2"></i>System Generated Recommendations</h6>
+        <div class="row g-3">
+            {% for stock in additional_stocks %}
+            <div class="col-md-4">
+                <div class="card border border-info h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ stock.ticker }}</h6>
+                        <div class="mb-2">
+                            <span class="badge bg-{{ 'success' if stock.action == 'buy' else ('danger' if stock.action == 'sell' else 'secondary') }} me-2">
+                                {{ stock.action.upper() }}
+                            </span>
+                            <span class="fw-bold {{ 'text-success' if stock.expected_return > 0 else ('text-danger' if stock.expected_return < 0 else 'text-muted') }}">
+                                {{ "%.1f"|format(stock.expected_return) }}%
+                            </span>
+    </div>
+</div>
+
+<!-- Analyst Notes -->
+{% if scenario.analyst_notes %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>Analyst Notes & Disclaimers</h5>
+    </div>
+    <div class="card-body">
+        <div class="bg-light p-3 rounded">
+            <pre class="mb-0">{{ scenario.analyst_notes }}</pre>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function searchAndAnalyzeStocks() {
+    const input = document.getElementById('stockSearchInput');
+    const searchValue = input.value.trim();
+    
+    if (!searchValue) {
+        alert('Please enter stock symbols to search');
+        return;
+    }
+    
+    // Parse the input to extract stock symbols (max 3)
+    const symbols = searchValue.split(',').map(s => s.trim().toUpperCase()).filter(s => s);
+    
+    if (symbols.length === 0) {
+        alert('Please enter valid stock symbols');
+        return;
+    }
+    
+    if (symbols.length > 3) {
+        alert('Maximum 3 stocks allowed. Please remove some symbols.');
+        return;
+    }
+    
+    // Add .NS suffix if not present
+    const nsSymbols = symbols.map(symbol => {
+        if (!symbol.endsWith('.NS') && !symbol.endsWith('.BO')) {
+            return symbol + '.NS';
+        }
+        return symbol;
+    });
+    
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Analyzing...';
+    button.disabled = true;
+    
+    // Make API call to analyze stocks based on scenario
+    const requestData = {
+        symbols: nsSymbols,
+        scenario_id: '{{ scenario.id }}',
+        scenario_title: '{{ scenario.scenario_title }}',
+        scenario_type: '{{ scenario.scenario_type }}',
+        scenario_description: '{{ scenario.scenario_description }}'
+    };
+    
+    fetch('/api/analyze_additional_stocks', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displaySearchResults(data.recommendations);
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error occurred'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error occurred. Please try again.');
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+function displaySearchResults(recommendations) {
+    const resultsDiv = document.getElementById('searchResults');
+    const contentDiv = document.getElementById('searchResultsContent');
+    
+    if (recommendations.length === 0) {
+        contentDiv.innerHTML = `
+            <div class="text-center text-muted py-3">
+                <i class="bi bi-info-circle fs-3 mb-2"></i>
+                <p>No recommendations generated for the searched stocks.</p>
+            </div>
+        `;
+    } else {
+        let htmlContent = '<div class="row g-3">';
+        
+        recommendations.forEach(stock => {
+            const actionClass = stock.action === 'buy' ? 'success' : (stock.action === 'sell' ? 'danger' : 'secondary');
+            const returnClass = stock.expected_return > 0 ? 'text-success' : (stock.expected_return < 0 ? 'text-danger' : 'text-muted');
+            
+            htmlContent += `
+                <div class="col-md-4">
+                    <div class="card border border-primary h-100">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">${stock.ticker}</h6>
+                            <span class="badge bg-info">SEARCHED</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <span class="badge bg-${actionClass} me-2">
+                                    ${stock.action.toUpperCase()}
+                                </span>
+                                <span class="fw-bold ${returnClass}">
+                                    ${stock.expected_return.toFixed(1)}%
+                                </span>
+                            </div>
+                            <p class="card-text small text-muted">${stock.rationale}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-light text-dark">${stock.sector ? stock.sector.toUpperCase() : 'GENERAL'}</span>
+                                <small class="text-muted">Score: ${stock.confidence || 'N/A'}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        htmlContent += '</div>';
+        contentDiv.innerHTML = htmlContent;
+    }
+    
+    resultsDiv.style.display = 'block';
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Allow Enter key to trigger search
+document.getElementById('stockSearchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchAndAnalyzeStocks();
+    }
+});
+</script>
+
+{% endblock %}

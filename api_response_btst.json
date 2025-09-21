@@ -1,0 +1,331 @@
+{
+  "analysis": {
+    "ai_insights": [
+      {
+        "description": "Only 2 BTST opportunities found (4.0% rate) - market conditions may be limiting.",
+        "title": "Limited BTST Opportunities",
+        "type": "info"
+      },
+      {
+        "description": "Employs 7 technical indicators: RSI, TSI, Candlestick (Bearish Engulfing).",
+        "title": "Good Technical Coverage",
+        "type": "info"
+      },
+      {
+        "description": "Only 38.0% actionable recommendations, showing conservative strategy with 31 neutral positions.",
+        "title": "Conservative Approach",
+        "type": "info"
+      },
+      {
+        "description": "Script maintains 0.93% monthly returns with room for optimization.",
+        "title": "Positive Performance",
+        "type": "info"
+      },
+      {
+        "description": "Average confidence of 52.6% with potential for improvement.",
+        "title": "Moderate Confidence",
+        "type": "info"
+      },
+      {
+        "description": "Only 4.0% accuracy - BTST criteria may be too aggressive or market timing off.",
+        "title": "Low BTST Accuracy",
+        "type": "warning"
+      },
+      {
+        "description": "Generated 2 BTST buy signals out of 50 total recommendations.",
+        "title": "Active BTST Trading",
+        "type": "info"
+      }
+    ],
+    "analysis_date": "2025-08-25T16:05:53.381105",
+    "basic_insight": "BTST Strategy Analysis: 2 opportunities from 50 stocks (4.0% success rate). Script shows 0.0% execution success with 2 total runs. Monthly return: 0.93% if monthly_return is not None else 'N/A'.",
+    "claude_summary": "Comprehensive BTST analysis of BTSTjson.py: 2 BTST opportunities identified from 50 stocks using 7 technical indicators.",
+    "detailed_analysis": "The BTST strategy demonstrates strong performance with 52.6% average confidence. Technical analysis uses RSI, TSI, Candlestick (Bearish Engulfing), Open-High, Candlestick (Bullish Engulfing) indicators. Recommendation accuracy of 4.0% if accuracy is not None else 'N/A' with 2 BTST buy signals generated.",
+    "performance_metrics": {
+      "accuracy_rate": "4.0%",
+      "best_performing_stock": {
+        "return": "7.51%",
+        "symbol": "HEROMOTOCO.NS"
+      },
+      "monthly_return": "0.93%",
+      "stock_performance": [
+        [
+          "HEROMOTOCO.NS",
+          {
+            "monthly_return": 7.506815128635992,
+            "recommendation_count": 2,
+            "recommendations": [
+              {
+                "execution_date": "Sat, 23 Aug 2025 19:57:40 GMT",
+                "execution_id": 57,
+                "price_at_recommendation": 4997.9,
+                "recommendation": "Neutral",
+                "symbol": "HEROMOTOCO.NS",
+                "target_price": null
+              },
+              {
+                "execution_date": "Wed, 13 Aug 2025 14:42:44 GMT",
+                "execution_id": 55,
+                "price_at_recommendation": 4768.7,
+                "recommendation": "Neutral",
+                "symbol": "HEROMOTOCO.NS",
+                "target_price": null
+              }
+            ],
+            "successful_recommendations": 0,
+            "total_return": 7.506815128635992,
+            "weekly_return": 1.318549884701582,
+            "yearly_return": 7.506815128635992
+          }
+        ],
+        [
+          "BAJAJ-AUTO.NS",
+          {
+            "monthly_return": 6.903974493292929,
+            "recommendation_count": 2,
+            "recommendations": [
+              {
+                "execution_date": "Sat, 23 Aug 2025 19:57:40 GMT",
+                "execution_id": 57,
+                "price_at_recommendation": 8679.5,
+                "recommendation": "Buy",
+                "symbol": "BAJAJ-AUTO.NS",
+                "target_price": null
+              },
+              {
+                "execution_date": "Wed, 13 Aug 2025 14:42:44 GMT",
+                "execution_id": 55,
+                "price_at_recommendation": 8248.5,
+                "recommendation": "Neutral",
+                "symbol": "BAJAJ-AUTO.NS",
+                "target_price": null
+              }
+            ],
+            "successful_recommendations": 0,
+            "total_return": 6.903974493292929,
+            "weekly_return": 0.8180194711676939,
+            "yearly_return": 6.903974493292929
+          }
+        ],
+        [
+          "EICHERMOT.NS",
+          {
+            "monthly_return": 5.943836942387764,
+            "recommendation_count": 2,
+            "recommendations": [
+              {
+                "execution_date": "Sat, 23 Aug 2025 19:57:40 GMT",
+                "execution_id": 57,
+                "price_at_recommendation": 5924.5,
+                "recommendation": "Buy",
+                "symbol": "EICHERMOT.NS",
+                "target_price": null
+              },
+              {
+                "execution_date": "Wed, 13 Aug 2025 14:42:44 GMT",
+                "execution_id": 55,
+                "price_at_recommendation": 5714.5,
+                "recommendation": "Neutral",
+                "symbol": "EICHERMOT.NS",
+                "target_price": null
+              }
+            ],
+            "successful_recommendations": 0,
+            "total_return": 5.943836942387764,
+            "weekly_return": 1.114018060595831,
+            "yearly_return": 5.943836942387764
+          }
+        ],
+        [
+          "HINDUNILVR.NS",
+          {
+            "monthly_return": 5.535371484667708,
+            "recommendation_count": 2,
+            "recommendations": [
+              {
+                "execution_date": "Sat, 23 Aug 2025 19:57:40 GMT",
+                "execution_id": 57,
+                "price_at_recommendation": 2629.9,
+                "recommendation": "Neutral",
+                "symbol": "HINDUNILVR.NS",
+                "target_price": null
+              },
+              {
+                "execution_date": "Wed, 13 Aug 2025 14:42:44 GMT",
+                "execution_id": 55,
+                "price_at_recommendation": 2495.1,
+                "recommendation": "Neutral",
+                "symbol": "HINDUNILVR.NS",
+                "target_price": null
+              }
+            ],
+            "successful_recommendations": 0,
+            "total_return": 5.535371484667708,
+            "weekly_return": 0.06464495441841549,
+            "yearly_return": 5.535371484667708
+          }
+        ],
+        [
+          "BAJFINANCE.NS",
+          {
+            "monthly_return": 5.448487342904789,
+            "recommendation_count": 2,
+            "recommendations": [
+              {
+                "execution_date": "Sat, 23 Aug 2025 19:57:40 GMT",
+                "execution_id": 57,
+                "price_at_recommendation": 894.5,
+                "recommendation": "Sell",
+                "symbol": "BAJFINANCE.NS",
+                "target_price": null
+              },
+              {
+                "execution_date": "Wed, 13 Aug 2025 14:42:44 GMT",
+                "execution_id": 55,
+                "price_at_recommendation": 860.0,
+                "recommendation": "Neutral",
+                "symbol": "BAJFINANCE.NS",
+                "target_price": null
+              }
+            ],
+            "successful_recommendations": 0,
+            "total_return": 5.448487342904789,
+            "weekly_return": 0.7043027158153996,
+            "yearly_return": 5.448487342904789
+          }
+        ]
+      ],
+      "success_rate": "0.0%",
+      "total_recommendations": 50,
+      "weekly_return": "0.28%",
+      "worst_performing_stock": {
+        "return": "-0.76%",
+        "symbol": "ASIANPAINT.NS"
+      },
+      "yearly_return": "0.93%"
+    },
+    "performance_summary": {
+      "recommendation_accuracy": 4.0,
+      "success_rate": 0.0,
+      "total_executions": 2,
+      "total_recommendations": 50
+    },
+    "recommendations": {
+      "sector_performance": {
+        "analysis_depth": 7,
+        "recommendation_distribution": {
+          "BTST Buy": 2,
+          "Buy": 8,
+          "Neutral": 31,
+          "Sell": 9
+        },
+        "technical_indicators": [
+          "RSI",
+          "TSI",
+          "Candlestick (Bearish Engulfing)",
+          "Open-High",
+          "Candlestick (Bullish Engulfing)",
+          "MACD",
+          "BTST"
+        ]
+      },
+      "strategy_breakdown": {
+        "BTST Buy": 2,
+        "Buy": 8,
+        "Neutral": 31,
+        "Sell": 9
+      },
+      "timing_analysis": {
+        "avg_confidence": "52.6%",
+        "btst_opportunities": 2,
+        "stocks_analyzed": 50,
+        "success_rate": "4.0%"
+      }
+    },
+    "returns_analysis": {
+      "monthly": {
+        "average_return": 0.9260919324970464,
+        "count": 50,
+        "total_return": 46.304596624852316
+      },
+      "weekly": {
+        "average_return": 0.27641405377648803,
+        "count": 25,
+        "total_return": 6.910351344412201
+      },
+      "yearly": {
+        "average_return": 0.9260919324970464,
+        "count": 50,
+        "total_return": 46.304596624852316
+      }
+    },
+    "script_name": "BTSTjson.py",
+    "stock_performance": {
+      "best_performers": [
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "HEROMOTOCO.NS",
+          "total_return": "7.51%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "BAJAJ-AUTO.NS",
+          "total_return": "6.90%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "EICHERMOT.NS",
+          "total_return": "5.94%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "HINDUNILVR.NS",
+          "total_return": "5.54%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "BAJFINANCE.NS",
+          "total_return": "5.45%"
+        }
+      ],
+      "worst_performers": [
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "ASIANPAINT.NS",
+          "total_return": "-0.76%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "HDFCBANK.NS",
+          "total_return": "-0.84%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "BPCL.NS",
+          "total_return": "-2.28%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "0.0%",
+          "symbol": "ITC.NS",
+          "total_return": "-3.30%"
+        },
+        {
+          "recommendation_count": 2,
+          "success_rate": "50.0%",
+          "symbol": "BEL.NS",
+          "total_return": "-5.07%"
+        }
+      ]
+    }
+  },
+  "status": "success"
+}

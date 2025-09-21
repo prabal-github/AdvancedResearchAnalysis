@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Email Validation Test - PredictRAM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .email-validation-message {
+            margin-top: 5px;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: none;
+        }
+        .test-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">📧 Email Role Validation Test</h1>
+                <p class="text-center text-muted">Test the cross-role email validation system</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="test-form">
+                    <h3 class="text-primary mb-3">👥 Investor Registration Test</h3>
+                    <form id="investor-form" action="/api/register/investor" method="post">
+                        <div class="form-group">
+                            <label for="investor-first-name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="investor-first-name" name="first_name" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label for="investor-last-name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="investor-last-name" name="last_name" placeholder="Enter last name">
+                        </div>
+                        <div class="form-group">
+                            <label for="investor-email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="investor-email" name="email" placeholder="Enter email address">
+                            <div id="investor-email-validation" class="email-validation-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="investor-mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" class="form-control" id="investor-mobile" name="mobile" placeholder="Enter mobile number">
+                        </div>
+                        <div class="form-group">
+                            <label for="investor-password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="investor-password" name="password" placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register as Investor</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="test-form">
+                    <h3 class="text-success mb-3">📊 Analyst Registration Test</h3>
+                    <form id="analyst-form" action="/api/register/analyst" method="post">
+                        <div class="form-group">
+                            <label for="analyst-first-name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="analyst-first-name" name="first_name" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-last-name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="analyst-last-name" name="last_name" placeholder="Enter last name">
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="analyst-email" name="email" placeholder="Enter email address">
+                            <div id="analyst-email-validation" class="email-validation-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" class="form-control" id="analyst-mobile" name="mobile" placeholder="Enter mobile number">
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-experience" class="form-label">Experience</label>
+                            <select class="form-control" id="analyst-experience" name="experience">
+                                <option value="">Select experience</option>
+                                <option value="0-1">0-1 years</option>
+                                <option value="1-3">1-3 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5+">5+ years</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-specialization" class="form-label">Specialization</label>
+                            <input type="text" class="form-control" id="analyst-specialization" name="specialization" placeholder="Enter specialization">
+                        </div>
+                        <div class="form-group">
+                            <label for="analyst-password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="analyst-password" name="password" placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-success">Register as Analyst</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5>🧪 How to Test:</h5>
+                    <ol>
+                        <li>Try entering an email that's already registered as an analyst in the investor form</li>
+                        <li>Try entering an email that's already registered as an investor in the analyst form</li>
+                        <li>Try entering a new email in both forms</li>
+                        <li>Watch for real-time validation messages below the email fields</li>
+                        <li>Try submitting the forms to test server-side validation</li>
+                    </ol>
+                    <p class="mb-0"><strong>Expected Result:</strong> You should see error messages when trying to use an email already registered for the opposite role.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-secondary">
+                    <h6>📋 Test Results Log:</h6>
+                    <div id="test-log" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+                        <!-- Test results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Include Email Validation Script -->
+    <script src="/static/js/email-role-validation.js"></script>
+    
+    <script>
+        // Enhanced logging for test purposes
+        function logTest(message) {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Setup manual validation with logging
+        document.addEventListener('DOMContentLoaded', function() {
+            logTest('📄 Page loaded - Setting up email validation...');
+            
+            // Setup investor email validation
+            setupEmailValidation('investor-email', 'investor', 'investor-email-validation');
+            logTest('✅ Investor email validation setup complete');
+            
+            // Setup analyst email validation  
+            setupEmailValidation('analyst-email', 'analyst', 'analyst-email-validation');
+            logTest('✅ Analyst email validation setup complete');
+            
+            // Override forms to prevent actual submission and show results
+            document.getElementById('investor-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('investor-email').value;
+                logTest(`🚀 Investor registration attempted with email: ${email}`);
+                
+                // Simulate API call for testing
+                testRegistration('investor', email);
+            });
+            
+            document.getElementById('analyst-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('analyst-email').value;
+                logTest(`🚀 Analyst registration attempted with email: ${email}`);
+                
+                // Simulate API call for testing
+                testRegistration('analyst', email);
+            });
+        });
+        
+        function testRegistration(role, email) {
+            logTest(`📡 Testing ${role} registration API call...`);
+            
+            const apiUrl = `/api/register/${role}`;
+            const data = {
+                first_name: 'Test',
+                last_name: 'User',
+                email: email,
+                mobile: '1234567890',
+                password: 'testpass123'
+            };
+            
+            if (role === 'analyst') {
+                data.experience = '1-3';
+                data.specialization = 'Data Analysis';
+            }
+            
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    logTest(`✅ ${role} registration successful: ${data.message || 'Registration completed'}`);
+                } else {
+                    logTest(`❌ ${role} registration failed: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                logTest(`💥 ${role} registration error: ${error.message}`);
+            });
+        }
+        
+        // Add some test suggestions
+        setTimeout(() => {
+            logTest('💡 Try these test emails to see validation in action:');
+            logTest('   - test@investor.com (enter in analyst form)');
+            logTest('   - test@analyst.com (enter in investor form)');
+            logTest('   - newuser@test.com (should work for both)');
+        }, 1000);
+    </script>
+</body>
+</html>

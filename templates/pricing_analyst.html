@@ -1,0 +1,139 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Analyst Plans & Pricing</h2>
+  <p class="text-center text-muted">Compare analyst tiers for publishing & AI usage. <a href="/pricing/investor">Investor plans?</a></p>
+  {% if not settings.key_id %}
+  <div class="alert alert-warning small">Payments not configured. Contact admin.</div>
+  {% endif %}
+  <div class="row g-4 justify-content-center mb-5">
+    {% for plan, label in {'pro':'Pro', 'pro_plus':'Pro Plus'}.items() %}
+    {% set p = plan_pricing[plan] %}
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm border-success-subtle">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ label }}</h5>
+          <h3 class="card-text">{{ p.currency }} {{ '%.0f' % (p.amount / 100) }}<small class="text-muted fs-6">/month</small></h3>
+          <ul class="small mt-3">
+            {% if plan == 'pro' %}
+              <li>Publish up to {{ analyst_limits.pro.publish_limit }} reports</li>
+              <li>Advanced AI tooling</li>
+            {% else %}
+              <li>Unlimited publishing</li>
+              <li>All AI features unlocked</li>
+            {% endif %}
+          </ul>
+          <div class="mt-auto">
+            <button class="btn btn-success w-100" onclick="startAnalystCheckout('{{ plan }}')">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if analyst_limits %}
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered align-middle table-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Feature <span class="text-muted small">(hover)</span></th>
+          <th>Small</th>
+          <th>Pro</th>
+          <th>Pro Plus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% set fd = feature_descriptions.publish_limit %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ analyst_limits.small.publish_limit }}</td>
+          <td>{{ analyst_limits.pro.publish_limit }}</td>
+          <td>{{ analyst_limits.pro_plus.publish_limit if analyst_limits.pro_plus.publish_limit is not none else 'Unlimited' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.runs_per_day %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ analyst_limits.small.runs_per_day }}</td>
+          <td>{{ analyst_limits.pro.runs_per_day }}</td>
+          <td>{{ analyst_limits.pro_plus.runs_per_day if analyst_limits.pro_plus.runs_per_day is not none else 'Unlimited' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.llm_prompts_per_day %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ analyst_limits.small.llm_prompts_per_day }}</td>
+          <td>{{ analyst_limits.pro.llm_prompts_per_day }}</td>
+          <td>{{ analyst_limits.pro_plus.llm_prompts_per_day if analyst_limits.pro_plus.llm_prompts_per_day is not none else 'Unlimited' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.llm_tokens_per_day %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ analyst_limits.small.llm_tokens_per_day }}</td>
+          <td>{{ analyst_limits.pro.llm_tokens_per_day }}</td>
+          <td>{{ analyst_limits.pro_plus.llm_tokens_per_day if analyst_limits.pro_plus.llm_tokens_per_day is not none else 'Unlimited' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.allow_full_analysis %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ 'Yes' if analyst_limits.small.allow_full_analysis else 'No' }}</td>
+          <td>{{ 'Yes' if analyst_limits.pro.allow_full_analysis else 'No' }}</td>
+          <td>{{ 'Yes' if analyst_limits.pro_plus.allow_full_analysis else 'No' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.provider_manage %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ 'Yes' if analyst_limits.small.provider_manage else 'No' }}</td>
+          <td>{{ 'Yes' if analyst_limits.pro.provider_manage else 'No' }}</td>
+          <td>{{ 'Yes' if analyst_limits.pro_plus.provider_manage else 'No' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <div class="alert alert-info small">Unlimited = no enforced cap within fair usage policy. Daily counters reset at UTC midnight.</div>
+  <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#featureGlossaryModal">Open Feature Glossary</button>
+</div>
+
+<!-- Feature Glossary Modal -->
+<div class="modal fade" id="featureGlossaryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Analyst Feature Glossary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body small">
+        <dl>
+          {% for key, meta in feature_descriptions.items() %}
+          <dt class="mt-2">{{ meta.label }}</dt>
+          <dd class="text-muted">{{ meta.description }}</dd>
+          {% endfor %}
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function startAnalystCheckout(plan){
+  try {
+    const res = await fetch('/api/analyst/payments/create_order',{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({plan})});
+    const data = await res.json();
+    if(!res.ok){ alert(data.error || 'Failed to create order'); return; }
+    const { order, key_id } = data;
+    const options = { key: key_id, amount: order.amount, currency: order.currency, name: 'Predictram Research', description: 'Analyst Subscription: '+plan, order_id: order.id,
+      handler: async function(resp){
+        const v = await fetch('/api/analyst/payments/verify',{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(resp)});
+        const vdata = await v.json();
+        if(v.ok){ alert('Payment successful! Plan: '+vdata.plan); window.location='/analyst_dashboard'; } else { alert(vdata.error || 'Verification failed'); }
+      }, theme:{color:'#198754'} };
+    new window.Razorpay(options).open();
+  } catch(e){ alert('Checkout error'); }
+}
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}

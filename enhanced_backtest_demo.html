@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced ML Models Backtesting - Multiple Stock Selection</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        .demo-container { max-width: 800px; margin: 0 auto; }
+        .feature-highlight { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .model-card { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            border-radius: 8px; 
+            padding: 16px; 
+            margin: 16px 0; 
+        }
+        .model-title { 
+            color: #60a5fa; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+        }
+        
+        /* Enhanced backtesting styles */
+        .backtest-section { background:#0f172a; border:1px solid #334155; border-radius:6px; padding:12px; margin-top:8px; }
+        .backtest-controls { display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:start; margin-bottom:8px; }
+        .stock-selection-container { display:flex; flex-direction:column; gap:4px; }
+        .stock-multiselect { background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:6px 8px; font-size:11px; border-radius:4px; min-height:80px; resize:vertical; }
+        .stock-multiselect option { padding:2px 4px; }
+        .stock-multiselect option:checked { background:#2563eb; color:#fff; }
+        .selected-stocks { font-size:10px; color:#94a3b8; margin-top:2px; max-height:40px; overflow-y:auto; }
+        .backtest-controls select { background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:6px 8px; font-size:11px; border-radius:4px; height:32px; }
+        .backtest-controls button { background:#2563eb; color:#fff; cursor:pointer; border:none; padding:8px 12px; font-size:11px; border-radius:4px; font-weight:600; height:32px; min-width:80px; }
+        .backtest-controls button:hover { background:#1d4ed8; }
+        .backtest-controls button:disabled { background:#374151; cursor:not-allowed; }
+        .multi-stock-label { font-size:10px; color:#94a3b8; margin-bottom:2px; }
+        
+        .improvement { background: #065f46; border: 1px solid #10b981; padding: 10px; border-radius: 6px; margin: 10px 0; }
+        .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .before, .after { padding: 15px; border-radius: 8px; }
+        .before { background: #7f1d1d; border: 1px solid #dc2626; }
+        .after { background: #065f46; border: 1px solid #10b981; }
+        .highlight { background: #fbbf24; color: #000; padding: 2px 4px; border-radius: 3px; }
+        .code { background: #374151; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🚀 Enhanced ML Models Backtesting - Multiple Stock Selection</h1>
+        
+        <div class="feature-highlight">
+            <h2>✅ Improvements Implemented</h2>
+            <ul>
+                <li><strong>🎯 Fixed Button Alignment:</strong> Grid-based layout for better control spacing</li>
+                <li><strong>📈 Multiple Stock Selection:</strong> Hold Ctrl/Cmd to select multiple stocks</li>
+                <li><strong>📊 Portfolio Results:</strong> Aggregate metrics for multiple stocks</li>
+                <li><strong>🔄 Enhanced UX:</strong> Better visual feedback and loading states</li>
+                <li><strong>📋 Stock Counter:</strong> Shows selected stocks count and names</li>
+            </ul>
+        </div>
+
+        <div class="before-after">
+            <div class="before">
+                <h3>❌ Before (Old Layout)</h3>
+                <div class="code">
+display: flex;
+gap: 8px;
+align-items: center;
+
+Single stock dropdown
+Basic button alignment
+No multi-selection
+                </div>
+            </div>
+            <div class="after">
+                <h3>✅ After (Enhanced Layout)</h3>
+                <div class="code">
+display: grid;
+grid-template-columns: 1fr auto auto;
+gap: 8px;
+align-items: start;
+
+Multi-select dropdown
+Proper grid alignment
+Portfolio backtesting
+                </div>
+            </div>
+        </div>
+
+        <div class="model-card">
+            <div class="model-title">🧠 Intraday Price Drift Model (Enhanced)</div>
+            <div>Short horizon drift estimation with multiple stock support</div>
+            <div class="backtest-section">
+                <div class="backtest-controls">
+                    <div class="stock-selection-container">
+                        <div class="multi-stock-label">Select Stocks (Hold Ctrl/Cmd for multiple):</div>
+                        <select class="stock-multiselect" multiple>
+                            <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                            <option value="TCS.NS" selected>Tata Consultancy Services Ltd</option>
+                            <option value="HDFCBANK.NS" selected>HDFC Bank Ltd</option>
+                            <option value="INFY.NS">Infosys Ltd</option>
+                            <option value="ICICIBANK.NS">ICICI Bank Ltd</option>
+                            <option value="KOTAKBANK.NS">Kotak Mahindra Bank Ltd</option>
+                        </select>
+                        <div class="selected-stocks">Selected (2): Tata Consultancy Services Ltd, HDFC Bank Ltd</div>
+                    </div>
+                    <select>
+                        <option value="3mo">3M</option>
+                        <option value="6mo">6M</option>
+                        <option value="1y" selected>1Y</option>
+                        <option value="2y">2Y</option>
+                    </select>
+                    <button onclick="alert('Enhanced Backtesting with Multiple Stocks!')">Backtest</button>
+                </div>
+                <div style="margin-top:8px; font-size:12px; color:#94a3b8;">
+                    Results will show portfolio metrics + individual stock performance
+                </div>
+            </div>
+        </div>
+
+        <div class="improvement">
+            <h3>🎯 Key Enhancements</h3>
+            
+            <h4>1. Fixed Button Alignment</h4>
+            <ul>
+                <li><strong>Grid Layout:</strong> <span class="highlight">grid-template-columns: 1fr auto auto</span></li>
+                <li><strong>Consistent Heights:</strong> All controls aligned to 32px height</li>
+                <li><strong>Proper Spacing:</strong> 8px gap between all elements</li>
+            </ul>
+            
+            <h4>2. Multiple Stock Selection</h4>
+            <ul>
+                <li><strong>Multi-select Dropdown:</strong> <span class="highlight">multiple</span> attribute added</li>
+                <li><strong>Visual Feedback:</strong> Selected stocks counter and names display</li>
+                <li><strong>Smart Button:</strong> Disabled until stocks are selected</li>
+            </ul>
+            
+            <h4>3. Enhanced Results Display</h4>
+            <ul>
+                <li><strong>Single Stock:</strong> Individual performance metrics</li>
+                <li><strong>Multiple Stocks:</strong> Portfolio aggregate metrics + individual breakdown</li>
+                <li><strong>Progress Tracking:</strong> Shows "Running backtest X/Y" during execution</li>
+            </ul>
+        </div>
+
+        <div class="feature-highlight">
+            <h3>📊 Portfolio Results Features</h3>
+            <div class="code">
+Portfolio Results (5/5 stocks)
+├── Avg Total Return: 12.45%
+├── Avg Volatility: 22.8%
+├── Avg Sharpe Ratio: 0.546
+└── Max Drawdown: 18.2%
+
+Individual Stock Results:
+├── RELIANCE.NS: 8.4% (Vol: 24.1% | Sharpe: 0.35 | DD: 12.3%)
+├── TCS.NS: 15.2% (Vol: 19.8% | Sharpe: 0.77 | DD: 9.8%)
+├── HDFCBANK.NS: 11.8% (Vol: 26.3% | Sharpe: 0.45 | DD: 15.6%)
+├── INFY.NS: 18.7% (Vol: 21.4% | Sharpe: 0.87 | DD: 11.2%)
+└── ICICIBANK.NS: 7.9% (Vol: 22.1% | Sharpe: 0.36 | DD: 18.2%)
+            </div>
+        </div>
+
+        <div class="feature-highlight">
+            <h3>🔧 Technical Implementation</h3>
+            
+            <h4>CSS Grid Layout:</h4>
+            <div class="code">
+.backtest-controls {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: start;
+}
+            </div>
+            
+            <h4>Multiple Stock Selection:</h4>
+            <div class="code">
+// Get selected stocks
+const selectedOptions = Array.from(stockSelect.selectedOptions);
+const selectedStocks = selectedOptions.map(option => option.value);
+
+// Run portfolio backtest
+if (selectedStocks.length > 1) {
+    await runMultiStockBacktest(modelId, selectedStocks, period, resultsDiv);
+}
+            </div>
+            
+            <h4>Portfolio Metrics Calculation:</h4>
+            <div class="code">
+const avgReturn = validResults.reduce((sum, r) => 
+    sum + r.result.total_return, 0) / validResults.length;
+const avgSharpe = validResults.reduce((sum, r) => 
+    sum + r.result.sharpe_ratio, 0) / validResults.length;
+            </div>
+        </div>
+
+        <div style="background: #10b981; color: #000; padding: 15px; border-radius: 8px; font-weight: bold; text-align: center; margin: 30px 0;">
+            ✅ IMPLEMENTATION COMPLETE
+            <br>
+            <span style="font-size: 14px;">Enhanced alignment + multiple stock selection for all 5 ML models!</span>
+        </div>
+
+        <h3>🚀 How to Use</h3>
+        <ol>
+            <li><strong>Navigate to:</strong> <code>http://127.0.0.1:5008/integrated_ml_models_and_agentic_ai</code></li>
+            <li><strong>Click:</strong> "ML Models" tab</li>
+            <li><strong>For any model:</strong>
+                <ul>
+                    <li>Hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) and click to select multiple stocks</li>
+                    <li>Choose time period (3M, 6M, 1Y, 2Y)</li>
+                    <li>Click enhanced <strong>"Backtest"</strong> button</li>
+                    <li>View portfolio results with individual stock breakdown</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</body>
+</html>

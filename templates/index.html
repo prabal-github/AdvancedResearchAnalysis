@@ -1,0 +1,635 @@
+{% extends "layout.html" %}
+{% block title %}Research QA Dashboard{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Research Report Quality Scoring</h1>
+        <p class="text-muted mb-0">Analytical framework for evaluating research reports</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="showForm()">
+            <i class="bi bi-plus-circle me-1"></i> Analyze New Report
+        </button>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+{% include 'partials/_brand_header.html' %}
+
+<div id="formDiv" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">Analyze Report</h5>
+    </div>
+    <div class="card-body">
+        <form id="analyzeForm" onsubmit="return submitForm(event)">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Analyst Name</label>
+                <input type="text" name="analyst" class="form-control form-control-lg" placeholder="Enter analyst name">
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Report Topic</label>
+                    <input type="text" name="topic" class="form-control" placeholder="e.g., Q3 Earnings Analysis, Market Outlook, Stock Research" maxlength="500">
+                    <div class="form-text">Brief description of the report topic</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Sub-Heading</label>
+                    <input type="text" name="sub_heading" class="form-control" placeholder="e.g., Strong Growth Despite Market Volatility" maxlength="1000">
+                    <div class="form-text">Descriptive sub-heading for the report</div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Report Text</label>
+                <textarea name="text" rows="6" class="form-control" placeholder="Paste research report content here... (Stock tickers will be automatically extracted)" required></textarea>
+                <div class="form-text">Stock tickers will be automatically extracted from the report text</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-activity me-1"></i> Analyze Report
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="hideForm()">Cancel</button>
+            </div>
+        </form>
+        <div id="resultDiv" class="mt-4"></div>
+    </div>
+</div>
+
+<!-- Quick Access Section -->
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Access</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="/investor_dashboard" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded">
+                                <i class="bi bi-person-workspace fs-4 text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-primary">Investor Dashboard</h6>
+                                    <small class="text-muted">Secure investor portal</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/investor_register" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded">
+                                <i class="bi bi-person-plus fs-4 text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-success">Register as Investor</h6>
+                                    <small class="text-muted">Create investor account</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        {% if session.get('user_role') == 'admin' or session.get('analyst_id') %}
+                        <a href="/report_hub" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded">
+                                <i class="bi bi-file-earmark-text fs-4 text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-info">Report Hub</h6>
+                                    <small class="text-muted">All research reports</small>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                        <a href="/analysts_list" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded">
+                                <i class="bi bi-people fs-4 text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-info">Analysts Directory</h6>
+                                    <small class="text-muted">View all analysts</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="/analyze_new" class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 80px;">
+                            <i class="bi bi-plus-circle fs-2 mb-2"></i>
+                            <span>Analyze New Report</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        {% if session.get('user_role') == 'admin' or session.get('analyst_id') %}
+                        <a href="/report_hub" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 80px;">
+                            <i class="bi bi-collection fs-2 mb-2"></i>
+                            <span>Report Hub</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 80px;">
+                            <i class="bi bi-gear fs-2 mb-2"></i>
+                            <span>Admin Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/test_analyst_performance_debug" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 80px;">
+                            <i class="bi bi-graph-up fs-2 mb-2"></i>
+                            <span>Analyst Performance</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Reports Leaderboard</h2>
+    <div class="d-flex gap-2">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-funnel me-1"></i> Filter
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Highest Score</a></li>
+                <li><a class="dropdown-item" href="#">Newest First</a></li>
+                <li><a class="dropdown-item" href="#">By Analyst</a></li>
+            </ul>
+        </div>
+        <div class="input-group input-group-sm" style="width: 200px;">
+            <input type="text" class="form-control" placeholder="Search reports...">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-5">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Analyst</th>
+                        <th>Tickers</th>
+                        <th class="text-center">Composite Score</th>
+                        <th class="text-center">AI Detection</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                        <th class="pe-4">Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    {% set analysis = report.analysis %}
+                    <tr>
+                        <td class="ps-4 fw-semibold text-muted">{{ report.id }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-35px symbol-circle me-2">
+                                    <span class="symbol-label bg-light-primary text-primary fw-bold">{{ report.analyst[0] }}</span>
+                                </div>
+                                {{ report.analyst }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                {% for ticker in report.tickers|loads %}
+                                <span class="badge bg-light text-dark border">{{ ticker }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {% if analysis.composite_quality_score is defined %}
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div class="progress w-100" style="height: 20px; max-width: 150px;">
+                                    <div class="progress-bar 
+                                        {% if analysis.composite_quality_score >= 0.8 %}bg-success
+                                        {% elif analysis.composite_quality_score >= 0.6 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ analysis.composite_quality_score * 100 }}%" 
+                                        aria-valuenow="{{ analysis.composite_quality_score * 100 }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <span class="fw-bold ms-2" style="min-width: 45px;">
+                                    {{ (analysis.composite_quality_score * 100) | round(1) }}%
+                                </span>
+                            </div>
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if analysis.ai_detection is defined %}
+                            <div class="d-flex flex-column align-items-center">
+                                {% set ai_prob = analysis.ai_detection.ai_probability %}
+                                {% if ai_prob >= 0.7 %}
+                                    <span class="badge bg-danger mb-1">🤖 AI Generated</span>
+                                    <small class="text-muted">{{ (ai_prob * 100) | round(1) }}% AI</small>
+                                {% elif ai_prob >= 0.4 %}
+                                    <span class="badge bg-warning mb-1">❓ Uncertain</span>
+                                    <small class="text-muted">{{ (ai_prob * 100) | round(1) }}% AI</small>
+                                {% else %}
+                                    <span class="badge bg-success mb-1">👤 Human Written</span>
+                                    <small class="text-muted">{{ ((1-ai_prob) * 100) | round(1) }}% Human</small>
+                                {% endif %}
+                                <div class="progress mt-1" style="height: 4px; width: 80px;">
+                                    <div class="progress-bar 
+                                        {% if ai_prob >= 0.7 %}bg-danger
+                                        {% elif ai_prob >= 0.4 %}bg-warning
+                                        {% else %}bg-success{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ (ai_prob if ai_prob >= 0.5 else (1-ai_prob)) * 100 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="badge bg-secondary">Not Checked</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="text-muted">{{ report.created_at.strftime('%Y-%m-%d') }}</div>
+                            <small class="text-muted">{{ report.created_at.strftime('%H:%M') }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group-vertical d-grid gap-1" role="group">
+                                <a class="btn btn-sm btn-success" href="/skill_learning/{{ report.id }}" title="Skill Learning Analysis">
+                                    <i class="bi bi-mortarboard-fill me-1"></i> Learn Code
+                                </a>
+                                <a class="btn btn-sm btn-light-primary" href="{{ url_for('view_report', report_id=report.id) }}" title="View Report">
+                                    <i class="bi bi-eye me-1"></i> View
+                                </a>
+                            </div>
+                        </td>
+                        <td class="pe-4">
+                            <button class="btn btn-sm btn-light" onclick="downloadReport('{{ report.analyst }}', {{ analysis|tojson }})">
+                                <i class="bi bi-download me-1"></i> JSON
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Quality Metrics Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for metric in [
+                        ("Factual Accuracy", "Alignment with verified data", "bi-check-circle", "primary"),
+                        ("Predictive Power", "Future price alignment", "bi-graph-up", "success"),
+                        ("Bias Detection", "Sentiment vs evidence", "bi-sliders", "warning"),
+                        ("Originality", "Unique insights", "bi-lightbulb", "info"),
+                        ("Risk Disclosure", "Risk factors mentioned", "bi-exclamation-triangle", "danger"),
+                        ("Transparency", "Methodology clarity", "bi-eye", "purple")
+                    ] %}
+                    <div class="col-md-6 mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="symbol symbol-40px">
+                                    <span class="symbol-label bg-light-{{ metric[3] }} text-{{ metric[3] }}">
+                                        <i class="bi {{ metric[2] }} fs-3"></i>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h6 class="mb-1">{{ metric[0] }}</h6>
+                                <p class="text-muted mb-0">{{ metric[1] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Performance Insights</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-4">
+                    <div class="text-center">
+                        <div class="fs-1 fw-bold text-primary" id="avgScore">{{ metrics.avg_quality_score if metrics else 0 }}%</div>
+                        <div class="text-muted">Avg. Score</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fs-1 fw-bold text-success" id="totalReports">{{ metrics.total_reports if metrics else 0 }}</div>
+                        <div class="text-muted">Reports</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fs-1 fw-bold text-info" id="totalAnalysts">{{ metrics.top_analysts|length if metrics and metrics.top_analysts else 0 }}</div>
+                        <div class="text-muted">Analysts</div>
+                    </div>
+                </div>
+                
+                <h6 class="mb-3">Top Analysts <button class="btn btn-sm btn-outline-primary ms-2" onclick="refreshMetrics()"><i class="bi bi-arrow-clockwise"></i></button></h6>
+                <div class="mb-4" id="topAnalysts">
+                    {% if metrics and metrics.top_analysts %}
+                        {% for analyst in metrics.top_analysts %}
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="flex-grow-1 me-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="symbol symbol-25px symbol-circle me-2">
+                                        <span class="symbol-label bg-light-primary text-primary fw-bold">{{ analyst.name[0] if analyst.name else 'A' }}</span>
+                                    </div>
+                                    {{ analyst.name }}
+                                    <span class="badge bg-light text-muted ms-2">{{ analyst.report_count }} reports</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="progress" style="height: 8px; width: 80px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                        style="width: {{ analyst.avg_score }}%" 
+                                        aria-valuenow="{{ analyst.avg_score }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <span class="fw-bold ms-2">{{ analyst.avg_score }}%</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">No analyst data available</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Real-time Quality Metrics Chart -->
+                <h6 class="mb-3">Quality Metrics Trend</h6>
+                <div style="height: 200px; margin-bottom: 20px;">
+                    <canvas id="qualityTrendChart"></canvas>
+                </div>
+                
+                <h6 class="mb-3">Recent Activity</h6>
+                <div class="border-top pt-3">
+                    <div class="d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-file-earmark-text fs-3 text-muted"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="fw-semibold">New report analyzed</div>
+                            <div class="text-muted small">MSFT report by David Kim</div>
+                            <div class="text-muted small">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-download fs-3 text-muted"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="fw-semibold">Report downloaded</div>
+                            <div class="text-muted small">AAPL analysis by Sarah Johnson</div>
+                            <div class="text-muted small">5 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .symbol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+    .symbol.symbol-circle {
+        border-radius: 50%;
+    }
+    .symbol.symbol-35px {
+        width: 35px;
+        height: 35px;
+    }
+    .symbol.symbol-25px {
+        width: 25px;
+        height: 25px;
+    }
+    .symbol.symbol-40px {
+        width: 40px;
+        height: 40px;
+    }
+    .symbol-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+    .progress-bar {
+        transition: width 0.6s ease;
+    }
+    .table-hover tbody tr {
+        transition: background-color 0.2s;
+    }
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+function showForm() {
+    document.getElementById('formDiv').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function hideForm() {
+    document.getElementById('formDiv').style.display = 'none';
+}
+function submitForm(event) {
+    event.preventDefault();
+    const form = document.getElementById('analyzeForm');
+    const data = {
+        analyst: form.analyst.value,
+        text: form.text.value,
+        topic: form.topic.value,
+        sub_heading: form.sub_heading.value
+    };
+    
+    // Show loading indicator
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Analyzing...';
+    submitBtn.disabled = true;
+    
+    fetch('/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(r=>r.json()).then(res=>{
+        if (res.result) {
+            document.getElementById('resultDiv').innerHTML = `
+                <div class="alert alert-success d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Analysis Complete!</h5>
+                        <div class="mb-0">Report ID: ${res.report_id}</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="${window.location.origin}/report/${res.report_id}" class="btn btn-success">
+                        <i class="bi bi-eye me-1"></i> View Full Report
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="downloadReport('${data.analyst}', ${JSON.stringify(res.result)})">
+                        <i class="bi bi-download me-1"></i> Download Results
+                    </button>
+                </div>
+            `;
+            form.reset();
+        } else {
+            document.getElementById('resultDiv').innerHTML = `
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle-fill fs-3 me-3"></i>
+                    <div>
+                        <h5 class="mb-0">Error: ${res.error || 'Unknown error'}</h5>
+                    </div>
+                </div>
+            `;
+        }
+    }).catch(error => {
+        document.getElementById('resultDiv').innerHTML = `
+            <div class="alert alert-danger">
+                Network error: ${error.message}
+            </div>
+        `;
+    }).finally(() => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Real-time metrics update function
+function refreshMetrics() {
+    fetch('/api/metrics')
+        .then(response => response.json())
+        .then(data => {
+            // Update summary stats
+            document.getElementById('avgScore').textContent = data.avg_quality_score + '%';
+            document.getElementById('totalReports').textContent = data.total_reports;
+            document.getElementById('totalAnalysts').textContent = data.top_analysts.length;
+            
+            // Update top analysts
+            const topAnalystsContainer = document.getElementById('topAnalysts');
+            if (data.top_analysts && data.top_analysts.length > 0) {
+                topAnalystsContainer.innerHTML = data.top_analysts.map(analyst => `
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="flex-grow-1 me-3">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-25px symbol-circle me-2">
+                                    <span class="symbol-label bg-light-primary text-primary fw-bold">${analyst.name.charAt(0)}</span>
+                                </div>
+                                ${analyst.name}
+                                <span class="badge bg-light text-muted ms-2">${analyst.report_count} reports</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="progress" style="height: 8px; width: 80px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                    style="width: ${analyst.avg_score}%" 
+                                    aria-valuenow="${analyst.avg_score}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                            <span class="fw-bold ms-2">${analyst.avg_score}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                topAnalystsContainer.innerHTML = '<div class="text-center text-muted">No analyst data available</div>';
+            }
+            
+            // Update quality trend chart
+            updateQualityTrendChart(data.recent_trends);
+        })
+        .catch(error => {
+            console.error('Error fetching metrics:', error);
+        });
+}
+
+// Quality trend chart
+let qualityTrendChart;
+
+function initializeQualityTrendChart() {
+    const ctx = document.getElementById('qualityTrendChart');
+    if (!ctx) return;
+    
+    const initialData = {{ metrics.recent_trends | tojson if metrics and metrics.recent_trends else '[]' }};
+    
+    qualityTrendChart = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: initialData.map((_, index) => `Report ${index + 1}`),
+            datasets: [{
+                label: 'Quality Score',
+                data: initialData.map(item => (item.score * 100).toFixed(1)),
+                borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function updateQualityTrendChart(trends) {
+    if (qualityTrendChart && trends) {
+        qualityTrendChart.data.labels = trends.map((_, index) => `Report ${index + 1}`);
+        qualityTrendChart.data.datasets[0].data = trends.map(item => (item.score * 100).toFixed(1));
+        qualityTrendChart.update();
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeQualityTrendChart();
+    
+    // Auto-refresh metrics every 30 seconds
+    setInterval(refreshMetrics, 30000);
+});
+
+function downloadReport(analyst, analysis) {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analysis, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", analyst.replace(/[^a-zA-Z0-9_-]/g, "_") + "_report.json");
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+}
+</script>
+{% endblock %}

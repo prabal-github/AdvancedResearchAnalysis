@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Investor Risk Profiling{% endblock %}
+{% block header %}
+<h1 class="mb-0">Risk Profiling</h1>
+<p class="text-muted mb-0">Help us understand your preferences to tailor recommendations</p>
+{% endblock %}
+{% block content %}
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    {% if score is not none %}
+    <div class="alert alert-info d-flex align-items-center justify-content-between">
+      <div>
+        <strong>Current Profile:</strong> {{ category }}
+        <span class="badge bg-secondary ms-2">Score: {{ score }}</span>
+      </div>
+      <div>
+        <a href="{{ url_for('investor_dashboard') }}" class="btn btn-sm btn-outline-primary">Back to Dashboard</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Age</label>
+          <select name="age" class="form-select" required>
+            {% set a = answers.get('age') if answers else '' %}
+            <option value="" disabled {{ '' == a and 'selected' or '' }}>Select...</option>
+            <option {{ ' <30' == a and 'selected' or '' }} value="<30">&lt;30</option>
+            <option {{ '30-45' == a and 'selected' or '' }} value="30-45">30-45</option>
+            <option {{ '46-60' == a and 'selected' or '' }} value="46-60">46-60</option>
+            <option {{ '60+' == a and 'selected' or '' }} value="60+">60+</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Investment Objective</label>
+          <select name="objective" class="form-select" required>
+            {% set o = answers.get('objective') if answers else '' %}
+            <option value="" disabled {{ '' == o and 'selected' or '' }}>Select...</option>
+            <option {{ 'Growth' == o and 'selected' or '' }} value="Growth">Growth</option>
+            <option {{ 'Balanced' == o and 'selected' or '' }} value="Balanced">Balanced</option>
+            <option {{ 'Income' == o and 'selected' or '' }} value="Income">Income</option>
+            <option {{ 'Capital Preservation' == o and 'selected' or '' }} value="Capital Preservation">Capital Preservation</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Time Horizon</label>
+          <select name="horizon" class="form-select" required>
+            {% set h = answers.get('horizon') if answers else '' %}
+            <option value="" disabled {{ '' == h and 'selected' or '' }}>Select...</option>
+            <option {{ '<1y' == h and 'selected' or '' }} value="<1y">&lt;1y</option>
+            <option {{ '1-3y' == h and 'selected' or '' }} value="1-3y">1-3y</option>
+            <option {{ '3-5y' == h and 'selected' or '' }} value="3-5y">3-5y</option>
+            <option {{ '5y+' == h and 'selected' or '' }} value="5y+">5y+</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Risk Appetite</label>
+          <select name="risk_appetite" class="form-select" required>
+            {% set r = answers.get('risk_appetite') if answers else '' %}
+            <option value="" disabled {{ '' == r and 'selected' or '' }}>Select...</option>
+            <option {{ 'Low' == r and 'selected' or '' }} value="Low">Low</option>
+            <option {{ 'Medium' == r and 'selected' or '' }} value="Medium">Medium</option>
+            <option {{ 'High' == r and 'selected' or '' }} value="High">High</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Investment Knowledge</label>
+          <select name="knowledge" class="form-select" required>
+            {% set k = answers.get('knowledge') if answers else '' %}
+            <option value="" disabled {{ '' == k and 'selected' or '' }}>Select...</option>
+            <option {{ 'Beginner' == k and 'selected' or '' }} value="Beginner">Beginner</option>
+            <option {{ 'Intermediate' == k and 'selected' or '' }} value="Intermediate">Intermediate</option>
+            <option {{ 'Advanced' == k and 'selected' or '' }} value="Advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Profile</button>
+        <a href="{{ url_for('investor_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

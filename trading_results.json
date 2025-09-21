@@ -1,0 +1,171 @@
+{
+  "strategy_name": "Momentum Trading Strategy",
+  "execution_date": "2025-08-25T21:13:27.464691",
+  "recommendations": [
+    {
+      "stock_symbol": "AAPL",
+      "action": "BUY",
+      "current_price": 177.08,
+      "target_price": 183.79,
+      "confidence": 0.884,
+      "reason": "Technical analysis suggests buy signal for AAPL",
+      "timestamp": "2025-08-09T21:13:27.464691",
+      "return_percentage": 3.79
+    },
+    {
+      "stock_symbol": "META",
+      "action": "SELL",
+      "current_price": 157.87,
+      "target_price": 152.89,
+      "confidence": 0.846,
+      "reason": "Technical analysis suggests sell signal for META",
+      "timestamp": "2025-08-24T21:13:27.464691",
+      "return_percentage": 3.16
+    },
+    {
+      "stock_symbol": "TSLA",
+      "action": "HOLD",
+      "current_price": 284.06,
+      "target_price": 273.29,
+      "confidence": 0.742,
+      "reason": "Technical analysis suggests hold signal for TSLA",
+      "timestamp": "2025-08-24T21:13:27.464691",
+      "return_percentage": 3.79
+    },
+    {
+      "stock_symbol": "MSFT",
+      "action": "HOLD",
+      "current_price": 254.77,
+      "target_price": 230.31,
+      "confidence": 0.9,
+      "reason": "Technical analysis suggests hold signal for MSFT",
+      "timestamp": "2025-08-12T21:13:27.464691",
+      "return_percentage": 9.6
+    },
+    {
+      "stock_symbol": "NVDA",
+      "action": "SELL",
+      "current_price": 216.42,
+      "target_price": 190.19,
+      "confidence": 0.793,
+      "reason": "Technical analysis suggests sell signal for NVDA",
+      "timestamp": "2025-08-11T21:13:27.464691",
+      "return_percentage": 12.12
+    },
+    {
+      "stock_symbol": "NVDA",
+      "action": "BUY",
+      "current_price": 122.9,
+      "target_price": 136.8,
+      "confidence": 0.804,
+      "reason": "Technical analysis suggests buy signal for NVDA",
+      "timestamp": "2025-07-29T21:13:27.464691",
+      "return_percentage": 11.3
+    },
+    {
+      "stock_symbol": "GOOGL",
+      "action": "SELL",
+      "current_price": 278.24,
+      "target_price": 268.82,
+      "confidence": 0.914,
+      "reason": "Technical analysis suggests sell signal for GOOGL",
+      "timestamp": "2025-08-24T21:13:27.464691",
+      "return_percentage": 3.38
+    },
+    {
+      "stock_symbol": "NVDA",
+      "action": "SELL",
+      "current_price": 195.41,
+      "target_price": 170.25,
+      "confidence": 0.744,
+      "reason": "Technical analysis suggests sell signal for NVDA",
+      "timestamp": "2025-08-06T21:13:27.464691",
+      "return_percentage": 12.87
+    },
+    {
+      "stock_symbol": "META",
+      "action": "SELL",
+      "current_price": 160.7,
+      "target_price": 157.13,
+      "confidence": 0.62,
+      "reason": "Technical analysis suggests sell signal for META",
+      "timestamp": "2025-08-20T21:13:27.464691",
+      "return_percentage": 2.22
+    },
+    {
+      "stock_symbol": "AAPL",
+      "action": "HOLD",
+      "current_price": 202.23,
+      "target_price": 193.08,
+      "confidence": 0.664,
+      "reason": "Technical analysis suggests hold signal for AAPL",
+      "timestamp": "2025-08-07T21:13:27.464691",
+      "return_percentage": 4.52
+    },
+    {
+      "stock_symbol": "MSFT",
+      "action": "BUY",
+      "current_price": 227.4,
+      "target_price": 234.5,
+      "confidence": 0.625,
+      "reason": "Technical analysis suggests buy signal for MSFT",
+      "timestamp": "2025-08-20T21:13:27.464691",
+      "return_percentage": 3.12
+    },
+    {
+      "stock_symbol": "AMZN",
+      "action": "HOLD",
+      "current_price": 207.38,
+      "target_price": 183.09,
+      "confidence": 0.68,
+      "reason": "Technical analysis suggests hold signal for AMZN",
+      "timestamp": "2025-08-20T21:13:27.464691",
+      "return_percentage": 11.71
+    },
+    {
+      "stock_symbol": "GOOGL",
+      "action": "SELL",
+      "current_price": 126.55,
+      "target_price": 114.77,
+      "confidence": 0.706,
+      "reason": "Technical analysis suggests sell signal for GOOGL",
+      "timestamp": "2025-07-29T21:13:27.464691",
+      "return_percentage": 9.31
+    },
+    {
+      "stock_symbol": "AAPL",
+      "action": "SELL",
+      "current_price": 267.32,
+      "target_price": 231.76,
+      "confidence": 0.653,
+      "reason": "Technical analysis suggests sell signal for AAPL",
+      "timestamp": "2025-08-17T21:13:27.464691",
+      "return_percentage": 13.3
+    },
+    {
+      "stock_symbol": "TSLA",
+      "action": "HOLD",
+      "current_price": 293.68,
+      "target_price": 273.8,
+      "confidence": 0.73,
+      "reason": "Technical analysis suggests hold signal for TSLA",
+      "timestamp": "2025-08-05T21:13:27.464691",
+      "return_percentage": 6.77
+    }
+  ],
+  "summary": {
+    "total_signals": 15,
+    "buy_signals": 3,
+    "sell_signals": 7,
+    "hold_signals": 5,
+    "accuracy_rate": 0.655
+  },
+  "performance_metrics": {
+    "weekly_return": 5.43,
+    "monthly_return": -6.41,
+    "yearly_return": 36.61,
+    "sharpe_ratio": 1.17,
+    "max_drawdown": -9.52,
+    "win_rate": 0.751
+  }
+}

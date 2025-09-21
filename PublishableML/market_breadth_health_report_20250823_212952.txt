@@ -1,0 +1,26 @@
+Market Breadth Health Score Analysis Report
+============================================
+Generated: 2025-08-23 21:29:52
+
+EXECUTIVE SUMMARY:
+------------------
+Market Breadth Score: 0.571
+Breadth Rating: Neutral Breadth
+Universe Coverage: 50 stocks
+
+COMPONENT BREAKDOWN:
+--------------------
+Advance/Decline Health: 0.493
+New Highs/Lows Distribution: 0.598
+Sector Participation: 0.680
+Volume-Weighted Breadth: 0.497
+Momentum Breadth Quality: 0.630
+
+MARKET STATISTICS:
+------------------
+Advancing Stocks: 14.0%
+Declining Stocks: 84.0%
+New 20D Highs: 5
+New 20D Lows: 4
+New 52W Highs: 4
+New 52W Lows: 0

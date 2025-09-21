@@ -1,0 +1,29 @@
+Fundamental Surprise Impact Predictor Analysis Report
+====================================================
+Generated: 2025-08-23 19:48:55
+
+Model Components:
+-----------------
+Earnings Surprise Magnitude: 25.0%
+Revenue Surprise Assessment: 20.0%
+Guidance Accuracy Score: 20.0%
+Market Reaction Analysis: 15.0%
+Execution Consistency: 20.0%
+
+Top 15 Most Predictable Stocks:
+--------------------------------
+ 1. HINDALCO.NS     | Score: 0.666 | Rating: Moderately Predictable | Sector: Basic Materials
+ 2. SBIN.NS         | Score: 0.641 | Rating: Moderately Predictable | Sector: Financial Services
+ 3. BEL.NS          | Score: 0.639 | Rating: Moderately Predictable | Sector: Industrials
+ 4. BRITANNIA.NS    | Score: 0.632 | Rating: Moderately Predictable | Sector: Consumer Defensive
+ 5. TECHM.NS        | Score: 0.632 | Rating: Moderately Predictable | Sector: Technology
+ 6. CIPLA.NS        | Score: 0.631 | Rating: Moderately Predictable | Sector: Healthcare
+ 7. LT.NS           | Score: 0.623 | Rating: Moderately Predictable | Sector: Industrials
+ 8. BHARTIARTL.NS   | Score: 0.619 | Rating: Moderately Predictable | Sector: Communication Services
+ 9. KOTAKBANK.NS    | Score: 0.617 | Rating: Moderately Predictable | Sector: Financial Services
+10. M&M.NS          | Score: 0.616 | Rating: Moderately Predictable | Sector: Consumer Cyclical
+11. TATACONSUM.NS   | Score: 0.615 | Rating: Moderately Predictable | Sector: Consumer Defensive
+12. HINDUNILVR.NS   | Score: 0.613 | Rating: Moderately Predictable | Sector: Consumer Defensive
+13. HCLTECH.NS      | Score: 0.610 | Rating: Moderately Predictable | Sector: Technology
+14. INFY.NS         | Score: 0.604 | Rating: Moderately Predictable | Sector: Technology
+15. RELIANCE.NS     | Score: 0.604 | Rating: Moderately Predictable | Sector: Energy

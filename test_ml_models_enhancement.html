@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribed ML Models - Performance Enhancement Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .feature-check {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
+        }
+        .success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .performance-demo {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .performance-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1><i class="fas fa-chart-line"></i> ML Models Performance Enhancement Test</h1>
+        <p class="text-muted">Testing the enhanced subscribed ML models page functionality</p>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h3>✅ Features Implemented:</h3>
+                
+                <div class="feature-check success">
+                    <h5><i class="fas fa-check-circle text-success"></i> Removed Dollar Signs ($)</h5>
+                    <p>All currency symbols have been removed from price displays for cleaner presentation.</p>
+                    <small class="text-muted">Updated in both summary stats and individual price badges</small>
+                </div>
+
+                <div class="feature-check success">
+                    <h5><i class="fas fa-times-circle text-success"></i> Removed "Avg Stock Price"</h5>
+                    <p>Replaced the average stock price metric with more meaningful performance indicators.</p>
+                    <small class="text-muted">Now shows "Win Rate" instead of average price</small>
+                </div>
+
+                <div class="feature-check success">
+                    <h5><i class="fas fa-chart-bar text-success"></i> Added Performance Comparison</h5>
+                    <p>Shows performance comparison between first recommendation price and current price.</p>
+                    <small class="text-muted">Displays percentage gain/loss for each stock symbol</small>
+                </div>
+
+                <div class="feature-check success">
+                    <h5><i class="fas fa-trophy text-success"></i> ML Model Performance Ranking</h5>
+                    <p>Models are now evaluated based on how well their recommendations perform.</p>
+                    <small class="text-muted">Green badges for profits, red badges for losses</small>
+                </div>
+
+                <h3>📊 New Summary Statistics:</h3>
+                <div class="performance-demo">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="h4 text-primary">5</div>
+                            <small>Subscribed Models</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h4 text-primary">24</div>
+                            <small>Total Runs</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h4 text-primary">12</div>
+                            <small>Unique Stocks</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h4 text-success">73.5%</div>
+                            <small><strong>Win Rate</strong> <i>(NEW!)</i></small>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>🎯 Performance Analysis Demo:</h3>
+                <div class="performance-demo">
+                    <h6><i class="fas fa-chart-line"></i> Performance Analysis:</h6>
+                    
+                    <div class="performance-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>AAPL</strong>
+                            <span class="badge bg-success">+12.45%</span>
+                        </div>
+                        <small class="text-muted">
+                            First Buy: 150.30 → Current: 169.01 (3 recommendations)
+                        </small>
+                    </div>
+
+                    <div class="performance-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>TSLA</strong>
+                            <span class="badge bg-danger">-8.22%</span>
+                        </div>
+                        <small class="text-muted">
+                            First Buy: 245.67 → Current: 225.48 (2 recommendations)
+                        </small>
+                    </div>
+
+                    <div class="performance-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>MSFT</strong>
+                            <span class="badge bg-success">+5.78%</span>
+                        </div>
+                        <small class="text-muted">
+                            First Buy: 312.90 → Current: 331.00 (4 recommendations)
+                        </small>
+                    </div>
+                </div>
+
+                <h3>📈 Updated Price Display:</h3>
+                <div class="performance-demo">
+                    <h6><i class="fas fa-chart-bar"></i> Latest Stock Prices:</h6>
+                    <span class="badge bg-primary me-2">AAPL: 169.01</span>
+                    <span class="badge bg-primary me-2">TSLA: 225.48</span>
+                    <span class="badge bg-primary me-2">MSFT: 331.00</span>
+                    <span class="badge bg-secondary me-2">GOOGL: N/A</span>
+                    <br><small class="text-muted mt-2 d-block">Notice: No more $ symbols for cleaner display</small>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-info-circle"></i> Enhancement Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>✅ Completed Changes:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> Removed $ symbols</li>
+                            <li><i class="fas fa-check text-success"></i> Removed "Avg Stock Price"</li>
+                            <li><i class="fas fa-check text-success"></i> Added Win Rate metric</li>
+                            <li><i class="fas fa-check text-success"></i> Added performance comparison</li>
+                            <li><i class="fas fa-check text-success"></i> Color-coded profit/loss</li>
+                        </ul>
+
+                        <h6 class="mt-3">🔧 Backend Changes:</h6>
+                        <ul class="small">
+                            <li>Enhanced data collection for historical prices</li>
+                            <li>Performance calculation algorithm</li>
+                            <li>Win rate calculation</li>
+                            <li>Updated template variables</li>
+                        </ul>
+
+                        <h6 class="mt-3">🎨 Frontend Changes:</h6>
+                        <ul class="small">
+                            <li>New performance analysis section</li>
+                            <li>Updated summary statistics</li>
+                            <li>Improved CSS styling</li>
+                            <li>Performance badges with color coding</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h6><i class="fas fa-link"></i> Test the Changes</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="small">Visit the updated page to see the changes in action:</p>
+                        <a href="/subscribed_ml_models?demo=true" class="btn btn-success btn-sm w-100" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> View Enhanced Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Highlight the key changes for user
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ ML Models Enhancement Test Page Loaded');
+            console.log('📊 Key Changes:');
+            console.log('   • Removed $ symbols from all price displays');
+            console.log('   • Replaced "Avg Stock Price" with "Win Rate"');
+            console.log('   • Added performance comparison showing first buy vs current price');
+            console.log('   • Color-coded performance indicators (green=profit, red=loss)');
+            console.log('🔗 Test URL: /subscribed_ml_models?demo=true');
+        });
+    </script>
+</body>
+</html>

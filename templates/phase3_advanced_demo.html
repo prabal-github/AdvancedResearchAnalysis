@@ -1,0 +1,422 @@
+{% extends "layout.html" %}
+
+{% block title %}Phase 3: Advanced Features Demo - Research QA{% endblock %}
+
+{% block header %}
+<div class="text-center py-5 text-white">
+    <div class="animate__animated animate__fadeInDown">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-rocket-takeoff me-3"></i>Phase 3: Advanced Features
+        </h1>
+        <p class="lead mb-4">Progressive Web App • D3.js Visualizations • Real-time Updates • Mobile-First Design</p>
+        <div class="connection-status connected d-inline-flex align-items-center">
+            <span class="status-dot connected"></span>
+            <span class="ms-2">System Status: Online</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- PWA Installation Banner will appear here if supported -->
+
+<div class="container-fluid">
+    <!-- Phase 3 Feature Overview -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="pwa-features">
+                <div class="pwa-feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="bi bi-phone text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Progressive Web App</h5>
+                    <p class="text-muted mb-0">Install as native app with offline support and push notifications</p>
+                </div>
+                <div class="pwa-feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <i class="bi bi-graph-up text-success fs-1 mb-3"></i>
+                    <h5 class="fw-bold">D3.js Visualizations</h5>
+                    <p class="text-muted mb-0">Interactive data visualizations with advanced analytics</p>
+                </div>
+                <div class="pwa-feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <i class="bi bi-lightning text-warning fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Real-time Updates</h5>
+                    <p class="text-muted mb-0">Live data feeds and instant notifications</p>
+                </div>
+                <div class="pwa-feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <i class="bi bi-tablet text-info fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Mobile-First</h5>
+                    <p class="text-muted mb-0">Optimized for mobile devices with touch gestures</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time Dashboard Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="advanced-card">
+                <div class="advanced-card-body text-center">
+                    <div class="realtime-indicator mb-2">
+                        <span class="realtime-dot"></span>
+                        <small>Live Data</small>
+                    </div>
+                    <h3 class="text-primary mb-1" data-realtime="market">
+                        <i class="bi bi-arrow-up"></i>2.34%
+                    </h3>
+                    <p class="text-muted mb-0">Market Change</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="advanced-card">
+                <div class="advanced-card-body text-center">
+                    <div class="realtime-indicator mb-2">
+                        <span class="realtime-dot"></span>
+                        <small>Live Updates</small>
+                    </div>
+                    <h3 class="text-success mb-1">
+                        <span class="realtime-counter">15</span>
+                    </h3>
+                    <p class="text-muted mb-0">New Notifications</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="advanced-card">
+                <div class="advanced-card-body text-center">
+                    <div class="realtime-indicator mb-2">
+                        <span class="realtime-dot"></span>
+                        <small>Performance</small>
+                    </div>
+                    <h3 class="text-info mb-1" data-realtime="performance">87.5%</h3>
+                    <p class="text-muted mb-0">System Performance</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="advanced-card">
+                <div class="advanced-card-body text-center">
+                    <div class="realtime-indicator mb-2">
+                        <span class="realtime-dot"></span>
+                        <small>Active Users</small>
+                    </div>
+                    <h3 class="text-warning mb-1">1,247</h3>
+                    <p class="text-muted mb-0">Online Now</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- D3.js Visualizations Grid -->
+    <div class="responsive-grid">
+        <!-- Portfolio Sunburst Chart -->
+        <div class="d3-visualization" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>Portfolio Allocation
+                </h5>
+                <div class="chart-controls">
+                    <span class="chart-control active">All Assets</span>
+                    <span class="chart-control">Stocks</span>
+                    <span class="chart-control">Bonds</span>
+                </div>
+            </div>
+            <div class="d3-chart-container" id="portfolio-sunburst"></div>
+        </div>
+
+        <!-- Market Trend Line Chart -->
+        <div class="d3-visualization" data-aos="fade-up" data-aos-delay="100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Market Trends
+                </h5>
+                <div class="realtime-indicator">
+                    <span class="realtime-dot"></span>
+                    <small>Live Data</small>
+                </div>
+            </div>
+            <div class="d3-chart-container" id="market-trend-chart"></div>
+        </div>
+
+        <!-- Analyst Network Graph -->
+        <div class="d3-visualization" data-aos="fade-up" data-aos-delay="200">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-diagram-3 me-2"></i>Analyst Network
+            </h5>
+            <div class="d3-chart-container" id="analyst-network"></div>
+            <div class="chart-legend mt-3">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #0d6efd;"></div>
+                    <span>Platform</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #198754;"></div>
+                    <span>Analysts</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fd7e14;"></div>
+                    <span>Investors</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Stock Chart -->
+        <div class="d3-visualization" data-aos="fade-up" data-aos-delay="300">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-activity me-2"></i>Real-time Stock Price
+                </h5>
+                <div class="realtime-indicator">
+                    <span class="realtime-dot"></span>
+                    <small>Updating every 2s</small>
+                </div>
+            </div>
+            <div class="d3-chart-container" id="realtime-stock-chart"></div>
+        </div>
+
+        <!-- Risk Heatmap -->
+        <div class="d3-visualization" data-aos="fade-up" data-aos-delay="400">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-thermometer-half me-2"></i>Risk Assessment Heatmap
+            </h5>
+            <div class="d3-chart-container" id="risk-heatmap"></div>
+        </div>
+
+        <!-- Mobile Performance Demo -->
+        <div class="d3-visualization d-md-none" data-aos="fade-up" data-aos-delay="500">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-phone me-2"></i>Mobile Optimized
+            </h5>
+            <div class="text-center py-4">
+                <p class="text-muted mb-3">This chart is optimized for mobile viewing with touch gestures.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <div class="text-center">
+                        <i class="bi bi-hand-index-thumb fs-3 text-primary"></i>
+                        <small class="d-block">Touch to interact</small>
+                    </div>
+                    <div class="text-center">
+                        <i class="bi bi-arrows-move fs-3 text-success"></i>
+                        <small class="d-block">Swipe to navigate</small>
+                    </div>
+                    <div class="text-center">
+                        <i class="bi bi-zoom-in fs-3 text-info"></i>
+                        <small class="d-block">Pinch to zoom</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Monitoring -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="advanced-card">
+                <div class="advanced-card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="bi bi-speedometer2 me-2"></i>Performance Monitoring
+                    </h5>
+                </div>
+                <div class="advanced-card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>CPU Usage</span>
+                                <span class="fw-bold" data-realtime="performance">34%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" style="width: 34%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Memory Usage</span>
+                                <span class="fw-bold" data-realtime="performance">67%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Network Load</span>
+                                <span class="fw-bold" data-realtime="performance">23%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 23%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-primary me-2" onclick="phase3Manager.syncOfflineActions()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Sync Offline Data
+                        </button>
+                        <button class="btn btn-outline-success me-2" onclick="phase3Manager.installPWA()">
+                            <i class="bi bi-download me-1"></i>Install App
+                        </button>
+                        <button class="btn btn-outline-info" onclick="phase3Manager.toggleMobileSidebar()">
+                            <i class="bi bi-phone me-1"></i>Mobile View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Status Grid -->
+    <div class="row mt-5 mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="advanced-card">
+                <div class="advanced-card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>Phase 3 Features Status
+                    </h6>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Progressive Web App
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            D3.js Visualizations
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Real-time Updates
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Mobile Optimization
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Offline Support
+                            <span class="badge bg-info">Enabled</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Push Notifications
+                            <span class="badge bg-warning">Pending Permission</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="advanced-card">
+                <div class="advanced-card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-info-circle text-info me-2"></i>Technical Information
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold text-primary">Service Worker</div>
+                                <small class="text-muted">Registered</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold text-success">Cache API</div>
+                                <small class="text-muted">Available</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold text-info">IndexedDB</div>
+                                <small class="text-muted">Supported</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold text-warning">Web Manifest</div>
+                                <small class="text-muted">Loaded</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-3 bg-primary bg-opacity-10 rounded">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-lightbulb text-primary me-2"></i>
+                            <span class="small">
+                                <strong>Pro Tip:</strong> Add this app to your home screen for the best experience!
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Skeletons for Lazy Loading -->
+<div class="d-none">
+    <div class="loading-skeleton chart" id="skeleton-template"></div>
+    <div class="loading-skeleton card" id="card-skeleton-template"></div>
+    <div class="loading-skeleton text" id="text-skeleton-template"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Additional Phase 3 demo functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Demo-specific initialization
+    console.log('🎯 Phase 3 Demo Page Loaded');
+    
+    // Add demo data refresh button functionality
+    window.refreshDemoData = function() {
+        console.log('🔄 Refreshing demo data...');
+        
+        // Simulate data refresh with loading state
+        const cards = document.querySelectorAll('.advanced-card');
+        cards.forEach(card => {
+            card.style.opacity = '0.6';
+        });
+        
+        setTimeout(() => {
+            cards.forEach(card => {
+                card.style.opacity = '1';
+            });
+            
+            // Show success message
+            if (typeof toastr !== 'undefined') {
+                toastr.success('Demo data refreshed successfully!');
+            }
+        }, 1500);
+    };
+    
+    // PWA install button functionality
+    window.installPWADemo = function() {
+        if (window.phase3Manager && window.phase3Manager.installPWA) {
+            window.phase3Manager.installPWA();
+        } else {
+            alert('PWA installation not available in demo mode');
+        }
+    };
+    
+    // Chart interaction demo
+    const chartContainers = document.querySelectorAll('.d3-chart-container');
+    chartContainers.forEach(container => {
+        container.addEventListener('click', function() {
+            console.log('Chart interaction:', this.id);
+            
+            // Add click effect
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+    
+    // Mobile detection demo
+    if (window.innerWidth <= 768) {
+        console.log('📱 Mobile device detected - mobile optimizations active');
+        
+        // Add mobile-specific demo features
+        const mobileFeatureCard = document.querySelector('.d-md-none .d3-visualization');
+        if (mobileFeatureCard) {
+            mobileFeatureCard.style.background = 'linear-gradient(135deg, #e3f2fd, #bbdefb)';
+        }
+    }
+});
+</script>
+{% endblock %}

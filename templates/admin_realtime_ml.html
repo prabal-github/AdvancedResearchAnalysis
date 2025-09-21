@@ -1,0 +1,739 @@
+{% extends "base.html" %}
+
+{% block title %}Real-time ML Models - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-primary">
+                <i class="fas fa-robot"></i> Real-time ML Models Dashboard
+            </h1>
+            <p class="lead">Manage real-time ML models with Fyers API integration and YFinance fallback</p>
+        </div>
+    </div>
+
+    <!-- Fyers API Configuration -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4><i class="fas fa-api"></i> Fyers API Configuration</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="fyersApiForm">
+                                <div class="form-group mb-3">
+                                    <label for="fyersApiKey">Fyers API Key</label>
+                                    <input type="text" class="form-control" id="fyersApiKey" placeholder="Enter Fyers API Key">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="fyersAccessToken">Fyers Access Token</label>
+                                    <input type="text" class="form-control" id="fyersAccessToken" placeholder="Enter Fyers Access Token">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="fyersClientId">Fyers Client ID (Optional)</label>
+                                    <input type="text" class="form-control" id="fyersClientId" placeholder="Enter Fyers Client ID">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="fyersDescription">Description</label>
+                                    <input type="text" class="form-control" id="fyersDescription" placeholder="e.g., Main Fyers API for real-time data">
+                                </div>
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-save"></i> Save Fyers API
+                                </button>
+                                <button type="button" class="btn btn-success" id="testFyersConnection">
+                                    <i class="fas fa-check-circle"></i> Test Connection
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="fyersStatus" class="alert alert-info">
+                                <h6><i class="fas fa-info-circle"></i> Fyers API Status</h6>
+                                <p>Configure your Fyers API credentials to enable real-time data fetching.</p>
+                                <p><strong>Benefits:</strong></p>
+                                <ul>
+                                    <li>Real-time price data</li>
+                                    <li>Higher data accuracy</li>
+                                    <li>Better recommendation quality</li>
+                                    <li>YFinance as automatic fallback</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anthropic AI Configuration -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h4><i class="fas fa-brain"></i> Anthropic AI Configuration</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="anthropicApiForm">
+                                <div class="form-group mb-3">
+                                    <label for="anthropicApiKey">Anthropic API Key</label>
+                                    <input type="password" class="form-control" id="anthropicApiKey" placeholder="Enter Anthropic API Key (sk-ant-...)">
+                                    <small class="form-text text-muted">Your Anthropic API key for Claude Sonnet 3.5/3.7</small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="anthropicModel">Claude Model</label>
+                                    <select class="form-control" id="anthropicModel">
+                                        <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Latest)</option>
+                                        <option value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet (June)</option>
+                                        <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="anthropicDescription">Description</label>
+                                    <input type="text" class="form-control" id="anthropicDescription" placeholder="e.g., Main Claude API for run history analysis">
+                                </div>
+                                <button type="submit" class="btn btn-info me-2">
+                                    <i class="fas fa-save"></i> Save Anthropic API
+                                </button>
+                                <button type="button" class="btn btn-success" id="testAnthropicConnection">
+                                    <i class="fas fa-check-circle"></i> Test Connection
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="anthropicStatus" class="alert alert-info">
+                                <h6><i class="fas fa-robot"></i> Anthropic AI Status</h6>
+                                <p>Configure your Anthropic API key to enable AI-powered run history analysis.</p>
+                                <p><strong>AI Features:</strong></p>
+                                <ul>
+                                    <li>Intelligent run history analysis</li>
+                                    <li>Pattern recognition in model results</li>
+                                    <li>Performance trend insights</li>
+                                    <li>Recommendation optimization suggestions</li>
+                                    <li>Risk assessment and compliance review</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i> 
+                                        Supports Claude 3.5 Sonnet for advanced analysis capabilities
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time Stock Data Test -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h4><i class="fas fa-chart-line"></i> Real-time Data Test</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="testSymbol">Test Symbol</label>
+                                <select class="form-control" id="testSymbol">
+                                    <option value="RELIANCE.NS">RELIANCE.NS</option>
+                                    <option value="TCS.NS">TCS.NS</option>
+                                    <option value="HDFCBANK.NS">HDFCBANK.NS</option>
+                                    <option value="INFY.NS">INFY.NS</option>
+                                    <option value="HINDUNILVR.NS">HINDUNILVR.NS</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-success" id="getRealTimePrice">
+                                <i class="fas fa-sync"></i> Get Real-time Price
+                            </button>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="realTimePriceResult" class="border p-3 bg-light">
+                                <p class="text-muted">Select a symbol and click "Get Real-time Price" to test data fetching</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ML Models Control Panel -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h4><i class="fas fa-brain"></i> Real-time ML Models</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Stock Recommender -->
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5><i class="fas fa-star"></i> Stock Recommender</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Generate real-time stock recommendations with ML analysis</p>
+                                    <form id="stockRecommenderForm">
+                                        <div class="form-group mb-2">
+                                            <label>Stock Category</label>
+                                            <select class="form-control" name="stock_category">
+                                                <option value="NIFTY50">NIFTY 50</option>
+                                                <option value="MIDCAP">Mid Cap</option>
+                                                <option value="SMALLCAP">Small Cap</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label>Min Confidence (%)</label>
+                                            <input type="number" class="form-control" name="min_confidence" value="70" min="50" max="95">
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="use_fyers" id="stockUseFyers">
+                                            <label class="form-check-label" for="stockUseFyers">
+                                                Use Fyers API (if configured)
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            <i class="fas fa-play"></i> Run Stock Recommender
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BTST Analyzer -->
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5><i class="fas fa-moon"></i> BTST Analyzer</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Analyze Buy Today Sell Tomorrow opportunities</p>
+                                    <form id="btstAnalyzerForm">
+                                        <div class="form-group mb-2">
+                                            <label>Stock Category</label>
+                                            <select class="form-control" name="stock_category">
+                                                <option value="NIFTY50">NIFTY 50</option>
+                                                <option value="MIDCAP">Mid Cap</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label>Min BTST Score</label>
+                                            <input type="number" class="form-control" name="btst_min_score" value="40" min="20" max="80">
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="use_fyers" id="btstUseFyers">
+                                            <label class="form-check-label" for="btstUseFyers">
+                                                Use Fyers API (if configured)
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-success btn-block">
+                                            <i class="fas fa-play"></i> Run BTST Analyzer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Options Analyzer -->
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5><i class="fas fa-chart-area"></i> Options Analyzer</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Analyze options trading strategies</p>
+                                    <form id="optionsAnalyzerForm">
+                                        <div class="form-group mb-2">
+                                            <label>Stock Symbol</label>
+                                            <select class="form-control" name="stock_symbol">
+                                                <option value="NIFTY">NIFTY Index</option>
+                                                <option value="RELIANCE.NS">RELIANCE</option>
+                                                <option value="TCS.NS">TCS</option>
+                                                <option value="HDFCBANK.NS">HDFCBANK</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="use_fyers" id="optionsUseFyers">
+                                            <label class="form-check-label" for="optionsUseFyers">
+                                                Use Fyers API (if configured)
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-info btn-block">
+                                            <i class="fas fa-play"></i> Run Options Analyzer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sector Analyzer -->
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-dark text-white">
+                                    <h5><i class="fas fa-industry"></i> Sector Analyzer</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Analyze sector performance and trends</p>
+                                    <form id="sectorAnalyzerForm">
+                                        <div class="form-group mb-2">
+                                            <label>Sector (Optional)</label>
+                                            <select class="form-control" name="sector">
+                                                <option value="">All Sectors</option>
+                                                <option value="Banking">Banking</option>
+                                                <option value="IT">Information Technology</option>
+                                                <option value="Auto">Automobile</option>
+                                                <option value="Pharma">Pharmaceutical</option>
+                                                <option value="FMCG">FMCG</option>
+                                                <option value="Energy">Energy</option>
+                                                <option value="Metals">Metals</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="use_fyers" id="sectorUseFyers">
+                                            <label class="form-check-label" for="sectorUseFyers">
+                                                Use Fyers API (if configured)
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-dark btn-block">
+                                            <i class="fas fa-play"></i> Run Sector Analyzer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI-Powered Run History Analysis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-purple" style="border-color: #6f42c1;">
+                <div class="card-header text-white" style="background-color: #6f42c1;">
+                    <h4><i class="fas fa-history"></i> AI-Powered Run History Analysis</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="runHistoryAnalysisForm">
+                                <div class="form-group mb-3">
+                                    <label for="analysisTimeframe">Analysis Timeframe</label>
+                                    <select class="form-control" id="analysisTimeframe">
+                                        <option value="7">Last 7 days</option>
+                                        <option value="30">Last 30 days</option>
+                                        <option value="90">Last 90 days</option>
+                                        <option value="365">Last year</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="analysisType">Analysis Type</label>
+                                    <select class="form-control" id="analysisType">
+                                        <option value="performance">Performance Analysis</option>
+                                        <option value="patterns">Pattern Recognition</option>
+                                        <option value="trends">Trend Analysis</option>
+                                        <option value="comprehensive">Comprehensive Report</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="modelFilter">Model Filter</label>
+                                    <select class="form-control" id="modelFilter">
+                                        <option value="">All Models</option>
+                                        <option value="stock_recommender">Stock Recommender</option>
+                                        <option value="btst_analyzer">BTST Analyzer</option>
+                                        <option value="options_analyzer">Options Analyzer</option>
+                                        <option value="sector_analyzer">Sector Analyzer</option>
+                                    </select>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="includeMetrics" checked>
+                                    <label class="form-check-label" for="includeMetrics">
+                                        Include performance metrics
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="includeRecommendations" checked>
+                                    <label class="form-check-label" for="includeRecommendations">
+                                        Include optimization recommendations
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn text-white" style="background-color: #6f42c1;">
+                                    <i class="fas fa-magic"></i> Generate AI Analysis
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="analysisStatus" class="alert alert-info">
+                                <h6><i class="fas fa-brain"></i> AI Analysis Features</h6>
+                                <p>Leveraging Claude 3.5 Sonnet for intelligent analysis:</p>
+                                <ul>
+                                    <li><strong>Performance Trends:</strong> Identify patterns in model accuracy</li>
+                                    <li><strong>Risk Assessment:</strong> Analyze recommendation risk profiles</li>
+                                    <li><strong>Market Correlation:</strong> Understand market condition impacts</li>
+                                    <li><strong>Optimization Insights:</strong> Suggestions for model improvements</li>
+                                    <li><strong>Anomaly Detection:</strong> Identify unusual patterns or outliers</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shield-alt"></i> 
+                                        Your data is processed securely and not stored by Anthropic
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Display -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary text-white">
+                    <h4><i class="fas fa-chart-bar"></i> Analysis Results</h4>
+                </div>
+                <div class="card-body">
+                    <div id="resultsDisplay" class="text-center text-muted">
+                        <p>Run any ML model above to see real-time analysis results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Fyers API Configuration
+    $('#fyersApiForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            service_name: 'fyers',
+            api_key: $('#fyersApiKey').val(),
+            access_token: $('#fyersAccessToken').val(),
+            client_id: $('#fyersClientId').val(),
+            description: $('#fyersDescription').val()
+        };
+        
+        $.ajax({
+            url: '/api/admin/api_keys/save',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success) {
+                    $('#fyersStatus').removeClass('alert-info alert-danger').addClass('alert-success')
+                        .html(`<h6><i class="fas fa-check-circle"></i> Success</h6><p>${response.message}</p>`);
+                } else {
+                    $('#fyersStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                        .html(`<h6><i class="fas fa-times-circle"></i> Error</h6><p>${response.error}</p>`);
+                }
+            },
+            error: function() {
+                $('#fyersStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                    .html('<h6><i class="fas fa-times-circle"></i> Error</h6><p>Failed to save Fyers API credentials</p>');
+            }
+        });
+    });
+
+    // Test Fyers Connection
+    $('#testFyersConnection').on('click', function() {
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Testing...');
+        
+        $.ajax({
+            url: '/api/admin/fyers/test_connection',
+            method: 'POST',
+            success: function(response) {
+                if (response.success && response.test_success) {
+                    $('#fyersStatus').removeClass('alert-info alert-danger').addClass('alert-success')
+                        .html(`<h6><i class="fas fa-check-circle"></i> Connection Successful</h6><p>${response.test_result}</p>`);
+                } else {
+                    $('#fyersStatus').removeClass('alert-info alert-success').addClass('alert-warning')
+                        .html(`<h6><i class="fas fa-exclamation-triangle"></i> Connection Failed</h6><p>${response.test_result || response.error}</p>`);
+                }
+            },
+            error: function() {
+                $('#fyersStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                    .html('<h6><i class="fas fa-times-circle"></i> Test Failed</h6><p>Unable to test Fyers connection</p>');
+            },
+            complete: function() {
+                $('#testFyersConnection').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Test Connection');
+            }
+        });
+    });
+
+    // Get Real-time Price
+    $('#getRealTimePrice').on('click', function() {
+        const symbol = $('#testSymbol').val();
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Fetching...');
+        
+        $.ajax({
+            url: `/api/admin/fyers/real_time_price/${symbol}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const data = response.price_data;
+                    $('#realTimePriceResult').html(`
+                        <h6><i class="fas fa-chart-line"></i> ${data.symbol} - Real-time Data</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Current Price:</strong> ₹${data.current_price}</p>
+                                <p><strong>Change:</strong> ₹${data.change} (${data.change_percent}%)</p>
+                                <p><strong>Open:</strong> ₹${data.open_price}</p>
+                                <p><strong>High:</strong> ₹${data.high_price}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Low:</strong> ₹${data.low_price}</p>
+                                <p><strong>Previous Close:</strong> ₹${data.previous_close}</p>
+                                <p><strong>Volume:</strong> ${data.volume.toLocaleString()}</p>
+                                <p><strong>Source:</strong> <span class="badge badge-${data.source === 'fyers' ? 'success' : 'primary'}">${data.source.toUpperCase()}</span></p>
+                            </div>
+                        </div>
+                        <small class="text-muted">Last updated: ${new Date(data.timestamp).toLocaleString()}</small>
+                    `);
+                } else {
+                    $('#realTimePriceResult').html(`<p class="text-danger">${response.error}</p>`);
+                }
+            },
+            error: function() {
+                $('#realTimePriceResult').html('<p class="text-danger">Failed to fetch real-time price</p>');
+            },
+            complete: function() {
+                $('#getRealTimePrice').prop('disabled', false).html('<i class="fas fa-sync"></i> Get Real-time Price');
+            }
+        });
+    });
+
+    // Anthropic API Configuration
+    $('#anthropicApiForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            service_name: 'anthropic',
+            api_key: $('#anthropicApiKey').val(),
+            model: $('#anthropicModel').val(),
+            description: $('#anthropicDescription').val()
+        };
+        
+        $.ajax({
+            url: '/api/admin/api_keys/save',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success) {
+                    $('#anthropicStatus').removeClass('alert-info alert-danger').addClass('alert-success')
+                        .html(`<h6><i class="fas fa-check-circle"></i> Success</h6><p>${response.message}</p>`);
+                } else {
+                    $('#anthropicStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                        .html(`<h6><i class="fas fa-times-circle"></i> Error</h6><p>${response.error}</p>`);
+                }
+            },
+            error: function() {
+                $('#anthropicStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                    .html('<h6><i class="fas fa-times-circle"></i> Error</h6><p>Failed to save Anthropic API credentials</p>');
+            }
+        });
+    });
+
+    // Test Anthropic Connection
+    $('#testAnthropicConnection').on('click', function() {
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Testing...');
+        
+        $.ajax({
+            url: '/api/admin/anthropic/test_connection',
+            method: 'POST',
+            success: function(response) {
+                if (response.success && response.test_success) {
+                    $('#anthropicStatus').removeClass('alert-info alert-danger').addClass('alert-success')
+                        .html(`<h6><i class="fas fa-check-circle"></i> Connection Successful</h6><p>${response.test_result}</p>`);
+                } else {
+                    $('#anthropicStatus').removeClass('alert-info alert-success').addClass('alert-warning')
+                        .html(`<h6><i class="fas fa-exclamation-triangle"></i> Connection Failed</h6><p>${response.test_result || response.error}</p>`);
+                }
+            },
+            error: function() {
+                $('#anthropicStatus').removeClass('alert-info alert-success').addClass('alert-danger')
+                    .html('<h6><i class="fas fa-times-circle"></i> Test Failed</h6><p>Unable to test Anthropic connection</p>');
+            },
+            complete: function() {
+                $('#testAnthropicConnection').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Test Connection');
+            }
+        });
+    });
+
+    // AI-Powered Run History Analysis
+    $('#runHistoryAnalysisForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            timeframe: $('#analysisTimeframe').val(),
+            analysis_type: $('#analysisType').val(),
+            model_filter: $('#modelFilter').val(),
+            include_metrics: $('#includeMetrics').is(':checked'),
+            include_recommendations: $('#includeRecommendations').is(':checked')
+        };
+        
+        const button = $(this).find('button[type="submit"]');
+        button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
+        
+        $('#analysisStatus').removeClass('alert-info alert-danger alert-success').addClass('alert-warning')
+            .html('<h6><i class="fas fa-brain fa-spin"></i> AI Analysis in Progress</h6><p>Claude is analyzing your run history data...</p>');
+        
+        $.ajax({
+            url: '/api/admin/run_history/ai_analysis',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            timeout: 120000, // 2 minutes timeout for AI analysis
+            success: function(response) {
+                if (response.success) {
+                    $('#analysisStatus').removeClass('alert-warning alert-danger').addClass('alert-success')
+                        .html(`
+                            <h6><i class="fas fa-check-circle"></i> AI Analysis Complete</h6>
+                            <div class="mt-3">
+                                <h6>Analysis Summary:</h6>
+                                <div class="analysis-content" style="max-height: 400px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                                    ${response.analysis.replace(/\n/g, '<br>')}
+                                </div>
+                            </div>
+                        `);
+                } else {
+                    $('#analysisStatus').removeClass('alert-warning alert-success').addClass('alert-danger')
+                        .html(`<h6><i class="fas fa-times-circle"></i> Analysis Failed</h6><p>${response.error}</p>`);
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = 'Failed to generate AI analysis';
+                if (xhr.status === 504) {
+                    errorMsg = 'Analysis timed out. Try with a smaller timeframe.';
+                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+                
+                $('#analysisStatus').removeClass('alert-warning alert-success').addClass('alert-danger')
+                    .html(`<h6><i class="fas fa-times-circle"></i> Analysis Failed</h6><p>${errorMsg}</p>`);
+            },
+            complete: function() {
+                button.prop('disabled', false).html('<i class="fas fa-magic"></i> Generate AI Analysis');
+            }
+        });
+    });
+
+    // ML Model Forms
+    function runMLModel(formId, endpoint, modelName) {
+        $(`#${formId}`).on('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const button = $(this).find('button[type="submit"]');
+            
+            button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Running...');
+            $('#resultsDisplay').html('<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Running real-time analysis...</p></div>');
+            
+            $.ajax({
+                url: endpoint,
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        let resultsHtml = `
+                            <div class="alert alert-success">
+                                <h5><i class="fas fa-check-circle"></i> ${modelName} Completed Successfully</h5>
+                                <div class="row">
+                                    <div class="col-md-3"><strong>Execution Time:</strong> ${response.execution_time}s</div>
+                                    <div class="col-md-3"><strong>Analyzed:</strong> ${response.total_analyzed}</div>
+                                    <div class="col-md-3"><strong>Actionable:</strong> ${response.actionable_count}</div>
+                                    <div class="col-md-3"><strong>Data Source:</strong> <span class="badge badge-${response.data_source === 'Fyers API' ? 'success' : 'primary'}">${response.data_source}</span></div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        if (response.results && response.results.length > 0) {
+                            resultsHtml += '<div class="table-responsive"><table class="table table-striped"><thead><tr>';
+                            
+                            // Dynamic table headers based on model type
+                            if (modelName.includes('Stock')) {
+                                resultsHtml += '<th>Symbol</th><th>Recommendation</th><th>Confidence</th><th>Current Price</th><th>Target Price</th><th>Reasoning</th>';
+                            } else if (modelName.includes('BTST')) {
+                                resultsHtml += '<th>Symbol</th><th>Recommendation</th><th>BTST Score</th><th>Entry Price</th><th>Target Price</th><th>Reasoning</th>';
+                            } else if (modelName.includes('Options')) {
+                                resultsHtml += '<th>Symbol</th><th>Strategy</th><th>Confidence</th><th>Expected Move</th><th>Strikes</th><th>Reasoning</th>';
+                            }
+                            
+                            resultsHtml += '</tr></thead><tbody>';
+                            
+                            response.results.forEach(function(result) {
+                                resultsHtml += '<tr>';
+                                if (modelName.includes('Stock')) {
+                                    resultsHtml += `
+                                        <td><strong>${result.symbol}</strong></td>
+                                        <td><span class="badge badge-${result.recommendation === 'BUY' ? 'success' : result.recommendation === 'SELL' ? 'danger' : 'secondary'}">${result.recommendation}</span></td>
+                                        <td>${result.confidence}%</td>
+                                        <td>₹${result.current_price}</td>
+                                        <td>₹${result.target_price}</td>
+                                        <td><small>${result.reasoning}</small></td>
+                                    `;
+                                } else if (modelName.includes('BTST')) {
+                                    resultsHtml += `
+                                        <td><strong>${result.symbol}</strong></td>
+                                        <td><span class="badge badge-${result.recommendation === 'STRONG BUY' ? 'success' : result.recommendation === 'BUY' ? 'primary' : 'secondary'}">${result.recommendation}</span></td>
+                                        <td>${result.btst_score}</td>
+                                        <td>₹${result.entry_price}</td>
+                                        <td>₹${result.target_price}</td>
+                                        <td><small>${result.reasoning}</small></td>
+                                    `;
+                                } else if (modelName.includes('Options')) {
+                                    resultsHtml += `
+                                        <td><strong>${result.symbol}</strong></td>
+                                        <td>${result.strategy}</td>
+                                        <td>${result.confidence}%</td>
+                                        <td>₹${result.expected_move}</td>
+                                        <td>${result.recommended_strikes ? result.recommended_strikes.join(', ') : 'N/A'}</td>
+                                        <td><small>${result.reasoning}</small></td>
+                                    `;
+                                }
+                                resultsHtml += '</tr>';
+                            });
+                            
+                            resultsHtml += '</tbody></table></div>';
+                        }
+                        
+                        $('#resultsDisplay').html(resultsHtml);
+                    } else {
+                        $('#resultsDisplay').html(`<div class="alert alert-danger"><h5><i class="fas fa-times-circle"></i> Error</h5><p>${response.error}</p></div>`);
+                    }
+                },
+                error: function() {
+                    $('#resultsDisplay').html('<div class="alert alert-danger"><h5><i class="fas fa-times-circle"></i> Error</h5><p>Failed to run ML model</p></div>');
+                },
+                complete: function() {
+                    button.prop('disabled', false).html(`<i class="fas fa-play"></i> Run ${modelName}`);
+                }
+            });
+        });
+    }
+
+    // Initialize ML model forms
+    runMLModel('stockRecommenderForm', '/api/admin/ml_models/run_stock_recommender', 'Stock Recommender');
+    runMLModel('btstAnalyzerForm', '/api/admin/ml_models/run_btst_analyzer', 'BTST Analyzer');
+    runMLModel('optionsAnalyzerForm', '/api/admin/ml_models/run_options_analyzer', 'Options Analyzer');
+    runMLModel('sectorAnalyzerForm', '/api/admin/ml_models/run_sector_analyzer', 'Sector Analyzer');
+});
+</script>
+{% endblock %}

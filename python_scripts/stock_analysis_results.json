@@ -1,0 +1,1476 @@
+{
+  "metadata": {
+    "total_stocks_analyzed": 25,
+    "actionable_recommendations": 5,
+    "btst_opportunities": 0,
+    "average_confidence": 52.2,
+    "timestamp": "2025-08-25 21:41:43"
+  },
+  "stocks": [
+    {
+      "Symbol": "ADANIENT.NS",
+      "Current Price": 2302.9,
+      "Change (%)": -0.95,
+      "Open": 2335.7,
+      "High": 2348.4,
+      "Low": 2300.0,
+      "Volume": 542276.0,
+      "RSI (14)": 0.0,
+      "MACD": -11.2986,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -100.0,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Sell",
+      "Confidence (%)": 25,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -1.4,
+        "Close Near High (%)": 5.99,
+        "Intraday Range (%)": 2.07,
+        "Volume Spike": 0.79,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    },
+    {
+      "Symbol": "ADANIPORTS.NS",
+      "Current Price": 1340.4,
+      "Change (%)": -0.06,
+      "Open": 1341.3,
+      "High": 1348.9,
+      "Low": 1332.5,
+      "Volume": 1214058.0,
+      "RSI (14)": 3.82,
+      "MACD": -4.3635,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -64.98,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 40,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.07,
+        "Close Near High (%)": 48.17,
+        "Intraday Range (%)": 1.22,
+        "Volume Spike": 0.72,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "APOLLOHOSP.NS",
+      "Current Price": 7851.0,
+      "Change (%)": -0.9,
+      "Open": 7926.0,
+      "High": 7950.0,
+      "Low": 7838.5,
+      "Volume": 402957.0,
+      "RSI (14)": 57.7,
+      "MACD": 15.1424,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 59.41,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 55,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.95,
+        "Close Near High (%)": 11.21,
+        "Intraday Range (%)": 1.41,
+        "Volume Spike": 0.79,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "ASIANPAINT.NS",
+      "Current Price": 2492.9,
+      "Change (%)": -0.46,
+      "Open": 2516.0,
+      "High": 2522.5,
+      "Low": 2476.0,
+      "Volume": 766349.0,
+      "RSI (14)": 0.0,
+      "MACD": -12.4304,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -100.0,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 40,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.92,
+        "Close Near High (%)": 36.34,
+        "Intraday Range (%)": 1.85,
+        "Volume Spike": 1.24,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "AXISBANK.NS",
+      "Current Price": 1070.0,
+      "Change (%)": -0.08,
+      "Open": 1073.0,
+      "High": 1074.5,
+      "Low": 1068.2,
+      "Volume": 2711187.0,
+      "RSI (14)": 0.0,
+      "MACD": -2.1143,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -100.0,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 40,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.28,
+        "Close Near High (%)": 28.57,
+        "Intraday Range (%)": 0.59,
+        "Volume Spike": 0.62,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "BAJAJ-AUTO.NS",
+      "Current Price": 8750.5,
+      "Change (%)": 0.82,
+      "Open": 8750.0,
+      "High": 8764.0,
+      "Low": 8633.5,
+      "Volume": 360880.0,
+      "RSI (14)": 41.04,
+      "MACD": -14.8108,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 31.96,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 65,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.01,
+        "Close Near High (%)": 89.66,
+        "Intraday Range (%)": 1.49,
+        "Volume Spike": 0.65,
+        "Close > Prev High": "Yes",
+        "BTST Score": 50
+      }
+    },
+    {
+      "Symbol": "BAJFINANCE.NS",
+      "Current Price": 900.8,
+      "Change (%)": 0.7,
+      "Open": 902.1,
+      "High": 908.0,
+      "Low": 898.15,
+      "Volume": 5837595.0,
+      "RSI (14)": 47.47,
+      "MACD": -1.4114,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -68.71,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Sell",
+      "Confidence (%)": 15,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.14,
+        "Close Near High (%)": 26.9,
+        "Intraday Range (%)": 1.09,
+        "Volume Spike": 0.96,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "BAJAJFINSV.NS",
+      "Current Price": 1963.8,
+      "Change (%)": -0.11,
+      "Open": 1959.1,
+      "High": 1967.8,
+      "Low": 1953.0,
+      "Volume": 869508.0,
+      "RSI (14)": 41.83,
+      "MACD": -1.1656,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -65.04,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 45,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.24,
+        "Close Near High (%)": 72.97,
+        "Intraday Range (%)": 0.76,
+        "Volume Spike": 0.64,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    },
+    {
+      "Symbol": "BEL.NS",
+      "Current Price": 372.05,
+      "Change (%)": -0.75,
+      "Open": 377.85,
+      "High": 380.05,
+      "Low": 371.5,
+      "Volume": 8573215.0,
+      "RSI (14)": 21.43,
+      "MACD": -1.5134,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -88.92,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Sell",
+      "Confidence (%)": 25,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -1.54,
+        "Close Near High (%)": 6.43,
+        "Intraday Range (%)": 2.26,
+        "Volume Spike": 0.63,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    },
+    {
+      "Symbol": "BPCL.NS",
+      "Current Price": 315.8,
+      "Change (%)": -0.21,
+      "Open": 318.95,
+      "High": 318.95,
+      "Low": 314.5,
+      "Volume": 2838188.0,
+      "RSI (14)": 0.0,
+      "MACD": -0.8802,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -100.0,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 60,
+      "Risk Management": {
+        "Stop Loss": 322.12,
+        "Target": 303.17
+      },
+      "Primary Condition": "Open=High (Bearish)",
+      "Models Used": {
+        "Open-High": {
+          "signal": "Bearish",
+          "confidence": 30
+        },
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.99,
+        "Close Near High (%)": 29.21,
+        "Intraday Range (%)": 1.4,
+        "Volume Spike": 0.8,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "BHARTIARTL.NS",
+      "Current Price": 1930.7,
+      "Change (%)": -0.13,
+      "Open": 1940.0,
+      "High": 1940.1,
+      "Low": 1913.2,
+      "Volume": 2451242.0,
+      "RSI (14)": 90.08,
+      "MACD": 4.7143,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 94.16,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 60,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Overbought",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.48,
+        "Close Near High (%)": 65.06,
+        "Intraday Range (%)": 1.39,
+        "Volume Spike": 0.56,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "BRITANNIA.NS",
+      "Current Price": 5550.5,
+      "Change (%)": 0.09,
+      "Open": 5565.5,
+      "High": 5608.5,
+      "Low": 5545.0,
+      "Volume": 145716.0,
+      "RSI (14)": 57.1,
+      "MACD": 18.5157,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 76.26,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 55,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.27,
+        "Close Near High (%)": 8.66,
+        "Intraday Range (%)": 1.14,
+        "Volume Spike": 0.56,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "CIPLA.NS",
+      "Current Price": 1601.2,
+      "Change (%)": 0.53,
+      "Open": 1594.0,
+      "High": 1607.8,
+      "Low": 1592.0,
+      "Volume": 1298370.0,
+      "RSI (14)": 95.16,
+      "MACD": 8.8272,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 55.16,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 60,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Overbought",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.45,
+        "Close Near High (%)": 58.23,
+        "Intraday Range (%)": 0.99,
+        "Volume Spike": 1.01,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "COALINDIA.NS",
+      "Current Price": 380.0,
+      "Change (%)": 1.48,
+      "Open": 375.0,
+      "High": 380.75,
+      "Low": 374.8,
+      "Volume": 4348602.0,
+      "RSI (14)": 49.15,
+      "MACD": -0.4861,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -11.74,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 40,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 1.33,
+        "Close Near High (%)": 87.39,
+        "Intraday Range (%)": 1.59,
+        "Volume Spike": 0.86,
+        "Close > Prev High": "Yes",
+        "BTST Score": 50
+      }
+    },
+    {
+      "Symbol": "DRREDDY.NS",
+      "Current Price": 1283.9,
+      "Change (%)": 0.49,
+      "Open": 1277.7,
+      "High": 1288.9,
+      "Low": 1275.3,
+      "Volume": 966985.0,
+      "RSI (14)": 100.0,
+      "MACD": 6.7766,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 100.0,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 60,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Overbought",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.49,
+        "Close Near High (%)": 63.24,
+        "Intraday Range (%)": 1.06,
+        "Volume Spike": 0.81,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "EICHERMOT.NS",
+      "Current Price": 5990.5,
+      "Change (%)": 1.11,
+      "Open": 5945.0,
+      "High": 6009.0,
+      "Low": 5880.0,
+      "Volume": 822933.0,
+      "RSI (14)": 66.77,
+      "MACD": 4.954,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 32.47,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 85,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.77,
+        "Close Near High (%)": 85.66,
+        "Intraday Range (%)": 2.17,
+        "Volume Spike": 1.39,
+        "Close > Prev High": "Yes",
+        "BTST Score": 75
+      }
+    },
+    {
+      "Symbol": "GRASIM.NS",
+      "Current Price": 2811.4,
+      "Change (%)": -0.09,
+      "Open": 2825.7,
+      "High": 2832.7,
+      "Low": 2791.6,
+      "Volume": 591824.0,
+      "RSI (14)": 43.11,
+      "MACD": 1.4853,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 48.46,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.51,
+        "Close Near High (%)": 48.17,
+        "Intraday Range (%)": 1.45,
+        "Volume Spike": 0.8,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "HCLTECH.NS",
+      "Current Price": 1504.2,
+      "Change (%)": 2.58,
+      "Open": 1480.0,
+      "High": 1509.7,
+      "Low": 1476.2,
+      "Volume": 2764777.0,
+      "RSI (14)": 66.06,
+      "MACD": 3.1342,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 66.64,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 1.64,
+        "Close Near High (%)": 83.58,
+        "Intraday Range (%)": 2.26,
+        "Volume Spike": 0.68,
+        "Close > Prev High": "Yes",
+        "BTST Score": 75
+      }
+    },
+    {
+      "Symbol": "HDFCBANK.NS",
+      "Current Price": 1964.1,
+      "Change (%)": -0.03,
+      "Open": 1960.2,
+      "High": 1977.4,
+      "Low": 1957.0,
+      "Volume": 8758559.0,
+      "RSI (14)": 9.09,
+      "MACD": -3.8811,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -88.49,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 40,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.2,
+        "Close Near High (%)": 34.8,
+        "Intraday Range (%)": 1.04,
+        "Volume Spike": 1.21,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "HDFCLIFE.NS",
+      "Current Price": 787.0,
+      "Change (%)": -0.22,
+      "Open": 788.75,
+      "High": 791.95,
+      "Low": 785.35,
+      "Volume": 2326393.0,
+      "RSI (14)": 22.67,
+      "MACD": -0.6708,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 19.58,
+      "Candlestick": "Bearish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 35,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bearish Engulfing)": {
+          "signal": "Bearish",
+          "confidence": 15
+        },
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.22,
+        "Close Near High (%)": 25.0,
+        "Intraday Range (%)": 0.84,
+        "Volume Spike": 1.38,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "HEROMOTOCO.NS",
+      "Current Price": 5063.8,
+      "Change (%)": 1.32,
+      "Open": 5010.0,
+      "High": 5079.9,
+      "Low": 4976.0,
+      "Volume": 692987.0,
+      "RSI (14)": 37.74,
+      "MACD": -12.1208,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 11.92,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 55,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 1.07,
+        "Close Near High (%)": 84.5,
+        "Intraday Range (%)": 2.07,
+        "Volume Spike": 0.65,
+        "Close > Prev High": "No",
+        "BTST Score": 50
+      }
+    },
+    {
+      "Symbol": "HINDALCO.NS",
+      "Current Price": 715.85,
+      "Change (%)": 1.65,
+      "Open": 708.0,
+      "High": 720.9,
+      "Low": 707.55,
+      "Volume": 4539271.0,
+      "RSI (14)": 66.91,
+      "MACD": 0.4027,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -26.89,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 50,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 1.11,
+        "Close Near High (%)": 62.17,
+        "Intraday Range (%)": 1.89,
+        "Volume Spike": 0.93,
+        "Close > Prev High": "Yes",
+        "BTST Score": 25
+      }
+    },
+    {
+      "Symbol": "HINDUNILVR.NS",
+      "Current Price": 2631.6,
+      "Change (%)": 0.06,
+      "Open": 2643.0,
+      "High": 2643.0,
+      "Low": 2615.2,
+      "Volume": 667550.0,
+      "RSI (14)": 62.57,
+      "MACD": 7.9349,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 80.28,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 90,
+      "Risk Management": {
+        "Stop Loss": 2684.23,
+        "Target": 2526.34
+      },
+      "Primary Condition": "Open=High (Bearish)",
+      "Models Used": {
+        "Open-High": {
+          "signal": "Bearish",
+          "confidence": 30
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.43,
+        "Close Near High (%)": 58.99,
+        "Intraday Range (%)": 1.05,
+        "Volume Spike": 0.38,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "ICICIBANK.NS",
+      "Current Price": 1433.2,
+      "Change (%)": -0.22,
+      "Open": 1435.9,
+      "High": 1435.9,
+      "Low": 1424.0,
+      "Volume": 6738287.0,
+      "RSI (14)": 45.43,
+      "MACD": 0.0152,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -52.73,
+      "Candlestick": "Hammer (Bullish)",
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": 1461.86,
+        "Target": 1375.87
+      },
+      "Primary Condition": "Open=High (Bearish)",
+      "Models Used": {
+        "Open-High": {
+          "signal": "Bearish",
+          "confidence": 30
+        },
+        "Candlestick (Hammer (Bullish))": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.19,
+        "Close Near High (%)": 77.31,
+        "Intraday Range (%)": 0.83,
+        "Volume Spike": 1.05,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    },
+    {
+      "Symbol": "ITC.NS",
+      "Current Price": 399.35,
+      "Change (%)": 0.26,
+      "Open": 399.0,
+      "High": 400.55,
+      "Low": 396.25,
+      "Volume": 10438212.0,
+      "RSI (14)": 8.86,
+      "MACD": -1.7135,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -90.04,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Neutral",
+      "Confidence (%)": 55,
+      "Risk Management": {
+        "Stop Loss": null,
+        "Target": null
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "RSI": {
+          "signal": "Oversold",
+          "confidence": 10
+        },
+        "MACD": {
+          "signal": "Bearish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.09,
+        "Close Near High (%)": 72.09,
+        "Intraday Range (%)": 1.08,
+        "Volume Spike": 0.71,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    }
+  ],
+  "actionable_recommendations": [
+    {
+      "Symbol": "HINDUNILVR.NS",
+      "Current Price": 2631.6,
+      "Change (%)": 0.06,
+      "Open": 2643.0,
+      "High": 2643.0,
+      "Low": 2615.2,
+      "Volume": 667550.0,
+      "RSI (14)": 62.57,
+      "MACD": 7.9349,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 80.28,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 90,
+      "Risk Management": {
+        "Stop Loss": 2684.23,
+        "Target": 2526.34
+      },
+      "Primary Condition": "Open=High (Bearish)",
+      "Models Used": {
+        "Open-High": {
+          "signal": "Bearish",
+          "confidence": 30
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.43,
+        "Close Near High (%)": 58.99,
+        "Intraday Range (%)": 1.05,
+        "Volume Spike": 0.38,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "EICHERMOT.NS",
+      "Current Price": 5990.5,
+      "Change (%)": 1.11,
+      "Open": 5945.0,
+      "High": 6009.0,
+      "Low": 5880.0,
+      "Volume": 822933.0,
+      "RSI (14)": 66.77,
+      "MACD": 4.954,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 32.47,
+      "Candlestick": "Bullish Engulfing",
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 85,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "Candlestick (Bullish Engulfing)": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 0.77,
+        "Close Near High (%)": 85.66,
+        "Intraday Range (%)": 2.17,
+        "Volume Spike": 1.39,
+        "Close > Prev High": "Yes",
+        "BTST Score": 75
+      }
+    },
+    {
+      "Symbol": "GRASIM.NS",
+      "Current Price": 2811.4,
+      "Change (%)": -0.09,
+      "Open": 2825.7,
+      "High": 2832.7,
+      "Low": 2791.6,
+      "Volume": 591824.0,
+      "RSI (14)": 43.11,
+      "MACD": 1.4853,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 48.46,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.51,
+        "Close Near High (%)": 48.17,
+        "Intraday Range (%)": 1.45,
+        "Volume Spike": 0.8,
+        "Close > Prev High": "No",
+        "BTST Score": 0
+      }
+    },
+    {
+      "Symbol": "HCLTECH.NS",
+      "Current Price": 1504.2,
+      "Change (%)": 2.58,
+      "Open": 1480.0,
+      "High": 1509.7,
+      "Low": 1476.2,
+      "Volume": 2764777.0,
+      "RSI (14)": 66.06,
+      "MACD": 3.1342,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": 66.64,
+      "Candlestick": null,
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": NaN,
+        "Target": NaN
+      },
+      "Primary Condition": "No clear Open-High/Low pattern",
+      "Models Used": {
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bullish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": 1.64,
+        "Close Near High (%)": 83.58,
+        "Intraday Range (%)": 2.26,
+        "Volume Spike": 0.68,
+        "Close > Prev High": "Yes",
+        "BTST Score": 75
+      }
+    },
+    {
+      "Symbol": "ICICIBANK.NS",
+      "Current Price": 1433.2,
+      "Change (%)": -0.22,
+      "Open": 1435.9,
+      "High": 1435.9,
+      "Low": 1424.0,
+      "Volume": 6738287.0,
+      "RSI (14)": 45.43,
+      "MACD": 0.0152,
+      "Bollinger Bands": {
+        "Upper": NaN,
+        "Lower": NaN
+      },
+      "ATR": NaN,
+      "TSI": -52.73,
+      "Candlestick": "Hammer (Bullish)",
+      "Support/Resistance": null,
+      "Recommendation": "Buy",
+      "Confidence (%)": 70,
+      "Risk Management": {
+        "Stop Loss": 1461.86,
+        "Target": 1375.87
+      },
+      "Primary Condition": "Open=High (Bearish)",
+      "Models Used": {
+        "Open-High": {
+          "signal": "Bearish",
+          "confidence": 30
+        },
+        "Candlestick (Hammer (Bullish))": {
+          "signal": "Bullish",
+          "confidence": 15
+        },
+        "MACD": {
+          "signal": "Bullish",
+          "confidence": 10
+        },
+        "TSI": {
+          "signal": "Bearish",
+          "confidence": 10
+        }
+      },
+      "Last Updated": "2025-08-25 00:00",
+      "BTST Metrics": {
+        "Price Change (%)": -0.19,
+        "Close Near High (%)": 77.31,
+        "Intraday Range (%)": 0.83,
+        "Volume Spike": 1.05,
+        "Close > Prev High": "No",
+        "BTST Score": 25
+      }
+    }
+  ],
+  "btst_opportunities": []
+}

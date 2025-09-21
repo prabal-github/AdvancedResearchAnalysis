@@ -1,0 +1,1842 @@
+{% extends "layout.html" %}
+{% block title %}Enhanced Analysis - {{ report.analyst }} - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">{{ report.topic or 'Comprehensive Report Analysis' }}</h1>
+        <p class="text-muted mb-0">{{ report.sub_heading or 'Detailed Quality Metrics, SEBI Compliance & Action Items' }}</p>
+    </div>
+    <div>
+        <a href="/skill_learning/{{ report.id }}" class="btn btn-success me-2">
+            <i class="bi bi-mortarboard-fill me-1"></i> Skill Learning Analysis
+        </a>
+        <a href="/report/{{ report.id }}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-file-text me-1"></i> Standard View
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Flagged Alerts Section -->
+{% if analysis.flagged_alerts %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-danger text-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Flagged Alerts
+                    <span class="badge bg-light text-dark ms-2">{{ analysis.flagged_alerts.total_alerts }} Total</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3 text-center">
+                        <h4 class="text-danger">{{ analysis.flagged_alerts.critical_alerts }}</h4>
+                        <p class="mb-0">Critical</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h4 class="text-warning">{{ analysis.flagged_alerts.high_priority_alerts }}</h4>
+                        <p class="mb-0">High Priority</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h4 class="text-info">{{ analysis.flagged_alerts.medium_priority_alerts }}</h4>
+                        <p class="mb-0">Medium Priority</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h4 class="text-secondary">{{ analysis.flagged_alerts.low_priority_alerts }}</h4>
+                        <p class="mb-0">Low Priority</p>
+                    </div>
+                </div>
+                
+                {% if analysis.flagged_alerts.alerts %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Priority</th>
+                                <th>Category</th>
+                                <th>Message</th>
+                                <th>Action Required</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alert in analysis.flagged_alerts.alerts %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if alert.type == 'Critical' else 'warning' if alert.type == 'High' else 'info' if alert.type == 'Medium' else 'secondary' }}">
+                                        {{ alert.type }}
+                                    </span>
+                                </td>
+                                <td>{{ alert.category }}</td>
+                                <td>
+                                    <strong>{{ alert.message }}</strong>
+                                    <br><small class="text-muted">{{ alert.details }}</small>
+                                </td>
+                                <td>{{ alert.action_required }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <!-- Report Info -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">Report Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Analyst:</strong> {{ report.analyst }}</p>
+                        <p><strong>Date:</strong> {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Report ID:</strong> {{ report.id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Overall Quality Score:</strong> 
+                           <span class="badge bg-{{ 'success' if (analysis.quality_score or 0.85) > 0.8 else 'warning' if (analysis.quality_score or 0.85) > 0.6 else 'danger' }}">
+                               {{ ((analysis.quality_score or 0.85) * 100) | round(1) }}%
+                           </span>
+                        </p>
+                        {% if report.tickers %}
+                        <p><strong>Tickers:</strong> 
+                           {% for ticker in report.tickers | loads %}
+                               <span class="badge bg-secondary me-1">{{ ticker }}</span>
+                           {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Compliant Report Generation -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-robot me-2"></i>AI-Powered Compliant Report Generation
+                </h5>
+                <button id="generateCompliantBtn" class="btn btn-success">
+                    <i class="bi bi-magic me-1"></i> Generate Compliant Version
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="compliantReportContent" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="text-success">✅ AI-Generated Compliant Report</h6>
+                            <p class="text-muted">This is how your report should look with full SEBI compliance and professional standards:</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Report Comparison Tabs -->
+                    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="compliant-tab" data-bs-toggle="tab" data-bs-target="#compliant-content" type="button" role="tab">
+                                <i class="bi bi-check-circle me-1"></i> Compliant Version
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="comparison-tab" data-bs-toggle="tab" data-bs-target="#comparison-content" type="button" role="tab">
+                                <i class="bi bi-file-diff me-1"></i> Side-by-Side Comparison
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="reportTabsContent">
+                        <!-- Compliant Report Tab -->
+                        <div class="tab-pane fade show active" id="compliant-content" role="tabpanel">
+                            <div class="bg-light p-4 rounded mt-3" style="max-height: 600px; overflow-y: auto;">
+                                <div id="compliantReportText"></div>
+                            </div>
+                            <div class="mt-3 d-flex gap-2">
+                                <button id="copyCompliantBtn" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-clipboard me-1"></i> Copy to Clipboard
+                                </button>
+                                <button id="downloadCompliantBtn" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-download me-1"></i> Download Report
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Side-by-Side Comparison Tab -->
+                        <div class="tab-pane fade" id="comparison-content" role="tabpanel">
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-warning">📄 Original Report</h6>
+                                    <div class="bg-light p-3 rounded" style="height: 500px; overflow-y: auto;">
+                                        <div style="white-space: pre-wrap;">{{ report.original_text[:2000] }}{% if report.original_text|length > 2000 %}...{% endif %}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-success">✅ AI-Improved Version</h6>
+                                    <div class="bg-light p-3 rounded" style="height: 500px; overflow-y: auto;">
+                                        <div id="comparisonCompliantText"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="compliantLoadingState" style="display: none;">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span>Generating AI-powered compliant report... This may take a few moments.</span>
+                    </div>
+                </div>
+                
+                <!-- Initial State -->
+                <div id="compliantInitialState">
+                    <p class="mb-3">Click the button above to generate an AI-powered, SEBI-compliant version of this report that addresses all identified issues and follows professional standards.</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>SEBI Compliance Enhanced</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-shield-check text-success me-2"></i>
+                                <span>Risk Disclosure Improved</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-graph-up text-success me-2"></i>
+                                <span>Professional Structure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geopolitical Risk Assessment -->
+        {% if analysis.geopolitical_assessment %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-globe me-2"></i>Geopolitical Risk Assessment
+                    <span class="badge bg-{{ 'success' if analysis.geopolitical_assessment.risk_level == 'Low' else 'warning' if analysis.geopolitical_assessment.risk_level == 'Medium' else 'danger' }} ms-2">
+                        {{ analysis.geopolitical_assessment.risk_level }}
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-primary">{{ (analysis.geopolitical_assessment.score * 100) | round(1) }}%</h4>
+                        <p class="mb-0">Risk Assessment Score</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-info">{{ analysis.geopolitical_assessment.geopolitical_mentions }}</h4>
+                        <p class="mb-0">Risk Factors Mentioned</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-success">{{ analysis.geopolitical_assessment.indian_risk_coverage }}</h4>
+                        <p class="mb-0">India-Specific Risks</p>
+                    </div>
+                </div>
+                
+                {% if analysis.geopolitical_assessment.risk_factors_identified %}
+                <div class="mb-3">
+                    <h6>Risk Factors Identified:</h6>
+                    {% for factor in analysis.geopolitical_assessment.risk_factors_identified %}
+                        <span class="badge bg-warning me-1">{{ factor }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ (analysis.geopolitical_assessment.disclosure_coverage / 6 * 100) | round }}%">
+                        {{ analysis.geopolitical_assessment.disclosure_coverage }}/6
+                    </div>
+                </div>
+                <small class="text-muted">Risk Disclosure Coverage: {{ analysis.geopolitical_assessment.disclosure_coverage }}/6 categories</small>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Stock Quality Assessment -->
+        {% if stock_quality_summary %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up-arrow me-2"></i>Stock Quality Assessment
+                    <span class="badge bg-{{ 'success' if (stock_quality_summary.values() | list | map(attribute='score') | list | sum / stock_quality_summary.values() | list | length) >= 70 else 'warning' if (stock_quality_summary.values() | list | map(attribute='score') | list | sum / stock_quality_summary.values() | list | length) >= 50 else 'danger' }} ms-2">
+                        {{ ((stock_quality_summary.values() | list | map(attribute='score') | list | sum / stock_quality_summary.values() | list | length) | round(1)) }}/100
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-primary">{{ stock_quality_summary | length }}</h4>
+                        <p class="mb-0">Stocks Analyzed</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-success">{{ ((stock_quality_summary.values() | list | map(attribute='score') | list | sum / stock_quality_summary.values() | list | length) | round(1)) }}</h4>
+                        <p class="mb-0">Average Quality Score</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        {% set high_quality_count = stock_quality_summary.values() | selectattr('score', 'ge', 70) | list | length %}
+                        <h4 class="text-{{ 'success' if high_quality_count > 0 else 'warning' }}">{{ high_quality_count }}</h4>
+                        <p class="mb-0">High Quality Stocks</p>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Stock</th>
+                                <th>Company</th>
+                                <th>Quality Score</th>
+                                <th>Rating</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ticker, data in stock_quality_summary.items() %}
+                            <tr>
+                                <td><span class="badge bg-secondary">{{ ticker }}</span></td>
+                                <td>{{ data.company_name }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress me-2" style="width: 60px; height: 8px;">
+                                            <div class="progress-bar bg-{{ 'success' if data.score >= 70 else 'warning' if data.score >= 50 else 'danger' }}" 
+                                                 style="width: {{ data.score }}%"></div>
+                                        </div>
+                                        <span>{{ data.score }}/100</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if data.score >= 70 else 'warning' if data.score >= 50 else 'danger' }}">
+                                        {{ data.rating }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showStockDetails('{{ ticker }}')">
+                                        <i class="bi bi-eye me-1"></i>View Details
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Detailed Fundamental Analysis -->
+        {% if fundamental_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line me-2"></i>Detailed Fundamental Analysis
+                    <span class="badge bg-info ms-2">{{ fundamental_analysis | length }} Stock{{ 's' if fundamental_analysis | length > 1 else '' }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Tabs for each stock -->
+                <ul class="nav nav-pills nav-fill mb-3" id="stockTabs" role="tablist">
+                    {% for ticker in fundamental_analysis.keys() %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ 'active' if loop.first else '' }}" 
+                                id="{{ ticker }}-tab" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#{{ ticker }}-panel" 
+                                type="button" 
+                                role="tab">
+                            {{ ticker }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <!-- Tab content -->
+                <div class="tab-content" id="stockTabContent">
+                    {% for ticker, analysis_data in fundamental_analysis.items() %}
+                    <div class="tab-pane fade {{ 'show active' if loop.first else '' }}" 
+                         id="{{ ticker }}-panel" 
+                         role="tabpanel">
+                        
+                        {% if analysis_data %}
+                        <!-- Stock Basic Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <h6><i class="bi bi-building me-2"></i>{{ analysis_data.basic_info.company_name }}</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Sector:</small>
+                                        <p class="mb-1"><strong>{{ analysis_data.basic_info.sector or 'N/A' }}</strong></p>
+                                        <small class="text-muted">Current Price:</small>
+                                        <p class="mb-1"><strong>₹{{ analysis_data.basic_info.current_price | round(2) if analysis_data.basic_info.current_price else 'N/A' }}</strong></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Market Cap:</small>
+                                        <p class="mb-1"><strong>₹{{ (analysis_data.basic_info.market_cap / 10000000) | round(0) if analysis_data.basic_info.market_cap else 'N/A' }} Cr</strong></p>
+                                        <small class="text-muted">52-Week Range:</small>
+                                        <p class="mb-1"><strong>₹{{ analysis_data.basic_info.fifty_two_week_low | round(2) if analysis_data.basic_info.fifty_two_week_low else 'N/A' }} - ₹{{ analysis_data.basic_info.fifty_two_week_high | round(2) if analysis_data.basic_info.fifty_two_week_high else 'N/A' }}</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h4 class="text-{{ 'success' if analysis_data.quality_assessment.overall_score >= 70 else 'warning' if analysis_data.quality_assessment.overall_score >= 50 else 'danger' }}">
+                                            {{ analysis_data.quality_assessment.overall_score }}/100
+                                        </h4>
+                                        <p class="mb-0">Quality Score</p>
+                                        <span class="badge bg-{{ 'success' if analysis_data.quality_assessment.overall_score >= 70 else 'warning' if analysis_data.quality_assessment.overall_score >= 50 else 'danger' }}">
+                                            {{ analysis_data.quality_assessment.quality_rating }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Component Scores -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6><i class="bi bi-pie-chart me-2"></i>Quality Components</h6>
+                                <div class="row">
+                                    {% for component, score in analysis_data.quality_assessment.component_scores.items() %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small>{{ component.replace('_', ' ').title() }}</small>
+                                            <small><strong>{{ score }}/{{ 30 if component == 'profitability' else 25 if component == 'financial_health' else 20 if component == 'valuation' else 15 if component == 'growth' else 10 }}</strong></small>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            {% set max_score = 30 if component == 'profitability' else 25 if component == 'financial_health' else 20 if component == 'valuation' else 15 if component == 'growth' else 10 %}
+                                            <div class="progress-bar bg-{{ 'success' if (score/max_score) >= 0.7 else 'warning' if (score/max_score) >= 0.5 else 'danger' }}" 
+                                                 style="width: {{ (score/max_score*100) | round }}%"></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Metrics -->
+                        {% if analysis_data.financial_metrics %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-calculator me-2"></i>Key Financial Ratios</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            {% if analysis_data.financial_metrics.pe_ratio %}
+                                            <tr>
+                                                <td>P/E Ratio</td>
+                                                <td><strong>{{ analysis_data.financial_metrics.pe_ratio | round(2) }}</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.pb_ratio %}
+                                            <tr>
+                                                <td>P/B Ratio</td>
+                                                <td><strong>{{ analysis_data.financial_metrics.pb_ratio | round(2) }}</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.debt_to_equity %}
+                                            <tr>
+                                                <td>Debt-to-Equity</td>
+                                                <td><strong>{{ analysis_data.financial_metrics.debt_to_equity | round(2) }}</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.roe %}
+                                            <tr>
+                                                <td>Return on Equity</td>
+                                                <td><strong>{{ (analysis_data.financial_metrics.roe * 100) | round(2) }}%</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-trending-up me-2"></i>Performance Metrics</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            {% if analysis_data.financial_metrics.profit_margin %}
+                                            <tr>
+                                                <td>Profit Margin</td>
+                                                <td><strong>{{ (analysis_data.financial_metrics.profit_margin * 100) | round(2) }}%</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.revenue_growth %}
+                                            <tr>
+                                                <td>Revenue Growth</td>
+                                                <td><strong>{{ (analysis_data.financial_metrics.revenue_growth * 100) | round(2) }}%</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.annual_return %}
+                                            <tr>
+                                                <td>Annual Return</td>
+                                                <td><strong>{{ (analysis_data.financial_metrics.annual_return * 100) | round(2) }}%</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if analysis_data.financial_metrics.volatility %}
+                                            <tr>
+                                                <td>Volatility</td>
+                                                <td><strong>{{ (analysis_data.financial_metrics.volatility * 100) | round(2) }}%</strong></td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Fundamental analysis data not available for {{ ticker }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SEBI Compliance -->
+        {% if analysis.sebi_compliance %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-check me-2"></i>Basic Compliance Assessment
+                    <span class="badge bg-{{ 'success' if analysis.sebi_compliance.overall_rating in ['Excellent', 'Good'] else 'warning' if analysis.sebi_compliance.overall_rating == 'Fair' else 'danger' }} ms-2">
+                        {{ analysis.sebi_compliance.overall_rating }}
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6 text-center">
+                        <h4 class="text-primary">{{ (analysis.sebi_compliance.score * 100) | round(1) }}%</h4>
+                        <p class="mb-0">Compliance Score</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <h4 class="text-success">{{ analysis.sebi_compliance.mandatory_disclosures_found }}/{{ analysis.sebi_compliance.total_mandatory }}</h4>
+                        <p class="mb-0">Mandatory Disclosures</p>
+                    </div>
+                </div>
+                
+                {% if analysis.sebi_compliance.compliance_met %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Compliance Met:</h6>
+                        <ul class="list-unstyled">
+                            {% for item in analysis.sebi_compliance.compliance_met %}
+                            <li><i class="bi bi-check-circle text-success me-1"></i>{{ item.replace('_', ' ').title() }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Issues to Address:</h6>
+                        {% if analysis.sebi_compliance.compliance_issues %}
+                        <ul class="list-unstyled">
+                            {% for issue in analysis.sebi_compliance.compliance_issues %}
+                            <li><i class="bi bi-exclamation-triangle text-warning me-1"></i>{{ issue }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p class="text-success">No issues found</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Global Standards -->
+        {% if analysis.global_standards %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-globe2 me-2"></i>Global Standards Compliance
+                    <span class="badge bg-{{ 'success' if analysis.global_standards.global_rating in ['World-class', 'International'] else 'warning' if analysis.global_standards.global_rating == 'Regional' else 'secondary' }} ms-2">
+                        {{ analysis.global_standards.global_rating }}
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-primary">{{ (analysis.global_standards.score * 100) | round(1) }}%</h4>
+                        <p class="mb-0">Global Standards Score</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-{{ 'success' if analysis.global_standards.esg_coverage else 'warning' }}">
+                            {{ 'Yes' if analysis.global_standards.esg_coverage else 'No' }}
+                        </h4>
+                        <p class="mb-0">ESG Coverage</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-{{ 'success' if analysis.global_standards.international_perspective else 'warning' }}">
+                            {{ 'Yes' if analysis.global_standards.international_perspective else 'No' }}
+                        </h4>
+                        <p class="mb-0">International Perspective</p>
+                    </div>
+                </div>
+                
+                {% if analysis.global_standards.standards_met %}
+                <div class="mb-3">
+                    <h6>Standards Met:</h6>
+                    {% for standard in analysis.global_standards.standards_met %}
+                        <span class="badge bg-success me-1">{{ standard.replace('_', ' ').title() }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Summary Statistics -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light py-2">
+                <h6 class="mb-0">Report Summary</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="text-primary mb-0">{{ ((analysis.quality_score or 0.85) * 100) | round(1) }}%</h4>
+                        <small class="text-muted">Overall Quality</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-{{ 'success' if analysis.flagged_alerts|length < 5 else 'warning' if analysis.flagged_alerts|length < 10 else 'danger' }} mb-0">{{ analysis.flagged_alerts|length }}</h4>
+                        <small class="text-muted">Total Alerts</small>
+                    </div>
+                </div>
+                {% if analysis.detailed_quality_metrics %}
+                <hr>
+                <div class="small">
+                    <div class="d-flex justify-content-between">
+                        <span>Word Count:</span>
+                        <span>{{ analysis.detailed_quality_metrics.word_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Citations:</span>
+                        <span>{{ analysis.detailed_quality_metrics.citations_found }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Price Targets:</span>
+                        <span>{{ analysis.detailed_quality_metrics.price_targets_identified }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light py-2">
+                <h6 class="mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('compare_reports') }}?ticker={{ report.ticker }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-left-right me-1"></i> Compare Reports
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Print Analysis
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-house me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Summary -->
+        {% if analysis.geopolitical_assessment %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light py-2">
+                <h6 class="mb-0">Risk Summary</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="mb-1">Geopolitical Risk</h6>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-{{ 'danger' if analysis.geopolitical_assessment.score > 0.7 else 'warning' if analysis.geopolitical_assessment.score > 0.4 else 'success' }}" 
+                             style="width: {{ (analysis.geopolitical_assessment.score * 100) | round }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ analysis.geopolitical_assessment.risk_level }}</small>
+                </div>
+                
+                {% if analysis.geopolitical_assessment.risks_identified %}
+                <h6 class="mb-2">Key Risks:</h6>
+                <ul class="list-unstyled small">
+                    {% for risk in analysis.geopolitical_assessment.risks_identified[:3] %}
+                    <li class="mb-1">
+                        <i class="bi bi-exclamation-triangle text-warning me-1"></i>
+                        {{ risk }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Compliance Status -->
+        {% if analysis.sebi_compliance %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light py-2">
+                <h6 class="mb-0">Compliance Status</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="mb-1">SEBI Compliance</h6>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-{{ 'success' if analysis.sebi_compliance.score > 0.8 else 'warning' if analysis.sebi_compliance.score > 0.6 else 'danger' }}" 
+                             style="width: {{ (analysis.sebi_compliance.score * 100) | round }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ (analysis.sebi_compliance.score * 100) | round(1) }}% compliant</small>
+                </div>
+
+                {% if analysis.sebi_compliance.missing_items %}
+                <h6 class="mb-2">Missing Items:</h6>
+                <ul class="list-unstyled small">
+                    {% for item in analysis.sebi_compliance.missing_items[:3] %}
+                    <li class="mb-1">
+                        <i class="bi bi-x-circle text-danger me-1"></i>
+                        {{ item }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Composite Quality Score Breakdown -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Composite Quality Score Breakdown
+                    <span class="badge bg-{{ 'success' if (analysis.quality_score or 0.85) > 0.8 else 'warning' if (analysis.quality_score or 0.85) > 0.6 else 'danger' }} ms-2">
+                        {{ ((analysis.quality_score or 0.85) * 100) | round(1) }}%
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if analysis.scores %}
+                    <div class="col-md-6">
+                        <h6>Core Quality Metrics</h6>
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Factual Accuracy</small>
+                                <small>{{ (analysis.scores.factual_accuracy * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: {{ (analysis.scores.factual_accuracy * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Predictive Power</small>
+                                <small>{{ (analysis.scores.predictive_power * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-info" style="width: {{ (analysis.scores.predictive_power * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Risk Disclosure</small>
+                                <small>{{ (analysis.scores.risk_disclosure * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" style="width: {{ (analysis.scores.risk_disclosure * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-md-6">
+                        <h6>Compliance Metrics</h6>
+                        {% if analysis.geopolitical_assessment %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Geopolitical Risk</small>
+                                <small>{{ (analysis.geopolitical_assessment.score * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-secondary" style="width: {{ (analysis.geopolitical_assessment.score * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if analysis.sebi_compliance %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>SEBI Compliance</small>
+                                <small>{{ (analysis.sebi_compliance.score * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" style="width: {{ (analysis.sebi_compliance.score * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if analysis.content_guidelines_analysis %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Content Guidelines</small>
+                                <small>{{ (analysis.content_guidelines_analysis.overall_compliance_score * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: {{ (analysis.content_guidelines_analysis.overall_compliance_score * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if analysis.stock_quality_assessment %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <small>Stock Quality <i class="bi bi-graph-up-arrow text-info" title="New Feature"></i></small>
+                                <small>{{ (analysis.stock_quality_assessment.average_score * 100) | round(1) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-info" style="width: {{ (analysis.stock_quality_assessment.average_score * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Quality Metrics -->
+        {% if analysis.detailed_quality_metrics %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard-data me-2"></i>Detailed Quality Metrics
+                    <span class="badge bg-info ms-2">{{ analysis.detailed_quality_metrics.word_count }} words</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Content Statistics Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-3 text-center">
+                        <div class="bg-light rounded p-3">
+                            <h4 class="text-primary mb-1">{{ analysis.detailed_quality_metrics.word_count }}</h4>
+                            <small class="text-muted">Total Words</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="bg-light rounded p-3">
+                            <h4 class="text-info mb-1">{{ analysis.detailed_quality_metrics.sentence_count }}</h4>
+                            <small class="text-muted">Sentences</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="bg-light rounded p-3">
+                            <h4 class="text-warning mb-1">{{ analysis.detailed_quality_metrics.paragraph_count }}</h4>
+                            <small class="text-muted">Paragraphs</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="bg-light rounded p-3">
+                            <h4 class="text-success mb-1">{{ ((analysis.detailed_quality_metrics.word_count / 200) | round(1)) }}</h4>
+                            <small class="text-muted">Min. Read</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-bar-chart me-2"></i>Content Analysis</h6>
+                        
+                        <!-- Financial Depth -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Financial Depth Coverage</span>
+                                <span class="text-primary">{{ analysis.detailed_quality_metrics.financial_depth_score }}/13</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-primary" style="width: {{ ((analysis.detailed_quality_metrics.financial_depth_score / 13) * 100) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Revenue, Profit, Cash Flow, Ratios, etc.</small>
+                        </div>
+
+                        <!-- Technical Analysis -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Technical Analysis Depth</span>
+                                <span class="text-info">{{ analysis.detailed_quality_metrics.technical_depth_score }}/10</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-info" style="width: {{ ((analysis.detailed_quality_metrics.technical_depth_score / 10) * 100) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Moving Averages, RSI, MACD, Support/Resistance</small>
+                        </div>
+
+                        <!-- Reading Statistics -->
+                        <div class="mb-3">
+                            <h6 class="mb-2"><i class="bi bi-file-text me-2"></i>Reading Statistics</h6>
+                            <div class="small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Avg. Words per Sentence:</span>
+                                    <span><strong>{{ ((analysis.detailed_quality_metrics.word_count / analysis.detailed_quality_metrics.sentence_count) | round(1)) }}</strong></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Avg. Sentences per Paragraph:</span>
+                                    <span><strong>{{ ((analysis.detailed_quality_metrics.sentence_count / analysis.detailed_quality_metrics.paragraph_count) | round(1)) }}</strong></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Reading Level:</span>
+                                    <span><strong>
+                                        {% set avg_words = (analysis.detailed_quality_metrics.word_count / analysis.detailed_quality_metrics.sentence_count) %}
+                                        {% if avg_words < 15 %}Easy
+                                        {% elif avg_words < 20 %}Moderate
+                                        {% elif avg_words < 25 %}Complex
+                                        {% else %}Advanced{% endif %}
+                                    </strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-clipboard-check me-2"></i>Data Quality & Evidence</h6>
+                        
+                        <!-- Citations -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Citations & References</span>
+                                <span class="text-success">{{ analysis.detailed_quality_metrics.citations_found }}</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: {{ (analysis.detailed_quality_metrics.citations_found * 20) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Source credibility and data backing</small>
+                        </div>
+
+                        <!-- Price Targets -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Price Target Analysis</span>
+                                <span class="text-warning">{{ analysis.detailed_quality_metrics.price_targets_identified }}</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: {{ (analysis.detailed_quality_metrics.price_targets_identified * 25) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Specific price targets with justification</small>
+                        </div>
+
+                        <!-- Timeline Specifications -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Timeline Specifications</span>
+                                <span class="text-info">{{ analysis.detailed_quality_metrics.timeline_specifications }}</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-info" style="width: {{ (analysis.detailed_quality_metrics.timeline_specifications * 20) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Time-bound predictions and milestones</small>
+                        </div>
+
+                        <!-- Risk Mentions -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>Risk Coverage</span>
+                                <span class="text-danger">{{ analysis.detailed_quality_metrics.risk_mentions }}</span>
+                            </div>
+                            <div class="progress mb-1" style="height: 8px;">
+                                <div class="progress-bar bg-danger" style="width: {{ (analysis.detailed_quality_metrics.risk_mentions * 10) | round }}%"></div>
+                            </div>
+                            <small class="text-muted">Risk factors and potential downsides</small>
+                        </div>
+
+                        <!-- Overall Content Quality Score -->
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <h6 class="mb-2"><i class="bi bi-star me-2"></i>Overall Content Quality</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Content Quality Score</span>
+                                <span class="h5 mb-0 text-primary">{{ (analysis.detailed_quality_metrics.content_quality_score * 100) | round(1) }}%</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-gradient 
+                                    {% if analysis.detailed_quality_metrics.content_quality_score > 0.8 %}bg-success
+                                    {% elif analysis.detailed_quality_metrics.content_quality_score > 0.6 %}bg-warning
+                                    {% else %}bg-danger{% endif %}" 
+                                    style="width: {{ (analysis.detailed_quality_metrics.content_quality_score * 100) | round }}%"></div>
+                            </div>
+                            <small class="text-muted mt-1">
+                                Based on content depth, evidence quality, and analytical rigor
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SEBI Compliance Analysis -->
+        {% if analysis.sebi_compliance_detailed %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-check me-2"></i>SEBI Compliance Analysis
+                    <span class="badge bg-{{ 'success' if analysis.sebi_compliance_detailed.compliance_rating in ['Excellent', 'Good'] else 'warning' if analysis.sebi_compliance_detailed.compliance_rating == 'Satisfactory' else 'danger' }} ms-2">
+                        {{ analysis.sebi_compliance_detailed.compliance_rating }}
+                    </span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Category Scores -->
+                <div class="row mb-4">
+                    <div class="col-md-3 text-center">
+                        <h5 class="text-primary">{{ (analysis.sebi_compliance_detailed.category_scores.disclosure_score * 100) | round }}%</h5>
+                        <p class="mb-0">Disclosure Requirements</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h5 class="text-warning">{{ (analysis.sebi_compliance_detailed.category_scores.risk_disclosure_score * 100) | round }}%</h5>
+                        <p class="mb-0">Risk Disclosure</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h5 class="text-info">{{ (analysis.sebi_compliance_detailed.category_scores.credentials_score * 100) | round }}%</h5>
+                        <p class="mb-0">Analyst Credentials</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h5 class="text-success">{{ (analysis.sebi_compliance_detailed.category_scores.disclaimers_score * 100) | round }}%</h5>
+                        <p class="mb-0">Company Disclaimers</p>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Disclosure Requirements</h6>
+                        {% for key, value in analysis.sebi_compliance_detailed.disclosure_requirements.items() %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small">{{ key.replace('_', ' ').title() }}</span>
+                            <span class="badge bg-{{ 'success' if value.found else 'danger' }}">
+                                {{ 'Found' if value.found else 'Missing' }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Risk Disclosure</h6>
+                        {% for key, value in analysis.sebi_compliance_detailed.risk_disclosure_requirements.items() %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small">{{ key.replace('_', ' ').title() }}</span>
+                            <span class="badge bg-{{ 'success' if value.found else 'danger' }}">
+                                {{ 'Found' if value.found else 'Missing' }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Content Guidelines Analysis -->
+        {% if analysis.content_guidelines_analysis %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-check me-2"></i>Content Guidelines Compliance
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for guideline, score in analysis.content_guidelines_analysis.guidelines_scores.items() %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ guideline.replace('_', ' ').title() }}</span>
+                            <span>{{ (score * 100) | round(1) }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-{{ 'success' if score > 0.8 else 'warning' if score > 0.6 else 'danger' }}" 
+                                 style="width: {{ (score * 100) | round }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action Items Required -->
+        {% if analysis.action_items %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-check2-square me-2"></i>Action Items Required
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="actionItemsAccordion">
+                    {% for category, items in analysis.action_items.items() %}
+                    {% if items %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ loop.index }}">
+                            <button class="accordion-button {{ 'collapsed' if loop.index > 1 else '' }}" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" 
+                                    aria-expanded="{{ 'true' if loop.index == 1 else 'false' }}" aria-controls="collapse{{ loop.index }}">
+                                {{ category.replace('_', ' ').title() }} ({{ items|length }})
+                            </button>
+                        </h2>
+                        <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {{ 'show' if loop.index == 1 else '' }}" 
+                             aria-labelledby="heading{{ loop.index }}" data-bs-parent="#actionItemsAccordion">
+                            <div class="accordion-body">
+                                {% for item in items %}
+                                <div class="border-start border-3 border-{{ 'danger' if item.priority == 'Critical' else 'warning' if item.priority == 'High' else 'info' }} ps-3 mb-3">
+                                    <h6 class="mb-1">{{ item.action }}</h6>
+                                    <p class="mb-1">{{ item.description }}</p>
+                                    <small class="text-muted">
+                                        <strong>Timeline:</strong> {{ item.timeline }} | 
+                                        <strong>Responsible:</strong> {{ item.responsible }}
+                                    </small>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Original Research Report -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>Original Research Report
+            {% if analysis.detailed_quality_metrics %}
+            <span class="badge bg-info ms-2">{{ analysis.detailed_quality_metrics.word_count }} words</span>
+            {% endif %}
+        </h5>
+        <div class="mt-2">
+            {% if analysis.detailed_quality_metrics %}
+            <div class="row">
+                <div class="col-md-3">
+                    <small class="text-muted">
+                        <i class="bi bi-file-text me-1"></i>
+                        <strong>{{ analysis.detailed_quality_metrics.word_count }}</strong> words
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">
+                        <i class="bi bi-paragraph me-1"></i>
+                        <strong>{{ analysis.detailed_quality_metrics.sentence_count }}</strong> sentences
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">
+                        <i class="bi bi-layout-text-sidebar me-1"></i>
+                        <strong>{{ analysis.detailed_quality_metrics.paragraph_count }}</strong> paragraphs
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>
+                        <strong>{{ ((analysis.detailed_quality_metrics.word_count / 200) | round(1)) }}</strong> min read
+                    </small>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Report Content - Full Display -->
+                <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">
+                            <i class="bi bi-file-text me-2"></i>Original Research Report
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="copyReportContent()">
+                                <i class="bi bi-clipboard me-1"></i>Copy
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleReportHeight()">
+                                <i class="bi bi-arrows-expand me-1" id="heightToggleIcon"></i>
+                                <span id="heightToggleText">Compact View</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Report Content - Full Height by Default -->
+                    <div class="report-content-wrapper" id="reportContentWrapper" style="overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; background-color: white; min-height: 200px;">
+                        {% if report.original_text %}
+                        <div class="report-content" style="white-space: pre-wrap; line-height: 1.8; font-family: 'Georgia', serif; font-size: 15px; color: #2c3e50;">{{ report.original_text }}</div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle me-2"></i>No Report Content Available</h6>
+                            <p class="mb-2">This report doesn't have any content stored. Please try one of the following:</p>
+                            <ul class="mb-3">
+                                <li>Go back to the dashboard and upload a new report</li>
+                                <li>Check if the report file was uploaded correctly</li>
+                                <li>Ensure the report text was properly extracted</li>
+                            </ul>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-circle me-1"></i>Upload New Report
+                                </a>
+                                <button class="btn btn-secondary btn-sm" onclick="loadSampleContent()">
+                                    <i class="bi bi-file-text me-1"></i>Load Sample Content
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Content Analysis Summary -->
+                {% if analysis.detailed_quality_metrics %}
+                <div class="mt-3">
+                    <h6>Content Quality Analysis</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Financial Depth</span>
+                                    <span>{{ analysis.detailed_quality_metrics.financial_depth_score }}/13</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-success" style="width: {{ ((analysis.detailed_quality_metrics.financial_depth_score / 13) * 100) | round }}%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Technical Analysis</span>
+                                    <span>{{ analysis.detailed_quality_metrics.technical_depth_score }}/10</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-info" style="width: {{ ((analysis.detailed_quality_metrics.technical_depth_score / 10) * 100) | round }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Citations Found</span>
+                                    <span>{{ analysis.detailed_quality_metrics.citations_found }}</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ (analysis.detailed_quality_metrics.citations_found * 10) | round }}%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Risk Mentions</span>
+                                    <span>{{ analysis.detailed_quality_metrics.risk_mentions }}</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-danger" style="width: {{ (analysis.detailed_quality_metrics.risk_mentions * 5) | round }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-4">
+                <h6>Report Statistics</h6>
+                <div class="bg-light rounded p-3">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <h4 class="text-primary mb-1">{{ report.ticker }}</h4>
+                            <small class="text-muted">Stock Symbol</small>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <h4 class="text-success mb-1">{{ report.created_at.strftime('%m/%d') }}</h4>
+                            <small class="text-muted">Date Created</small>
+                        </div>
+                    </div>
+                    
+                    {% if analysis.detailed_quality_metrics %}
+                    <hr class="my-3">
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Avg. Words/Sentence:</span>
+                            <span><strong>{{ ((analysis.detailed_quality_metrics.word_count / analysis.detailed_quality_metrics.sentence_count) | round(1)) }}</strong></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Avg. Sentences/Paragraph:</span>
+                            <span><strong>{{ ((analysis.detailed_quality_metrics.sentence_count / analysis.detailed_quality_metrics.paragraph_count) | round(1)) }}</strong></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Price Targets Identified:</span>
+                            <span><strong>{{ analysis.detailed_quality_metrics.price_targets_identified }}</strong></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Timeline Specifications:</span>
+                            <span><strong>{{ analysis.detailed_quality_metrics.timeline_specifications }}</strong></span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Quick Actions for Report -->
+                <div class="mt-3">
+                    <h6>Report Actions</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="copyReportContent()">
+                            <i class="bi bi-clipboard me-1"></i> Copy Report
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="printReport()">
+                            <i class="bi bi-printer me-1"></i> Print Report
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="toggleReadingMode()">
+                            <i class="bi bi-eye me-1"></i> Reading Mode
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional CSS for better report display -->
+        <style>
+        .report-content-wrapper {
+            border-radius: 6px;
+        }
+
+        .report-content-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .report-content-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .report-content-wrapper::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .report-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .report-content {
+            font-size: 14px;
+            color: #333;
+            text-align: justify;
+        }
+
+        .report-content h1, .report-content h2, .report-content h3 {
+            color: #2c3e50;
+            margin: 15px 0 10px 0;
+        }
+
+        .report-content p {
+            margin-bottom: 10px;
+        }
+
+        .reading-mode .report-content {
+            font-size: 16px;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        </style>
+    </div>
+</div>
+
+<script>
+function exportAnalysis() {
+    const analysisData = {
+        report_id: '{{ report.id }}',
+        analyst: '{{ report.analyst }}',
+        analysis: {{ analysis | tojson | safe }},
+        improvements: {{ improvements | tojson | safe }},
+        export_date: new Date().toISOString()
+    };
+    
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analysisData, null, 2));
+    const downloadElement = document.createElement('a');
+    downloadElement.setAttribute("href", dataStr);
+    downloadElement.setAttribute("download", "enhanced_analysis_{{ report.id }}.json");
+    document.body.appendChild(downloadElement);
+    downloadElement.click();
+    downloadElement.remove();
+}
+
+function compareWithOthers() {
+    const tickers = {{ report.tickers | tojson | safe }};
+    if (tickers && tickers.length > 0) {
+        const ticker = tickers[0]; // Use first ticker for comparison
+        window.location.href = `/compare_reports?ticker=${ticker}`;
+    } else {
+        alert('No tickers available for comparison');
+    }
+}
+
+function generateReport() {
+    const reportContent = `
+Enhanced Analysis Report
+========================
+
+Report ID: {{ report.id }}
+Analyst: {{ report.analyst }}
+Date: {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}
+Overall Quality Score: {{ ((analysis.quality_score or 0.85) * 100) | round(1) }}%
+
+{% if analysis.geopolitical_assessment %}
+GEOPOLITICAL RISK ASSESSMENT:
+- Risk Level: {{ analysis.geopolitical_assessment.risk_level }}
+- Score: {{ (analysis.geopolitical_assessment.score * 100) | round(1) }}%
+- Risk Mentions: {{ analysis.geopolitical_assessment.geopolitical_mentions }}
+- India-Specific Coverage: {{ analysis.geopolitical_assessment.indian_risk_coverage }}
+{% endif %}
+
+{% if analysis.sebi_compliance %}
+SEBI COMPLIANCE:
+- Overall Rating: {{ analysis.sebi_compliance.overall_rating }}
+- Compliance Score: {{ (analysis.sebi_compliance.score * 100) | round(1) }}%
+- Mandatory Disclosures: {{ analysis.sebi_compliance.mandatory_disclosures_found }}
+{% endif %}
+
+{% if analysis.global_standards %}
+GLOBAL STANDARDS:
+- Rating: {{ analysis.global_standards.global_rating }}
+- Score: {{ (analysis.global_standards.score * 100) | round(1) }}%
+- ESG Coverage: {{ 'Yes' if analysis.global_standards.esg_coverage else 'No' }}
+{% endif %}
+
+IMPROVEMENTS NEEDED:
+{% for improvement in improvements %}
+- {{ improvement }}
+{% endfor %}
+    `;
+    
+    const reportBlob = new Blob([reportContent], { type: 'text/plain' });
+    const reportUrl = URL.createObjectURL(reportBlob);
+    const downloadElement = document.createElement('a');
+    downloadElement.href = reportUrl;
+    downloadElement.download = 'enhanced_report_{{ report.id }}.txt';
+    document.body.appendChild(downloadElement);
+    downloadElement.click();
+    downloadElement.remove();
+    URL.revokeObjectURL(reportUrl);
+}
+
+// Report content management functions
+function copyReportContent() {
+    const reportContent = document.querySelector('.report-content').textContent;
+    navigator.clipboard.writeText(reportContent).then(function() {
+        // Show success message
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-check me-1"></i> Copied!';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-primary');
+        }, 2000);
+    }).catch(function(err) {
+        alert('Failed to copy report content');
+    });
+}
+
+function printReport() {
+    const reportContent = document.querySelector('.report-content').innerHTML;
+    const reportTitle = document.querySelector('h1').textContent;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>${reportTitle}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
+                .report-meta { background: #f5f5f5; padding: 15px; margin: 20px 0; }
+                .report-content { white-space: pre-wrap; }
+            </style>
+        </head>
+        <body>
+            <h1>${reportTitle}</h1>
+            <div class="report-meta">
+                <strong>Stock:</strong> {{ report.ticker }}<br>
+                <strong>Date:</strong> {{ report.created_at.strftime('%B %d, %Y') }}<br>
+                {% if analysis.detailed_quality_metrics %}
+                <strong>Word Count:</strong> {{ analysis.detailed_quality_metrics.word_count }}<br>
+                <strong>Quality Score:</strong> {{ ((analysis.quality_score or 0.85) * 100) | round(1) }}%
+                {% endif %}
+            </div>
+            <div class="report-content">${reportContent}</div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function toggleReadingMode() {
+    const reportSection = document.querySelector('.report-content').closest('.card');
+    const button = event.target;
+    
+    if (reportSection.classList.contains('reading-mode')) {
+        // Exit reading mode
+        reportSection.classList.remove('reading-mode');
+        reportSection.style.position = '';
+        reportSection.style.top = '';
+        reportSection.style.left = '';
+        reportSection.style.right = '';
+        reportSection.style.bottom = '';
+        reportSection.style.zIndex = '';
+        reportSection.style.backgroundColor = '';
+        reportSection.style.padding = '';
+        
+        button.innerHTML = '<i class="bi bi-eye me-1"></i> Reading Mode';
+        document.body.style.overflow = '';
+    } else {
+        // Enter reading mode
+        reportSection.classList.add('reading-mode');
+        reportSection.style.position = 'fixed';
+        reportSection.style.top = '20px';
+        reportSection.style.left = '20px';
+        reportSection.style.right = '20px';
+        reportSection.style.bottom = '20px';
+        reportSection.style.zIndex = '9999';
+        reportSection.style.backgroundColor = 'white';
+        reportSection.style.padding = '20px';
+        reportSection.style.overflow = 'auto';
+        
+        button.innerHTML = '<i class="bi bi-x me-1"></i> Exit Reading';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function toggleReportHeight() {
+    const wrapper = document.getElementById('reportContentWrapper');
+    const icon = document.getElementById('heightToggleIcon');
+    const text = document.getElementById('heightToggleText');
+    
+    if (wrapper.style.maxHeight && wrapper.style.maxHeight !== 'none') {
+        // Expand to full height
+        wrapper.style.maxHeight = 'none';
+        icon.className = 'bi bi-arrows-collapse me-1';
+        text.textContent = 'Full View';
+    } else {
+        // Collapse to compact view
+        wrapper.style.maxHeight = '400px';
+        icon.className = 'bi bi-arrows-expand me-1';
+        text.textContent = 'Compact View';
+    }
+}
+
+// Initialize report content display
+document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.getElementById('reportContentWrapper');
+    const indicator = document.getElementById('showMoreIndicator');
+    const reportContent = document.querySelector('.report-content');
+    
+    if (wrapper && reportContent && indicator) {
+        // Check if content is longer than the visible area
+        if (reportContent.scrollHeight > 400) {
+            indicator.style.display = 'block';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+});
+
+function loadSampleContent() {
+    const sampleReport = `Indian Stock Research Report - Technology Sector Analysis
+
+TATA CONSULTANCY SERVICES (TCS.NS) - Strong Buy Recommendation
+
+Executive Summary:
+Tata Consultancy Services shows exceptional growth in digital transformation services. The company's order book remains robust with strong margins. We recommend a STRONG BUY rating with a target price of ₹4,200.
+
+Key Indian Stocks Analysis:
+- TCS.NS: Leading IT services company, strong Q3 results
+- INFOSYS (INFY.NS): Digital transformation leader, revenue growth of 12%
+- WIPRO.NS: Cloud services expansion, partnership with major clients
+- HCLTECH.NS: Engineering services growth, AI capabilities
+- TECH MAHINDRA (TECHM.NS): 5G services rollout
+
+Banking Sector:
+- HDFC BANK (HDFCBANK.NS): Strong NII growth, expanding digital banking
+- ICICI BANK showing robust loan growth
+- SBI (SBIN.NS): Government backing, rural penetration
+- AXIS BANK improving asset quality
+- KOTAK MAHINDRA BANK premium positioning
+
+Industrial & Manufacturing:
+- RELIANCE.NS: Jio platforms growth, petrochemicals stable
+- TATA STEEL (TATASTEEL.NS): Steel demand recovery
+- L&T.NS: Infrastructure projects pipeline
+- MARUTI SUZUKI strong domestic sales
+- BAJAJ AUTO electric vehicle plans
+
+FMCG & Consumer:
+- ITC.NS: Cigarettes stable, FMCG growth
+- ASIAN PAINTS expanding market share
+- BRITANNIA INDUSTRIES rural penetration
+- NESTLÉ INDIA premium product focus
+- TITAN COMPANY jewelry demand strong
+
+Pharma Sector:
+- SUN PHARMA (SUNPHARMA.NS): US market recovery
+- DR REDDY'S LABORATORIES (DRREDDY.NS): Generic drugs pipeline
+- CIPLA.NS: Respiratory segment growth
+- DIVIS LABORATORIES API business expansion
+
+Cement & Materials:
+- ULTRATECH CEMENT (ULTRACEMCO.NS): Capacity expansion
+- SHREE CEMENT pricing power
+- GRASIM INDUSTRIES diversified portfolio
+
+Energy & Utilities:
+- ONGC.NS: Oil production targets
+- NTPC.NS: Renewable energy push
+- POWER GRID (POWERGRID.NS): Transmission expansion
+- BPCL.NS: Refinery upgrades
+- IOC.NS: Marketing network strength
+
+Technical Analysis:
+The Nifty IT index shows strong momentum above 50-day moving average. Support levels for major IT stocks remain intact. TCS.NS showing bullish pattern with volume confirmation.
+
+Risk Factors:
+- Global recession concerns affecting IT spending
+- Rupee volatility impacting margins
+- Increasing competition from global peers
+- Regulatory changes in key markets
+
+Price Targets (12-month):
+- TCS.NS: ₹4,200 (Current: ₹3,650)
+- INFY.NS: ₹1,800 (Current: ₹1,580)
+- WIPRO.NS: ₹520 (Current: ₹425)
+
+Recommendation: STRONG BUY for TCS.NS
+Analyst: Rajesh Kumar
+Date: 2025-07-15
+Target Review: Q3 FY26`;
+
+    const contentDiv = document.querySelector('.report-content-wrapper');
+    contentDiv.innerHTML = `<div class="report-content" style="white-space: pre-wrap; line-height: 1.8; font-family: 'Georgia', serif; font-size: 15px; color: #2c3e50;">${sampleReport}</div>`;
+    
+    // Show success message
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show mt-2';
+    alert.innerHTML = `
+        <i class="bi bi-check-circle me-2"></i>Sample report content loaded successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    contentDiv.appendChild(alert);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+        if (alert.parentNode) {
+            alert.remove();
+        }
+    }, 3000);
+}
+
+// Function to show stock details
+function showStockDetails(ticker) {
+    // Activate the corresponding tab in the fundamental analysis section
+    const fundamentalSection = document.querySelector('#stockTabs');
+    if (fundamentalSection) {
+        // Scroll to the fundamental analysis section
+        fundamentalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Activate the corresponding tab
+        const targetTab = document.querySelector(`#${ticker}-tab`);
+        if (targetTab) {
+            setTimeout(() => {
+                targetTab.click();
+            }, 500); // Small delay to allow scrolling to complete
+        }
+    } else {
+        // Show alert if fundamental analysis is not available
+        alert(`Detailed fundamental analysis for ${ticker} is not available.`);
+    }
+}
+
+// Initialize tooltips for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips if available
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+    
+    // Enhance progress bars with hover effects
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        bar.addEventListener('mouseenter', function() {
+            this.style.opacity = '0.8';
+        });
+        bar.addEventListener('mouseleave', function() {
+            this.style.opacity = '1';
+        });
+    });
+
+    // AI Compliant Report Generation functionality
+    const generateCompliantBtn = document.getElementById('generateCompliantBtn');
+    const compliantInitialState = document.getElementById('compliantInitialState');
+    const compliantLoadingState = document.getElementById('compliantLoadingState');
+    const compliantReportContent = document.getElementById('compliantReportContent');
+    const compliantReportText = document.getElementById('compliantReportText');
+    const comparisonCompliantText = document.getElementById('comparisonCompliantText');
+    
+    generateCompliantBtn.addEventListener('click', async function() {
+        try {
+            // Show loading state
+            generateCompliantBtn.disabled = true;
+            compliantInitialState.style.display = 'none';
+            compliantLoadingState.style.display = 'block';
+            compliantReportContent.style.display = 'none';
+            
+            // Make API call to generate compliant report
+            const response = await fetch(`/generate_compliant_report/{{ report.id }}`, {
+                method: 'GET',
+                credentials: 'same-origin',  // Include cookies/session
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            // Check if response is HTML (indicating redirect to login)
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Authentication required. Please refresh the page and log in.');
+            }
+            
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Format the report content with proper HTML
+                const formattedReport = data.compliant_report
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/^# (.*$)/gm, '<h3 class="text-primary mt-4 mb-3">$1</h3>')
+                    .replace(/^## (.*$)/gm, '<h4 class="text-secondary mt-3 mb-2">$1</h4>')
+                    .replace(/^### (.*$)/gm, '<h5 class="text-dark mt-2 mb-2">$1</h5>')
+                    .replace(/^- (.*$)/gm, '<li>$1</li>')
+                    .replace(/(<li>.*<\/li>)/gs, '<ul class="list-unstyled">$1</ul>');
+                
+                // Update both tabs with the content
+                compliantReportText.innerHTML = formattedReport;
+                comparisonCompliantText.innerHTML = formattedReport;
+                
+                // Show success state
+                compliantLoadingState.style.display = 'none';
+                compliantReportContent.style.display = 'block';
+                
+                // Add model info
+                // Model info removed per user request
+                
+            } else {
+                throw new Error(data.error || 'Failed to generate compliant report');
+            }
+            
+        } catch (error) {
+            console.error('Error generating compliant report:', error);
+            
+            // Show error state
+            compliantLoadingState.style.display = 'none';
+            compliantInitialState.style.display = 'block';
+            
+            // Show error message
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger';
+            errorAlert.innerHTML = `
+                <strong>Error:</strong> ${error.message}
+                <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+            `;
+            compliantInitialState.parentNode.insertBefore(errorAlert, compliantInitialState);
+            
+        } finally {
+            generateCompliantBtn.disabled = false;
+        }
+    });
+    
+    // Copy to clipboard functionality
+    document.getElementById('copyCompliantBtn').addEventListener('click', function() {
+        const textContent = compliantReportText.innerText;
+        navigator.clipboard.writeText(textContent).then(function() {
+            // Show success message
+            const btn = document.getElementById('copyCompliantBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check me-1"></i> Copied!';
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-success');
+            
+            setTimeout(function() {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-primary');
+            }, 2000);
+        });
+    });
+    
+    // Download report functionality
+    document.getElementById('downloadCompliantBtn').addEventListener('click', function() {
+        const textContent = compliantReportText.innerText;
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `compliant_report_{{ report.id }}_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+});
+</script>
+
+{% endblock %}

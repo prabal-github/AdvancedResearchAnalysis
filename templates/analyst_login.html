@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyst Login - Investment Research Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+        }
+        .analyst-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        .btn-analyst {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        .btn-analyst:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="text-center">
+                <i class="fas fa-chart-line analyst-icon"></i>
+                <h2 class="mb-4">Analyst Portal</h2>
+                <p class="text-muted mb-4">Access your research workspace</p>
+                <!-- Primary CTAs banner -->
+                <div class="mt-2 p-3 rounded-3" style="background:#f1f5ff; border:1px solid #cfe0ff;">
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ url_for('register_analyst') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-user-tie me-2"></i>Analyst Registration
+                        </a>
+                        <a href="{{ url_for('investor_register') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-user-plus me-2"></i>Investor Registration
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-user me-2"></i>Email Address
+                    </label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">
+                        Remember me
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-analyst w-100 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+            </form>
+
+            <div class="text-center">
+                <small class="text-muted">
+                    <a href="{{ url_for('forgot_password') }}" class="text-decoration-none">Forgot password?</a>
+                    <br>
+                    <a href="/" class="text-decoration-none">← Back to Main Site</a>
+                </small>
+            </div>
+
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <small class="text-muted">
+                    Professional Research Platform for Financial Analysts
+                </small>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

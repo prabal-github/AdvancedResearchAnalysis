@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Integration Setup - Investment Research Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-connected { background-color: #28a745; }
+        .status-disconnected { background-color: #dc3545; }
+        .status-testing { background-color: #ffc107; }
+        .setup-steps {
+            counter-reset: step-counter;
+        }
+        .setup-step {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 30px;
+        }
+        .setup-step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark gradient-bg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fab fa-github me-2"></i>
+                GitHub Integration
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">
+                            <i class="fas fa-chart-line me-1"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="navbar-text">
+                            <i class="fas fa-user me-1"></i>{{ session.username }}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card card-hover gradient-bg">
+                    <div class="card-body text-center">
+                        <h1 class="card-title mb-3">
+                            <i class="fab fa-github fa-2x me-3"></i>
+                            GitHub Integration Setup
+                        </h1>
+                        <p class="card-text lead">Upload your analysis reports and data directly to GitHub repositories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plug me-2"></i>
+                            Connection Status
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="connection-status">
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator status-disconnected" id="status-indicator"></span>
+                                <span id="status-text">Not Connected</span>
+                                <button class="btn btn-outline-primary btn-sm ms-auto" onclick="testConnection()">
+                                    <i class="fas fa-sync me-1"></i>Test Connection
+                                </button>
+                            </div>
+                        </div>
+                        <div id="github-info" class="mt-3" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Username:</strong> <span id="github-username"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Name:</strong> <span id="github-name"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Public Repos:</strong> <span id="github-repos"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Instructions -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Setup Instructions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <h6>Create GitHub Personal Access Token</h6>
+                                <p>Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Personal Access Tokens</a> and create a new token with the following permissions:</p>
+                                <ul>
+                                    <li><code>repo</code> - Full control of private repositories</li>
+                                    <li><code>public_repo</code> - Access to public repositories</li>
+                                    <li><code>user</code> - Read user profile data</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="setup-step">
+                                <h6>Configure Token</h6>
+                                <p>Set your GitHub token in one of these ways:</p>
+                                <div class="alert alert-info">
+                                    <strong>Environment Variable (Recommended):</strong><br>
+                                    Set <code>GITHUB_TOKEN=your_token_here</code> in your environment variables
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>Config File (Testing only):</strong><br>
+                                    Edit <code>config.py</code> and set <code>GITHUB_TOKEN = "your_token_here"</code>
+                                </div>
+                            </div>
+                            
+                            <div class="setup-step">
+                                <h6>Test Connection</h6>
+                                <p>Click the "Test Connection" button above to verify your setup. Once connected, you'll be able to upload reports directly to GitHub.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Features
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Automatic repository creation
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Markdown report generation
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                JSON data backup
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Version control for reports
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Enhanced analysis included
+                            </li>
+                        </ul>
+                        
+                        <hr>
+                        
+                        <h6>Repository Structure</h6>
+                        <pre class="small"><code>analyst-reports-{analyst}-{symbol}-{type}/
+├── reports/
+│   └── {symbol}_{type}_{timestamp}.md
+└── data/
+    └── {symbol}_{type}_{timestamp}.json</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card card-hover mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Security Notes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <small>
+                                <strong>Important:</strong> Never commit your GitHub token to version control. 
+                                Use environment variables for production deployments.
+                            </small>
+                        </div>
+                        <div class="alert alert-info">
+                            <small>
+                                <strong>Privacy:</strong> Reports can be uploaded to private repositories 
+                                if your token has the appropriate permissions.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Test Section -->
+        <div class="row mt-4" id="upload-section" style="display: none;">
+            <div class="col-12">
+                <div class="card card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-upload me-2"></i>
+                            Test Upload
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Once connected, you can test uploading a report to GitHub. Go to any report page and look for the GitHub upload button.</p>
+                        <a href="/reports" class="btn btn-primary">
+                            <i class="fas fa-chart-line me-1"></i>
+                            View Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function testConnection() {
+            const statusIndicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            const githubInfo = document.getElementById('github-info');
+            const uploadSection = document.getElementById('upload-section');
+            
+            // Show testing state
+            statusIndicator.className = 'status-indicator status-testing';
+            statusText.textContent = 'Testing connection...';
+            
+            fetch('/api/github/test_connection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show connected state
+                    statusIndicator.className = 'status-indicator status-connected';
+                    statusText.textContent = 'Connected to GitHub';
+                    
+                    // Show GitHub info
+                    document.getElementById('github-username').textContent = data.username || 'N/A';
+                    document.getElementById('github-name').textContent = data.name || 'N/A';
+                    document.getElementById('github-repos').textContent = data.public_repos || '0';
+                    githubInfo.style.display = 'block';
+                    uploadSection.style.display = 'block';
+                } else {
+                    // Show disconnected state
+                    statusIndicator.className = 'status-indicator status-disconnected';
+                    statusText.textContent = `Connection failed: ${data.error}`;
+                    githubInfo.style.display = 'none';
+                    uploadSection.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                statusIndicator.className = 'status-indicator status-disconnected';
+                statusText.textContent = `Connection error: ${error.message}`;
+                githubInfo.style.display = 'none';
+                uploadSection.style.display = 'none';
+            });
+        }
+        
+        // Test connection on page load
+        document.addEventListener('DOMContentLoaded', testConnection);
+    </script>
+</body>
+</html>

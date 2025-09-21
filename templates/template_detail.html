@@ -1,0 +1,222 @@
+{% extends "layout.html" %}
+
+{% block title %}Template: {{ template.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .template-detail {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .section-header {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .template-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #007bff;
+    }
+    .field-item {
+        background: white;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .field-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .field-value {
+        color: #6c757d;
+        font-style: italic;
+    }
+    .btn-primary-gradient {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="template-detail">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-clipboard-list"></i> {{ template.name }}</h2>
+                        <p class="mb-0">{{ template.description }}</p>
+                    </div>
+                    <div>
+                        <span class="badge badge-light">{{ template.category.replace('_', ' ').title() }}</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Event Details Template -->
+                        <div class="template-section">
+                            <h4><i class="fas fa-calendar-alt text-primary"></i> Event Details Template</h4>
+                            {% if template.event_details_template %}
+                                {% set event_details = template.event_details_template | loads %}
+                                <div class="field-item">
+                                    <span class="field-label">Macro Triggers:</span>
+                                    <span class="field-value">{{ event_details.macro_triggers | join(', ') if event_details.macro_triggers else 'Not specified' }}</span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Timeframe Options:</span>
+                                    <span class="field-value">{{ event_details.timeframe_options | join(', ') if event_details.timeframe_options else 'Not specified' }}</span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Catalysts:</span>
+                                    <span class="field-value">{{ event_details.catalysts | join(', ') if event_details.catalysts else 'Not specified' }}</span>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No event details template defined</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Impact Metrics Template -->
+                        <div class="template-section">
+                            <h4><i class="fas fa-chart-line text-success"></i> Impact Metrics Template</h4>
+                            {% if template.impact_metrics_template %}
+                                {% set impact_metrics = template.impact_metrics_template | loads %}
+                                <div class="field-item">
+                                    <span class="field-label">EPS Impact Format:</span>
+                                    <span class="field-value">{{ impact_metrics.eps_impact_format or 'Not specified' }}</span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Margin Sensitivity:</span>
+                                    <span class="field-value">{{ impact_metrics.margin_sensitivity_format or 'Not specified' }}</span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Revenue Exposure:</span>
+                                    <span class="field-value">{{ impact_metrics.revenue_exposure_format or 'Not specified' }}</span>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No impact metrics template defined</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- Correlation Template -->
+                        <div class="template-section">
+                            <h4><i class="fas fa-project-diagram text-warning"></i> Correlation Template</h4>
+                            {% if template.correlation_template %}
+                                {% set correlations = template.correlation_template | loads %}
+                                <div class="field-item">
+                                    <span class="field-label">Sector Correlation:</span>
+                                    <span class="field-value">{{ correlations.sector_correlation or 'Not specified' }}</span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Cross-Asset Correlation:</span>
+                                    <span class="field-value">{{ correlations.cross_asset_correlation or 'Not specified' }}</span>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No correlation template defined</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confidence Template -->
+                        <div class="template-section">
+                            <h4><i class="fas fa-bullseye text-danger"></i> Confidence Template</h4>
+                            {% if template.confidence_template %}
+                                {% set confidence = template.confidence_template | loads %}
+                                <div class="field-item">
+                                    <span class="field-label">Probability Scenarios:</span>
+                                    <span class="field-value">
+                                        {% for scenario, value in confidence.probability_scenarios.items() %}
+                                            {{ scenario }}: {{ value }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <div class="field-item">
+                                    <span class="field-label">Confidence Levels:</span>
+                                    <span class="field-value">{{ confidence.confidence_levels | join(', ') if confidence.confidence_levels else 'Not specified' }}</span>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No confidence template defined</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template Metadata -->
+                <div class="template-section">
+                    <h4><i class="fas fa-info-circle text-info"></i> Template Information</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="field-item">
+                                <span class="field-label">Created By:</span>
+                                <span class="field-value">{{ template.created_by or 'Unknown' }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="field-item">
+                                <span class="field-label">Usage Count:</span>
+                                <span class="field-value">{{ template.usage_count }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="field-item">
+                                <span class="field-label">Created:</span>
+                                <span class="field-value">{{ template.created_at.strftime('%Y-%m-%d') if template.created_at else 'Unknown' }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="field-item">
+                                <span class="field-label">Status:</span>
+                                <span class="field-value">
+                                    {% if template.is_active %}
+                                        <span class="text-success">Active</span>
+                                    {% else %}
+                                        <span class="text-danger">Inactive</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('create_template_report', template_id=template.id) }}" class="btn-primary-gradient mr-3">
+                        <i class="fas fa-edit"></i> Create Report with This Template
+                    </a>
+                    <a href="{{ url_for('research_templates') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Templates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

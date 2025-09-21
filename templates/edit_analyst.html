@@ -1,0 +1,305 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Analyst - Admin Dashboard{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-section h5 {
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .password-toggle {
+        cursor: pointer;
+        color: #6c757d;
+    }
+    .password-toggle:hover {
+        color: #495057;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    Edit Analyst
+                </h2>
+                <p class="text-muted mb-0">Update analyst account details</p>
+            </div>
+            <a href="/admin/manage_analysts" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Manage Analysts
+            </a>
+        </div>
+
+        <!-- Edit Form -->
+        <form method="POST" id="editAnalystForm">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h5>
+                    <i class="bi bi-person me-2"></i>
+                    Basic Information
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ analyst.name }}" readonly>
+                        <div class="form-text">Username cannot be changed</div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="analyst_id" class="form-label">Analyst ID</label>
+                        <input type="text" class="form-control" id="analyst_id" name="analyst_id" 
+                               value="{{ analyst.analyst_id }}" readonly>
+                        <div class="form-text">Analyst ID cannot be changed</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Full Name *</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" 
+                           value="{{ analyst.full_name or analyst.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           value="{{ analyst.email }}" required>
+                </div>
+            </div>
+
+            <!-- Professional Details -->
+            <div class="form-section">
+                <h5>
+                    <i class="bi bi-briefcase me-2"></i>
+                    Professional Details
+                </h5>
+                
+                <div class="mb-3">
+                    <label for="specialization" class="form-label">Specialization</label>
+                    <input type="text" class="form-control" id="specialization" name="specialization" 
+                           value="{{ analyst.specialization or '' }}"
+                           placeholder="e.g., Technical Analysis, Fundamental Analysis">
+                </div>
+
+                <div class="mb-3">
+                    <label for="experience_years" class="form-label">Years of Experience</label>
+                    <input type="number" class="form-control" id="experience_years" name="experience_years" 
+                           value="{{ analyst.experience_years or 0 }}" min="0" max="50">
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="form-section">
+                <h5>
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Security Settings
+                </h5>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">New Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Leave blank to keep current password">
+                        <button class="btn btn-outline-secondary password-toggle" type="button" 
+                                onclick="togglePassword('password')">
+                            <i class="bi bi-eye" id="password-icon"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        Only enter a new password if you want to change it. Leave blank to keep the current password.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Confirm New Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                               placeholder="Confirm new password">
+                        <button class="btn btn-outline-secondary password-toggle" type="button" 
+                                onclick="togglePassword('confirm_password')">
+                            <i class="bi bi-eye" id="confirm_password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Status -->
+            <div class="form-section">
+                <h5>
+                    <i class="bi bi-gear me-2"></i>
+                    Account Status
+                </h5>
+                
+                <div class="mb-3">
+                    <div class="alert {% if analyst.is_active %}alert-success{% else %}alert-warning{% endif %}">
+                        <i class="bi bi-{% if analyst.is_active %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                        Account Status: <strong>{% if analyst.is_active %}Active{% else %}Inactive{% endif %}</strong>
+                    </div>
+                    <div class="form-text">
+                        Account status can be changed from the Manage Analysts page.
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Created</label>
+                        <p class="form-control-plaintext">{{ analyst.created_at.strftime('%Y-%m-%d %H:%M') if analyst.created_at else 'Unknown' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Login</label>
+                        <p class="form-control-plaintext">{{ analyst.last_login.strftime('%Y-%m-%d %H:%M') if analyst.last_login else 'Never' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>
+                        Update Analyst
+                    </button>
+                    <a href="/admin/manage_analysts" class="btn btn-secondary ms-2">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Cancel
+                    </a>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-warning" 
+                            onclick="toggleStatus('{{ analyst.id }}', '{{ analyst.name }}', {{ analyst.is_active|lower }})">
+                        <i class="bi bi-{% if analyst.is_active %}pause{% else %}play{% endif %} me-2"></i>
+                        {% if analyst.is_active %}Deactivate{% else %}Activate{% endif %} Account
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+<div id="messageContainer"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Password visibility toggle
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(fieldId + '-icon');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        field.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+
+// Form validation
+document.getElementById('editAnalystForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (password && password !== confirmPassword) {
+        e.preventDefault();
+        showAlert('danger', 'Passwords do not match');
+        return false;
+    }
+    
+    if (password && password.length < 6) {
+        e.preventDefault();
+        showAlert('danger', 'Password must be at least 6 characters long');
+        return false;
+    }
+});
+
+// Toggle account status
+function toggleStatus(analystId, analystName, currentStatus) {
+    const action = currentStatus ? 'deactivate' : 'activate';
+    
+    if (confirm(`Are you sure you want to ${action} analyst ${analystName}?`)) {
+        fetch(`/admin/analyst/${analystId}/toggle_status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({})
+        })
+        .then(async response => {
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Unexpected response (status ${response.status}).`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showAlert('success', data.message);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showAlert('danger', data.error || 'Failed to update analyst status');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('danger', 'An error occurred while updating analyst status');
+        });
+    }
+}
+
+// Show alert messages
+function showAlert(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.getElementById('messageContainer').appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Show existing flash messages
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            showAlert('{{ "danger" if category == "error" else category }}', '{{ message }}');
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</script>
+{% endblock %}

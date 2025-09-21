@@ -1,0 +1,148 @@
+{
+  "timestamp": "2025-09-10T22:15:22.216100",
+  "summary": {
+    "total_tests": 22,
+    "working": 22,
+    "not_working": 0,
+    "errors": 0,
+    "success_rate": 100.0
+  },
+  "results": {
+    "working": [
+      {
+        "name": "Main Page",
+        "url": "/",
+        "status": 200,
+        "response_size": 68432
+      },
+      {
+        "name": "VS Terminal AClass",
+        "url": "/vs_terminal_AClass",
+        "status": 200,
+        "response_size": 168349
+      },
+      {
+        "name": "Health Check",
+        "url": "/health",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Events Current",
+        "url": "/api/events/current",
+        "status": 200,
+        "response_size": 820
+      },
+      {
+        "name": "API Health",
+        "url": "/api/health",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Risk Management Status",
+        "url": "/api/vs_terminal_AClass/risk_management/status",
+        "status": 200,
+        "response_size": 365
+      },
+      {
+        "name": "Risk Management Dashboard",
+        "url": "/api/vs_terminal_AClass/risk_management/dashboard",
+        "status": 200,
+        "response_size": 36912
+      },
+      {
+        "name": "Comprehensive Risk Analysis",
+        "url": "/api/vs_terminal_AClass/risk_management/comprehensive_analysis",
+        "status": 200,
+        "response_size": 1322
+      },
+      {
+        "name": "AI Advisor Query",
+        "url": "/api/vs_terminal_AClass/risk_management/advisor_query",
+        "status": 200,
+        "response_size": 1313
+      },
+      {
+        "name": "Market Data",
+        "url": "/api/market_data",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Portfolio Summary",
+        "url": "/api/portfolio/summary",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Enhanced Analytics",
+        "url": "/api/enhanced/dashboard",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Model Catalog",
+        "url": "/api/models/catalog",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Predictions",
+        "url": "/api/enhanced/predict_events",
+        "status": 200,
+        "response_size": 23208
+      },
+      {
+        "name": "Investor Login Page",
+        "url": "/investor_login",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Investor Register Page",
+        "url": "/investor_register",
+        "status": 200,
+        "response_size": 68506
+      },
+      {
+        "name": "User Profile",
+        "url": "/api/user/profile",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Analysis Report",
+        "url": "/api/analysis/report",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Performance Analytics",
+        "url": "/api/performance/analytics",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Real-time Events",
+        "url": "/api/realtime/events",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Export Portfolio",
+        "url": "/api/export/portfolio",
+        "status": 200,
+        "response_size": 9017
+      },
+      {
+        "name": "Data Export",
+        "url": "/api/data/export",
+        "status": 200,
+        "response_size": 9017
+      }
+    ],
+    "not_working": [],
+    "errors": []
+  }
+}

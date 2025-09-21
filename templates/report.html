@@ -1,0 +1,894 @@
+{% extends "layout.html" %}
+{% block title %}Report {{ report.id }} - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">{{ report.topic or 'Report Details' }}</h1>
+        {% if report.sub_heading %}
+        <p class="text-muted mb-0">{{ report.sub_heading }}</p>
+        {% endif %}
+    </div>
+    <div>
+        <span class="badge bg-primary">ID: {{ report.id }}</span>
+    </div>
+    
+    
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="d-flex gap-2 mb-4">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+    <a href="/skill_learning/{{ report.id }}" class="btn btn-success">
+        <i class="bi bi-mortarboard-fill me-1"></i> Skill Learning Analysis
+    </a>
+    <a href="/enhanced_analysis/{{ report.id }}" class="btn btn-primary">
+        <i class="bi bi-shield-check me-1"></i> Enhanced Analysis
+    </a>
+    <a href="/ai_detection_analysis/{{ report.id }}" class="btn btn-secondary">
+        <i class="bi bi-robot me-1"></i> AI Detection
+    </a>
+    
+    <!-- GitHub Upload Button -->
+    <button class="btn btn-info" onclick="uploadToGitHub('{{ report.id }}')">
+        <i class="fab fa-github me-1"></i> Upload to GitHub
+    </button>
+    
+    <!-- LinkedIn Sharing Dropdown -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fab fa-linkedin me-1"></i> Share Report
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_for('public_report_view', report_id=report.id, _external=True) | urlencode }}" target="_blank">
+                    <i class="fab fa-linkedin me-2"></i>Share on LinkedIn
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#" onclick="copyReportLink('{{ url_for('public_report_view', report_id=report.id, _external=True) }}')">
+                    <i class="bi bi-clipboard me-2"></i>Copy Public Link
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="{{ url_for('public_report_view', report_id=report.id) }}" target="_blank">
+                    <i class="bi bi-box-arrow-up-right me-2"></i>View Public Page
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Report Analysis</h4>
+                        <span class="badge bg-primary fs-6">ID: {{ report.id }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Analyst</h6>
+                            <p class="fw-semibold">{{ report.analyst }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Created At</h6>
+                            <p class="fw-semibold">{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted">Tickers</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for ticker in report.tickers|loads %}
+                            <span class="badge bg-light text-dark border">{{ ticker }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Composite Quality Score -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">Composite Quality Score</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-3" style="height: 30px;">
+                                {% set score_percentage = (analysis.quality_score or 85) %}
+                                <div class="progress-bar 
+                                    {% if (analysis.quality_score or 85) >= 80 %}bg-success
+                                    {% elif (analysis.quality_score or 85) >= 60 %}bg-warning
+                                    {% else %}bg-danger{% endif %}" 
+                                    role="progressbar" 
+                                    style="width: {{ score_percentage }}%" 
+                                    aria-valuenow="{{ score_percentage }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                            <span class="fw-bold fs-4">{{ score_percentage | round(1) }}%</span>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown Chart -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">Score Breakdown</h6>
+                        <div style="height: 400px;">
+                            <canvas id="scoreBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plagiarism Detection Results -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>Plagiarism Detection
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            {% set plagiarism_score = report.plagiarism_score or 0.0 if report.plagiarism_score is defined else 0.0 %}
+                            {% if plagiarism_score < 0.3 %}
+                                <span class="badge bg-success">Clean</span>
+                            {% elif plagiarism_score < 0.7 %}
+                                <span class="badge bg-warning">Moderate Similarity</span>
+                            {% else %}
+                                <span class="badge bg-danger">High Similarity</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Overall Similarity Score</h6>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                    {% set similarity_percentage = (plagiarism_score * 100) %}
+                                    {% if similarity_percentage < 30 %}
+                                        {% set progress_class = "bg-success" %}
+                                    {% elif similarity_percentage < 70 %}
+                                        {% set progress_class = "bg-warning" %}
+                                    {% else %}
+                                        {% set progress_class = "bg-danger" %}
+                                    {% endif %}
+                                    <div class="progress-bar {{ progress_class }}" 
+                                         role="progressbar" 
+                                         style="width: {{ similarity_percentage }}%" 
+                                         aria-valuenow="{{ similarity_percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <span class="fw-bold">{{ similarity_percentage | round(1) }}%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Detection Status</h6>
+                            <p class="fw-semibold mb-0">
+                                {% if report.plagiarism_checked is defined and report.plagiarism_checked %}
+                                    <i class="bi bi-check-circle text-success me-1"></i>Checked
+                                {% else %}
+                                    <i class="bi bi-x-circle text-warning me-1"></i>Not Checked
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Plagiarism Matches -->
+                    <div id="plagiarismMatches">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-muted mb-0">Potential Matches</h6>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-2" onclick="loadPlagiarismDetails('{{ report.id }}')">
+                                    <i class="bi bi-search me-1"></i>View Details
+                                </button>
+                                <a href="/plagiarism_analysis/{{ report.id }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-shield-exclamation me-1"></i>Full Analysis
+                                </a>
+                            </div>
+                        </div>
+                        <div id="plagiarismMatchesList">
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-hourglass-split"></i>
+                                <small>Loading plagiarism analysis...</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OHLC Chart -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">OHLC Price Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <div id="ohlcChart" style="height: 500px;"></div>
+                </div>
+            </div>
+
+            <!-- Backtesting Results for Indian Stocks -->
+            {% if analysis.backtest_results %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        Indian Stock Backtesting Results 
+                        <span class="badge bg-info ms-2">{{ analysis.backtest_results|length }} Stocks</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for ticker, data in analysis.backtest_results.items() %}
+                    <!-- Skip old format entries like 'ohlc_data' and 'target_achievement' -->
+                    {% if ticker not in ['ohlc_data', 'target_achievement'] and data is mapping and 'current_price' in data %}
+                    <div class="card border mb-3">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 fw-bold">{{ ticker }}</h6>
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-{% if data.get('performance_category') == 'Excellent' %}success{% elif data.get('performance_category') == 'Good' %}primary{% elif data.get('performance_category') == 'Positive' %}warning{% else %}danger{% endif %}">
+                                        {{ data.get('performance_category', 'Unknown') }}
+                                    </span>
+                                    <span class="badge bg-{% if data.get('momentum') == 'Bullish' %}success{% elif data.get('momentum') == 'Bearish' %}danger{% else %}secondary{% endif %}">
+                                        {{ data.get('momentum', 'Neutral') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <!-- Price Information -->
+                                <div class="col-md-3">
+                                    <h6 class="text-muted mb-2">Price Data</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Current Price</small>
+                                        <div class="fw-bold">₹{{ "%.2f"|format(data.current_price) }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">52W High</small>
+                                        <div class="fw-bold text-success">₹{{ "%.2f"|format(data.get('52w_high', data.current_price * 1.2)) }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">52W Low</small>
+                                        <div class="fw-bold text-danger">₹{{ "%.2f"|format(data.get('52w_low', data.current_price * 0.8)) }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Price Change</small>
+                                        <div class="fw-bold {% if data.get('price_change_percent', 0) > 0 %}text-success{% elif data.get('price_change_percent', 0) < 0 %}text-danger{% else %}text-muted{% endif %}">
+                                            {{ data.get('price_change_percent', 0) }}%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Performance Metrics -->
+                                <div class="col-md-3">
+                                    <h6 class="text-muted mb-2">Performance</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Target Achievement</small>
+                                        <div class="fw-bold {% if data.get('target_achievement', 0) >= 0.9 %}text-success{% elif data.get('target_achievement', 0) >= 0.7 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ (data.get('target_achievement', 0) * 100) | round(1) }}%
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Expected Return</small>
+                                        <div class="fw-bold">{{ (data.get('expected_return', 0) * 100) | round(1) }}%</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Sharpe Ratio</small>
+                                        <div class="fw-bold">{{ data.get('sharpe_ratio', 'N/A') }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Beta</small>
+                                        <div class="fw-bold">{{ data.get('beta', 'N/A') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Risk Assessment -->
+                                <div class="col-md-3">
+                                    <h6 class="text-muted mb-2">Risk Analysis</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Risk Level</small>
+                                        <div class="fw-bold">
+                                            <span class="badge bg-{% if data.get('risk_level') == 'Low' %}success{% elif data.get('risk_level') == 'Medium' %}warning{% else %}danger{% endif %}">
+                                                {{ data.get('risk_level', 'Unknown') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Volatility</small>
+                                        <div class="fw-bold">{{ (data.get('volatility', 0) * 100) | round(2) }}%</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">VaR (95%)</small>
+                                        <div class="fw-bold text-warning">₹{{ data.get('var_95', 'N/A') }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Support Level</small>
+                                        <div class="fw-bold">₹{{ data.get('support_level', 'N/A') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Market Data -->
+                                <div class="col-md-3">
+                                    <h6 class="text-muted mb-2">Market Data</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Liquidity</small>
+                                        <div class="fw-bold">
+                                            <span class="badge bg-{% if data.get('liquidity') == 'High' %}success{% elif data.get('liquidity') == 'Medium' %}primary{% else %}warning{% endif %}">
+                                                {{ data.get('liquidity', 'Unknown') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Avg Volume</small>
+                                        <div class="fw-bold">{{ "{:,}".format(data.get('avg_volume', 0)) }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Resistance Level</small>
+                                        <div class="fw-bold">₹{{ data.get('resistance_level', 'N/A') }}</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Data Quality</small>
+                                        <div class="fw-bold">
+                                            <span class="badge bg-{% if data.get('data_quality') == 'Good' %}success{% elif data.get('data_quality') == 'Limited' %}warning{% else %}danger{% endif %}">
+                                                {{ data.get('data_quality', 'Unknown') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Backtesting Results</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up fs-1 text-muted d-block mb-2"></i>
+                    <p class="text-muted">No Indian stocks (.NS) found in the report for backtesting analysis.</p>
+                    <small class="text-muted">Only Indian stocks with .NS suffix are analyzed for backtesting.</small>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quality Metrics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Quality Metrics</h5>
+                </div>
+                <div class="card-body">
+                    {% set metrics = [
+                        ('factual_accuracy', 'Factual Accuracy', 'bi-check-circle', 'primary'),
+                        ('predictive_power', 'Predictive Power', 'bi-graph-up', 'success'),
+                        ('bias_score', 'Bias Score', 'bi-sliders', 'warning'),
+                        ('originality', 'Originality', 'bi-lightbulb', 'info'),
+                        ('risk_disclosure', 'Risk Disclosure', 'bi-exclamation-triangle', 'danger'),
+                        ('transparency', 'Transparency', 'bi-eye', 'purple')
+                    ] %}
+                    
+                    {% for metric_key, metric_name, icon, color in metrics %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0 me-3">
+                            <span class="symbol symbol-35px">
+                                <span class="symbol-label bg-light-{{ color }} text-{{ color }}">
+                                    <i class="bi {{ icon }}"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold">{{ metric_name }}</span>
+                                {% set _scores = analysis.get('scores', {}) %}
+                                {% set value = _scores.get(metric_key, analysis.get(metric_key)) %}
+                                <span class="badge bg-light text-dark">
+                                    {% if value is not none %}
+                                        {% set metric_percentage = (value * 100) %}
+                                        {{ metric_percentage | round(1) }}%
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if value is not none %}
+                            <div class="progress mt-1" style="height: 6px;">
+                                {% if metric_key == 'bias_score' %}
+                                    {% set progress_width = ((1 - (value|abs)) * 100) %}
+                                {% else %}
+                                    {% set progress_width = (value * 100) %}
+                                {% endif %}
+                                <div class="progress-bar bg-{{ color }}" style="width: {{ progress_width }}%"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sentiment Trend -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Sentiment Trend</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 250px;">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flagged Alerts -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Flagged Alerts</h5>
+                </div>
+                <div class="card-body">
+                    {% set alerts = [] %}
+                    {% set _scores = analysis.get('scores', {}) %}
+                    {% set risk_val = _scores.get('risk_disclosure', analysis.get('risk_disclosure')) %}
+                    {% set bias_val = _scores.get('bias_score', analysis.get('bias_score')) %}
+                    {% set pred_val = _scores.get('predictive_power', analysis.get('predictive_power')) %}
+                    {% if risk_val is not none and risk_val < 0.4 %}
+                        {% set _ = alerts.append(('warning', 'Low Risk Disclosure', 'Risk disclosure score is below 40%')) %}
+                    {% endif %}
+                    {% if bias_val is not none and bias_val < -0.5 %}
+                        {% set _ = alerts.append(('danger', 'High Negative Bias', 'Bias score indicates strong negative sentiment')) %}
+                    {% endif %}
+                    {% if pred_val is not none and pred_val > 0.8 %}
+                        {% set _ = alerts.append(('success', 'Strong Predictive Power', 'Predictive power above 80%')) %}
+                    {% endif %}
+                    
+                    {% if alerts %}
+                        {% for alert_type, title, description in alerts %}
+                        <div class="alert alert-{{ alert_type }} d-flex align-items-center mb-2">
+                            <i class="bi bi-{% if alert_type == 'success' %}check-circle{% elif alert_type == 'warning' %}exclamation-triangle{% else %}x-circle{% endif %} me-2"></i>
+                            <div>
+                                <div class="fw-semibold">{{ title }}</div>
+                                <small>{{ description }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+                            <p>No alerts triggered</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .symbol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+    .symbol.symbol-circle {
+        border-radius: 50%;
+    }
+    .symbol.symbol-35px {
+        width: 35px;
+        height: 35px;
+    }
+    .symbol-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        width: 100%;
+        height: 100%;
+    }
+    .bg-light-primary { background-color: rgba(13, 110, 253, 0.1) !important; }
+    .bg-light-success { background-color: rgba(25, 135, 84, 0.1) !important; }
+    .bg-light-warning { background-color: rgba(255, 193, 7, 0.1) !important; }
+    .bg-light-info { background-color: rgba(13, 202, 240, 0.1) !important; }
+    .bg-light-danger { background-color: rgba(220, 53, 69, 0.1) !important; }
+    .bg-light-purple { background-color: rgba(111, 66, 193, 0.1) !important; }
+    .text-purple { color: #6f42c1 !important; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get analysis data
+    const analysisData = JSON.parse('{{ analysis | tojson | safe }}');
+    
+    // Score Breakdown Chart
+    const scoreCtx = document.getElementById('scoreBreakdownChart').getContext('2d');
+    
+    const scoreData = {
+        labels: ['Factual Accuracy', 'Predictive Power', 'Bias Score', 'Originality', 'Risk Disclosure', 'Transparency'],
+        datasets: [{
+            label: 'Quality Scores',
+            data: [
+                (analysisData.scores.factual_accuracy * 100).toFixed(1),
+                (analysisData.scores.predictive_power * 100).toFixed(1),
+                (Math.abs(analysisData.scores.bias_score) * 100).toFixed(1),
+                (analysisData.scores.originality * 100).toFixed(1),
+                (analysisData.scores.risk_disclosure * 100).toFixed(1),
+                (analysisData.scores.transparency * 100).toFixed(1)
+            ],
+            backgroundColor: [
+                'rgba(13, 110, 253, 0.8)',
+                'rgba(25, 135, 84, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(13, 202, 240, 0.8)',
+                'rgba(220, 53, 69, 0.8)',
+                'rgba(111, 66, 193, 0.8)'
+            ],
+            borderColor: [
+                'rgba(13, 110, 253, 1)',
+                'rgba(25, 135, 84, 1)',
+                'rgba(255, 193, 7, 1)',
+                'rgba(13, 202, 240, 1)',
+                'rgba(220, 53, 69, 1)',
+                'rgba(111, 66, 193, 1)'
+            ],
+            borderWidth: 2
+        }]
+    };
+
+    new Chart(scoreCtx, {
+        type: 'radar',
+        data: scoreData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Sentiment Trend Chart
+    const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+    
+    // Generate sample sentiment data based on bias score
+    const biasScore = analysisData.scores.bias_score;
+    const sentimentData = [];
+    const labels = [];
+    
+    for (let i = 0; i < 7; i++) {
+        labels.push('Day ' + (i + 1));
+        sentimentData.push((biasScore + Math.random() * 0.4 - 0.2) * 100);
+    }
+
+    new Chart(sentimentCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sentiment Score',
+                data: sentimentData,
+                borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: -100,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // OHLC Chart using Plotly
+    const tickersData = {{ report.tickers | safe }};
+    const analysisDataStr = '{{ analysis | tojson | safe }}';
+    let analysisData;
+    
+    try {
+        analysisData = JSON.parse(analysisDataStr);
+    } catch (e) {
+        console.error('Error parsing analysis data:', e);
+        analysisData = { backtest_results: {} };
+    }
+    
+    let tickers = [];
+    try {
+        tickers = JSON.parse(tickersData);
+    } catch (e) {
+        console.error('Error parsing tickers:', e);
+        tickers = [];
+    }
+    
+    if (tickers && tickers.length > 0 && analysisData.backtest_results) {
+        const traces = [];
+        
+        tickers.forEach(function(ticker, index) {
+            if (analysisData.backtest_results[ticker]) {
+                const data = analysisData.backtest_results[ticker];
+                traces.push({
+                    x: ['52W Low', 'Current Price', '52W High'],
+                    y: [data['52w_low'], data.current_price, data['52w_high']],
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: ticker,
+                    line: {
+                        color: ['#007bff', '#28a745', '#dc3545', '#ffc107', '#6f42c1'][index % 5],
+                        width: 3
+                    },
+                    marker: {
+                        size: 8
+                    }
+                });
+            }
+        });
+
+        if (traces.length > 0) {
+            const layout = {
+                title: {
+                    text: 'Stock Price Analysis',
+                    font: { size: 16 }
+                },
+                xaxis: { 
+                    title: 'Price Points',
+                    titlefont: { size: 14 }
+                },
+                yaxis: { 
+                    title: 'Price ($)',
+                    titlefont: { size: 14 }
+                },
+                showlegend: true,
+                legend: {
+                    x: 0,
+                    y: 1
+                },
+                margin: { t: 50, r: 50, b: 50, l: 50 },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)'
+            };
+
+            Plotly.newPlot('ohlcChart', traces, layout, {responsive: true});
+        } else {
+            document.getElementById('ohlcChart').innerHTML = '<div class="text-center text-muted p-4"><i class="bi bi-graph-up fs-1 d-block mb-2"></i><p>No stock data available for visualization</p></div>';
+        }
+    } else {
+        document.getElementById('ohlcChart').innerHTML = '<div class="text-center text-muted p-4"><i class="bi bi-graph-up fs-1 d-block mb-2"></i><p>No tickers found in report</p></div>';
+    }
+
+    // Load plagiarism detection results
+    loadPlagiarismDetails('{{ report.id }}');
+});
+
+// Plagiarism Detection Functions
+function loadPlagiarismDetails(reportId) {
+    fetch(`/api/plagiarism_check/${reportId}`)
+        .then(response => response.json())
+        .then(data => {
+            updatePlagiarismDisplay(data);
+        })
+        .catch(error => {
+            console.error('Error loading plagiarism details:', error);
+            document.getElementById('plagiarismMatchesList').innerHTML = 
+                '<div class="text-center text-muted py-3"><i class="bi bi-exclamation-triangle text-warning"></i> <small>Error loading plagiarism analysis</small></div>';
+        });
+}
+
+function updatePlagiarismDisplay(data) {
+    const container = document.getElementById('plagiarismMatchesList');
+    
+    if (!data.matches || data.matches.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-success py-3">
+                <i class="bi bi-shield-check fs-3 text-success d-block mb-2"></i>
+                <p class="mb-0">No plagiarism detected</p>
+                <small class="text-muted">This report appears to be original content</small>
+            </div>
+        `;
+        return;
+    }
+    
+    let matchesHtml = '';
+    data.matches.forEach((match, index) => {
+        const similarityPercentage = (match.similarity_score * 100).toFixed(1);
+        const badgeClass = match.similarity_score > 0.8 ? 'bg-danger' : 
+                          match.similarity_score > 0.6 ? 'bg-warning' : 'bg-info';
+        
+        matchesHtml += `
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h6 class="mb-1">Match ${index + 1}: ${match.matched_analyst}</h6>
+                        <small class="text-muted">Report ID: ${match.matched_report_id}</small>
+                    </div>
+                    <span class="badge ${badgeClass}">${similarityPercentage}% Similar</span>
+                </div>
+                
+                <div class="mb-2">
+                    <small class="text-muted">Detection Method: ${match.match_type}</small>
+                </div>
+                
+                ${match.matched_segments && match.matched_segments.length > 0 ? `
+                    <div class="mt-3">
+                        <small class="text-muted fw-semibold">Similar Segments:</small>
+                        <div class="mt-2">
+                            ${match.matched_segments.slice(0, 2).map(segment => `
+                                <div class="bg-light p-2 rounded mb-2 small">
+                                    <div class="mb-1"><strong>Similarity:</strong> ${(segment.similarity * 100).toFixed(1)}%</div>
+                                    <div class="text-truncate" title="${segment.text1}">
+                                        <strong>Current:</strong> ${segment.text1.substring(0, 100)}...
+                                    </div>
+                                    <div class="text-truncate" title="${segment.text2}">
+                                        <strong>Match:</strong> ${segment.text2.substring(0, 100)}...
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="showFullMatch('${match.matched_report_id}')">
+                        <i class="bi bi-eye me-1"></i>View Full Report
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = matchesHtml;
+}
+
+function showFullMatch(reportId) {
+    // Open the matched report in a new tab
+    window.open(`/report/${reportId}`, '_blank');
+}
+
+// LinkedIn Sharing Function for Report Page
+function copyReportLink(url) {
+    navigator.clipboard.writeText(url).then(function() {
+        // Show success notification
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            <i class="bi bi-check-circle me-2"></i>
+            Public report link copied to clipboard!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 3000);
+    }).catch(function() {
+        alert('Failed to copy link. Please copy the URL manually.');
+    });
+}
+
+// GitHub Upload Function
+function uploadToGitHub(reportId) {
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Uploading...';
+    button.disabled = true;
+
+    fetch('/api/github/upload_report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            report_id: reportId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Success!</strong> Report uploaded to GitHub: 
+                <a href="${data.repo_url}" target="_blank" class="alert-link">${data.repo_name}</a>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        } else {
+            // Show error message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Error!</strong> ${data.error}
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    })
+    .catch(error => {
+        // Show error message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Error!</strong> Failed to upload: ${error.message}
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    })
+    .finally(() => {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+</script>
+{% endblock %}

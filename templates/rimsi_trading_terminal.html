@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIMSI Trading Terminal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0a0e27;
+            --secondary-dark: #1e2139;
+            --accent-blue: #00d4ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff4757;
+            --accent-yellow: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #b4b7c9;
+            --border-color: #2c3248;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .terminal-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header header"
+                "sidebar main rightpanel";
+            height: 100vh;
+            gap: 1px;
+            background-color: var(--border-color);
+        }
+
+        .terminal-header {
+            grid-area: header;
+            background: var(--secondary-dark);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .terminal-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .terminal-sidebar {
+            grid-area: sidebar;
+            background: var(--secondary-dark);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .terminal-main {
+            grid-area: main;
+            background: var(--primary-dark);
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .terminal-rightpanel {
+            grid-area: rightpanel;
+            background: var(--secondary-dark);
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .agent-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--accent-green);
+        }
+
+        .performance-badge {
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .portfolio-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .portfolio-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .positive { color: var(--accent-green); }
+        .negative { color: var(--accent-red); }
+        .neutral { color: var(--accent-blue); }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .insight-card.warning {
+            border-left-color: var(--accent-yellow);
+        }
+
+        .insight-card.success {
+            border-left-color: var(--accent-green);
+        }
+
+        .insight-card.danger {
+            border-left-color: var(--accent-red);
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .insight-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .insight-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .command-interface {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .command-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            padding: 15px;
+            outline: none;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-terminal {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-green));
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-terminal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .market-status {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .market-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .market-index {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .market-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .market-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .scrollbar-custom {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) var(--secondary-dark);
+        }
+
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: var(--secondary-dark);
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 1200px) {
+            .terminal-container {
+                grid-template-columns: 260px 1fr 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .terminal-container {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "main";
+            }
+            
+            .terminal-sidebar,
+            .terminal-rightpanel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <!-- Header -->
+        <header class="terminal-header">
+            <div class="terminal-logo">
+                <i class="fas fa-chart-line fa-2x" style="color: var(--accent-blue);"></i>
+                <h1>RIMSI Trading Terminal</h1>
+            </div>
+            <div class="terminal-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Live Market Data</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" style="background: var(--accent-green);"></div>
+                    <span>AI Agents Active</span>
+                </div>
+                <span class="text-secondary">Welcome, {{ investor_id }}</span>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="terminal-sidebar scrollbar-custom">
+            <div class="section-title">
+                <i class="fas fa-robot"></i> AI Agents
+            </div>
+            
+            <!-- Alpha Trader Agent -->
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-name">Alpha Trader</div>
+                    <div class="agent-status">
+                        <div class="status-dot"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="performance-badge">{{ ai_agents_status.alpha_trader.performance }}</div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    Momentum & fundamental analysis specialist
+                </p>
+            </div>
+
+            <!-- Beta Optimizer Agent -->
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-name">Beta Optimizer</div>
+                    <div class="agent-status">
+                        <div class="status-dot"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="performance-badge">{{ ai_agents_status.beta_optimizer.performance }}</div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    Risk-adjusted returns optimization
+                </p>
+            </div>
+
+            <!-- Gamma Scanner Agent -->
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-name">Gamma Scanner</div>
+                    <div class="agent-status">
+                        <div class="status-dot"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="performance-badge">{{ ai_agents_status.gamma_scanner.performance }}</div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                    Technical patterns & breakout detection
+                </p>
+            </div>
+
+            <div class="section-title" style="margin-top: 30px;">
+                <i class="fas fa-briefcase"></i> Connected Portfolios
+            </div>
+            
+            {% if connected_portfolios %}
+                {% for portfolio in connected_portfolios %}
+                <div class="agent-card">
+                    <div class="agent-name">{{ portfolio.name }}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">
+                        Value: ₹{{ "{:,.2f}".format(portfolio.current_value) }}
+                    </div>
+                    <div style="font-size: 12px; margin-top: 5px;" 
+                         class="{% if portfolio.total_pnl_percent > 0 %}positive{% elif portfolio.total_pnl_percent < 0 %}negative{% else %}neutral{% endif %}">
+                        P&L: {{ "{:+.2f}".format(portfolio.total_pnl_percent) }}%
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <i class="fas fa-info-circle"></i>
+                    <p style="margin-top: 10px;">No portfolios connected</p>
+                    <a href="{{ url_for('rimsi_trading_terminal_portfolio') }}" class="btn-terminal" style="margin-top: 15px; text-decoration: none; display: inline-block;">
+                        Connect Portfolio
+                    </a>
+                </div>
+            {% endif %}
+        </aside>
+
+        <!-- Main Content -->
+        <main class="terminal-main scrollbar-custom">
+            <!-- Market Status -->
+            <div class="market-status">
+                <div class="market-card">
+                    <div class="market-index">NIFTY 50</div>
+                    <div class="market-value" id="nifty-value">20,085.50</div>
+                    <div class="market-change positive" id="nifty-change">+1.2 (+0.06%)</div>
+                </div>
+                <div class="market-card">
+                    <div class="market-index">BANK NIFTY</div>
+                    <div class="market-value" id="banknifty-value">45,280.25</div>
+                    <div class="market-change positive" id="banknifty-change">+2.5 (+0.06%)</div>
+                </div>
+                <div class="market-card">
+                    <div class="market-index">VIX</div>
+                    <div class="market-value" id="vix-value">15.25</div>
+                    <div class="market-change negative" id="vix-change">-0.3 (-1.93%)</div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-button active" onclick="showTab('overview')">
+                    <i class="fas fa-chart-area"></i> Overview
+                </button>
+                <button class="tab-button" onclick="showTab('analysis')">
+                    <i class="fas fa-brain"></i> AI Analysis
+                </button>
+                <button class="tab-button" onclick="showTab('predictions')">
+                    <i class="fas fa-crystal-ball"></i> Predictions
+                </button>
+                <button class="tab-button" onclick="showTab('backtest')">
+                    <i class="fas fa-history"></i> Backtest
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="overview" class="tab-content active">
+                <div class="portfolio-card">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">Portfolio Performance Overview</div>
+                    </div>
+                    
+                    {% if connected_portfolios %}
+                        {% for portfolio in connected_portfolios %}
+                        <div class="portfolio-metrics">
+                            <div class="metric-item">
+                                <div class="metric-value positive">₹{{ "{:,.2f}".format(portfolio.current_value) }}</div>
+                                <div class="metric-label">Current Value</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value {{ 'positive' if portfolio.total_pnl > 0 else 'negative' if portfolio.total_pnl < 0 else 'neutral' }}">
+                                    {{ "{:+.2f}".format(portfolio.total_pnl_percent) }}%
+                                </div>
+                                <div class="metric-label">Total P&L</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class="fas fa-chart-line fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                            <h3>No Connected Portfolios</h3>
+                            <p>Connect your portfolio to see performance metrics and AI insights</p>
+                            <a href="{{ url_for('rimsi_trading_terminal_portfolio') }}" class="btn-terminal" style="margin-top: 20px; text-decoration: none;">
+                                <i class="fas fa-plus"></i> Connect Portfolio
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="chart-container">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chart-line fa-3x" style="opacity: 0.3;"></i>
+                        <p style="margin-top: 15px;">Portfolio Performance Chart</p>
+                        <small>(Chart integration in progress)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis" class="tab-content">
+                <div class="portfolio-card">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">AI Agent Analysis</div>
+                        <button class="btn-terminal" onclick="runAnalysis()">
+                            <i class="fas fa-sync"></i> Refresh Analysis
+                        </button>
+                    </div>
+                    
+                    <div id="analysis-results">
+                        {% if connected_portfolios %}
+                            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+                                <p>AI agents analyzing your portfolio...</p>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                <i class="fas fa-robot fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                                <h3>AI Analysis Unavailable</h3>
+                                <p>Connect a portfolio to enable AI-powered analysis</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="predictions" class="tab-content">
+                <div class="portfolio-card">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">ML Ensemble Predictions</div>
+                        <button class="btn-terminal" onclick="generatePredictions()">
+                            <i class="fas fa-magic"></i> Generate Predictions
+                        </button>
+                    </div>
+                    
+                    <div id="predictions-results">
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class="fas fa-crystal-ball fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                            <h3>ML Predictions</h3>
+                            <p>Advanced ensemble models ready to analyze market opportunities</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="backtest" class="tab-content">
+                <div class="portfolio-card">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">Ensemble Backtesting</div>
+                        <button class="btn-terminal" onclick="runBacktest()">
+                            <i class="fas fa-play"></i> Run Backtest
+                        </button>
+                    </div>
+                    
+                    <div id="backtest-results">
+                        {% if active_ensembles %}
+                            {% for ensemble in active_ensembles %}
+                            <div class="agent-card">
+                                <div class="agent-header">
+                                    <div class="agent-name">{{ ensemble.name }}</div>
+                                    <div class="performance-badge">
+                                        {% if ensemble.backtest_returns %}
+                                            {{ "{:.1f}".format(ensemble.backtest_returns) }}% Return
+                                        {% else %}
+                                            Ready
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <p style="font-size: 12px; color: var(--text-secondary);">
+                                    {{ ensemble.description }}
+                                </p>
+                                {% if ensemble.backtest_sharpe %}
+                                <div style="margin-top: 10px; font-size: 12px;">
+                                    <span style="color: var(--accent-blue);">Sharpe:</span> {{ "{:.2f}".format(ensemble.backtest_sharpe) }}
+                                    {% if ensemble.backtest_max_drawdown %}
+                                    <span style="margin-left: 15px; color: var(--accent-red);">Max DD:</span> {{ "{:.1f}".format(ensemble.backtest_max_drawdown) }}%
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                <i class="fas fa-history fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                                <h3>No Active Ensembles</h3>
+                                <p>Create an ensemble model to run backtests</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Command Interface -->
+            <div class="command-interface">
+                <div class="section-title">
+                    <i class="fas fa-terminal"></i> AI Command Interface
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="command-input" placeholder="Ask AI: 'What are the best stocks to buy today?' or 'Analyze my portfolio risk'..." id="aiCommand">
+                    <button class="btn-terminal" onclick="processAICommand()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div id="ai-response" style="margin-top: 15px; min-height: 60px; color: var(--text-secondary); font-family: 'Courier New', monospace; font-size: 14px;">
+                    <div style="opacity: 0.6;">
+                        <i class="fas fa-info-circle"></i> AI Assistant ready. Type your query above or use voice commands.
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="terminal-rightpanel scrollbar-custom">
+            <div class="section-title">
+                <i class="fas fa-lightbulb"></i> AI Insights
+            </div>
+            
+            {% if recent_insights %}
+                {% for insight in recent_insights %}
+                <div class="insight-card {{ insight.priority if insight.priority in ['warning', 'success', 'danger'] else '' }}">
+                    <div class="insight-title">{{ insight.title }}</div>
+                    <div class="insight-description">{{ insight.description }}</div>
+                    <div class="insight-meta">
+                        <span>{{ insight.agent_name }}</span>
+                        <span>{{ insight.created_at.strftime('%H:%M') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <i class="fas fa-brain fa-2x" style="opacity: 0.5; margin-bottom: 15px;"></i>
+                    <p>No recent insights</p>
+                    <p style="font-size: 12px; margin-top: 10px;">Connect a portfolio to receive AI-powered insights</p>
+                </div>
+            {% endif %}
+
+            <div class="section-title" style="margin-top: 30px;">
+                <i class="fas fa-chart-bar"></i> Market Scan
+            </div>
+            
+            <div class="agent-card">
+                <div class="agent-name">Momentum Stocks</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin: 8px 0;">
+                    High-moving stocks with volume surge
+                </div>
+                <button class="btn-terminal" style="width: 100%; font-size: 12px;" onclick="scanMarket('momentum')">
+                    <i class="fas fa-search"></i> Scan Now
+                </button>
+            </div>
+
+            <div class="agent-card">
+                <div class="agent-name">Value Opportunities</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin: 8px 0;">
+                    Undervalued stocks with good fundamentals
+                </div>
+                <button class="btn-terminal" style="width: 100%; font-size: 12px;" onclick="scanMarket('value')">
+                    <i class="fas fa-search"></i> Scan Now
+                </button>
+            </div>
+
+            <div class="agent-card">
+                <div class="agent-name">Breakout Patterns</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin: 8px 0;">
+                    Technical breakout opportunities
+                </div>
+                <button class="btn-terminal" style="width: 100%; font-size: 12px;" onclick="scanMarket('breakout')">
+                    <i class="fas fa-search"></i> Scan Now
+                </button>
+            </div>
+
+            <div class="section-title" style="margin-top: 30px;">
+                <i class="fas fa-bell"></i> Live Alerts
+            </div>
+            
+            <div id="live-alerts">
+                <div style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                    <i class="fas fa-bell-slash" style="opacity: 0.5;"></i>
+                    <p style="font-size: 12px; margin-top: 8px;">No active alerts</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentTab = 'overview';
+        let updateInterval;
+
+        // Initialize terminal
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTerminal();
+            startRealTimeUpdates();
+        });
+
+        function initializeTerminal() {
+            console.log('RIMSI Trading Terminal initialized');
+            
+            // Initialize demo data if needed
+            initializeDemoData();
+            
+            // Add Enter key listener for AI command
+            document.getElementById('aiCommand').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processAICommand();
+                }
+            });
+            
+            // Load connected portfolios
+            loadConnectedPortfolios();
+        }
+
+        function initializeDemoData() {
+            fetch('/api/trading_terminal/initialize_demo_data')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Demo data initialized:', data.message);
+                        // Update portfolios count
+                        updatePortfoliosCount();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error initializing demo data:', error);
+                });
+        }
+
+        function updatePortfoliosCount() {
+            // Update connected portfolios count
+            const portfoliosCountElement = document.getElementById('portfolios-count');
+            if (portfoliosCountElement) {
+                portfoliosCountElement.textContent = '{{ connected_portfolios|length if connected_portfolios else 3 }}';
+            }
+        }
+
+        function loadConnectedPortfolios() {
+            // Load and display connected portfolios in the sidebar
+            fetch('/api/trading_terminal/portfolio_data/1')  // Demo portfolio ID
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayPortfolioSummary(data.portfolio);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading portfolios:', error);
+                });
+        }
+
+        function displayPortfolioSummary(portfolio) {
+            // Update portfolio summary in the overview tab
+            const overviewContent = document.getElementById('overview-content');
+            if (overviewContent) {
+                const portfolioHtml = `
+                    <div class="portfolio-summary">
+                        <h4>${portfolio.name}</h4>
+                        <div class="portfolio-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Current Value:</span>
+                                <span class="metric-value">₹${portfolio.current_value.toLocaleString()}</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">P&L:</span>
+                                <span class="metric-value ${portfolio.total_pnl_percent >= 0 ? 'positive' : 'negative'}">
+                                    ${portfolio.total_pnl_percent.toFixed(2)}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                overviewContent.innerHTML = portfolioHtml;
+            }
+        }
+
+        function startRealTimeUpdates() {
+            // Update market data every 5 seconds
+            updateInterval = setInterval(updateMarketData, 5000);
+            
+            // Initial update
+            updateMarketData();
+        }
+
+        function updateMarketData() {
+            fetch('/api/trading_terminal/real_time_data')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateMarketDisplay(data.market_data);
+                    }
+                })
+                .catch(error => console.log('Market data update failed:', error));
+        }
+
+        function updateMarketDisplay(marketData) {
+            // Update market indices with simulated data for demo
+            const niftyChange = (Math.random() - 0.5) * 2;
+            const bankNiftyChange = (Math.random() - 0.5) * 2;
+            const vixChange = (Math.random() - 0.5) * 1;
+
+            updateMarketCard('nifty', 20085.50 + niftyChange, niftyChange);
+            updateMarketCard('banknifty', 45280.25 + bankNiftyChange, bankNiftyChange);
+            updateMarketCard('vix', 15.25 + vixChange, vixChange);
+        }
+
+        function updateMarketCard(index, value, change) {
+            const valueElement = document.getElementById(`${index}-value`);
+            const changeElement = document.getElementById(`${index}-change`);
+            
+            if (valueElement && changeElement) {
+                valueElement.textContent = value.toFixed(2);
+                const changePercent = (change / value * 100).toFixed(2);
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)} (${change >= 0 ? '+' : ''}${changePercent}%)`;
+                changeElement.className = `market-change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            currentTab = tabName;
+        }
+
+        function runAnalysis() {
+            const resultsDiv = document.getElementById('analysis-results');
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+                    <p>AI agents analyzing portfolio...</p>
+                </div>
+            `;
+
+            // Simulate analysis call
+            setTimeout(() => {
+                fetch('/api/trading_terminal/portfolio_analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayAnalysisResults(data);
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--accent-red);">
+                            <i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 15px;"></i>
+                            <p>Analysis failed. Please try again.</p>
+                        </div>
+                    `;
+                });
+            }, 2000);
+        }
+
+        function displayAnalysisResults(data) {
+            const resultsDiv = document.getElementById('analysis-results');
+            if (data.success) {
+                // Display analysis results
+                resultsDiv.innerHTML = `
+                    <div class="insight-card success">
+                        <div class="insight-title">Portfolio Analysis Complete</div>
+                        <div class="insight-description">
+                            Overall Score: ${data.analysis.overall_score}/10 | 
+                            Risk Score: ${data.analysis.risk_score}/10 | 
+                            Diversification: ${data.analysis.diversification_score}/10
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-title">Performance Metrics</div>
+                        <div class="insight-description">
+                            Sharpe Ratio: ${data.analysis.metrics.sharpe_ratio} | 
+                            Max Drawdown: ${data.analysis.metrics.max_drawdown}% | 
+                            VaR (95%): ₹${data.analysis.metrics.var_95.toLocaleString()}
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--accent-red);">
+                        <p>Analysis unavailable. Please connect a portfolio first.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function generatePredictions() {
+            const resultsDiv = document.getElementById('predictions-results');
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+                    <p>Generating ML ensemble predictions...</p>
+                </div>
+            `;
+
+            // Simulate predictions call
+            setTimeout(() => {
+                fetch('/api/trading_terminal/stock_recommendations')
+                .then(response => response.json())
+                .then(data => {
+                    displayPredictions(data);
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--accent-red);">
+                            <i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 15px;"></i>
+                            <p>Prediction generation failed. Please try again.</p>
+                        </div>
+                    `;
+                });
+            }, 3000);
+        }
+
+        function displayPredictions(data) {
+            const resultsDiv = document.getElementById('predictions-results');
+            if (data.success && data.recommendations.length > 0) {
+                let html = '';
+                data.recommendations.forEach(rec => {
+                    const confidenceColor = rec.confidence > 0.8 ? 'var(--accent-green)' : 
+                                          rec.confidence > 0.6 ? 'var(--accent-blue)' : 'var(--accent-yellow)';
+                    html += `
+                        <div class="insight-card">
+                            <div class="insight-title">${rec.symbol} - ${rec.recommendation}</div>
+                            <div class="insight-description">
+                                Current: ₹${rec.currentPrice} | Target: ₹${rec.targetPrice} | SL: ₹${rec.stopLoss}
+                                <br>Agent: ${rec.agent} | Confidence: <span style="color: ${confidenceColor}">${(rec.confidence * 100).toFixed(0)}%</span>
+                            </div>
+                            <div style="font-size: 12px; margin-top: 8px; color: var(--text-secondary);">
+                                ${rec.reasoning}
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsDiv.innerHTML = html;
+            } else {
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <p>No predictions available. Connect a portfolio to get recommendations.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function runBacktest() {
+            // Simulate backtest with demo data
+            const resultsDiv = document.getElementById('backtest-results');
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div class="loading-spinner" style="margin: 0 auto 20px;"></div>
+                    <p>Running ensemble backtest...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                resultsDiv.innerHTML = `
+                    <div class="insight-card success">
+                        <div class="insight-title">Backtest Complete</div>
+                        <div class="insight-description">
+                            3-Month Performance: +12.5% | Sharpe: 1.85 | Max DD: -8.2%
+                            <br>Win Rate: 68% | Total Trades: 45 | Profit Factor: 2.1
+                        </div>
+                    </div>
+                `;
+            }, 4000);
+        }
+
+        function processAICommand() {
+            const command = document.getElementById('aiCommand').value.trim();
+            const responseDiv = document.getElementById('ai-response');
+            
+            if (!command) return;
+
+            responseDiv.innerHTML = `
+                <div style="opacity: 0.8;">
+                    <i class="fas fa-spinner fa-spin"></i> Processing: "${command}"
+                </div>
+            `;
+
+            // Simulate AI processing
+            setTimeout(() => {
+                fetch('/api/trading_terminal/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: command })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        responseDiv.innerHTML = `
+                            <div style="color: var(--accent-blue); margin-bottom: 10px;">
+                                <i class="fas fa-robot"></i> AI Response:
+                            </div>
+                            <div>${data.response}</div>
+                        `;
+                    } else {
+                        responseDiv.innerHTML = `
+                            <div style="color: var(--accent-red);">
+                                <i class="fas fa-exclamation-circle"></i> Error processing command. Please try again.
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    responseDiv.innerHTML = `
+                        <div style="color: var(--text-primary);">
+                            <i class="fas fa-robot"></i> Demo Response: Based on current market analysis, here are my insights for your query about "${command}". 
+                            The AI system is processing multiple data sources including technical indicators, fundamental analysis, and market sentiment.
+                        </div>
+                    `;
+                });
+
+                document.getElementById('aiCommand').value = '';
+            }, 1500);
+        }
+
+        function scanMarket(type) {
+            const alertsDiv = document.getElementById('live-alerts');
+            
+            // Add scanning indicator
+            alertsDiv.innerHTML = `
+                <div style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                    <div class="loading-spinner" style="margin: 0 auto 10px;"></div>
+                    <p style="font-size: 12px;">Scanning ${type} opportunities...</p>
+                </div>
+            `;
+
+            // Simulate market scan
+            setTimeout(() => {
+                fetch(`/api/trading_terminal/market_scan?type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayScanResults(data.results, type);
+                    }
+                })
+                .catch(error => {
+                    // Demo scan results
+                    const demoResults = [
+                        { symbol: 'RELIANCE', score: 9.2, change: 2.8 },
+                        { symbol: 'TCS', score: 8.7, change: 1.9 },
+                        { symbol: 'HDFC', score: 8.1, change: 2.1 }
+                    ];
+                    displayScanResults(demoResults, type);
+                });
+            }, 2000);
+        }
+
+        function displayScanResults(results, type) {
+            const alertsDiv = document.getElementById('live-alerts');
+            let html = `<div style="font-size: 12px; color: var(--accent-blue); margin-bottom: 10px; text-align: center;">${type.toUpperCase()} SCAN RESULTS</div>`;
+            
+            results.slice(0, 3).forEach(result => {
+                html += `
+                    <div style="background: rgba(0, 212, 255, 0.1); border-radius: 6px; padding: 8px; margin-bottom: 8px; border: 1px solid var(--accent-blue);">
+                        <div style="font-weight: 600; font-size: 12px;">${result.symbol}</div>
+                        <div style="font-size: 11px; color: var(--text-secondary);">
+                            Score: ${result.score || result.score} | Change: +${result.change || Math.random() * 3}%
+                        </div>
+                    </div>
+                `;
+            });
+            
+            alertsDiv.innerHTML = html;
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+{
+  "timestamp": "2025-07-21T23:16:30.983614",
+  "total_tests": 17,
+  "passed_tests": 10,
+  "results": [
+    {
+      "endpoint": "/api/main_dashboard",
+      "method": "GET",
+      "description": "Main Dashboard Data",
+      "success": false,
+      "status_code": 500,
+      "response_time": 0.00873,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch dashboard data\",\n  \"success\": false,\n  \"timestamp\": \"2025-07-21T23:16:..."
+    },
+    {
+      "endpoint": "/api/investor_dashboard",
+      "method": "GET",
+      "description": "Investor Dashboard Data",
+      "success": false,
+      "status_code": 500,
+      "response_time": 0.019577,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch investor dashboard data\",\n  \"success\": false,\n  \"timestamp\": \"2025-07-..."
+    },
+    {
+      "endpoint": "/api/enhanced_analysis_reports",
+      "method": "GET",
+      "description": "All Enhanced Reports",
+      "success": false,
+      "status_code": 500,
+      "response_time": 2.329724,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch enhanced analysis reports\",\n  \"success\": false,\n  \"timestamp\": \"2025-0..."
+    },
+    {
+      "endpoint": "/api/enhanced_analysis_reports?limit=5",
+      "method": "GET",
+      "description": "Limited Enhanced Reports",
+      "success": false,
+      "status_code": 500,
+      "response_time": 1.502701,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch enhanced analysis reports\",\n  \"success\": false,\n  \"timestamp\": \"2025-0..."
+    },
+    {
+      "endpoint": "/api/admin_dashboard",
+      "method": "GET",
+      "description": "Admin Dashboard Data",
+      "success": false,
+      "status_code": 500,
+      "response_time": 0.024226,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch admin dashboard data\",\n  \"success\": false,\n  \"timestamp\": \"2025-07-21T..."
+    },
+    {
+      "endpoint": "/api/compare_reports",
+      "method": "POST",
+      "description": "Compare Reports",
+      "success": false,
+      "status_code": 404,
+      "response_time": 0.014739,
+      "error": "HTTP 404: {\n  \"error\": \"Some report IDs were not found\",\n  \"success\": false\n}\n..."
+    },
+    {
+      "endpoint": "/api/ai_research_assistant",
+      "method": "GET",
+      "description": "AI Assistant Status",
+      "success": true,
+      "status_code": 200,
+      "response_time": 4.036454,
+      "error": null
+    },
+    {
+      "endpoint": "/api/ai_research_assistant",
+      "method": "POST",
+      "description": "AI Query Processing",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.932918,
+      "error": null
+    },
+    {
+      "endpoint": "/api/admin/performance",
+      "method": "GET",
+      "description": "Admin Performance Analytics",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.021376,
+      "error": null
+    },
+    {
+      "endpoint": "/api/admin/performance?days=7",
+      "method": "GET",
+      "description": "Admin Performance (7 days)",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.025954,
+      "error": null
+    },
+    {
+      "endpoint": "/api/analysts",
+      "method": "GET",
+      "description": "All Analysts Data",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.018865,
+      "error": null
+    },
+    {
+      "endpoint": "/api/enhanced_knowledge_stats",
+      "method": "GET",
+      "description": "Enhanced Knowledge Stats",
+      "success": true,
+      "status_code": 200,
+      "response_time": 3.279425,
+      "error": null
+    },
+    {
+      "endpoint": "/ai_query_analysis",
+      "method": "POST",
+      "description": "Simple AI Query Analysis",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.967652,
+      "error": null
+    },
+    {
+      "endpoint": "/api/metrics",
+      "method": "GET",
+      "description": "Real-time Metrics",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.029961,
+      "error": null
+    },
+    {
+      "endpoint": "/api/analysts",
+      "method": "GET",
+      "description": "Get Analysts for Testing",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.005647,
+      "error": null
+    },
+    {
+      "endpoint": "/api/analysts/Shrihari%20Dhamanekar",
+      "method": "GET",
+      "description": "Specific Analyst: Shrihari Dhamanekar",
+      "success": true,
+      "status_code": 200,
+      "response_time": 0.027014,
+      "error": null
+    },
+    {
+      "endpoint": "/api/analyst/Shrihari%20Dhamanekar/performance",
+      "method": "GET",
+      "description": "Analyst Performance: Shrihari Dhamanekar",
+      "success": false,
+      "status_code": 500,
+      "response_time": 0.003207,
+      "error": "HTTP 500: {\n  \"error\": \"Failed to fetch analyst performance data\",\n  \"success\": false,\n  \"timestamp\": \"2025-07..."
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+{% block title %}hAi-Edge Demo Login - PredictRAM{% endblock %}
+
+{% block header %}
+<div class="container-fluid bg-gradient-primary text-white py-4">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-md-6 text-center">
+            <div>
+                <i class="fas fa-robot fa-3x text-light mb-3"></i>
+                <h1 class="h2 mb-1">hAi-Edge ML Model Portfolio</h1>
+                <p class="mb-0 opacity-75">Demo Authentication System</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-white text-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2 text-primary"></i>Choose Your Role
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('hai_edge.demo_login_post') }}">
+                        <div class="mb-4">
+                            <label class="form-label">Select User Type:</label>
+                            
+                            <!-- Admin Option -->
+                            <div class="card mb-3 role-card" onclick="selectRole('admin')">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="user_type" value="admin" id="admin">
+                                        <label class="form-check-label" for="admin">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <i class="fas fa-user-shield fa-2x text-danger"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">Administrator</h6>
+                                                    <small class="text-muted">
+                                                        • Launch new hAi-Edge models<br>
+                                                        • View all model analytics<br>
+                                                        • Manage model configurations<br>
+                                                        • Full system access
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Analyst Option -->
+                            <div class="card mb-3 role-card" onclick="selectRole('analyst')">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="user_type" value="analyst" id="analyst">
+                                        <label class="form-check-label" for="analyst">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <i class="fas fa-chart-line fa-2x text-success"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">Analyst</h6>
+                                                    <small class="text-muted">
+                                                        • View all launched models<br>
+                                                        • Access detailed analytics<br>
+                                                        • Monitor performance metrics<br>
+                                                        • Generate reports
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Investor Option -->
+                            <div class="card mb-3 role-card" onclick="selectRole('investor')">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="user_type" value="investor" id="investor">
+                                        <label class="form-check-label" for="investor">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <i class="fas fa-coins fa-2x text-warning"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">Investor</h6>
+                                                    <small class="text-muted">
+                                                        • View launched models<br>
+                                                        • Access performance data<br>
+                                                        • Review investment options<br>
+                                                        • Track returns
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="loginBtn" disabled>
+                                <i class="fas fa-sign-in-alt me-2"></i>Access hAi-Edge Dashboard
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    This is a demo environment. No real authentication required.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.role-card {
+    border: 2px solid #e3e6f0;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.role-card:hover {
+    border-color: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.role-card.selected {
+    border-color: #5a67d8;
+    background-color: #f8f9fc;
+}
+
+.form-check-input:checked {
+    background-color: #5a67d8;
+    border-color: #5a67d8;
+}
+</style>
+
+<script>
+function selectRole(role) {
+    // Remove all selected classes
+    document.querySelectorAll('.role-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked card
+    event.currentTarget.classList.add('selected');
+    
+    // Check the radio button
+    document.getElementById(role).checked = true;
+    
+    // Enable the login button
+    document.getElementById('loginBtn').disabled = false;
+}
+
+// Enable login button when radio is selected
+document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('loginBtn').disabled = false;
+    });
+});
+</script>
+{% endblock %}

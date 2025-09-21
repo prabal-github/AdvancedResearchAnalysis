@@ -1,0 +1,746 @@
+{% extends "layout.html" %}
+{% block title %}Advanced Trading Models - Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .trading-model-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    
+    .trading-model-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+    }
+    
+    .model-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px 15px 0 0;
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .model-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .stock-recommender-icon {
+        background: linear-gradient(45deg, #00c9ff, #92fe9d);
+    }
+    
+    .options-analyzer-icon {
+        background: linear-gradient(45deg, #fa709a, #fee140);
+    }
+    
+    .sector-analyzer-icon {
+        background: linear-gradient(45deg, #43e97b, #38f9d7);
+    }
+    
+    .btst-analyzer-icon {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+    }
+    
+    .dividend-predictor-icon {
+        background: linear-gradient(45deg, #f093fb, #f5576c);
+    }
+    
+    .run-button {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .run-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .status-running {
+        background: linear-gradient(45deg, #ffc107, #fd7e14);
+        color: white;
+    }
+    
+    .status-completed {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+    }
+    
+    .status-error {
+        background: linear-gradient(45deg, #dc3545, #fd5e53);
+        color: white;
+    }
+    
+    .results-table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .table thead th {
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        max-width: 400px;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #e9ecef;
+        margin-top: 1rem;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+        width: 0%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="bi bi-graph-up-arrow me-2"></i>
+                Advanced Trading Models Dashboard
+            </h1>
+            <p class="text-muted">Execute and manage sophisticated trading analysis models</p>
+        </div>
+    </div>
+
+    <!-- Trading Models Grid -->
+    <div class="row g-4 mb-5">
+        <!-- Advanced Stock Recommender -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4">
+                    <div class="model-icon stock-recommender-icon mx-auto">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">Advanced Stock Recommender</h5>
+                    <p class="card-text text-muted mb-4">
+                        ML-powered stock analysis with technical indicators, volume patterns, and momentum signals for buy/sell recommendations.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="run-button" onclick="runStockRecommender()">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                        <small class="text-muted text-center">
+                            Status: <span id="stock-recommender-status" class="status-badge">Ready</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Options ML Analyzer -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4">
+                    <div class="model-icon options-analyzer-icon mx-auto">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">Options ML Analyzer</h5>
+                    <p class="card-text text-muted mb-4">
+                        Comprehensive options chain analysis with Greeks, IV analysis, and profit probability calculations.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="run-button" onclick="runOptionsAnalyzer()">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                        <small class="text-muted text-center">
+                            Status: <span id="options-analyzer-status" class="status-badge">Ready</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sector ML Analyzer -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4">
+                    <div class="model-icon sector-analyzer-icon mx-auto">
+                        <i class="bi bi-pie-chart"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">Sector ML Analyzer</h5>
+                    <p class="card-text text-muted mb-4">
+                        Sector-wise analysis with rotation indicators, relative strength, and cross-sector momentum patterns.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="run-button" onclick="runSectorAnalyzer()">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                        <small class="text-muted text-center">
+                            Status: <span id="sector-analyzer-status" class="status-badge">Ready</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overnight Edge BTST Analyzer -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4">
+                    <div class="model-icon btst-analyzer-icon mx-auto">
+                        <i class="bi bi-moon"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">Overnight Edge BTST</h5>
+                    <p class="card-text text-muted mb-4">
+                        Buy Today Sell Tomorrow analysis with overnight gap predictions and short-term momentum signals.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="run-button" onclick="runBTSTAnalyzer()">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                        <small class="text-muted text-center">
+                            Status: <span id="btst-analyzer-status" class="status-badge">Ready</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dividend Predictor -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4">
+                    <div class="model-icon dividend-predictor-icon mx-auto">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">Dividend Predictor</h5>
+                    <p class="card-text text-muted mb-4">
+                        Dividend sustainability analysis with yield predictions and distribution probability assessment.
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button class="run-button" onclick="runDividendPredictor()">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                        <small class="text-muted text-center">
+                            Status: <span id="dividend-predictor-status" class="status-badge">Ready</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Run All Models -->
+        <div class="col-lg-4 col-md-6">
+            <div class="trading-model-card h-100">
+                <div class="card-body p-4 d-flex flex-column justify-content-center">
+                    <div class="text-center">
+                        <i class="bi bi-lightning-charge display-4 text-primary mb-3"></i>
+                        <h5 class="card-title">Run All Models</h5>
+                        <p class="card-text text-muted mb-4">
+                            Execute all trading models in sequence for comprehensive market analysis.
+                        </p>
+                        <button class="run-button" onclick="runAllModels()">
+                            <i class="bi bi-rocket me-2"></i>Execute All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Results -->
+    <div class="row">
+        <div class="col-12">
+            <div class="trading-model-card">
+                <div class="model-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Recent Trading Model Results
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_results %}
+                    <div class="table-responsive">
+                        <table class="table results-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3">Model</th>
+                                    <th class="px-4 py-3">Execution Time</th>
+                                    <th class="px-4 py-3">Results</th>
+                                    <th class="px-4 py-3">Confidence</th>
+                                    <th class="px-4 py-3">Run By</th>
+                                    <th class="px-4 py-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in recent_results %}
+                                <tr>
+                                    <td class="px-4 py-3">
+                                        <strong class="text-primary">{{ result.model_display_name }}</strong>
+                                        <br><small class="text-muted">{{ result.created_at.strftime('%d %b %Y %H:%M') }}</small>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-light text-dark">{{ result.execution_time }}s</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-info">{{ result.total_analyzed }} analyzed</span>
+                                        <span class="badge bg-success">{{ result.actionable_count }} actionable</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge {% if result.avg_confidence > 80 %}bg-success{% elif result.avg_confidence > 60 %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ result.avg_confidence }}%
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">{{ result.run_by }}</td>
+                                    <td class="px-4 py-3">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewResult('{{ result.id }}')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="downloadResult('{{ result.id }}')">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-graph-up display-4 text-muted mb-3"></i>
+                        <h5 class="text-muted">No trading model results yet</h5>
+                        <p class="text-muted">Run your first trading model to see results here</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingTitle">Running Trading Model...</h5>
+        <p id="loadingMessage" class="text-muted">Please wait while we analyze the market data</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <small class="text-muted mt-2 d-block" id="progressText">0%</small>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultModalTitle">Trading Model Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+                <!-- Results will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="downloadCurrentResult()">
+                    <i class="bi bi-download me-2"></i>Download Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentResultId = null;
+let runningModels = new Set();
+
+// Model execution functions
+function runStockRecommender() {
+    if (runningModels.has('stock_recommender')) return;
+    
+    updateModelStatus('stock-recommender-status', 'Running', 'status-running');
+    showLoading('Advanced Stock Recommender', 'Analyzing stock patterns and technical indicators...');
+    runningModels.add('stock_recommender');
+    
+    fetch('/api/admin/ml_models/run_stock_recommender', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'stock_category=NIFTY50&min_confidence=70'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        runningModels.delete('stock_recommender');
+        
+        if (data.success) {
+            updateModelStatus('stock-recommender-status', 'Completed', 'status-completed');
+            showAlert('Stock Recommender analysis completed successfully!', 'success');
+            refreshResults();
+        } else {
+            updateModelStatus('stock-recommender-status', 'Error', 'status-error');
+            showAlert('Error running Stock Recommender: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        runningModels.delete('stock_recommender');
+        updateModelStatus('stock-recommender-status', 'Error', 'status-error');
+        showAlert('Network error: ' + error.message, 'danger');
+    });
+}
+
+function runOptionsAnalyzer() {
+    if (runningModels.has('options_analyzer')) return;
+    
+    updateModelStatus('options-analyzer-status', 'Running', 'status-running');
+    showLoading('Options ML Analyzer', 'Analyzing options chains and calculating Greeks...');
+    runningModels.add('options_analyzer');
+    
+    fetch('/api/admin/ml_models/run_options_analyzer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'asset_key=NSE_INDEX|Nifty%2050&expiry_date=2025-09-25&days_to_expiry=7&risk_free_rate=0.05&selected_strike=22000'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        runningModels.delete('options_analyzer');
+        
+        if (data.success) {
+            updateModelStatus('options-analyzer-status', 'Completed', 'status-completed');
+            showAlert('Options Analyzer completed successfully!', 'success');
+            refreshResults();
+        } else {
+            updateModelStatus('options-analyzer-status', 'Error', 'status-error');
+            showAlert('Error running Options Analyzer: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        runningModels.delete('options_analyzer');
+        updateModelStatus('options-analyzer-status', 'Error', 'status-error');
+        showAlert('Network error: ' + error.message, 'danger');
+    });
+}
+
+function runSectorAnalyzer() {
+    if (runningModels.has('sector_analyzer')) return;
+    
+    updateModelStatus('sector-analyzer-status', 'Running', 'status-running');
+    showLoading('Sector ML Analyzer', 'Analyzing sector performance and rotation patterns...');
+    runningModels.add('sector_analyzer');
+    
+    fetch('/api/admin/ml_models/run_sector_analyzer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'period=6mo'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        runningModels.delete('sector_analyzer');
+        
+        if (data.success) {
+            updateModelStatus('sector-analyzer-status', 'Completed', 'status-completed');
+            showAlert('Sector Analyzer completed successfully!', 'success');
+            refreshResults();
+        } else {
+            updateModelStatus('sector-analyzer-status', 'Error', 'status-error');
+            showAlert('Error running Sector Analyzer: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        runningModels.delete('sector_analyzer');
+        updateModelStatus('sector-analyzer-status', 'Error', 'status-error');
+        showAlert('Network error: ' + error.message, 'danger');
+    });
+}
+
+function runBTSTAnalyzer() {
+    if (runningModels.has('btst_analyzer')) return;
+    
+    updateModelStatus('btst-analyzer-status', 'Running', 'status-running');
+    showLoading('Overnight Edge BTST', 'Analyzing overnight trading opportunities...');
+    runningModels.add('btst_analyzer');
+    
+    fetch('/api/admin/ml_models/run_btst_analyzer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'stock_category=NIFTY50&min_confidence=70&btst_min_score=75'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        runningModels.delete('btst_analyzer');
+        
+        if (data.success) {
+            updateModelStatus('btst-analyzer-status', 'Completed', 'status-completed');
+            showAlert('BTST Analyzer completed successfully!', 'success');
+            refreshResults();
+        } else {
+            updateModelStatus('btst-analyzer-status', 'Error', 'status-error');
+            showAlert('Error running BTST Analyzer: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        runningModels.delete('btst_analyzer');
+        updateModelStatus('btst-analyzer-status', 'Error', 'status-error');
+        showAlert('Network error: ' + error.message, 'danger');
+    });
+}
+
+function runDividendPredictor() {
+    updateModelStatus('dividend-predictor-status', 'Running', 'status-running');
+    showLoading('Dividend Predictor', 'Analyzing dividend sustainability and predictions...');
+    
+    // Simulate dividend predictor run
+    setTimeout(() => {
+        hideLoading();
+        updateModelStatus('dividend-predictor-status', 'Completed', 'status-completed');
+        showAlert('Dividend Predictor completed successfully!', 'success');
+        refreshResults();
+    }, 3000);
+}
+
+async function runAllModels() {
+    if (runningModels.size > 0) {
+        showAlert('Please wait for current models to finish before running all models', 'warning');
+        return;
+    }
+    
+    showAlert('Starting comprehensive trading analysis...', 'info');
+    
+    // Run models sequentially
+    await runModelSequentially('Stock Recommender', runStockRecommender);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait between models
+    
+    await runModelSequentially('Options Analyzer', runOptionsAnalyzer);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    await runModelSequentially('Sector Analyzer', runSectorAnalyzer);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    await runModelSequentially('BTST Analyzer', runBTSTAnalyzer);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    runDividendPredictor();
+    
+    showAlert('All trading models execution initiated!', 'success');
+}
+
+function runModelSequentially(modelName, runFunction) {
+    return new Promise((resolve) => {
+        console.log(`Starting ${modelName}...`);
+        runFunction();
+        
+        // Wait for model to complete (simplified for demo)
+        const checkCompletion = setInterval(() => {
+            if (!runningModels.has(modelName.toLowerCase().replace(' ', '_'))) {
+                clearInterval(checkCompletion);
+                resolve();
+            }
+        }, 1000);
+    });
+}
+
+// Utility functions
+function updateModelStatus(elementId, text, className) {
+    const element = document.getElementById(elementId);
+    element.textContent = text;
+    element.className = 'status-badge ' + className;
+}
+
+function showLoading(title, message) {
+    document.getElementById('loadingTitle').textContent = title;
+    document.getElementById('loadingMessage').textContent = message;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    
+    // Simulate progress
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress > 90) progress = 90;
+        
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.getElementById('progressText').textContent = Math.round(progress) + '%';
+        
+        if (progress >= 90) {
+            clearInterval(progressInterval);
+        }
+    }, 500);
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressText').textContent = '0%';
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '10000';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+function viewResult(resultId) {
+    currentResultId = resultId;
+    
+    fetch(`/api/admin/ml_results/${resultId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayResultModal(data.result);
+        } else {
+            showAlert('Error loading result: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Network error: ' + error.message, 'danger');
+    });
+}
+
+function displayResultModal(result) {
+    document.getElementById('resultModalTitle').textContent = `${result.model_display_name} - Results`;
+    
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6>Analysis Overview</h6>
+                <table class="table table-sm">
+                    <tr><td>Model:</td><td><strong>${result.model_display_name}</strong></td></tr>
+                    <tr><td>Execution Time:</td><td>${result.execution_time}s</td></tr>
+                    <tr><td>Total Analyzed:</td><td>${result.total_analyzed}</td></tr>
+                    <tr><td>Actionable Results:</td><td>${result.actionable_count}</td></tr>
+                    <tr><td>Average Confidence:</td><td>${result.avg_confidence}%</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6>Execution Details</h6>
+                <table class="table table-sm">
+                    <tr><td>Run By:</td><td>${result.run_by}</td></tr>
+                    <tr><td>Created:</td><td>${new Date(result.created_at).toLocaleString()}</td></tr>
+                    <tr><td>Status:</td><td><span class="badge bg-success">Completed</span></td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <h6>Key Insights</h6>
+                <div class="alert alert-info">
+                    This trading model analysis provides actionable insights based on advanced ML algorithms. 
+                    Review the detailed results and apply appropriate risk management strategies.
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('resultModalBody').innerHTML = html;
+    
+    const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+    modal.show();
+}
+
+function downloadResult(resultId) {
+    window.open(`/api/admin/ml_results/${resultId}/download`, '_blank');
+}
+
+function downloadCurrentResult() {
+    if (currentResultId) {
+        downloadResult(currentResultId);
+    }
+}
+
+function refreshResults() {
+    // Reload the page to refresh results
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    console.log('Advanced Trading Models Dashboard initialized');
+});
+</script>
+{% endblock %}

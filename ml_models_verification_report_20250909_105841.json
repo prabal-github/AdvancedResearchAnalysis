@@ -1,0 +1,180 @@
+{
+  "verification_timestamp": "2025-09-09T10:58:40.410822",
+  "database": {
+    "host": "3.85.19.80",
+    "port": 5432,
+    "database": "research",
+    "url": "postgresql://admin:***@3.85.19.80:5432/research"
+  },
+  "models": [
+    {
+      "id": "commodities_trend_v1",
+      "name": "Commodities Trend Analysis",
+      "version": "1.0",
+      "author_user_key": "commodity_expert_303",
+      "category": "Commodities",
+      "created_at": "2025-09-08T20:08:35.553632",
+      "artifact_path": "/models/commodities_trend_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"trend_analysis\", \"seasonal_forecast\", \"macro_impact\"]"
+    },
+    {
+      "id": "cryptocurrency_predictor_v1",
+      "name": "Cryptocurrency Price Predictor",
+      "version": "1.0",
+      "author_user_key": "crypto_analyst_202",
+      "category": "Cryptocurrency",
+      "created_at": "2025-09-08T20:08:33.951632",
+      "artifact_path": "/models/crypto_predictor_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"predict_price\", \"sentiment_analysis\", \"on_chain_metrics\"]"
+    },
+    {
+      "id": "earnings_predictor_v1",
+      "name": "Earnings Surprise Predictor",
+      "version": "1.0",
+      "author_user_key": "earnings_expert_606",
+      "category": "Fundamental Analysis",
+      "created_at": "2025-09-08T20:08:40.359198",
+      "artifact_path": "/models/earnings_predictor_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"predict_surprise\", \"estimate_revision\", \"post_earnings_move\"]"
+    },
+    {
+      "id": "intraday_scalping_v1",
+      "name": "Intraday Scalping Model",
+      "version": "1.0",
+      "author_user_key": "scalper_101",
+      "category": "Intraday",
+      "created_at": "2025-09-08T20:08:31.706632",
+      "artifact_path": "/models/intraday_scalping_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"scalp_signals\", \"liquidity_check\", \"quick_exit\"]"
+    },
+    {
+      "id": "c63e2e08-a0d0-43e2-9478-94c4acee7cb7",
+      "name": "Momentum Score",
+      "version": "1.0",
+      "author_user_key": "seed:system",
+      "category": "Momentum",
+      "created_at": "2025-09-08T19:41:11.130866",
+      "artifact_path": "/secure_artifacts/c63e2e08-a0d0-43e2-9478-94c4acee7cb7/model.py",
+      "visibility": "public",
+      "allowed_functions": "[\"predict\", \"score\", \"backtest\"]"
+    },
+    {
+      "id": "nifty_momentum_v1",
+      "name": "NIFTY Momentum Strategy",
+      "version": "1.0",
+      "author_user_key": "demo_analyst_456",
+      "category": "Momentum",
+      "created_at": "2025-09-08T20:08:23.369069",
+      "artifact_path": "/models/nifty_momentum_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"predict\", \"analyze\", \"backtest\"]"
+    },
+    {
+      "id": "options_greeks_calc_v1",
+      "name": "Options Greeks Calculator",
+      "version": "1.0",
+      "author_user_key": "demo_analyst_456",
+      "category": "Options",
+      "created_at": "2025-09-08T20:08:27.862072",
+      "artifact_path": "/models/options_greeks_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"calculate_greeks\", \"price_option\", \"volatility_analysis\"]"
+    },
+    {
+      "id": "portfolio_optimizer_v1",
+      "name": "AI Portfolio Optimizer",
+      "version": "1.0",
+      "author_user_key": "portfolio_manager_404",
+      "category": "Portfolio Management",
+      "created_at": "2025-09-08T20:08:37.155203",
+      "artifact_path": "/models/portfolio_optimizer_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"optimize_weights\", \"risk_analysis\", \"rebalance_strategy\"]"
+    },
+    {
+      "id": "56008b60-1f83-4a8b-a19b-2d9aa5c9a206",
+      "name": "SMA Crossover Strategy",
+      "version": "1.0",
+      "author_user_key": "seed:system",
+      "category": "Quantitative",
+      "created_at": "2025-09-08T19:41:11.130866",
+      "artifact_path": "/secure_artifacts/56008b60-1f83-4a8b-a19b-2d9aa5c9a206/model.py",
+      "visibility": "public",
+      "allowed_functions": "[\"predict\", \"score\", \"backtest\"]"
+    },
+    {
+      "id": "72752cf5-d3df-42e3-979e-cc05b35e64b0",
+      "name": "Simple Volatility Score",
+      "version": "1.0",
+      "author_user_key": "seed:system",
+      "category": "Risk",
+      "created_at": "2025-09-08T19:41:11.130866",
+      "artifact_path": "/secure_artifacts/72752cf5-d3df-42e3-979e-cc05b35e64b0/model.py",
+      "visibility": "public",
+      "allowed_functions": "[\"predict\", \"score\", \"backtest\"]"
+    },
+    {
+      "id": "bank_sector_analysis_v1",
+      "name": "Bank Sector Analysis Model",
+      "version": "1.0",
+      "author_user_key": "demo_analyst_456",
+      "category": "Sector",
+      "created_at": "2025-09-08T20:08:25.616071",
+      "artifact_path": "/models/bank_sector_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"analyze_fundamentals\", \"predict_price\", \"risk_assessment\"]"
+    },
+    {
+      "id": "sentiment_driven_trading_v1",
+      "name": "Sentiment-Driven Trading Model",
+      "version": "1.0",
+      "author_user_key": "sentiment_analyst_505",
+      "category": "Sentiment Analysis",
+      "created_at": "2025-09-08T20:08:38.758198",
+      "artifact_path": "/models/sentiment_trading_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"sentiment_score\", \"news_analysis\", \"social_tracking\"]"
+    },
+    {
+      "id": "swing_trading_signals_v1",
+      "name": "Swing Trading Signals",
+      "version": "1.0",
+      "author_user_key": "swing_trader_789",
+      "category": "Swing Trading",
+      "created_at": "2025-09-08T20:08:29.464633",
+      "artifact_path": "/models/swing_trading_v1.pkl",
+      "visibility": "public",
+      "allowed_functions": "[\"generate_signals\", \"analyze_trend\", \"calculate_targets\"]"
+    }
+  ],
+  "categories": {
+    "Commodities": 1,
+    "Cryptocurrency": 1,
+    "Fundamental Analysis": 1,
+    "Intraday": 1,
+    "Momentum": 2,
+    "Options": 1,
+    "Portfolio Management": 1,
+    "Quantitative": 1,
+    "Risk": 1,
+    "Sector": 1,
+    "Sentiment Analysis": 1,
+    "Swing Trading": 1
+  },
+  "performance_summary": {
+    "average_accuracy": 77.84,
+    "max_accuracy": 91.4,
+    "min_accuracy": 67.5,
+    "average_return": 21.88
+  },
+  "recommendations_summary": {
+    "BUY": {
+      "count": 8,
+      "avg_confidence": 76.35000000000001
+    }
+  }
+}

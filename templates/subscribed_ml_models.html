@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Subscribed ML Models - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .model-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .model-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+        .model-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .run-count {
+            background: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        .price-badge {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin: 2px;
+            display: inline-block;
+        }
+        .insight-card {
+            background: #f0f8ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .run-item {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .run-date {
+            color: #6c757d;
+            font-size: 0.9em;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            padding: 50px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 8px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .status-success { color: #28a745; }
+        .status-warning { color: #ffc107; }
+        .status-error { color: #dc3545; }
+        .navbar-custom {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        .performance-item {
+            background: #f8f9fa;
+            transition: all 0.2s;
+        }
+        .performance-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .performance-profit {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 4px solid #28a745;
+        }
+        .performance-loss {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 4px solid #dc3545;
+        }
+        .data-source-consensus {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            color: white;
+        }
+        .data-source-primary {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+        }
+        .data-source-single {
+            background: linear-gradient(90deg, #17a2b8, #138496);
+            color: white;
+        }
+        .reliability-high {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+        .reliability-medium {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+        .reliability-low {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+        .price-comparison-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .price-comparison-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* Enhanced Analytics Styles */
+        .analytics-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ai-summary {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        /* AI Alerts Styles */
+        .alerts-container {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .alert-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .alert-item.entry {
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-item.exit {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-item.hold {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .signal-strength {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8em;
+        }
+        
+        .confidence-meter {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+            transition: width 0.3s ease;
+        }
+        
+        /* Performance Charts */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-top: 15px;
+        }
+        
+        /* Loading States */
+        .loading-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Status Badges */
+        .trend-improving { color: #28a745; }
+        .trend-declining { color: #dc3545; }
+        .trend-neutral { color: #6c757d; }
+        
+        .risk-low { color: #28a745; }
+        .risk-medium { color: #ffc107; }
+        .risk-high { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line"></i> PredictRAM
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/investor_dashboard">
+                    <i class="fas fa-dashboard"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/subscribed_ml_models">
+                    <i class="fas fa-robot"></i> My ML Models
+                </a>
+                <a class="nav-link" href="/email_preferences">
+                    <i class="fas fa-envelope-open"></i> Email Settings
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-robot text-primary"></i> My Subscribed ML Models</h1>
+                    <div class="d-flex gap-2">
+                        <a href="/email_preferences" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope-open"></i> Email Settings
+                        </a>
+                        <button class="btn btn-outline-success" onclick="sendTestEmail()">
+                            <i class="fas fa-paper-plane"></i> Test Email
+                        </button>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-refresh"></i> Refresh Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Email Notification Status -->
+                <div id="emailNotificationStatus" class="alert alert-info d-none" role="alert">
+                    <i class="fas fa-envelope me-2"></i>
+                    <span id="emailStatusMessage">Email notification sent successfully!</span>
+                </div>
+
+                {% if is_admin %}
+                <!-- Admin Data Source Configuration Panel -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cog"></i> Admin: Data Source Configuration
+                                    <small class="text-muted">({{ admin_name }})</small>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card {% if yfinance_available %}border-success{% else %}border-danger{% endif %}">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-chart-line"></i> YFinance Integration
+                                                    <span class="badge {% if yfinance_available %}bg-success{% else %}bg-danger{% endif %} ms-2">
+                                                        {% if yfinance_available %}Active{% else %}Inactive{% endif %}
+                                                    </span>
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>Status:</strong> {% if yfinance_available %}✅ Available{% else %}❌ Not Available{% endif %}</p>
+                                                <p><strong>Coverage:</strong> Global Markets (including NSE)</p>
+                                                <p><strong>Configuration:</strong> No credentials required</p>
+                                                {% if not yfinance_available %}
+                                                    <div class="alert alert-danger">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                        YFinance library is not installed. Run: pip install yfinance
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card {% if fyers_available and fyers_configured %}border-success{% elif fyers_available %}border-warning{% else %}border-danger{% endif %}">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-rupee-sign"></i> Fyers API Integration
+                                                    <span class="badge {% if fyers_available and fyers_configured %}bg-success{% elif fyers_available %}bg-warning{% else %}bg-danger{% endif %} ms-2">
+                                                        {% if fyers_available and fyers_configured %}Configured
+                                                        {% elif fyers_available %}Needs Setup
+                                                        {% else %}Not Available{% endif %}
+                                                    </span>
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>Status:</strong> 
+                                                    {% if fyers_available %}✅ Library Available{% else %}❌ Library Not Installed{% endif %}
+                                                </p>
+                                                <p><strong>Credentials:</strong> 
+                                                    {% if fyers_configured %}✅ Configured{% else %}❌ Not Configured{% endif %}
+                                                </p>
+                                                <p><strong>Coverage:</strong> Indian Markets (NSE, BSE, MCX)</p>
+                                                
+                                                {% if not fyers_available %}
+                                                    <div class="alert alert-danger">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                        Fyers API library is not installed. Already installed: fyers-apiv3
+                                                    </div>
+                                                {% elif not fyers_configured %}
+                                                    <div class="alert alert-warning">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        Configure Fyers API credentials below for enhanced reliability.
+                                                    </div>
+                                                    <button class="btn btn-primary btn-sm" onclick="showFyersConfig()">
+                                                        <i class="fas fa-cog"></i> Configure Credentials
+                                                    </button>
+                                                {% else %}
+                                                    <div class="alert alert-success">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        Fyers API is fully configured and operational.
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Admin Controls Row -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-info" onclick="checkDataSourceStatus()">
+                                                <i class="fas fa-search"></i> Check Status
+                                            </button>
+                                            <button class="btn btn-success" onclick="testDataSources()">
+                                                <i class="fas fa-flask"></i> Test Both Sources
+                                            </button>
+                                            <button class="btn btn-warning" onclick="refreshDataSources()">
+                                                <i class="fas fa-sync"></i> Refresh Integration
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if models %}
+                    <!-- Summary Statistics -->
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">{{ models|length }}</div>
+                            <div class="stat-label">Subscribed Models</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ total_runs }}</div>
+                            <div class="stat-label">Total Runs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ unique_symbols|length }}</div>
+                            <div class="stat-label">Unique Stocks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ win_rate|round(1) if win_rate else 0 }}%</div>
+                            <div class="stat-label">Win Rate</div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Section -->
+                    {% if insights %}
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h3><i class="fas fa-brain text-success"></i> AI Insights</h3>
+                            {% for insight in insights %}
+                            <div class="insight-card">
+                                <h5><i class="fas fa-lightbulb"></i> {{ insight.model }}</h5>
+                                <p>{{ insight.summary }}</p>
+                                {% if insight.change_in_recommendations is defined %}
+                                    <div class="d-flex align-items-center">
+                                        {% if insight.change_in_recommendations > 0 %}
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-arrow-up"></i> +{{ insight.change_in_recommendations }} recommendations
+                                            </span>
+                                        {% elif insight.change_in_recommendations < 0 %}
+                                            <span class="badge bg-danger me-2">
+                                                <i class="fas fa-arrow-down"></i> {{ insight.change_in_recommendations }} recommendations
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary me-2">
+                                                <i class="fas fa-minus"></i> No change in recommendations
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if is_admin %}
+                    <!-- Real-time Data Sources Status -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h3><i class="fas fa-database text-info"></i> Real-time Data Sources</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-primary">
+                                        <div class="card-header bg-primary text-white">
+                                            <i class="fas fa-chart-line"></i> YFinance Integration
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Status:</span>
+                                                <span class="badge bg-success">Active</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span>Coverage:</span>
+                                                <span class="text-success">Global Markets</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span>Reliability:</span>
+                                                <span class="text-primary">Primary Source</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-warning">
+                                        <div class="card-header bg-warning text-dark">
+                                            <i class="fas fa-rupee-sign"></i> Fyers API Integration
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Status:</span>
+                                                <span class="badge bg-secondary">Configured</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span>Coverage:</span>
+                                                <span class="text-warning">Indian Markets</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span>Reliability:</span>
+                                                <span class="text-info">Backup Source</span>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> 
+                                                Configure API credentials for enhanced reliability
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Dual Source Advantage:</strong> 
+                                When both data sources are available, the system creates a consensus price for maximum accuracy. 
+                                YFinance provides global coverage while Fyers API offers specialized Indian market data.
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Models List -->
+                    {% for model in models %}
+                    <div class="model-card">
+                        <div class="model-header">
+                            <div class="model-name">
+                                <i class="fas fa-cogs"></i> {{ model.model_name }}
+                            </div>
+                            <div class="run-count">
+                                {{ model.run_results|length }} runs
+                            </div>
+                        </div>
+
+                        <!-- Model Performance Analysis -->
+                        {% if model.performance_data %}
+                        <div class="mb-3">
+                            <h6><i class="fas fa-chart-line"></i> Performance Analysis (Real-time Data):</h6>
+                            {% for symbol, perf in model.performance_data.items() %}
+                                <div class="performance-item mb-2 p-2 border rounded {% if perf.performance_pct > 0 %}performance-profit{% else %}performance-loss{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>{{ symbol }}</strong>
+                                        <div>
+                                            <span class="badge {% if perf.performance_pct > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                                {% if perf.performance_pct > 0 %}+{% endif %}{{ "%.2f"|format(perf.performance_pct) }}%
+                                            </span>
+                                            {% if perf.reliability_score %}
+                                                <span class="badge {% if perf.reliability_score >= 90 %}bg-success{% elif perf.reliability_score >= 70 %}bg-warning{% else %}bg-secondary{% endif %} ms-1" title="Data reliability score">
+                                                    {{ perf.reliability_score }}% reliable
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        First Buy: {{ "%.2f"|format(perf.first_rec_price) }} → Current: {{ "%.2f"|format(perf.current_price) }}
+                                        ({{ perf.recommendation_count }} recommendations)
+                                        {% if perf.data_source %}
+                                            <br>
+                                            <span class="badge 
+                                                {% if perf.data_source == 'dual_consensus' %}data-source-consensus
+                                                {% elif perf.data_source == 'yfinance_primary' %}data-source-primary
+                                                {% else %}data-source-single{% endif %} mt-1">
+                                                <i class="fas fa-database"></i>
+                                                {% if is_admin %}
+                                                    {% if perf.data_source == 'dual_consensus' %}
+                                                        YFinance + Fyers (Consensus)
+                                                    {% elif perf.data_source == 'yfinance_primary' %}
+                                                        YFinance (Primary)
+                                                    {% elif perf.data_source == 'yfinance' %}
+                                                        YFinance
+                                                    {% elif perf.data_source == 'fyers' %}
+                                                        Fyers API
+                                                    {% else %}
+                                                        {{ perf.data_source }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if perf.data_source == 'dual_consensus' %}
+                                                        Multi-Source Verified
+                                                    {% elif perf.data_source == 'yfinance_primary' %}
+                                                        Primary Data Source
+                                                    {% else %}
+                                                        Market Data
+                                                    {% endif %}
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Enhanced Analytics Section -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6><i class="fas fa-brain text-primary"></i> Advanced Analytics</h6>
+                                <button class="btn btn-sm btn-outline-primary" onclick="loadAdvancedAnalytics('{{ model.model_id }}')">
+                                    <i class="fas fa-chart-line"></i> View Details
+                                </button>
+                            </div>
+                            <div id="analytics-{{ model.model_id }}" class="analytics-container" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card bg-light">
+                                            <div class="card-body p-3">
+                                                <h6 class="card-title text-primary">Performance Metrics</h6>
+                                                <div class="metric-item">
+                                                    <span>Total Returns:</span>
+                                                    <span id="total-returns-{{ model.model_id }}" class="float-end fw-bold">Loading...</span>
+                                                </div>
+                                                <div class="metric-item">
+                                                    <span>Win Rate:</span>
+                                                    <span id="win-rate-{{ model.model_id }}" class="float-end fw-bold">Loading...</span>
+                                                </div>
+                                                <div class="metric-item">
+                                                    <span>Sharpe Ratio:</span>
+                                                    <span id="sharpe-ratio-{{ model.model_id }}" class="float-end fw-bold">Loading...</span>
+                                                </div>
+                                                <div class="metric-item">
+                                                    <span>Max Drawdown:</span>
+                                                    <span id="max-drawdown-{{ model.model_id }}" class="float-end fw-bold text-danger">Loading...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card bg-light">
+                                            <div class="card-body p-3">
+                                                <h6 class="card-title text-success">AI Analysis</h6>
+                                                <div class="ai-summary">
+                                                    <small class="text-muted">Performance Trend:</small>
+                                                    <div id="performance-trend-{{ model.model_id }}" class="fw-bold mb-2">Loading...</div>
+                                                    <small class="text-muted">AI Summary:</small>
+                                                    <div id="ai-summary-{{ model.model_id }}" class="small">Loading analysis...</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <canvas id="performance-chart-{{ model.model_id }}" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI-Powered Entry/Exit Alerts -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6><i class="fas fa-robot text-warning"></i> AI Trading Signals</h6>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="generateAIAlert('{{ model.model_id }}')">
+                                        <i class="fas fa-magic"></i> Generate Signal
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" onclick="loadAIAlerts('{{ model.model_id }}')">
+                                        <i class="fas fa-bell"></i> View Alerts
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="ai-alerts-{{ model.model_id }}" class="alerts-container">
+                                <!-- AI alerts will be loaded here -->
+                                <div class="text-center text-muted py-3">
+                                    <i class="fas fa-robot fa-2x mb-2"></i>
+                                    <p>Click "Generate Signal" to get AI-powered entry/exit recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historical Performance Chart -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6><i class="fas fa-history text-info"></i> Historical Performance</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="radio" class="btn-check" name="period-{{ model.model_id }}" id="period-7d-{{ model.model_id }}" value="7d" checked>
+                                    <label class="btn btn-outline-info" for="period-7d-{{ model.model_id }}">7D</label>
+                                    
+                                    <input type="radio" class="btn-check" name="period-{{ model.model_id }}" id="period-30d-{{ model.model_id }}" value="30d">
+                                    <label class="btn btn-outline-info" for="period-30d-{{ model.model_id }}">30D</label>
+                                    
+                                    <input type="radio" class="btn-check" name="period-{{ model.model_id }}" id="period-90d-{{ model.model_id }}" value="90d">
+                                    <label class="btn btn-outline-info" for="period-90d-{{ model.model_id }}">90D</label>
+                                </div>
+                            </div>
+                            <canvas id="historical-chart-{{ model.model_id }}" width="400" height="200"></canvas>
+                        </div>
+
+                        <!-- Latest Stock Prices with Data Sources -->
+                        {% if model.latest_prices %}
+                        <div class="mb-3">
+                            <h6><i class="fas fa-chart-bar"></i> Latest Stock Prices (Dual Source):</h6>
+                            <div class="row">
+                                {% for symbol, price in model.latest_prices.items() %}
+                                <div class="col-md-6 mb-2">
+                                    {% if price %}
+                                        <div class="card price-comparison-card 
+                                            {% if model.data_source_info and model.data_source_info[symbol] %}
+                                                {% set source_info = model.data_source_info[symbol] %}
+                                                {% if source_info.reliability >= 90 %}reliability-high
+                                                {% elif source_info.reliability >= 70 %}reliability-medium
+                                                {% else %}reliability-low{% endif %}
+                                            {% endif %}">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <strong>{{ symbol }}</strong>
+                                                    <span class="text-primary fs-5">{{ "%.2f"|format(price) }}</span>
+                                                </div>
+                                                {% if model.data_source_info and model.data_source_info[symbol] %}
+                                                    <small class="text-muted">
+                                                        {% set source_info = model.data_source_info[symbol] %}
+                                                        <span class="badge 
+                                                            {% if source_info.source == 'dual_consensus' %}data-source-consensus
+                                                            {% elif source_info.source == 'yfinance_primary' %}data-source-primary
+                                                            {% else %}data-source-single{% endif %} mb-1">
+                                                            <i class="fas fa-database"></i>
+                                                            {% if is_admin %}
+                                                                {% if source_info.source == 'dual_consensus' %}
+                                                                    Dual Source Consensus
+                                                                {% elif source_info.source == 'yfinance_primary' %}
+                                                                    YFinance (Primary)
+                                                                {% elif source_info.source == 'yfinance' %}
+                                                                    YFinance Only
+                                                                {% elif source_info.source == 'fyers' %}
+                                                                    Fyers API Only
+                                                                {% else %}
+                                                                    {{ source_info.source }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if source_info.source == 'dual_consensus' %}
+                                                                    Multi-Source Verified
+                                                                {% elif source_info.source == 'yfinance_primary' %}
+                                                                    Primary Data Source
+                                                                {% else %}
+                                                                    Market Data
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </span>
+                                                        {% if is_admin and source_info.source == 'dual_consensus' and source_info.yfinance_price and source_info.fyers_price %}
+                                                            <br><span class="text-success">
+                                                                <i class="fas fa-check-circle"></i> 
+                                                                YF: {{ "%.2f"|format(source_info.yfinance_price) }} | 
+                                                                Fyers: {{ "%.2f"|format(source_info.fyers_price) }}
+                                                            </span>
+                                                        {% endif %}
+                                                        {% if source_info.reliability %}
+                                                            <br>Reliability: <strong>{{ source_info.reliability }}%</strong>
+                                                        {% endif %}
+                                                    </small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="card price-comparison-card reliability-low">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <strong>{{ symbol }}</strong>
+                                                    <span class="text-secondary">N/A</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-exclamation-triangle text-warning"></i> 
+                                                    No data available
+                                                </small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Recent Runs -->
+                        <h6><i class="fas fa-history"></i> Recent Runs:</h6>
+                        {% if model.run_results %}
+                            {% for run in model.run_results[:3] %}  <!-- Show only latest 3 runs -->
+                            <div class="run-item">
+                                <div class="run-date">{{ run.created_at.strftime('%Y-%m-%d %H:%M') if run.created_at else 'Unknown' }}</div>
+                                
+                                {% if run.ml_result %}
+                                    <div class="mb-2">
+                                        <span class="badge bg-{{ 'success' if run.ml_result.status == 'completed' else 'warning' }}">
+                                            {{ run.ml_result.status|title }}
+                                        </span>
+                                    </div>
+                                    
+                                    {% if run.ml_result.summary %}
+                                        <div class="mb-2">
+                                            <strong>Summary:</strong> {{ run.ml_result.summary[:200] }}{% if run.ml_result.summary|length > 200 %}...{% endif %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if run.output %}
+                                        <div class="mb-2">
+                                            <strong>Output:</strong> 
+                                            <div class="text-muted small">{{ run.output[:300] }}{% if run.output|length > 300 %}...{% endif %}</div>
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="text-muted">No detailed results available for this run.</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            
+                            {% if model.run_results|length > 3 %}
+                                <div class="text-center mt-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="showAllRuns('{{ model.model_id }}')">
+                                        Show All {{ model.run_results|length }} Runs
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-muted">No runs recorded yet.</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="no-data">
+                        <i class="fas fa-robot fa-3x mb-3 text-muted"></i>
+                        {% if demo_mode %}
+                            <h3>Demo Mode - Login Required</h3>
+                            <p>Please log in as an investor to view your subscribed ML models.</p>
+                            <div class="mb-3">
+                                <a href="/investor_login" class="btn btn-primary me-2">
+                                    <i class="fas fa-sign-in-alt"></i> Login as Investor
+                                </a>
+                                <a href="/demo_investor_login" class="btn btn-success me-2">
+                                    <i class="fas fa-user-circle"></i> Demo Login (Quick Test)
+                                </a>
+                                <a href="/subscribed_ml_models?demo=true" class="btn btn-outline-secondary">
+                                    <i class="fas fa-eye"></i> View Demo Data
+                                </a>
+                            </div>
+                        {% else %}
+                            <h3>No Subscribed ML Models</h3>
+                            <p>You haven't subscribed to any ML models yet.</p>
+                            <a href="/published" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Browse Available Models
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Fyers Configuration Modal -->
+    <div class="modal fade" id="fyersConfigModal" tabindex="-1" aria-labelledby="fyersConfigModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fyersConfigModalLabel">
+                        <i class="fas fa-cog"></i> Configure Fyers API
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> You need a Fyers trading account and API credentials. 
+                        Visit <a href="https://myapi.fyers.in/" target="_blank">Fyers API Portal</a> to get your credentials.
+                    </div>
+                    <form id="fyersConfigForm">
+                        <div class="mb-3">
+                            <label for="fyersClientId" class="form-label">Client ID</label>
+                            <input type="text" class="form-control" id="fyersClientId" placeholder="Enter your Fyers Client ID" required>
+                            <div class="form-text">Format: ABC12345-100</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fyersAccessToken" class="form-label">Access Token</label>
+                            <input type="password" class="form-control" id="fyersAccessToken" placeholder="Enter your Fyers Access Token" required>
+                            <div class="form-text">This will be used to authenticate API requests</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="configureFyers()">
+                        <i class="fas fa-save"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function refreshData() {
+            window.location.reload();
+        }
+
+        function showAllRuns(modelId) {
+            // This could expand to show all runs or navigate to a detailed view
+            alert('Detailed view for model ' + modelId + ' - to be implemented');
+        }
+
+        // Auto-refresh every 5 minutes
+        setTimeout(function() {
+            refreshData();
+        }, 300000);
+
+        // Admin Data Source Management Functions
+        function checkDataSourceStatus() {
+            fetch('/api/admin/data_sources/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        let statusMessage = 'Data Source Status:\n\n';
+                        statusMessage += `YFinance: ${data.data_sources.yfinance.status}\n`;
+                        statusMessage += `Fyers: ${data.data_sources.fyers.status}\n\n`;
+                        statusMessage += `Active Sources: ${data.summary.active_sources}/${data.summary.total_sources}\n`;
+                        statusMessage += `Dual Source Enabled: ${data.summary.dual_source_enabled ? 'Yes' : 'No'}`;
+                        alert(statusMessage);
+                    } else {
+                        alert('Error checking status: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function testDataSources() {
+            const testSymbols = ['RELIANCE.NS', 'TCS.NS', 'INFY.NS'];
+            
+            fetch('/api/admin/data_sources/test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({symbols: testSymbols})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    let testMessage = 'Data Source Test Results:\n\n';
+                    testMessage += `Total Symbols Tested: ${data.summary.total_symbols}\n`;
+                    testMessage += `YFinance Success: ${data.summary.yfinance_success}\n`;
+                    testMessage += `Fyers Success: ${data.summary.fyers_success}\n`;
+                    testMessage += `Dual Consensus: ${data.summary.dual_consensus}\n`;
+                    testMessage += `Failures: ${data.summary.failures}\n\n`;
+                    
+                    data.test_results.forEach(result => {
+                        testMessage += `${result.symbol}: `;
+                        if (result.consensus_price) {
+                            testMessage += `₹${result.consensus_price.toFixed(2)} (${result.data_source})\n`;
+                        } else {
+                            testMessage += `Failed (${result.error || 'No data'})\n`;
+                        }
+                    });
+                    
+                    alert(testMessage);
+                } else {
+                    alert('Test failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
+        }
+
+        function refreshDataSources() {
+            location.reload();
+        }
+
+        function showFyersConfig() {
+            const fyersModal = new bootstrap.Modal(document.getElementById('fyersConfigModal'));
+            fyersModal.show();
+        }
+
+        function configureFyers() {
+            const clientId = document.getElementById('fyersClientId').value.trim();
+            const accessToken = document.getElementById('fyersAccessToken').value.trim();
+            
+            if (!clientId || !accessToken) {
+                alert('Please fill in both Client ID and Access Token');
+                return;
+            }
+            
+            fetch('/api/admin/data_sources/fyers/configure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: clientId,
+                    access_token: accessToken
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    let configMessage = '✅ Fyers API Configuration Successful!\n\n';
+                    configMessage += `Client ID Set: ${data.configuration.client_id_set}\n`;
+                    configMessage += `Access Token Set: ${data.configuration.access_token_set}\n`;
+                    
+                    if (data.test_result) {
+                        configMessage += `\nTest Result (${data.test_result.test_symbol}):\n`;
+                        if (data.test_result.success) {
+                            configMessage += `✅ Success - Price: ₹${data.test_result.fyers_price}`;
+                        } else {
+                            configMessage += `❌ Test Failed - ${data.test_result.error || 'Unknown error'}`;
+                        }
+                    }
+                    
+                    alert(configMessage);
+                    
+                    // Close modal and refresh page
+                    const fyersModal = bootstrap.Modal.getInstance(document.getElementById('fyersConfigModal'));
+                    fyersModal.hide();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    alert('❌ Configuration failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('❌ Error: ' + error.message);
+            });
+        }
+
+        // Enhanced Analytics Functions
+        function loadAdvancedAnalytics(modelId) {
+            const container = document.getElementById(`analytics-${modelId}`);
+            const isVisible = container.style.display !== 'none';
+            
+            if (isVisible) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            // Add loading state
+            setLoadingState(modelId);
+            
+            // Fetch analytics data
+            fetch(`/api/ml_model_analytics/${modelId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        updateAnalyticsDisplay(modelId, data.analytics);
+                        renderPerformanceChart(modelId, data.analytics);
+                    } else {
+                        showAnalyticsError(modelId, data.error);
+                    }
+                })
+                .catch(error => {
+                    showAnalyticsError(modelId, error.message);
+                });
+        }
+        
+        function setLoadingState(modelId) {
+            document.getElementById(`total-returns-${modelId}`).innerHTML = '<span class="loading-pulse">Loading...</span>';
+            document.getElementById(`win-rate-${modelId}`).innerHTML = '<span class="loading-pulse">Loading...</span>';
+            document.getElementById(`sharpe-ratio-${modelId}`).innerHTML = '<span class="loading-pulse">Loading...</span>';
+            document.getElementById(`max-drawdown-${modelId}`).innerHTML = '<span class="loading-pulse">Loading...</span>';
+            document.getElementById(`performance-trend-${modelId}`).innerHTML = '<span class="loading-pulse">Loading...</span>';
+            document.getElementById(`ai-summary-${modelId}`).innerHTML = '<span class="loading-pulse">Loading analysis...</span>';
+        }
+        
+        function updateAnalyticsDisplay(modelId, analytics) {
+            // Update performance metrics
+            document.getElementById(`total-returns-${modelId}`).innerHTML = 
+                `<span class="${analytics.total_returns > 0 ? 'text-success' : 'text-danger'}">${(analytics.total_returns * 100).toFixed(2)}%</span>`;
+            
+            document.getElementById(`win-rate-${modelId}`).innerHTML = 
+                `<span class="${analytics.win_rate > 0.5 ? 'text-success' : 'text-warning'}">${(analytics.win_rate * 100).toFixed(1)}%</span>`;
+            
+            document.getElementById(`sharpe-ratio-${modelId}`).innerHTML = 
+                `<span class="${analytics.sharpe_ratio > 1 ? 'text-success' : analytics.sharpe_ratio > 0 ? 'text-warning' : 'text-danger'}">${analytics.sharpe_ratio ? analytics.sharpe_ratio.toFixed(2) : 'N/A'}</span>`;
+            
+            document.getElementById(`max-drawdown-${modelId}`).innerHTML = 
+                `<span class="text-danger">${(analytics.max_drawdown * 100).toFixed(2)}%</span>`;
+            
+            // Update AI analysis
+            const trendClass = `trend-${analytics.performance_trend}`;
+            document.getElementById(`performance-trend-${modelId}`).innerHTML = 
+                `<span class="${trendClass}">${analytics.performance_trend.charAt(0).toUpperCase() + analytics.performance_trend.slice(1)}</span>`;
+            
+            document.getElementById(`ai-summary-${modelId}`).innerHTML = analytics.ai_summary || 'Analysis in progress...';
+        }
+        
+        function showAnalyticsError(modelId, error) {
+            const container = document.getElementById(`analytics-${modelId}`);
+            container.innerHTML = `
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Unable to load analytics: ${error}
+                </div>
+            `;
+        }
+        
+        function renderPerformanceChart(modelId, analytics) {
+            const ctx = document.getElementById(`performance-chart-${modelId}`).getContext('2d');
+            
+            // Sample data - in a real implementation, this would come from the API
+            const chartData = {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Returns (%)',
+                    data: [analytics.recent_returns * 25, analytics.recent_returns * 50, analytics.recent_returns * 75, analytics.recent_returns * 100],
+                    borderColor: analytics.total_returns > 0 ? '#28a745' : '#dc3545',
+                    backgroundColor: analytics.total_returns > 0 ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Returns (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // AI Alerts Functions
+        function generateAIAlert(modelId) {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            button.disabled = true;
+            
+            fetch(`/api/generate_ai_alert/${modelId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    displayNewAlert(modelId, data.alert);
+                    
+                    // Show success message with email status
+                    let message = 'AI signal generated successfully!';
+                    if (data.alert.email_sent) {
+                        message += ' Email notification sent to your registered email.';
+                        showEmailNotificationStatus('success', 'Email alert sent successfully!');
+                    } else {
+                        showEmailNotificationStatus('warning', 'Alert generated but email notification failed. Check your email preferences.');
+                    }
+                    showSuccessMessage(message);
+                } else {
+                    showErrorMessage('Failed to generate AI signal: ' + data.error);
+                }
+            })
+            .catch(error => {
+                showErrorMessage('Error generating AI signal: ' + error.message);
+            })
+            .finally(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
+        
+        function loadAIAlerts(modelId) {
+            const container = document.getElementById(`ai-alerts-${modelId}`);
+            
+            container.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading alerts...</div>';
+            
+            fetch(`/api/ai_alerts/${modelId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        displayAlerts(modelId, data.alerts);
+                    } else {
+                        container.innerHTML = `<div class="alert alert-warning">Failed to load alerts: ${data.error}</div>`;
+                    }
+                })
+                .catch(error => {
+                    container.innerHTML = `<div class="alert alert-danger">Error loading alerts: ${error.message}</div>`;
+                });
+        }
+        
+        function displayAlerts(modelId, alerts) {
+            const container = document.getElementById(`ai-alerts-${modelId}`);
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                        <p>No active alerts for this model</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let alertsHtml = '';
+            alerts.forEach(alert => {
+                alertsHtml += `
+                    <div class="alert-item ${alert.alert_type}" id="alert-${alert.id}">
+                        <div class="signal-strength">
+                            <span class="badge bg-info">${Math.round(alert.signal_strength * 100)}% confidence</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-${getAlertIcon(alert.alert_type)} me-2"></i>
+                            <strong class="text-uppercase">${alert.alert_type} Signal</strong>
+                            <span class="ms-auto text-muted small">${formatDate(alert.created_at)}</span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">AI Reasoning:</small>
+                            <div class="small">${alert.ai_reasoning}</div>
+                        </div>
+                        ${alert.price_target ? `
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <small class="text-muted">Target Price:</small>
+                                    <div class="fw-bold text-success">$${alert.price_target.toFixed(2)}</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Stop Loss:</small>
+                                    <div class="fw-bold text-danger">$${alert.stop_loss ? alert.stop_loss.toFixed(2) : 'N/A'}</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div class="confidence-meter">
+                            <div class="confidence-fill" style="width: ${alert.confidence_level * 100}%"></div>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="markAlertAsRead(${alert.id})">
+                                Mark as Read
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = alertsHtml;
+        }
+        
+        function displayNewAlert(modelId, alert) {
+            const container = document.getElementById(`ai-alerts-${modelId}`);
+            const alertHtml = `
+                <div class="alert-item ${alert.alert_type} border-warning" id="alert-${alert.id}">
+                    <div class="signal-strength">
+                        <span class="badge bg-warning text-dark">NEW</span>
+                        <span class="badge bg-info">${Math.round(alert.signal_strength * 100)}% confidence</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-${getAlertIcon(alert.alert_type)} me-2"></i>
+                        <strong class="text-uppercase">${alert.alert_type} Signal</strong>
+                        <span class="ms-auto text-muted small">Just now</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">AI Reasoning:</small>
+                        <div class="small">${alert.ai_reasoning}</div>
+                    </div>
+                    <div class="confidence-meter">
+                        <div class="confidence-fill" style="width: ${alert.confidence_level * 100}%"></div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = alertHtml + container.innerHTML;
+        }
+        
+        function getAlertIcon(alertType) {
+            switch(alertType.toLowerCase()) {
+                case 'entry': return 'arrow-up';
+                case 'exit': return 'arrow-down';
+                case 'hold': return 'hand-paper';
+                default: return 'exclamation-triangle';
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        
+        function markAlertAsRead(alertId) {
+            const alertElement = document.getElementById(`alert-${alertId}`);
+            alertElement.style.opacity = '0.6';
+            
+            // In a real implementation, this would make an API call to mark the alert as read
+            fetch(`/api/alerts/${alertId}/mark_read`, {
+                method: 'POST'
+            });
+        }
+        
+        function showSuccessMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function showErrorMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function showEmailNotificationStatus(type, message) {
+            const statusDiv = document.getElementById('emailNotificationStatus');
+            const messageSpan = document.getElementById('emailStatusMessage');
+            
+            // Update message and style
+            messageSpan.textContent = message;
+            statusDiv.className = `alert alert-${type === 'success' ? 'success' : 'warning'} d-block`;
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                statusDiv.className = 'alert alert-info d-none';
+            }, 10000);
+        }
+        
+        async function sendTestEmail() {
+            const testButton = document.querySelector('button[onclick="sendTestEmail()"]');
+            const originalText = testButton.innerHTML;
+            
+            try {
+                testButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+                testButton.disabled = true;
+                
+                const response = await fetch('/api/test_email_alert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    showCustomAlert('success', `Test email sent successfully to ${result.email}!`);
+                    showEmailNotificationStatus('success', `Test email sent to ${result.email}`);
+                } else {
+                    showCustomAlert('danger', result.message || 'Failed to send test email');
+                    showEmailNotificationStatus('warning', result.message || 'Failed to send test email');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showCustomAlert('danger', 'Network error. Please try again.');
+                showEmailNotificationStatus('warning', 'Network error sending test email');
+            } finally {
+                testButton.innerHTML = originalText;
+                testButton.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

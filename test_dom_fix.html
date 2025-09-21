@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Exception Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 DOM Exception Fix Test</h1>
+    <p>This page tests the fix for the DOM exception error in the animateValue function.</p>
+    
+    <div class="metric-value" data-value="1250">1250</div>
+    <div class="metric-value" data-value="987">987</div>
+    <div class="metric-value" data-value="543">543</div>
+    
+    <div id="test-results"></div>
+    
+    <script>
+        // Copy the fixed animateValue function
+        function animateValue(element, start, end, duration) {
+            // Handle both element objects and selector strings
+            const obj = (typeof element === 'string') ? document.querySelector(element) : element;
+            if (!obj) return; // Exit if element not found
+            
+            const range = end - start;
+            const minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+            
+            const startTime = new Date().getTime();
+            const endTime = startTime + duration;
+            
+            function run() {
+                try {
+                    const now = new Date().getTime();
+                    const remaining = Math.max((endTime - now) / duration, 0);
+                    const value = Math.round(end - (remaining * range));
+                    if (obj && obj.innerHTML !== undefined) {
+                        obj.innerHTML = value.toLocaleString();
+                    }
+                    
+                    if (value == end) {
+                        clearInterval(timer);
+                    }
+                } catch (error) {
+                    console.error('Error in animateValue run function:', error);
+                    clearInterval(timer);
+                }
+            }
+            
+            const timer = setInterval(run, stepTime);
+            run();
+        }
+
+        // Test function to verify the fix
+        function runTests() {
+            const results = document.getElementById('test-results');
+            let testsPassed = 0;
+            let totalTests = 0;
+            
+            function addResult(test, success, message) {
+                totalTests++;
+                if (success) testsPassed++;
+                
+                const div = document.createElement('div');
+                div.className = `test-result ${success ? 'success' : 'error'}`;
+                div.innerHTML = `<strong>Test ${totalTests}: ${test}</strong><br>${message}`;
+                results.appendChild(div);
+            }
+            
+            // Test 1: animateValue with CSS selector string
+            try {
+                animateValue('.metric-value:first-child', 0, 100, 1000);
+                addResult('CSS Selector', true, '✅ Successfully called animateValue with CSS selector string');
+            } catch (error) {
+                addResult('CSS Selector', false, `❌ Error with CSS selector: ${error.message}`);
+            }
+            
+            // Test 2: animateValue with HTMLElement object (the fix)
+            try {
+                const element = document.querySelector('.metric-value:nth-child(2)');
+                animateValue(element, 0, 200, 1000);
+                addResult('HTMLElement Object', true, '✅ Successfully called animateValue with HTMLElement object');
+            } catch (error) {
+                addResult('HTMLElement Object', false, `❌ Error with HTMLElement: ${error.message}`);
+            }
+            
+            // Test 3: animateValue with null/undefined
+            try {
+                animateValue(null, 0, 300, 1000);
+                addResult('Null Handling', true, '✅ Successfully handled null element');
+            } catch (error) {
+                addResult('Null Handling', false, `❌ Error with null element: ${error.message}`);
+            }
+            
+            // Test 4: IntersectionObserver simulation
+            try {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        try {
+                            if (entry.isIntersecting) {
+                                const element = entry.target;
+                                if (element) {
+                                    const finalValue = parseInt(element.dataset.value) || parseInt(element.textContent.replace(/[^\d]/g, ''));
+                                    if (!isNaN(finalValue)) {
+                                        animateValue(element, 0, finalValue, 1500);
+                                    }
+                                    observer.unobserve(element);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error in IntersectionObserver entry processing:', error);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.metric-value:last-child').forEach(el => {
+                    if (el) {
+                        observer.observe(el);
+                    }
+                });
+                
+                addResult('IntersectionObserver', true, '✅ IntersectionObserver setup successful - no DOM exceptions');
+            } catch (error) {
+                addResult('IntersectionObserver', false, `❌ IntersectionObserver error: ${error.message}`);
+            }
+            
+            // Final summary
+            setTimeout(() => {
+                const summary = document.createElement('div');
+                summary.className = `test-result ${testsPassed === totalTests ? 'success' : 'error'}`;
+                summary.innerHTML = `<strong>Summary: ${testsPassed}/${totalTests} tests passed</strong><br>
+                    ${testsPassed === totalTests ? 
+                        '🎉 All tests passed! The DOM exception has been fixed.' : 
+                        '⚠️ Some tests failed. Check the console for more details.'}`;
+                results.appendChild(summary);
+            }, 2000);
+        }
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

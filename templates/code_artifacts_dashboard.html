@@ -1,0 +1,238 @@
+{% extends 'layout.html' %}
+{% block title %}Code Artifacts Dashboard{% endblock %}
+{% block content %}
+<div class="container py-3" id="code-artifacts-dash">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Code Artifacts</h2>
+    <button class="btn btn-sm btn-primary" id="btn-new-artifact">New Artifact</button>
+  </div>
+  <div class="row g-2 mb-2">
+    <div class="col-md-6 small">
+      <div class="alert alert-info py-1 px-2 mb-0">
+        <strong>Tips:</strong> Click ⭐ to (un)star. Permissions badge letters: V=view R=run E=edit A=admin. Use side panels to monitor your run requests & pending approvals.
+      </div>
+    </div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <input type="text" id="filter-text" class="form-control form-control-sm" placeholder="Search title or slug" />
+    </div>
+    <div class="col-md-2">
+      <select id="filter-visibility" class="form-select form-select-sm">
+        <option value="">Any Visibility</option>
+        <option value="public">Public</option>
+        <option value="internal">Internal</option>
+        <option value="private">Private</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select id="filter-sort" class="form-select form-select-sm">
+        <option value="updated_desc">Recently Updated</option>
+        <option value="stars_desc">Most Stars</option>
+        <option value="runs_desc">Most Runs</option>
+        <option value="views_desc">Most Views</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-sm btn-outline-secondary w-100" id="btn-refresh">Refresh</button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" id="artifacts-table">
+      <thead><tr><th>Title</th><th>Slug</th><th>Visibility</th><th>Version</th><th>Stars</th><th>Runs</th><th>Views</th><th>Updated</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <nav class="d-flex justify-content-between align-items-center">
+    <ul class="pagination pagination-sm mb-0" id="pager"></ul>
+    <div class="small text-muted" id="page-summary"></div>
+  </nav>
+  <div class="row mt-4" id="aux-panels">
+    <div class="col-md-6 mb-3">
+      <div class="card h-100">
+        <div class="card-header py-2 d-flex justify-content-between align-items-center">
+          <span class="fw-semibold small">My Run Requests</span>
+          <button class="btn btn-light btn-sm" id="btn-refresh-my-reqs">Refresh</button>
+        </div>
+        <div class="card-body p-2" style="max-height:280px; overflow:auto;">
+          <table class="table table-sm mb-0" id="my-reqs-table"><thead><tr class="small"><th>ID</th><th>Artifact</th><th>Status</th><th>Created</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card h-100">
+        <div class="card-header py-2 d-flex justify-content-between align-items-center">
+          <span class="fw-semibold small">Pending Approvals (I can approve)</span>
+          <button class="btn btn-light btn-sm" id="btn-refresh-approvals">Refresh</button>
+        </div>
+        <div class="card-body p-2" style="max-height:280px; overflow:auto;">
+          <table class="table table-sm mb-0" id="approvals-table"><thead><tr class="small"><th>ID</th><th>Artifact</th><th>User</th><th>Created</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: New Artifact -->
+<div class="modal fade" id="modalNewArtifact" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">New Artifact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form id="form-new-artifact" class="vstack gap-2">
+          <div>
+            <label class="form-label">Slug</label>
+            <input class="form-control form-control-sm" id="new-slug" required placeholder="unique_identifier" />
+          </div>
+          <div>
+            <label class="form-label">Title</label>
+            <input class="form-control form-control-sm" id="new-title" required />
+          </div>
+          <div>
+            <label class="form-label">Visibility</label>
+            <select id="new-visibility" class="form-select form-select-sm">
+              <option value="public">Public</option>
+              <option value="internal">Internal</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Initial Code</label>
+            <textarea id="new-code" class="form-control" rows="10" spellcheck="false">print('hello world')</textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="btn-create-artifact">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+ (async function(){
+  const headers = { 'X-User': window.currentUser || '' };
+  let artifacts = [];
+  let currentPage = 1;
+  let total = 0;
+  let pageSize = 20;
+  function qs(sel){ return document.querySelector(sel); }
+  function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
+  function fmtDate(iso){ return iso? iso.split('T')[0] : ''; }
+  function render(){
+    const rows = artifacts.slice();
+    const tbody = qs('#artifacts-table tbody');
+    tbody.innerHTML='';
+    rows.forEach(a=>{
+      const tr = document.createElement('tr');
+      const perms = a.effective_perms || {};
+      const permIcons = [
+        perms.can_view? 'V':'',
+        perms.can_run? 'R':'',
+        perms.can_edit? 'E':'',
+        perms.can_admin? 'A':''
+      ].filter(Boolean).join('');
+      const starred = a.starred? '⭐':'';
+      tr.innerHTML = `<td><button class="btn btn-link p-0 me-1 btn-star" data-slug="${a.slug}" title="Star/unstar" style="text-decoration:none;">${starred||'☆'}</button><a href="/code_artifact?slug=${a.slug}">${a.title}</a></td><td>${a.slug}</td><td><span class="badge bg-secondary">${a.visibility}</span></td><td>${a.current_version}</td><td>${a.stars}</td><td>${a.run_count}</td><td>${a.views}</td><td>${fmtDate(a.updated_at)}</td><td><span class="badge bg-info text-dark" title="Permissions">${permIcons||'-'}</span> <button class="btn btn-sm btn-outline-primary ms-1" data-open slug="${a.slug}">Open</button></td>`;
+      tbody.appendChild(tr);
+    });
+    renderPager();
+    qs('#page-summary').textContent = `Showing page ${currentPage} (${artifacts.length} items / total ${total})`;
+    bindStars();
+  }
+  function renderPager(){
+    const pager = qs('#pager');
+    pager.innerHTML='';
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const make = (p,label,disabled,active)=>{
+      const li=document.createElement('li');
+      li.className='page-item'+(disabled?' disabled':'')+(active?' active':'');
+      li.innerHTML=`<a class='page-link' href='#'>${label}</a>`;
+      if(!disabled && !active){ li.onclick=e=>{ e.preventDefault(); currentPage=p; loadArtifacts(); }; }
+      pager.appendChild(li);
+    };
+    make(currentPage-1,'«', currentPage<=1,false);
+    for(let p=Math.max(1,currentPage-2); p<=Math.min(totalPages,currentPage+2); p++){
+      make(p, p, false, p===currentPage);
+    }
+    make(currentPage+1,'»', currentPage>=totalPages,false);
+  }
+  function buildQuery(){
+    const params = new URLSearchParams();
+    const txt = qs('#filter-text').value.trim();
+    const vis = qs('#filter-visibility').value;
+    const sort = qs('#filter-sort').value; // backend currently sorts by updated desc only; client will reorder after fetch if needed
+    params.set('page', currentPage);
+    params.set('page_size', pageSize);
+    if(txt) params.set('q', txt);
+    if(vis) params.set('visibility', vis);
+    return params.toString();
+  }
+  async function loadArtifacts(){
+    try{
+      const r = await fetch('/api/code/artifacts?'+buildQuery(), {headers});
+      const data = await r.json();
+      if(data.ok){
+        artifacts = data.artifacts||[];
+        total = data.total||artifacts.length;
+        pageSize = data.page_size||pageSize;
+        currentPage = data.page||currentPage;
+        // client-side resort based on selected sort (server default updated_at desc)
+        const sortSel = qs('#filter-sort').value;
+        const sorter = {
+          'updated_desc': (a,b)=> (b.updated_at||'').localeCompare(a.updated_at||''),
+          'stars_desc': (a,b)=> (b.stars||0)-(a.stars||0),
+          'runs_desc': (a,b)=> (b.run_count||0)-(a.run_count||0),
+          'views_desc': (a,b)=> (b.views||0)-(a.views||0),
+        }[sortSel];
+        artifacts.sort(sorter);
+      } else { artifacts=[]; total=0; }
+    }catch(e){ artifacts=[]; total=0; }
+    render();
+  }
+  function bindStars(){
+    qsa('.btn-star').forEach(btn=>{
+      btn.onclick= async ()=>{
+        const slug = btn.getAttribute('data-slug');
+        const isStarred = btn.textContent.trim()==='⭐';
+        const url = `/api/code/artifacts/${slug}/${isStarred?'unstar':'star'}`;
+        try{ const r = await fetch(url,{method:'POST', headers}); const d= await r.json(); if(d.ok){ loadArtifacts(); } }catch(e){}
+      };
+    });
+  }
+  // Filters
+  ['#filter-text','#filter-visibility','#filter-sort'].forEach(id=> qs(id).addEventListener('input', ()=>{ currentPage=1; loadArtifacts(); }));
+  qs('#btn-refresh').addEventListener('click', ()=>{ currentPage=1; loadArtifacts(); refreshAux(); });
+  // New Artifact modal
+  const modalEl = document.getElementById('modalNewArtifact');
+  const modal = new bootstrap.Modal(modalEl);
+  qs('#btn-new-artifact').onclick = ()=> modal.show();
+  qs('#btn-create-artifact').onclick = async ()=>{
+    const slug = qs('#new-slug').value.trim();
+    const title = qs('#new-title').value.trim();
+    const visibility = qs('#new-visibility').value;
+    const code = qs('#new-code').value;
+    if(!slug || !title){ return; }
+    const res = await fetch('/api/code/artifacts', {method:'POST', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify({slug,title,visibility,code})});
+    const data = await res.json();
+    if(!data.ok){ alert(data.error||'Create failed'); return; }
+    modal.hide();
+    artifacts.push(data.artifact);
+    render();
+  };
+  // Auxiliary panels
+  async function loadMyRunRequests(){
+    try{ const r= await fetch('/api/code/my_run_requests',{headers}); const d= await r.json(); if(d.ok){ const tb=qs('#my-reqs-table tbody'); tb.innerHTML=''; (d.requests||[]).forEach(req=>{ const tr=document.createElement('tr'); const st=req.status||''; const badge= st==='executed'?'success': (st==='approved'?'primary': (st==='pending'?'secondary': (st==='rejected'?'danger':'dark'))); tr.innerHTML=`<td>${req.id}</td><td><a href="/code_artifact?slug=${req.artifact_slug}">${req.artifact_title||req.artifact_slug||''}</a></td><td><span class="badge bg-${badge}">${st}</span></td><td class="small">${(req.created_at||'').replace('T',' ').slice(0,16)}</td>`; tb.appendChild(tr); }); } }catch(e){}
+  }
+  async function loadMyApprovals(){
+    try{ const r= await fetch('/api/code/my_pending_run_approvals',{headers}); const d= await r.json(); if(d.ok){ const tb=qs('#approvals-table tbody'); tb.innerHTML=''; (d.requests||[]).forEach(req=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${req.id}</td><td><a href="/code_artifact?slug=${req.artifact_slug}">${req.artifact_title||req.artifact_slug||''}</a></td><td>${req.requester}</td><td class="small">${(req.created_at||'').replace('T',' ').slice(0,16)}</td>`; tb.appendChild(tr); }); } }catch(e){}
+  }
+  function refreshAux(){ loadMyRunRequests(); loadMyApprovals(); }
+  qs('#btn-refresh-my-reqs').addEventListener('click', loadMyRunRequests);
+  qs('#btn-refresh-approvals').addEventListener('click', loadMyApprovals);
+  await loadArtifacts();
+  refreshAux();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,312 @@
+{% extends "layout.html" %}
+{% block title %}{{ script_name }} - Results{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <h1 class="mb-0"><i class="bi bi-file-code me-2"></i>{{ script_name }}</h1>
+    <p class="text-muted mb-0">Latest and past results</p>
+  </div>
+  <div>
+    <a href="/investor/script_results" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<style>
+  .json-table thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
+  .json-table td, .json-table th { white-space: nowrap; }
+  .json-table .cell-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .json-table tbody tr:nth-child(odd) { background-color: #fcfcfd; }
+</style>
+{% set numeric_cols = [
+  'Current Price','Price','price','Change (%)','Open','High','Low','Volume','RSI (14)','MACD','ATR','TSI',
+  'Confidence (%)','confidence','score','probability','weight',
+  'Bollinger Upper','Bollinger Lower','Stop Loss','Target','target','target_price','price_target','pt',
+  'BTST Score','Price Change (%)','Close Near High (%)','Intraday Range (%)','Volume Spike'
+] %}
+<div class="row" id="pageRoot" data-latest-id="{{ latest_id or '' }}">
+  <div class="col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Latest Result</strong>
+        {% if latest and latest.is_json_result %}
+          <a class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" href="#rawJson">View Raw JSON</a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if latest %}
+          <div class="mb-2 small text-muted">{{ latest.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} • {{ '%.2f' % latest.execution_time }}s</div>
+          {% if latest_columns and latest_columns|length > 0 and latest_table_rows and latest_table_rows|length > 0 %}
+            <div class="table-responsive" style="max-height: 520px;">
+              <table class="table table-sm table-hover align-middle json-table">
+                <thead class="table-light">
+                  <tr>
+                    {% for col in latest_columns %}
+                      <th>{{ col }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in latest_table_rows %}
+                    <tr>
+                      {% for col in latest_columns %}
+                        {% set val = row.get(col) %}
+                        <td class="{{ 'cell-num' if (col in numeric_cols) or (val is number) else '' }}">
+                          {% if col in ['recommendation','Recommendation','rec'] and val %}
+                            <span class="badge bg-primary">{{ val }}</span>
+                          {% elif col in ['symbol','Symbol','ticker','stock'] %}
+                            <strong style="white-space: nowrap;">{{ val or '—' }}</strong>
+                          {% else %}
+                            {{ val if val is not none else '—' }}
+                          {% endif %}
+                        </td>
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div id="rawJson" class="collapse mt-3">
+              <pre class="bg-light p-3 border rounded" style="max-height:420px; overflow:auto; white-space:pre-wrap;">{{ latest_pretty }}</pre>
+            </div>
+          {% elif latest_rows and latest_rows|length > 0 %}
+            <div class="table-responsive">
+              <table class="table table-sm table-hover align-middle json-table">
+                <thead class="table-light">
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Recommendation</th>
+                    <th>Insight</th>
+                    <th class="text-end">Confidence</th>
+                    <th class="text-end">Target</th>
+                    <th class="text-end">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in latest_rows %}
+                  <tr>
+                    <td><strong style="white-space: nowrap;">{{ r.symbol or '—' }}</strong></td>
+                    <td>
+                      {% if r.recommendation %}
+                        <span class="badge bg-primary">{{ r.recommendation }}</span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td style="max-width:420px">
+                      {% if r.insight %}
+                        <span class="text-muted">{{ r.insight }}</span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="text-end">{{ r.confidence if r.confidence is not none else '—' }}</td>
+                    <td class="text-end">{{ r.target if r.target is not none else '—' }}</td>
+                    <td class="text-end">{{ r.price if r.price is not none else '—' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div id="rawJson" class="collapse mt-3">
+              <pre class="bg-light p-3 border rounded" style="max-height:420px; overflow:auto; white-space:pre-wrap;">{{ latest_pretty }}</pre>
+            </div>
+          {% elif latest.is_json_result and latest_pretty %}
+            <pre class="bg-light p-3 border rounded" style="max-height:420px; overflow:auto; white-space:pre-wrap;">{{ latest_pretty }}</pre>
+          {% else %}
+            <pre class="bg-dark text-light p-3 border rounded" style="max-height:420px; overflow:auto; white-space:pre-wrap;">{{ latest.output or 'No output' }}</pre>
+          {% endif %}
+        {% else %}
+          <div class="text-muted">No results yet.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Past Results</strong>
+        <small class="text-muted">Last 30 days</small>
+      </div>
+      <div class="card-body">
+        {% if past and past|length > 0 %}
+          <div class="list-group">
+            {% for e in past %}
+              <a class="list-group-item list-group-item-action" href="#" data-run-id="{{ e.id }}" onclick="openResult(this.getAttribute('data-run-id')); return false;">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">{{ e.program_name }}</h6>
+                  <small class="text-muted">{{ e.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                </div>
+                <small class="text-muted">{{ e.description or 'No description' }}</small>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted">No past results.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    {% if latest_metadata %}
+    <div class="card mb-3">
+      <div class="card-header"><strong>Run Metadata</strong></div>
+      <div class="card-body small">
+        <div class="d-flex justify-content-between mb-1"><span>Total analyzed</span><span>{{ latest_metadata.total_stocks_analyzed or latest_metadata.get('total_stocks_analyzed') }}</span></div>
+        <div class="d-flex justify-content-between mb-1"><span>Actionable</span><span>{{ latest_metadata.actionable_recommendations or latest_metadata.get('actionable_recommendations') }}</span></div>
+        <div class="d-flex justify-content-between mb-1"><span>BTST opp.</span><span>{{ latest_metadata.btst_opportunities or latest_metadata.get('btst_opportunities') }}</span></div>
+        <div class="d-flex justify-content-between mb-1"><span>Avg confidence</span><span>{{ latest_metadata.average_confidence or latest_metadata.get('average_confidence') }}</span></div>
+        <div class="d-flex justify-content-between mb-1"><span>Timestamp</span><span>{{ latest_metadata.timestamp or latest_metadata.get('timestamp') }}</span></div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+          <div>
+            <div class="small text-muted">Total runs</div>
+            <div class="h5 mb-0">{{ summary.total_runs }}</div>
+          </div>
+          <div class="text-end">
+            <div class="small text-muted">Success rate</div>
+            <div class="h5 mb-0">{{ '%.1f' % summary.success_rate }}%</div>
+          </div>
+        </div>
+        <div class="small text-muted">Last run: {{ summary.last_run or 'N/A' }}</div>
+      </div>
+    </div>
+
+    {% if stocks_summary and stocks_summary|length > 0 %}
+    <div class="card mb-3">
+      <div class="card-header"><strong>Stocks Mentioned</strong></div>
+      <div class="card-body">
+        {% for sym, meta in stocks_summary.items() %}
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div><strong>{{ sym }}</strong></div>
+            <div>
+              <span class="badge bg-secondary me-2">x{{ meta.count }}</span>
+              {% if meta.latest_rec %}
+                <span class="badge bg-info">{{ meta.latest_rec }}</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>AI Analysis & Performance</strong>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-primary" onclick="loadAi('{{ script_name }}')"><i class="bi bi-robot"></i> Basic</button>
+            <button class="btn btn-sm btn-primary" onclick="window.location.href='/investor/scripts/{{ script_name }}/performance'; return false;"><i class="bi bi-graph-up-arrow"></i> Performance</button>
+          <button class="btn btn-sm btn-outline-success" onclick="loadLatestInsights()"><i class="bi bi-table"></i> Latest Table</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="aiBox" class="small text-muted">Click an option to generate insights and performance analysis.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Side drawer for viewing a past run -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="resultDrawer">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Execution Detail</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div id="drawerBody" class="small text-muted">Select a past run to view details.</div>
+  </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function openResult(id) {
+  try {
+    const r = await fetch(`/investor/script_results/execution/${id}`);
+    const d = await r.json();
+    if (!d.success) { document.getElementById('drawerBody').innerHTML = `<div class="alert alert-warning">${d.error}</div>`; return; }
+    const e = d.execution;
+    const content = `
+      <div class="mb-2">
+        <div><strong>Program:</strong> ${e.program_name}</div>
+        <div><strong>Script:</strong> ${e.script_name}</div>
+        <div><strong>Time:</strong> ${e.execution_time?.toFixed ? e.execution_time.toFixed(2) : e.execution_time}s</div>
+        <div><strong>Date:</strong> ${e.timestamp}</div>
+      </div>
+      <div>
+        <div class="mb-2"><strong>${e.is_json_result ? 'JSON Output' : 'Script Output'}</strong></div>
+        <pre class="bg-light p-2 border rounded" style="max-height:380px; overflow:auto; white-space:pre-wrap;"><code>${(e.json_output || e.output) || 'No output'}</code></pre>
+      </div>
+    `;
+    document.getElementById('drawerBody').innerHTML = content;
+    new bootstrap.Offcanvas('#resultDrawer').show();
+  } catch (err) {
+    document.getElementById('drawerBody').innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+  }
+}
+
+async function loadAi(scriptName) {
+  const box = document.getElementById('aiBox');
+  box.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating analysis...';
+  try {
+    const r = await fetch(`/api/investor/json_insights?script_name=${encodeURIComponent(scriptName)}`);
+    const d = await r.json();
+    if (!d.success) { box.innerHTML = `<div class="alert alert-warning">${d.error}</div>`; return; }
+    box.innerHTML = `
+      <div class="mb-2"><small class="text-muted">Samples analyzed: ${d.sample_count}</small></div>
+      <pre class="bg-light p-2 border rounded" style="white-space: pre-wrap;">${d.insights}</pre>
+      <div class="mt-2"><strong>Top Keys:</strong> ${d.top_keys.map(k => `<span class=\"badge bg-secondary me-1\">${k[0]}: ${k[1]}</span>`).join('')}</div>
+    `;
+  } catch (err) {
+    box.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+  }
+}
+
+// (Deprecated inline) loadEnhancedAnalysis kept for backward compatibility if invoked elsewhere
+async function loadEnhancedAnalysis(scriptName) {
+  // Redirect to dedicated performance page
+  window.location.href = `/investor/scripts/${encodeURIComponent(scriptName)}/performance`;
+}
+
+async function loadLatestInsights() {
+  const box = document.getElementById('aiBox');
+  box.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing latest table...';
+  try {
+    const root = document.getElementById('pageRoot');
+    const idAttr = root ? root.getAttribute('data-latest-id') : '';
+    const execId = idAttr ? parseInt(idAttr, 10) : null;
+    if (!execId) { box.innerHTML = '<div class="alert alert-warning">No latest execution found.</div>'; return; }
+    const r = await fetch(`/api/investor/execution_insights/${execId}`);
+    const d = await r.json();
+    if (!d.success) { box.innerHTML = `<div class="alert alert-warning">${d.error}</div>`; return; }
+
+    const recs = (d.recommendation_distribution || []).map(x => `${x[0]}: ${x[1]} (${x[2]}%)`).join(', ');
+    const movers = (d.top_movers || []).map(m => `<span class=\"badge bg-secondary me-1\">${m.symbol}: ${m.change_pct}%</span>`).join('');
+    const parts = [];
+    if (d.insights && d.insights.length) {
+      parts.push('<ul class="mb-2">' + d.insights.map(s => `<li>${s}</li>`).join('') + '</ul>');
+    }
+    parts.push(`<div class="mb-1"><strong>Rows analyzed:</strong> ${d.rows_analyzed}</div>`);
+    if (recs) parts.push(`<div class="mb-1"><strong>Recommendation mix:</strong> ${recs}</div>`);
+    if (movers) parts.push(`<div class="mb-1"><strong>Top movers:</strong> ${movers}</div>`);
+    parts.push(`<div class="mb-1"><strong>High-confidence (>=70%):</strong> ${d.high_confidence_count || 0}</div>`);
+    parts.push(`<div class="mb-1"><strong>BTST-qualified (score ≥60):</strong> ${d.btst_count || 0}</div>`);
+
+    box.innerHTML = parts.join('');
+  } catch (err) {
+    box.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+  }
+}
+</script>
+{% endblock %}

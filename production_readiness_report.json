@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-09-05T10:25:06.197070",
+  "total_checks": 6,
+  "passed_checks": 5,
+  "success_rate": 83.3,
+  "production_ready": false,
+  "checks": [
+    {
+      "name": "Environment Variables",
+      "passed": true,
+      "details": {
+        "GOOGLE_CLIENT_ID": true,
+        "GOOGLE_CLIENT_SECRET": true,
+        "GOOGLE_REDIRECT_URI": true
+      }
+    },
+    {
+      "name": "Database Schema",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "API Endpoints",
+      "passed": false,
+      "details": null
+    },
+    {
+      "name": "Google Meet Functions",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "Analyst Connections",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "Session Statistics",
+      "passed": true,
+      "details": null
+    }
+  ]
+}

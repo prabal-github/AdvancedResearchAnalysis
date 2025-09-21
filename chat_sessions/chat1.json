@@ -1,0 +1,13 @@
+{
+  "name": "chat1",
+  "saved_at": "2025-08-15T06:40:14.020323Z",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "system",
+      "html": "AI session ready. Ask about models, code improvements, or generate report sections.",
+      "text": "AI session ready. Ask about models, code improvements, or generate report sections.",
+      "ts": 1755240014005
+    }
+  ]
+}

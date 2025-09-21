@@ -1,0 +1,84 @@
+
+I’ll outline a simple, role-aware onboarding that fits your current stack (Flask + Jinja + Bootstrap + AOS/Toastr/Select2) and keeps it lightweight.
+
+Checklist
+
+Add role-aware “Getting Started” panels on dashboards.
+Provide an interactive tour (“Show me around”).
+Create dedicated Help pages (/help/investor, /help/analyst).
+Sprinkle contextual tips (tooltips/popovers) across key controls.
+Remember dismiss/remember states (localStorage) so tutorials don’t nag.
+What to use
+Bootstrap tooltips/popovers: quick, contextual hints on icons/buttons you already have.
+Intro.js or Shepherd.js (pick one):
+Intro.js: tiny, easy, no dependencies (good default).
+Shepherd.js: more customizable (needs tippy.js/Popper).
+Bootstrap Offcanvas/Modal: for a “Help Center” drawer or “Getting Started” modal.
+Static pages: simple Jinja templates for /help/investor and /help/analyst.
+LocalStorage: remember “dismissed” or “completed tour” per role.
+Optional: short Loom/YT videos embedded in help pages.
+How to add it (high-level)
+Role-aware “Getting Started” card
+
+On investor/analyst dashboards, show a dismissible card at the top with 3–5 key actions, e.g.:
+Investor: “Review Risk Profile → Explore ML Models → Analyze New Report”
+Analyst: “Update Profile → Submit Research → Check Certificate Status”
+Include a “Show me around” button that starts the tour.
+Interactive tour with Intro.js
+
+Add data attributes on important elements (sidebar Dashboard, Analyze New, AI Assistant, ML Models).
+Define a small JS init function per page that builds steps (title + description + element).
+Store localStorage.setItem('tourDismissed_investor', '1') when finished or dismissed.
+Add a “Start Tour” item in the profile dropdown to replay.
+Help pages
+
+Create /help/investor and /help/analyst with:
+Short overview, step-by-step guides, screenshots, and an optional 60–90s Loom embed.
+Link to these pages from the navbar dropdown and sidebar.
+Keep content modular (sections: Navigation, Key Tasks, Tips, FAQs).
+Contextual tips
+
+Use Bootstrap tooltips for terse “?” icons near inputs and action buttons.
+Use popovers for slightly longer explanations (e.g., “What is Risk Profiling?”).
+Empty states
+
+When lists are empty (no reports/portfolio items), show a friendly card with 1–2 steps and a CTA button.
+Remembering state
+
+Use localStorage to hide the “Getting Started” card after “Don’t show again.”
+Track completion events (optional) with a lightweight endpoint if you want analytics.
+Minimal structure to add
+Templates
+
+templates/help_investor.html (how-to, screenshots, short video)
+templates/help_analyst.html (profile, research submission, certificates, analytics)
+Small includes for the “Getting Started” card (e.g., _getting_started_investor.html, _getting_started_analyst.html)
+Static JS
+
+static/js/tour.js:
+initInvestorTour(), initAnalystTour()
+Reads data attributes on elements and runs Intro.js
+Optional: static/css/help.css for minor formatting
+Wiring
+
+Navbar dropdown: add “Help & Tutorials” and “Start Tour” links.
+Dashboards: include the role-specific “Getting Started” partial if not dismissed.
+Content outline (quick)
+Investor
+
+Start here: Risk Profile, Investor Dashboard overview
+ML Models: reading results and recommendations
+Analyze New Report: where to submit and read summaries
+Portfolio tools: stress test and alerts
+Tips: plan limits, “previous data” banner meaning
+Analyst
+
+Profile setup and certificate request/status
+Submitting research and best practices (headings, tickers, topics)
+Performance/leaderboards, report hub
+Admin-only tools (if applicable)
+Optional extras
+A Help off-canvas (Bootstrap) for quick tips without leaving the page.
+A tiny search box on /help/* pages (client-side filter on headings).
+A “First-login only” auto-tour trigger (then rely on the button later).
+If you want, I can scaffold the two help pages, the getting-started card partials, and a tiny Intro.js tour initializer next.

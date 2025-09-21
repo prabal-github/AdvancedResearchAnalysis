@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+{% block title %}Usage & Plans | Admin{% endblock %}
+{% block header %}
+<div class="d-flex align-items-center justify-content-between">
+  <h2 class="mb-0">Usage & Plan Management</h2>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-primary" href="{{ url_for('admin_payment_settings') }}"><i class="bi bi-gear"></i> Payment Settings</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('pricing_page_root') }}" target="_blank">View Pricing</a>
+    <a href="/admin_dashboard" class="btn btn-light"><i class="bi bi-arrow-left"></i> Back</a>
+  </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Investors</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Plan</th><th>Daily Usage</th><th>Notes</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in investors %}
+              <tr>
+                <td>{{ i.name }}</td>
+                <td>{{ i.email }}</td>
+                <td><span class="badge bg-primary text-uppercase">{{ i.plan or 'retail' }}</span></td>
+                <td>{{ i.daily_usage_count or 0 }} on {{ i.daily_usage_date or '-' }}</td>
+                <td class="text-truncate" style="max-width:240px;">{{ i.plan_notes }}</td>
+                <td>
+                  <form method="post" action="/admin/update_plan" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="target" value="investor"/>
+                    <input type="hidden" name="id" value="{{ i.id }}"/>
+                    <select class="form-select form-select-sm" name="plan" style="width:140px;">
+                      <option value="retail" {% if (i.plan or 'retail')=='retail' %}selected{% endif %}>Retail</option>
+                      <option value="pro" {% if i.plan=='pro' %}selected{% endif %}>Pro</option>
+                      <option value="pro_plus" {% if i.plan=='pro_plus' %}selected{% endif %}>Pro+</option>
+                    </select>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="reset_daily" id="r{{ i.id }}">
+                      <label class="form-check-label" for="r{{ i.id }}">Reset today</label>
+                    </div>
+                    <input class="form-control form-control-sm" name="plan_notes" placeholder="Add note" style="width:220px;"/>
+                    <button class="btn btn-sm btn-primary"><i class="bi bi-save"></i></button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Analysts</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Plan</th><th>Daily Usage</th><th>Notes</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in analysts %}
+              <tr>
+                <td>{{ a.full_name or a.name }}</td>
+                <td>{{ a.email }}</td>
+                <td><span class="badge bg-primary text-uppercase">{{ a.plan or 'small' }}</span></td>
+                <td>{{ a.daily_usage_count or 0 }} on {{ a.daily_usage_date or '-' }}</td>
+                <td class="text-truncate" style="max-width:240px;">{{ a.plan_notes }}</td>
+                <td>
+                  <form method="post" action="/admin/update_plan" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="target" value="analyst"/>
+                    <input type="hidden" name="id" value="{{ a.id }}"/>
+                    <select class="form-select form-select-sm" name="plan" style="width:140px;">
+                      <option value="small" {% if (a.plan or 'small')=='small' %}selected{% endif %}>Small</option>
+                      <option value="pro" {% if a.plan=='pro' %}selected{% endif %}>Pro</option>
+                      <option value="pro_plus" {% if a.plan=='pro_plus' %}selected{% endif %}>Pro+</option>
+                    </select>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="reset_daily" id="ra{{ a.id }}">
+                      <label class="form-check-label" for="ra{{ a.id }}">Reset today</label>
+                    </div>
+                    <input class="form-control form-control-sm" name="plan_notes" placeholder="Add note" style="width:220px;"/>
+                    <button class="btn btn-sm btn-primary"><i class="bi bi-save"></i></button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

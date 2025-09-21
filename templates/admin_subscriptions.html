@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Subscription Management</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+ body { font-family: system-ui, Arial, sans-serif; margin:0; background:#111; color:#eee; }
+ header { padding:14px 18px; background:#181818; border-bottom:1px solid #262626; display:flex; gap:14px; align-items:center; }
+ h1 { font-size:18px; margin:0; font-weight:600; }
+ table { width:100%; border-collapse:collapse; font-size:13px; margin-top:16px; }
+ th, td { border:1px solid #2a2a2a; padding:6px 8px; text-align:left; }
+ th { background:#202020; }
+ tr:nth-child(even){ background:#161616; }
+ button { background:#303840; color:#eee; border:1px solid #3f4a54; padding:5px 10px; font-size:12px; border-radius:4px; cursor:pointer; }
+ button:hover { background:#3c4652; }
+ .small { font-size:11px; opacity:.7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Subscription Management</h1>
+  <div class="small">Admin view of investor subscriptions to published models.</div>
+</header>
+<div style="padding:18px; max-width:1100px; margin:0 auto;">
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button onclick="loadSubs()">Refresh</button>
+  </div>
+  <table id="subsTable">
+    <thead>
+      <tr><th>ID</th><th>Investor</th><th>Model</th><th>Created</th><th>Actions</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+<script>
+function loadSubs(){
+  fetch('/api/admin/subscriptions').then(r=>r.json()).then(d=>{
+    const tb=document.querySelector('#subsTable tbody');
+    tb.innerHTML='';
+    if(!d.ok){ tb.innerHTML='<tr><td colspan=5>Error</td></tr>'; return; }
+    if(!d.subscriptions.length){ tb.innerHTML='<tr><td colspan=5 style="opacity:.6">No subscriptions</td></tr>'; return; }
+    d.subscriptions.forEach(s=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${s.id}</td><td>${escapeHtml(s.investor_name||s.investor_id||'-')}</td><td>${escapeHtml(s.model_name||s.model_id||'-')}</td><td>${s.created_at||''}</td><td><button onclick=\"delSub(${s.id})\">Delete</button></td>`;
+      tb.appendChild(tr);
+    });
+  }).catch(()=>{});
+}
+function delSub(id){
+  if(!confirm('Delete subscription '+id+'?')) return;
+  fetch('/api/admin/subscriptions/'+id,{method:'DELETE'}).then(r=>r.json()).then(d=>{ loadSubs(); });
+}
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
+loadSubs();
+</script>
+</body>
+</html>

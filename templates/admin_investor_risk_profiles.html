@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Investor Risk Profiles{% endblock %}
+{% block header %}
+<h1 class="mb-0">Investor Risk Profiles</h1>
+<p class="text-muted mb-0">Overview of submitted profiles</p>
+{% endblock %}
+{% block content %}
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Investor</th>
+            <th>Email</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Status</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in profiles %}
+          <tr>
+            <td>{{ p.investor_name }} <span class="text-muted small">({{ p.investor_id }})</span></td>
+            <td>{{ p.email }}</td>
+            <td><span class="badge bg-{{ 'success' if p.category=='Aggressive' else 'warning' if p.category=='Moderate' else 'secondary' }}">{{ p.category }}</span></td>
+            <td>{{ p.score }}</td>
+            <td>
+              {% if p.completed %}
+              <span class="badge bg-success">Completed</span>
+              {% else %}
+              <span class="badge bg-secondary">Pending</span>
+              {% endif %}
+            </td>
+            <td>{{ p.updated_at.strftime('%Y-%m-%d %H:%M') if p.updated_at else '-' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted">No profiles yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

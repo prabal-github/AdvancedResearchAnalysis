@@ -1,0 +1,85 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+<div class="container-fluid py-3">
+  <h4 class="mb-3"><i class="bi bi-camera-video me-2"></i>Session Bookings</h4>
+  <div class="row g-3">
+    <div class="col-lg-3">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white"><strong>Filters</strong></div>
+        <div class="card-body small">
+          <label class="form-label mb-1">Analyst ID</label>
+          <input type="number" id="fAnalystId" class="form-control form-control-sm mb-2" placeholder="e.g. 7">
+          <label class="form-label mb-1">Investor ID</label>
+          <input type="text" id="fInvestorId" class="form-control form-control-sm mb-2" placeholder="INV000123">
+          <label class="form-label mb-1">Status</label>
+          <select multiple id="fStatus" class="form-select form-select-sm mb-2" style="height:120px;">
+            <option>requested</option>
+            <option>confirmed</option>
+            <option>declined</option>
+            <option>cancelled</option>
+            <option>completed</option>
+          </select>
+          <label class="form-label mb-1">Limit</label>
+            <input type="number" id="fLimit" class="form-control form-control-sm mb-3" value="200" min="1" max="1000">
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-primary" onclick="loadSessions()"><i class="bi bi-search"></i> Apply</button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="resetFilters()">Reset</button>
+          </div>
+          <hr>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="autoRefreshChk" checked>
+            <label class="form-check-label small" for="autoRefreshChk">Auto-refresh (30s)</label>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-3 shadow-sm border-0">
+        <div class="card-header bg-white"><strong>Summary</strong></div>
+        <div class="card-body small" id="summaryBody">Loading...</div>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <strong>Results</strong>
+          <div class="small text-muted" id="resultsMeta"></div>
+        </div>
+        <div class="table-responsive" style="max-height:60vh;">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light"><tr><th>ID</th><th>Analyst</th><th>Investor</th><th>Start (UTC)</th><th>End</th><th>Status</th><th></th></tr></thead>
+            <tbody id="sessionsTableBody"><tr><td colspan="7" class="text-center text-muted">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+let refreshTimer=null;
+function buildQuery(){
+  const params=[]; const a=document.getElementById('fAnalystId').value.trim(); if(a) params.push('analyst_id='+encodeURIComponent(a));
+  const inv=document.getElementById('fInvestorId').value.trim(); if(inv) params.push('investor_id='+encodeURIComponent(inv));
+  const sts=[...document.getElementById('fStatus').selectedOptions].map(o=>o.value.trim()); if(sts.length) params.push('status='+encodeURIComponent(sts.join(',')));
+  const lim=document.getElementById('fLimit').value||200; params.push('limit='+lim);
+  return '/api/admin/analyst_sessions'+(params.length?'?'+params.join('&'):'' );
+}
+function loadSessions(){
+  const url=buildQuery();
+  fetch(url).then(r=>r.json()).then(j=>{
+    const body=document.getElementById('sessionsTableBody'); body.innerHTML='';
+    if(!j.ok){body.innerHTML='<tr><td colspan=7 class="text-danger">'+(j.error||'Error')+'</td></tr>'; return;}
+    document.getElementById('resultsMeta').textContent=j.count+' sessions';
+    if(!j.sessions.length){body.innerHTML='<tr><td colspan=7 class="text-muted text-center">None</td></tr>'; return;}
+    j.sessions.forEach(s=>{const tr=document.createElement('tr'); tr.innerHTML=`<td>${s.id}</td><td>${s.analyst_id}</td><td>${s.investor_id}</td><td>${s.start_utc}</td><td>${s.end_utc}</td><td><span class='badge bg-${s.status==='confirmed'?'success':(s.status==='requested'?'warning':'secondary')}'>${s.status}</span></td><td><button class='btn btn-sm btn-outline-info' onclick='viewSession(${s.id})'>View</button></td>`; body.appendChild(tr);});
+  });
+}
+function loadSummary(){
+  fetch('/api/admin/analyst_sessions/summary').then(r=>r.json()).then(j=>{const box=document.getElementById('summaryBody'); if(!j.ok){box.textContent=j.error||'Error'; return;} const statusRows=Object.entries(j.status_counts).map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')||'<tr><td colspan=2 class="text-muted">None</td></tr>'; const topRows=j.top_analysts.map(t=>`<tr><td>${t.analyst_id}</td><td>${t.confirmed_sessions}</td></tr>`).join('')||'<tr><td colspan=2 class="text-muted">None</td></tr>'; const upcoming=j.upcoming.map(u=>`<li class='list-group-item p-1 small'>#${u.id} A${u.analyst_id} ${u.start_utc}</li>`).join('')||'<li class="list-group-item p-1 small text-muted">None</li>'; box.innerHTML=`<div class='mb-2'><strong>Status Counts</strong><table class='table table-sm mb-2'><tbody>${statusRows}</tbody></table></div><div class='mb-2'><strong>Top Analysts (confirmed)</strong><table class='table table-sm mb-2'><tbody>${topRows}</tbody></table></div><div class='mb-2'><strong>Upcoming</strong><ul class='list-group list-group-flush small'>${upcoming}</ul></div>`; });
+}
+function resetFilters(){document.getElementById('fAnalystId').value=''; document.getElementById('fInvestorId').value=''; [...document.getElementById('fStatus').options].forEach(o=>o.selected=false); document.getElementById('fLimit').value=200; loadSessions();}
+function scheduleRefresh(){ if(refreshTimer) clearTimeout(refreshTimer); if(!document.getElementById('autoRefreshChk').checked) return; refreshTimer=setTimeout(()=>{ loadSessions(); loadSummary(); scheduleRefresh(); }, 30000); }
+ document.getElementById('autoRefreshChk').addEventListener('change', ()=>scheduleRefresh());
+ function init(){loadSessions(); loadSummary(); scheduleRefresh();}
+ document.addEventListener('DOMContentLoaded', init);
+ function viewSession(id){window.open('/api/analyst_sessions/'+id,'_blank');}
+</script>
+{% endblock %}

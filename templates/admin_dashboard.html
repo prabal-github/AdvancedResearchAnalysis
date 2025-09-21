@@ -1,0 +1,557 @@
+{% extends "layout.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center animate__animated animate__fadeInLeft">
+    <div>
+        <h1 class="mb-0 animate__animated animate__zoomIn">Admin Dashboard</h1>
+        <p class="text-muted mb-0 animate__animated animate__fadeInUp animate__delay-1s">Manage topics and track analyst performance</p>
+    </div>
+    <div class="animate__animated animate__fadeInRight">
+        <button class="btn btn-enhanced me-2" onclick="showCreateTopicModal()">
+            <i class="bi bi-plus-circle me-1"></i> Create Topic
+        </button>
+        <a href="/admin/ml_models" class="btn btn-enhanced me-2" style="background: var(--info-gradient);">
+            <i class="bi bi-cpu me-1"></i> ML Models
+        </a>
+        <a href="/admin/api_keys" class="btn btn-enhanced me-2" style="background: var(--secondary-gradient);">
+            <i class="bi bi-key me-1"></i> API Keys
+        </a>
+        <a href="/options_chain_ml" class="btn btn-enhanced me-2" style="background: var(--primary-gradient);">
+            <i class="bi bi-currency-exchange me-1"></i> Options Chain ML
+        </a>
+        <a href="/admin/python_terminal" class="btn btn-enhanced me-2" style="background: var(--dark-gradient);">
+            <i class="bi bi-terminal me-1"></i> Python Terminal
+        </a>
+        <a href="/admin/performance" class="btn btn-enhanced me-2" style="background: var(--success-gradient);">
+            <i class="bi bi-graph-up me-1"></i> Performance Analytics
+        </a>
+        <a href="/agentic_ai" class="btn btn-enhanced" style="background: var(--warning-gradient);">
+            <i class="bi bi-robot me-1"></i> AI Assistant
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Enhanced Metrics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="100">
+            <div class="metric-value" data-value="{{ total_topics }}">{{ total_topics }}</div>
+            <h6 class="text-muted mt-2">Total Topics</h6>
+            <small class="text-info">
+                <i class="bi bi-collection"></i> Research Topics
+            </small>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="200">
+            <div class="metric-value text-success" data-value="{{ completed_topics }}">{{ completed_topics }}</div>
+            <h6 class="text-muted mt-2">Completed</h6>
+            <small class="text-success">
+                <i class="bi bi-check-circle"></i> Finished Reports
+            </small>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="metric-card animate__animated animate__zoomIn" data-aos="zoom-in" data-aos-delay="300">
+            <div class="metric-value text-warning" data-value="{{ pending_topics }}">{{ pending_topics }}</div>
+            <h6 class="text-muted mt-2">Pending</h6>
+            <small class="text-warning">
+                <i class="bi bi-clock-history"></i> In Progress
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access Management -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Access</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="/admin/investor_registrations" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded">
+                                <i class="bi bi-person-check fs-4 text-warning me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-warning">Investor Registrations</h6>
+                                    <small class="text-muted">Review pending registrations</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/create_investor" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded">
+                                <i class="bi bi-person-plus fs-4 text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-primary">Create Investor</h6>
+                                    <small class="text-muted">Manual investor creation</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/create_analyst" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded">
+                                <i class="bi bi-person-badge fs-4 text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-success">Create Analyst</h6>
+                                    <small class="text-muted">Add new analyst accounts</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/manage_analysts" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded">
+                                <i class="bi bi-people-fill fs-4 text-warning me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-warning">Manage Analysts</h6>
+                                    <small class="text-muted">View, edit, activate/deactivate</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/certificates" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded">
+                                <i class="bi bi-award fs-4 text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-info">Certificates</h6>
+                                    <small class="text-muted">Manage certifications</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/fyers_api" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-dark bg-opacity-10 rounded">
+                                <i class="bi bi-gear fs-4 text-dark me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-dark">Fyers API Config</h6>
+                                    <small class="text-muted">Production data source setup</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-3">
+                    <div class="col-md-3">
+                        <a href="/options_chain_ml" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded">
+                                <i class="bi bi-currency-exchange fs-4 text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-primary">Options Chain ML</h6>
+                                    <small class="text-muted">Options analyzer & snapshots</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/admin/investor_registrations" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 bg-danger bg-opacity-10 rounded">
+                                <i class="bi bi-person-check-fill fs-4 text-danger me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-danger">Investor Registrations</h6>
+                                    <small class="text-muted">Review & approve investor registrations</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Provider Configuration Panel -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" id="aiProviderCard">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-robot me-2"></i>AI Provider Configuration</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="refreshAIStatus()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <h6>Anthropic Status</h6>
+                        <ul class="list-unstyled small mb-2" id="anthropicStatusList">
+                            <li>Loading...</li>
+                        </ul>
+                        <div class="input-group input-group-sm mb-2">
+                            <input type="password" class="form-control" placeholder="Enter Anthropic API Key" id="anthropicKeyInput" autocomplete="off">
+                            <button class="btn btn-primary" onclick="saveAnthropicKey()">Save</button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="testProvider('anthropic')" id="testAnthropicBtn">Test Anthropic</button>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Ollama Status</h6>
+                        <ul class="list-unstyled small mb-2" id="ollamaStatusList">
+                            <li>Loading...</li>
+                        </ul>
+                        <button class="btn btn-sm btn-outline-primary" onclick="testProvider('ollama')" id="testOllamaBtn">Test Ollama</button>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Test Result</h6>
+                        <pre class="small bg-light p-2 border rounded" style="max-height:180px; overflow:auto" id="aiTestResult">No test run yet.</pre>
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">Keys are stored only in server process memory (environment variable) and will be lost on restart. For persistence, configure at deployment.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Topics Management -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Topic Management</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Assigned To</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in topics %}
+                    <tr>
+                        <td>{{ topic.title }}</td>
+                        <td>{{ topic.assigned_to }}</td>
+                        <td><span class="badge bg-info">{{ topic.category }}</span></td>
+                        <td>
+                            {% if topic.status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif topic.status == 'in_progress' %}
+                                <span class="badge bg-warning">In Progress</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if topic.deadline %}
+                                {{ topic.deadline.strftime('%Y-%m-%d') }}
+                            {% else %}
+                                No deadline
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editTopic({{ topic.id }})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reports -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Recent Reports</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Analyst</th>
+                        <th>Quality Score</th>
+                        <th>AI Detection</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ report.id }}</td>
+                        <td>{{ report.analyst }}</td>
+                        <td>
+                            {% set analysis = report.analysis_result|loads if report.analysis_result else {} %}
+                            {% if analysis.composite_quality_score %}
+                                {{ (analysis.composite_quality_score * 100)|round(1) }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set ai_prob = report.ai_probability or 0 %}
+                            {% if ai_prob >= 0.7 %}
+                                <span class="badge bg-danger">AI</span>
+                            {% elif ai_prob >= 0.4 %}
+                                <span class="badge bg-warning">Uncertain</span>
+                            {% else %}
+                                <span class="badge bg-success">Human</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <a href="/report/{{ report.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Sessions & Recordings (Admin) -->
+<div class="card border-0 shadow-sm mt-4" id="adminSessionsCard">
+    <div class="card-header bg-white d-flex flex-wrap align-items-center gap-2">
+        <h5 class="mb-0"><i class="bi bi-camera-video me-2"></i>Sessions & Recordings</h5>
+        <div class="ms-auto d-flex flex-wrap gap-2">
+            <select id="sessFilterStatus" class="form-select form-select-sm" style="width:auto" onchange="loadAdminSessions()">
+                <option value="">All Status</option>
+                <option value="requested">Requested</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+            <input type="text" id="sessFilterAnalyst" placeholder="Analyst ID" class="form-control form-control-sm" style="width:110px" onkeyup="if(event.key==='Enter') loadAdminSessions()">
+            <input type="text" id="sessFilterInvestor" placeholder="Investor ID" class="form-control form-control-sm" style="width:120px" onkeyup="if(event.key==='Enter') loadAdminSessions()">
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadAdminSessions()"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" id="adminSessionsTable">
+                <thead class="table-light">
+                    <tr><th>ID</th><th>Start</th><th>Analyst</th><th>Investor</th><th>Status</th><th>Join</th><th>Recording</th></tr>
+                </thead>
+                <tbody id="adminSessionsBody"><tr><td colspan="7" class="text-center text-muted">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create Topic Modal -->
+<div class="modal fade" id="createTopicModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Topic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createTopicForm">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" name="category">
+                            <option value="sector">Sector Analysis</option>
+                            <option value="stock">Stock Research</option>
+                            <option value="market">Market Analysis</option>
+                            <option value="earnings">Earnings Review</option>
+                            <option value="technical">Technical Analysis</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assign To</label>
+                        <input type="text" class="form-control" name="assigned_to" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deadline</label>
+                        <input type="date" class="form-control" name="deadline">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createTopic()">Create Topic</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support Ticket Management (Admin) START -->
+<div class="card border-0 shadow-sm mb-4" id="adminSupportTicketsCard">
+  <div class="card-header bg-white d-flex flex-wrap gap-2 align-items-center">
+    <h5 class="mb-0"><i class="bi bi-life-preserver me-2"></i>Support Tickets</h5>
+    <div class="ms-auto d-flex flex-wrap gap-2">
+      <select class="form-select form-select-sm" id="filterStatus" onchange="loadAdminTickets()">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+      </select>
+      <select class="form-select form-select-sm" id="filterUserType" onchange="loadAdminTickets()">
+        <option value="">All Users</option>
+        <option value="investor">Investors</option>
+        <option value="analyst">Analysts</option>
+      </select>
+      <button class="btn btn-sm btn-outline-secondary" type="button" onclick="loadAdminTickets()"><i class="bi bi-arrow-clockwise"></i></button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle" id="adminTicketsTable">
+        <thead class="table-light"><tr><th>ID</th><th>Subject</th><th>User</th><th>Status</th><th>Priority</th><th>Category</th><th>Created</th><th></th></tr></thead>
+        <tbody id="adminTicketsBody"><tr><td colspan="8" class="text-center text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function loadAdminTickets(){
+  const status=document.getElementById('filterStatus').value; const userType=document.getElementById('filterUserType').value;
+  const qs=new URLSearchParams(); if(status) qs.append('status',status); if(userType) qs.append('user_type',userType);
+  fetch('/api/admin/support/tickets?'+qs.toString()).then(r=>r.json()).then(j=>{ if(!j.ok){return;} const body=document.getElementById('adminTicketsBody'); body.innerHTML=''; if(!j.tickets.length){ body.innerHTML='<tr><td colspan="8" class="text-center text-muted">No tickets</td></tr>'; return;} j.tickets.forEach(t=>{ const shortSubject = t.subject.length>40 ? t.subject.slice(0,37)+'...' : t.subject; const tr=document.createElement('tr'); tr.innerHTML=`<td>${t.id}</td><td><button class='btn btn-link p-0 text-start' style='max-width:240px' type='button' title='${t.subject.replace(/"/g,'&quot;')}' onclick='viewAdminTicket(${t.id})'>${shortSubject}</button></td><td>${t.user_type}</td><td>${renderStatusBadge(t.status)}</td><td>${t.priority}</td><td>${t.category}</td><td>${new Date(t.created_at).toLocaleDateString()}</td><td><div class='btn-group btn-group-sm'><button class='btn btn-outline-primary' type='button' onclick='advanceTicketStatus(${t.id})'>Next</button><button class='btn btn-outline-success' type='button' onclick='addAdminResponse(${t.id})'>Respond</button></div></td>`; body.appendChild(tr); }); }); }
+function renderStatusBadge(s){ if(s==='resolved') return '<span class="badge bg-success">resolved</span>'; if(s==='in_progress') return '<span class="badge bg-warning">in progress</span>'; return '<span class="badge bg-secondary">pending</span>'; }
+function advanceTicketStatus(id){ fetch(`/api/support/tickets/${id}`) // ensure exists (not owner but admin has separate API for details if needed)
+  ; const rowBtn = event.target; rowBtn.disabled=true; // cycle status manually: pending->in_progress->resolved
+  fetch('/api/admin/support/tickets/'+id,{method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status:'__cycle__'})})
+}
+// Implement cycle by fetching current list entry (simpler: fetch list again & patch)
+async function advanceTicketStatus(id){ try { const listResp=await fetch('/api/admin/support/tickets'); const list=await listResp.json(); const ticket=list.tickets.find(x=>x.id===id); if(!ticket) return; let next='resolved'; if(ticket.status==='pending') next='in_progress'; else if(ticket.status==='in_progress') next='resolved'; else next='resolved'; await fetch('/api/admin/support/tickets/'+id,{method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status: next})}); loadAdminTickets(); } catch(e){ console.error(e);} }
+function addAdminResponse(id){ const resp = prompt('Enter response to append:'); if(!resp) return; fetch('/api/admin/support/tickets/'+id,{method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({admin_response: resp})}).then(()=>loadAdminTickets()); }
+function viewAdminTicket(id){ Promise.all([
+  fetch('/api/admin/support/tickets/'+id).then(r=>r.json()),
+  fetch('/api/admin/support/tickets/'+id+'/history').then(r=>r.json())
+]).then(([tRes,hRes])=>{ if(!tRes.ok){return;} const t=tRes.ticket; const historyRows=(hRes.history||[]).map(x=>`<tr><td>${new Date(x.created_at).toLocaleString()}</td><td>${x.from_status||'-'}</td><td>${x.to_status}</td><td>${x.note||''}</td></tr>`).join(''); const modalHtml=`<div class='modal fade' id='adminTicketModal'><div class='modal-dialog modal-lg'><div class='modal-content'><div class='modal-header'><h5 class='modal-title'>Ticket #${t.id} - ${t.subject}</h5><button type='button' class='btn-close' data-bs-dismiss='modal'></button></div><div class='modal-body'><p><strong>User Type:</strong> ${t.user_type}</p><p><strong>Status:</strong> ${t.status} | <strong>Priority:</strong> ${t.priority} | <strong>Category:</strong> ${t.category}</p><hr><p style='white-space:pre-wrap'>${t.description}</p><hr><h6>Status & Response History</h6><div class='table-responsive'><table class='table table-sm'><thead><tr><th>Time</th><th>From</th><th>To</th><th>Note</th></tr></thead><tbody>${historyRows||'<tr><td colspan=4 class=text-muted>No history</td></tr>'}</tbody></table></div></div><div class='modal-footer'><button class='btn btn-outline-success' type='button' onclick='addAdminResponse(${t.id});'>Respond</button><button class='btn btn-secondary' data-bs-dismiss='modal'>Close</button></div></div></div></div>`; document.body.insertAdjacentHTML('beforeend', modalHtml); const m=new bootstrap.Modal(document.getElementById('adminTicketModal')); document.getElementById('adminTicketModal').addEventListener('hidden.bs.modal',()=>document.getElementById('adminTicketModal').remove()); m.show(); }); }
+if(document.getElementById('adminSupportTicketsCard')){ loadAdminTickets(); }
+</script>
+<!-- Support Ticket Management (Admin) END -->
+
+<script>
+function showCreateTopicModal() {
+    new bootstrap.Modal(document.getElementById('createTopicModal')).show();
+}
+
+function createTopic() {
+    const form = document.getElementById('createTopicForm');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/admin/create_topic', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            location.reload();
+        } else {
+            alert('Error creating topic');
+        }
+    });
+}
+
+function editTopic(topicId) {
+    alert('Edit topic functionality - to be implemented');
+}
+
+// ===== AI Provider Panel Logic =====
+async function refreshAIStatus() {
+  try {
+    const r = await fetch('/api/admin/ai/providers/status');
+    const j = await r.json();
+    if(!j.ok) throw new Error('Status fetch failed');
+    const anth = j.status.anthropic;
+    const oll = j.status.ollama;
+    const anthList = document.getElementById('anthropicStatusList');
+    const ollList = document.getElementById('ollamaStatusList');
+    anthList.innerHTML = '';
+    ollList.innerHTML = '';
+    anthList.appendChild(li(`Key Present: ${anth.key_present ? 'Yes ✅' : 'No ❌'}`));
+    anthList.appendChild(li(`Package Installed: ${anth.package_available ? 'Yes ✅' : 'No ❌'}`));
+    ollList.appendChild(li(`Configured Model: ${oll.configured_model || 'N/A'}`));
+    ollList.appendChild(li(`Port: ${oll.port || 'N/A'}`));
+  } catch(e) {
+    document.getElementById('anthropicStatusList').innerHTML = '<li class="text-danger">Error loading status</li>';
+    document.getElementById('ollamaStatusList').innerHTML = '<li class="text-danger">Error loading status</li>';
+  }
+}
+function li(text){ const el=document.createElement('li'); el.textContent=text; return el; }
+
+async function saveAnthropicKey(){
+  const key = document.getElementById('anthropicKeyInput').value.trim();
+  if(!key){ alert('Enter a key'); return; }
+  const btn = event.target; btn.disabled = true; btn.textContent='Saving...';
+  try {
+    const r = await fetch('/api/admin/ai/providers/set_key', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({provider:'anthropic', key})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error||'Failed');
+    refreshAIStatus();
+    alert('Key saved for current session');
+  } catch(e){ alert('Save failed: '+ e.message); }
+  finally { btn.disabled=false; btn.textContent='Save'; }
+}
+
+async function testProvider(provider){
+  const out = document.getElementById('aiTestResult');
+  out.textContent = 'Testing ' + provider + '...';
+  try {
+    const r = await fetch('/api/admin/ai/providers/test', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({provider, prompt:'Hello from admin dashboard test'})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error||'Test failed');
+    out.textContent = `[${provider}] ${j.response}`;
+  } catch(e){ out.textContent = 'Error: ' + e.message; }
+}
+
+// Auto-load status when panel visible
+if(document.getElementById('aiProviderCard')) {
+  refreshAIStatus();
+}
+
+// ---- Admin Sessions Loader ----
+async function loadAdminSessions(){
+    const st = document.getElementById('sessFilterStatus').value;
+    const aid = document.getElementById('sessFilterAnalyst').value.trim();
+    const iid = document.getElementById('sessFilterInvestor').value.trim();
+    const qs = new URLSearchParams();
+    if(st) qs.append('status', st);
+    if(aid) qs.append('analyst_id', aid);
+    if(iid) qs.append('investor_id', iid);
+    const body = document.getElementById('adminSessionsBody');
+    body.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Loading...</td></tr>';
+    try {
+        const r = await fetch('/api/admin/sessions?'+qs.toString());
+        const j = await r.json();
+        if(!j.ok){ body.innerHTML='<tr><td colspan="7" class="text-danger text-center">Error</td></tr>'; return; }
+        if(!j.sessions.length){ body.innerHTML='<tr><td colspan="7" class="text-center text-muted">No sessions</td></tr>'; return; }
+        body.innerHTML='';
+        j.sessions.forEach(s=>{
+            const start = new Date(s.start_utc).toLocaleString();
+            const statusBadge = `<span class='badge bg-${s.status==='confirmed'?'success':(s.status==='requested'?'warning':(s.status==='completed'?'primary':'secondary'))}'>${s.status}</span>`;
+            const join = s.video_host_url || s.video_join_url ? `<a href='${s.video_host_url || s.video_join_url}' target='_blank'>Open</a>` : '—';
+            const rec = s.video_recording_url ? `<a href='${s.video_recording_url}' target='_blank'>Download</a>` : '<span class="text-muted small">None</span>';
+            body.insertAdjacentHTML('beforeend', `<tr><td>${s.id}</td><td>${start}</td><td>${s.analyst_name||s.analyst_id}</td><td>${s.investor_name||s.investor_id}</td><td>${statusBadge}</td><td>${join}</td><td>${rec}</td></tr>`);
+        });
+    } catch(e){ console.error(e); body.innerHTML='<tr><td colspan="7" class="text-danger text-center">Load failed</td></tr>'; }
+}
+if(document.getElementById('adminSessionsCard')){ loadAdminSessions(); }
+</script>
+
+{% endblock %}

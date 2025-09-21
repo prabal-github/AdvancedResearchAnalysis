@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Models Individual Backtesting Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        .model-card { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            border-radius: 8px; 
+            padding: 16px; 
+            margin: 16px 0; 
+            max-width: 400px;
+        }
+        .model-title { 
+            color: #60a5fa; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+        }
+        .backtest-section { 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            border-radius: 6px; 
+            padding: 12px; 
+            margin-top: 8px; 
+        }
+        .backtest-controls { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+            margin-bottom: 8px; 
+        }
+        select, button { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            color: #e2e8f0; 
+            padding: 4px 8px; 
+            font-size: 11px; 
+            border-radius: 4px; 
+        }
+        button { 
+            background: #2563eb; 
+            color: #fff; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+        button:hover { background: #1d4ed8; }
+        .select-stock { flex: 1; }
+        .results { 
+            margin-top: 8px; 
+            font-size: 12px; 
+            color: #94a3b8; 
+        }
+        .highlight { background: #fbbf24; color: #000; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Individual ML Model Backtesting Implementation</h1>
+    
+    <p>Each ML model now has its own <span class="highlight">individual Backtest button</span> with the following features:</p>
+    
+    <div class="model-card">
+        <div class="model-title">🧠 Intraday Price Drift Model</div>
+        <div>Short horizon drift estimation using momentum signals</div>
+        <div class="backtest-section">
+            <div class="backtest-controls">
+                <select class="select-stock">
+                    <option value="">Select Stock</option>
+                    <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                    <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                    <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                    <option value="INFY.NS">Infosys Ltd</option>
+                </select>
+                <select>
+                    <option value="3mo">3M</option>
+                    <option value="6mo">6M</option>
+                    <option value="1y" selected>1Y</option>
+                    <option value="2y">2Y</option>
+                </select>
+                <button onclick="alert('Backtesting Intraday Price Drift Model...')">Backtest</button>
+            </div>
+            <div class="results">Click Backtest to see individual results for this model</div>
+        </div>
+    </div>
+
+    <div class="model-card">
+        <div class="model-title">🧠 Volatility Estimator (GARCH)</div>
+        <div>Conditional volatility forecast with low-vol regime trading</div>
+        <div class="backtest-section">
+            <div class="backtest-controls">
+                <select class="select-stock">
+                    <option value="">Select Stock</option>
+                    <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                    <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                    <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                    <option value="INFY.NS">Infosys Ltd</option>
+                </select>
+                <select>
+                    <option value="3mo">3M</option>
+                    <option value="6mo">6M</option>
+                    <option value="1y" selected>1Y</option>
+                    <option value="2y">2Y</option>
+                </select>
+                <button onclick="alert('Backtesting Volatility Estimator (GARCH)...')">Backtest</button>
+            </div>
+            <div class="results">Click Backtest to see individual results for this model</div>
+        </div>
+    </div>
+
+    <div class="model-card">
+        <div class="model-title">🧠 Regime Classification Model</div>
+        <div>Market regime labeling with trend-following strategy</div>
+        <div class="backtest-section">
+            <div class="backtest-controls">
+                <select class="select-stock">
+                    <option value="">Select Stock</option>
+                    <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                    <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                    <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                    <option value="INFY.NS">Infosys Ltd</option>
+                </select>
+                <select>
+                    <option value="3mo">3M</option>
+                    <option value="6mo">6M</option>
+                    <option value="1y" selected>1Y</option>
+                    <option value="2y">2Y</option>
+                </select>
+                <button onclick="alert('Backtesting Regime Classification Model...')">Backtest</button>
+            </div>
+            <div class="results">Click Backtest to see individual results for this model</div>
+        </div>
+    </div>
+
+    <div class="model-card">
+        <div class="model-title">🧠 Risk Parity Allocator</div>
+        <div>Equal risk contribution weights with inverse volatility</div>
+        <div class="backtest-section">
+            <div class="backtest-controls">
+                <select class="select-stock">
+                    <option value="">Select Stock</option>
+                    <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                    <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                    <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                    <option value="INFY.NS">Infosys Ltd</option>
+                </select>
+                <select>
+                    <option value="3mo">3M</option>
+                    <option value="6mo">6M</option>
+                    <option value="1y" selected>1Y</option>
+                    <option value="2y">2Y</option>
+                </select>
+                <button onclick="alert('Backtesting Risk Parity Allocator...')">Backtest</button>
+            </div>
+            <div class="results">Click Backtest to see individual results for this model</div>
+        </div>
+    </div>
+
+    <div class="model-card">
+        <div class="model-title">🧠 Sentiment Scoring Transformer</div>
+        <div>Aggregate market sentiment scoring using volume-price analysis</div>
+        <div class="backtest-section">
+            <div class="backtest-controls">
+                <select class="select-stock">
+                    <option value="">Select Stock</option>
+                    <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                    <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                    <option value="HDFCBANK.NS">HDFC Bank Ltd</option>
+                    <option value="INFY.NS">Infosys Ltd</option>
+                </select>
+                <select>
+                    <option value="3mo">3M</option>
+                    <option value="6mo">6M</option>
+                    <option value="1y" selected>1Y</option>
+                    <option value="2y">2Y</option>
+                </select>
+                <button onclick="alert('Backtesting Sentiment Scoring Transformer...')">Backtest</button>
+            </div>
+            <div class="results">Click Backtest to see individual results for this model</div>
+        </div>
+    </div>
+
+    <h2>✅ Implementation Status</h2>
+    <ul>
+        <li><strong>✅ Individual Backtest Buttons:</strong> Each ML model has its own Backtest button</li>
+        <li><strong>✅ Stock Selection:</strong> 54 Indian stocks available for each model</li>
+        <li><strong>✅ Period Selection:</strong> 3M, 6M, 1Y, 2Y options for each model</li>
+        <li><strong>✅ Individual Results:</strong> Separate results section for each model</li>
+        <li><strong>✅ Unique Strategy Logic:</strong> Each model has its own trading strategy</li>
+        <li><strong>✅ Performance Metrics:</strong> Total Return, Sharpe Ratio, Volatility, Max Drawdown</li>
+        <li><strong>✅ Monthly Returns:</strong> Strategy vs Benchmark comparison</li>
+    </ul>
+
+    <h2>🎯 How It Works</h2>
+    <ol>
+        <li><strong>Navigate to:</strong> <code>http://127.0.0.1:5008/integrated_ml_models_and_agentic_ai</code></li>
+        <li><strong>Click:</strong> "ML Models" tab</li>
+        <li><strong>For each model:</strong> Select stock → Select period → Click "Backtest"</li>
+        <li><strong>View Results:</strong> Individual performance metrics for that specific model</li>
+    </ol>
+
+    <p><strong>🚀 Status:</strong> <span style="color: #10b981; font-weight: bold;">COMPLETE</span> - Each ML model has individual Backtest functionality!</p>
+</body>
+</html>

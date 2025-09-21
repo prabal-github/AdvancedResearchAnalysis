@@ -1,0 +1,297 @@
+{% extends "layout.html" %}
+{% block title %}Backtest Results Dashboard{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Backtest Results Dashboard</h1>
+        <p class="text-muted mb-0">Comprehensive analysis of all backtesting results and performance metrics</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/run_backtest" class="btn btn-warning">
+            <i class="bi bi-play-circle me-1"></i> Run New Backtest
+        </a>
+        <a href="/report_hub" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Hub
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Statistics Overview -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="text-warning fs-1 mb-2">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+                <h3 class="text-warning mb-1">{{ total_backtests }}</h3>
+                <small class="text-muted">Total Backtests</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="text-success fs-1 mb-2">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="text-success mb-1">{{ "%.1f"|format(avg_performance) }}%</h3>
+                <small class="text-muted">Avg Performance</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="text-info fs-1 mb-2">
+                    <i class="bi bi-trophy"></i>
+                </div>
+                <h3 class="text-info mb-1">{{ backtest_results|selectattr('portfolio_return')|selectattr('portfolio_return', '>', 0)|list|length }}</h3>
+                <small class="text-muted">Profitable</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="text-primary fs-1 mb-2">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3 class="text-primary mb-1">{{ scenario_backtests|length }}</h3>
+                <small class="text-muted">Scenario Tests</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Backtest Results Table -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-list-task me-2"></i>Report Backtesting Results
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Report ID</th>
+                        <th>Analyst</th>
+                        <th>Tickers</th>
+                        <th class="text-center">Overall Score</th>
+                        <th class="text-center">Portfolio Return</th>
+                        <th class="text-center">Alpha</th>
+                        <th class="text-center">Sharpe Ratio</th>
+                        <th>Status</th>
+                        <th class="pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for backtest in backtest_results %}
+                    <tr>
+                        <td class="ps-4 fw-semibold text-muted">{{ backtest.report_id[:8] }}...</td>
+                        <td>{{ backtest.analyst }}</td>
+                        <td>
+                            {% if backtest.tickers_analyzed %}
+                                {% set tickers = backtest.tickers_analyzed|loads %}
+                                <div class="d-flex gap-1 flex-wrap">
+                                    {% for ticker in tickers[:3] %}
+                                    <span class="badge bg-light text-dark border">{{ ticker }}</span>
+                                    {% endfor %}
+                                    {% if tickers|length > 3 %}
+                                    <span class="badge bg-secondary">+{{ tickers|length - 3 }} more</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.overall_score %}
+                                <div class="progress me-2" style="width: 60px; height: 6px;">
+                                    <div class="progress-bar 
+                                        {% if backtest.overall_score >= 80 %}bg-success
+                                        {% elif backtest.overall_score >= 60 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        style="width: {{ backtest.overall_score }}%"></div>
+                                </div>
+                                <small class="fw-semibold">{{ "%.0f"|format(backtest.overall_score) }}</small>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.portfolio_return %}
+                                <span class="badge 
+                                    {% if backtest.portfolio_return > 0 %}bg-success
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ "%.1f"|format(backtest.portfolio_return) }}%
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.alpha_generated %}
+                                <span class="badge 
+                                    {% if backtest.alpha_generated > 0 %}bg-success
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ "%.2f"|format(backtest.alpha_generated) }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.sharpe_ratio %}
+                                <span class="badge 
+                                    {% if backtest.sharpe_ratio > 1 %}bg-success
+                                    {% elif backtest.sharpe_ratio > 0.5 %}bg-warning
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ "%.2f"|format(backtest.sharpe_ratio) }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if backtest.backtest_status == 'completed' %}bg-success
+                                {% elif backtest.backtest_status == 'running' %}bg-warning
+                                {% else %}bg-secondary{% endif %}">
+                                {{ backtest.backtest_status.title() }}
+                            </span>
+                        </td>
+                        <td class="pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <a href="/report/{{ backtest.report_id }}" class="btn btn-outline-primary" title="View Report">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <button class="btn btn-outline-success" onclick="viewBacktestDetails('{{ backtest.id }}')" title="Details">
+                                    <i class="bi bi-graph-up"></i>
+                                </button>
+                                <button class="btn btn-outline-info" onclick="downloadBacktest('{{ backtest.id }}')" title="Download">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Scenario Backtests Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-light py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-bar-chart-line me-2"></i>Scenario-Based Backtests
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Report ID</th>
+                        <th>Analyst</th>
+                        <th>Ticker</th>
+                        <th class="text-center">Recommendation</th>
+                        <th class="text-center">Return</th>
+                        <th class="text-center">Holding Period</th>
+                        <th class="text-center">Sharpe</th>
+                        <th>Status</th>
+                        <th class="pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for backtest in scenario_backtests %}
+                    <tr>
+                        <td class="ps-4 fw-semibold text-muted">{{ backtest.report_id[:8] }}...</td>
+                        <td>{{ backtest.analyst }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ backtest.ticker }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge 
+                                {% if backtest.recommendation == 'BUY' %}bg-success
+                                {% elif backtest.recommendation == 'SELL' %}bg-danger
+                                {% else %}bg-warning{% endif %}">
+                                {{ backtest.recommendation }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.percentage_return %}
+                                <span class="badge 
+                                    {% if backtest.percentage_return > 0 %}bg-success
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ "%.1f"|format(backtest.percentage_return) }}%
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.holding_period_days %}
+                                <small class="text-muted">{{ backtest.holding_period_days }} days</small>
+                            {% else %}
+                                <small class="text-muted">N/A</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if backtest.sharpe_ratio %}
+                                <span class="badge 
+                                    {% if backtest.sharpe_ratio > 1 %}bg-success
+                                    {% elif backtest.sharpe_ratio > 0.5 %}bg-warning
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ "%.2f"|format(backtest.sharpe_ratio) }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if backtest.status == 'closed' %}bg-success
+                                {% elif backtest.status == 'active' %}bg-warning
+                                {% else %}bg-secondary{% endif %}">
+                                {{ backtest.status.title() }}
+                            </span>
+                        </td>
+                        <td class="pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <a href="/report/{{ backtest.report_id }}" class="btn btn-outline-primary" title="View Report">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <button class="btn btn-outline-success" onclick="viewBacktestDetails('{{ backtest.id }}')" title="Details">
+                                    <i class="bi bi-graph-up"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewBacktestDetails(backtestId) {
+    // Implementation for viewing backtest details
+    alert('Viewing details for backtest: ' + backtestId);
+}
+
+function downloadBacktest(backtestId) {
+    // Implementation for downloading backtest results
+    window.open(`/api/export/backtest/${backtestId}`, '_blank');
+}
+</script>
+
+{% endblock %}

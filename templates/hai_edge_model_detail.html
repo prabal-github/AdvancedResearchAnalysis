@@ -1,0 +1,527 @@
+{% extends "layout.html" %}
+{% block title %}{{ portfolio.name }} - hAi-Edge Model Details - PredictRAM{% endblock %}
+
+{% block header %}
+<div class="container-fluid bg-gradient-primary text-white py-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-brain fa-3x text-light"></i>
+                </div>
+                <div>
+                    <h1 class="h2 mb-1">{{ portfolio.name }}</h1>
+                    <p class="mb-0 opacity-75">hAi-Edge ML Model Details</p>
+                    <small class="opacity-75">
+                        <i class="fas fa-chart-line me-1"></i>{{ portfolio.strategy_type.title() }} Strategy
+                        {% if user_type %}
+                        | <i class="fas fa-user me-1"></i>{{ user_type.title() }} Access
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('hai_edge.hai_edge_dashboard') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Model Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Model Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <h3 class="text-primary">₹{{ "{:,.0f}".format(analytics.current_value) }}</h3>
+                                <p class="text-muted mb-0">Current Value</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <h3 class="{% if analytics.total_return >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ "{:.2f}".format(analytics.total_return or 0) }}%
+                                </h3>
+                                <p class="text-muted mb-0">Total Return</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <h3 class="text-info" id="total-stocks">{{ analytics.total_stocks }}</h3>
+                                <p class="text-muted mb-0">Total Stocks</p>
+                                <small class="text-info">{{ analytics.market_status }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <h3 class="text-warning">{{ "{:.2f}".format(analytics.sharpe_ratio or 0) }}</h3>
+                                <p class="text-muted mb-0">Sharpe Ratio</p>
+                                <button class="btn btn-sm btn-outline-primary mt-1" onclick="refreshRealTimeData()">
+                                    <i class="fas fa-sync-alt"></i> Live Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Size Selection -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cog me-2 text-primary"></i>Portfolio Configuration
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Portfolio Size - Fixed Quantity Strategy</label>
+                            <div class="btn-group" role="group" aria-label="Portfolio Size">
+                                <input type="radio" class="btn-check" name="portfolioSize" id="size1" value="1" 
+                                       {% if request.args.get('size', 1)|int == 1 %}checked{% endif %}>
+                                <label class="btn btn-outline-success" for="size1">
+                                    <i class="fas fa-star me-1"></i>1 Stock × 10 Shares
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="portfolioSize" id="size2" value="2" 
+                                       {% if request.args.get('size', 1)|int == 2 %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="size2">
+                                    <i class="fas fa-chart-pie me-1"></i>2 Stocks × 5 Shares Each
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="portfolioSize" id="size5" value="5" 
+                                       {% if request.args.get('size', 1)|int == 5 %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="size5">
+                                    <i class="fas fa-chart-bar me-1"></i>5 Stocks × 1 Share Each
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="portfolioSize" id="size10" value="10" 
+                                       {% if request.args.get('size', 1)|int == 10 %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="size10">
+                                    <i class="fas fa-chart-line me-1"></i>10 Stocks × 1 Share Each
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-success" onclick="updatePortfolioSize()">
+                                <i class="fas fa-sync-alt me-1"></i>Update Portfolio
+                            </button>
+                            <small class="text-muted d-block mt-1">
+                                <i class="fas fa-lightbulb text-warning"></i> 
+                                <strong>Fixed Quantity Strategy:</strong> 
+                                • 1 Stock: 10 shares for concentrated exposure
+                                • 2 Stocks: 5 shares each for balanced risk
+                                • 5+ Stocks: 1 share each for maximum diversification
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Details -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-2 text-success"></i>Performance Analytics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Daily Return</small>
+                            <p class="h6 {% if analytics.daily_return >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ "{:.2f}".format(analytics.daily_return or 0) }}%
+                            </p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Max Drawdown</small>
+                            <p class="h6 text-danger">{{ "{:.2f}".format(analytics.max_drawdown or 0) }}%</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Volatility</small>
+                            <p class="h6 text-info">{{ "{:.2f}".format(analytics.volatility or 0) }}%</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">P&L</small>
+                            <p class="h6 {% if analytics.unrealized_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                ₹{{ "{:,.0f}".format(analytics.unrealized_pnl) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cog me-2 text-info"></i>Model Configuration
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Initial Capital</small>
+                            <p class="h6">₹{{ "{:,.0f}".format(portfolio.initial_capital) }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Risk Level</small>
+                            <p class="h6">{{ portfolio.risk_level.title() }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Created Date</small>
+                            <p class="h6">{{ portfolio.created_at.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Status</small>
+                            <span class="badge bg-success">{{ portfolio.status.title() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holdings Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie me-2 text-primary"></i>Current Holdings ({{ analytics.total_stocks }} Stocks)
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    {% if holdings %}
+                    <div class="table-responsive">
+                        <table id="holdings-table" class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Current Price</th>
+                                    <th class="text-end">Invested Value</th>
+                                    <th class="text-end">Market Value</th>
+                                    <th class="text-end">Day Change</th>
+                                    <th class="text-end">P&L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for holding in holdings[:10] %}
+                                <tr>
+                                    <td><strong>{{ holding.symbol }}</strong></td>
+                                    <td class="text-end">{{ holding.quantity }}</td>
+                                    <td class="text-end">₹{{ "{:.2f}".format(holding.current_price or 0) }}</td>
+                                    <td class="text-end">₹{{ "{:,.0f}".format((holding.quantity * (holding.avg_price or 0))) }}</td>
+                                    <td class="text-end">₹{{ "{:,.0f}".format((holding.quantity * (holding.current_price or 0))) }}</td>
+                                    <td class="text-end text-muted">Live Data</td>
+                                    <td class="text-end">
+                                        {% set pnl = (holding.quantity * (holding.current_price or 0)) - (holding.quantity * (holding.avg_price or 0)) %}
+                                        <span class="{% if pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {% if pnl >= 0 %}+{% endif %}₹{{ "{:,.0f}".format(pnl) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">No holdings found</h6>
+                        <p class="text-muted">This model hasn't made any investments yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Signals -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-signal me-2 text-warning"></i>Recent AI Signals
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if signals %}
+                    <div class="list-group list-group-flush">
+                        {% for signal in signals[:5] %}
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ signal.symbol }}</strong>
+                                    <span class="badge bg-{% if signal.signal_type == 'BUY' %}success{% elif signal.signal_type == 'SELL' %}danger{% else %}warning{% endif %} ms-2">
+                                        {{ signal.signal_type }}
+                                    </span>
+                                    <br><small class="text-muted">
+                                        Confidence: {{ "{:.1f}".format((signal.confidence or 0) * 100) }}%
+                                    </small>
+                                </div>
+                                <small class="text-muted">
+                                    {{ signal.created_at.strftime('%m-%d %H:%M') }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-signal fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No recent signals</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-history me-2 text-info"></i>Backtest Results
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if backtests %}
+                    <div class="list-group list-group-flush">
+                        {% for backtest in backtests[:3] %}
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ backtest.strategy_name or 'Backtest' }}</strong>
+                                    <br><small class="text-muted">
+                                        Return: 
+                                        <span class="{% if backtest.total_return >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {{ "{:.2f}".format(backtest.total_return or 0) }}%
+                                        </span>
+                                    </small>
+                                </div>
+                                <small class="text-muted">
+                                    {{ backtest.created_at.strftime('%m-%d') }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No backtest data</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.stat-card {
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    transition: all 0.3s;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.live-price {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.price-up {
+    color: #28a745 !important;
+}
+
+.price-down {
+    color: #dc3545 !important;
+}
+</style>
+
+<script>
+// Real-time price updates
+function refreshRealTimeData() {
+    const modelId = {{ portfolio.id }};
+    const button = document.querySelector('button[onclick="refreshRealTimeData()"]');
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    button.disabled = true;
+    
+    fetch(`/hai-edge/api/realtime-prices/${modelId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updatePortfolioSummary(data.portfolio_summary);
+                updateStockTable(data.stocks);
+                
+                // Show success feedback
+                button.innerHTML = '<i class="fas fa-check"></i> Updated!';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-sync-alt"></i> Live Update';
+                    button.disabled = false;
+                }, 2000);
+            } else {
+                console.error('Failed to fetch real-time data:', data.error);
+                button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-sync-alt"></i> Live Update';
+                    button.disabled = false;
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching real-time data:', error);
+            button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Live Update';
+                button.disabled = false;
+            }, 3000);
+        });
+}
+
+function updatePortfolioSummary(summary) {
+    // Update summary cards
+    document.getElementById('total-stocks').textContent = summary.total_stocks;
+    
+    // Update current value
+    const currentValueElement = document.querySelector('.stat-card .h3:contains("₹")').parentElement.querySelector('.h3');
+    if (currentValueElement) {
+        currentValueElement.textContent = `₹${summary.current_value.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        currentValueElement.classList.add('live-price');
+        setTimeout(() => currentValueElement.classList.remove('live-price'), 2000);
+    }
+    
+    // Update P&L
+    const pnlElement = document.querySelector('.h3[class*="text-success"], .h3[class*="text-danger"]');
+    if (pnlElement) {
+        pnlElement.textContent = `₹${summary.unrealized_pnl.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        pnlElement.className = summary.unrealized_pnl >= 0 ? 'h3 text-success live-price' : 'h3 text-danger live-price';
+        setTimeout(() => pnlElement.classList.remove('live-price'), 2000);
+        
+        // Update percentage
+        const pnlPercentElement = pnlElement.parentElement.querySelector('small, p');
+        if (pnlPercentElement) {
+            pnlPercentElement.textContent = `(${summary.pnl_percentage.toFixed(2)}%)`;
+        }
+    }
+    
+    // Update market status
+    const marketStatusElements = document.querySelectorAll('.text-info:contains("OPEN"), .text-info:contains("CLOSED")');
+    marketStatusElements.forEach(element => {
+        if (element.textContent.includes('OPEN') || element.textContent.includes('CLOSED')) {
+            element.textContent = summary.market_status;
+            element.className = summary.market_status === 'OPEN' ? 'text-success' : 'text-warning';
+        }
+    });
+}
+
+function updateStockTable(stocks) {
+    const tableBody = document.querySelector('#holdings-table tbody');
+    if (!tableBody) return;
+    
+    // Clear existing rows
+    tableBody.innerHTML = '';
+    
+    // Add updated stock data (ensure correct portfolio size)
+    const portfolioSize = new URLSearchParams(window.location.search).get('size') || 10;
+    stocks.slice(0, portfolioSize).forEach(stock => {
+        const row = document.createElement('tr');
+        const changeClass = stock.change_percent >= 0 ? 'text-success' : 'text-danger';
+        const changeIcon = stock.change_percent >= 0 ? '▲' : '▼';
+        
+        row.innerHTML = `
+            <td><strong>${stock.symbol}</strong></td>
+            <td>${stock.quantity || 'N/A'}</td>
+            <td>₹${stock.current_price.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>₹${(stock.invested_value || stock.market_value).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>₹${stock.market_value.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td class="${changeClass}">
+                ${changeIcon} ${Math.abs(stock.change_percent).toFixed(2)}%
+            </td>
+            <td class="${stock.unrealized_pnl >= 0 ? 'text-success' : 'text-danger'}">
+                ₹${(stock.unrealized_pnl || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+            </td>
+        `;
+        row.classList.add('live-price');
+        tableBody.appendChild(row);
+        
+        // Remove animation after 2 seconds
+        setTimeout(() => row.classList.remove('live-price'), 2000);
+    });
+}
+
+// Auto-refresh every 30 seconds if market is open
+setInterval(() => {
+    const marketStatus = document.querySelector('.text-success, .text-warning');
+    if (marketStatus && marketStatus.textContent.includes('OPEN')) {
+        refreshRealTimeData();
+    }
+}, 30000);
+
+// Portfolio size update function
+function updatePortfolioSize() {
+    const selectedSize = document.querySelector('input[name="portfolioSize"]:checked').value;
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('size', selectedSize);
+    window.location.href = currentUrl.toString();
+}
+
+// Initial load notification
+document.addEventListener('DOMContentLoaded', function() {
+    const currentSize = new URLSearchParams(window.location.search).get('size') || 1;
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show';
+    notification.innerHTML = `
+        <i class="fas fa-calculator"></i>
+        <strong>Fixed Quantity Portfolio:</strong> This portfolio uses ${currentSize} stock${currentSize == 1 ? '' : 's'} with strategic quantities. 
+        ${currentSize == 1 ? '10 shares for concentrated exposure' : currentSize == 2 ? '5 shares each for balanced risk' : '1 share each for diversification'} - Data updates every 30 seconds.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(notification, container.firstChild);
+    
+    // Auto-dismiss after 10 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 10000);
+});
+</script>
+</style>
+{% endblock %}

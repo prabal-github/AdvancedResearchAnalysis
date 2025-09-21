@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% include 'partials/_brand_header.html' %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Investor Plans & Pricing</h2>
+  <p class="text-center text-muted">Compare investor subscription tiers. <a href="/pricing/analyst">Looking for Analyst plans?</a></p>
+  {% if not settings.key_id %}
+  <div class="alert alert-warning small">Payments not configured. Contact admin.</div>
+  {% endif %}
+  {% set currency = settings.currency or 'INR' %}
+  {% set prices = {
+    'retail': (settings.price_retail or 176900) / 100,
+    'pro': (settings.price_pro or 589900) / 100,
+    'pro_plus': (settings.price_pro_plus or 943900) / 100,
+  } %}
+  <div class="row g-4 justify-content-center mb-5">
+    {% for plan, label in {'retail':'Retail', 'pro':'Pro', 'pro_plus':'Pro Plus'}.items() %}
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm border-primary-subtle">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ label }}</h5>
+          <h3 class="card-text">{{ currency }} {{ '%.0f' % prices[plan] }}<small class="text-muted fs-6">/month</small></h3>
+          <ul class="small mt-3">
+            {% if plan == 'retail' %}
+              <li>Starter investor toolkit</li>
+              <li>Core analytics</li>
+            {% elif plan == 'pro' %}
+              <li>Advanced analytics suite</li>
+              <li>Higher limits</li>
+            {% else %}
+              <li>All features unlocked</li>
+              <li>Highest limits</li>
+            {% endif %}
+          </ul>
+          <div class="mt-auto">
+            <button class="btn btn-primary w-100" onclick="startInvestorCheckout('{{ plan }}')">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if investor_limits %}
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered align-middle table-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Feature <span class="text-muted small">(hover)</span></th>
+          <th>Retail</th>
+          <th>Pro</th>
+          <th>Pro Plus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% set fd = feature_descriptions.max_distinct_accounts %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ investor_limits.retail.max_distinct_accounts }}</td>
+            <td>{{ investor_limits.pro.max_distinct_accounts }}</td>
+            <td>{{ investor_limits.pro_plus.max_distinct_accounts }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.daily_analysis_limit %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ investor_limits.retail.daily_analysis_limit }}</td>
+          <td>{{ investor_limits.pro.daily_analysis_limit }}</td>
+          <td>{{ investor_limits.pro_plus.daily_analysis_limit }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.max_portfolios_total %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ investor_limits.retail.max_portfolios_total }}</td>
+          <td>{{ investor_limits.pro.max_portfolios_total }}</td>
+          <td>{{ investor_limits.pro_plus.max_portfolios_total if investor_limits.pro_plus.max_portfolios_total is not none else 'Unlimited' }}</td>
+        </tr>
+        <tr>
+          {% set fd = feature_descriptions.live_price_integration %}
+          <td title="{{ fd.description }}">{{ fd.label }}</td>
+          <td>{{ 'Yes' if investor_limits.retail.live_price_integration else 'No' }}</td>
+          <td>{{ 'Yes' if investor_limits.pro.live_price_integration else 'No' }}</td>
+          <td>{{ 'Yes' if investor_limits.pro_plus.live_price_integration else 'No' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <div class="alert alert-info small">Unlimited = no enforced cap within fair usage policy. Daily counters reset at UTC midnight.</div>
+  <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#featureGlossaryModal">Open Feature Glossary</button>
+</div>
+
+<!-- Feature Glossary Modal -->
+<div class="modal fade" id="featureGlossaryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Investor Feature Glossary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body small">
+        <dl>
+          {% for key, meta in feature_descriptions.items() %}
+          <dt class="mt-2">{{ meta.label }}</dt>
+          <dd class="text-muted">{{ meta.description }}</dd>
+          {% endfor %}
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function startInvestorCheckout(plan) {
+  try {
+    const res = await fetch('/api/payments/create_order', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({plan}) });
+    const data = await res.json();
+    if(!res.ok){ alert(data.error || 'Failed to create order'); return; }
+    const { order, key_id } = data;
+    const options = {
+      key: key_id, amount: order.amount, currency: order.currency, name: 'Predictram Research', description: 'Investor Subscription: '+plan, order_id: order.id,
+      handler: async function(resp){
+        const v = await fetch('/api/payments/verify',{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(resp)});
+        const vdata = await v.json();
+        if(v.ok){ alert('Payment successful! Plan: '+vdata.plan); window.location='/investor_dashboard'; } else { alert(vdata.error || 'Verification failed'); }
+      }, theme:{color:'#1a73e8'}
+    };
+    new window.Razorpay(options).open();
+  } catch(e){ alert('Checkout error'); }
+}
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}

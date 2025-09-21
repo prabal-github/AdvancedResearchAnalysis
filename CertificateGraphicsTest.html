@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Certificate Visual Check</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+.test-container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+.test-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+.gradient-test { width: 200px; height: 50px; border-radius: 25px; margin: 10px 0; }
+.animation-test { width: 60px; height: 60px; border-radius: 50%; margin: 10px; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="test-container">
+    <h1>🔍 Certificate Graphics Verification</h1>
+    
+    <div class="test-item">
+        <h3>1. Background Gradients Test</h3>
+        <div class="gradient-test" style="background: linear-gradient(45deg, #3498db, #2980b9);"></div>
+        <div class="gradient-test" style="background: linear-gradient(45deg, #e74c3c, #c0392b);"></div>
+        <div class="gradient-test" style="background: linear-gradient(45deg, #f39c12, #e67e22);"></div>
+        <p>✅ If you see 3 colored gradient bars above, gradients work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>2. Border Styles Test</h3>
+        <div style="border: 8px solid #2c3e50; width: 200px; height: 50px; border-radius: 15px; margin: 10px 0;"></div>
+        <div style="border: 4px double #34495e; width: 200px; height: 50px; border-radius: 8px; margin: 10px 0;"></div>
+        <p>✅ If you see 2 bordered rectangles above, border styles work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>3. Shadow Effects Test</h3>
+        <div style="width: 200px; height: 50px; background: #3498db; box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3); border-radius: 10px; margin: 10px 0;"></div>
+        <div style="width: 200px; height: 50px; background: #e74c3c; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border-radius: 10px; margin: 10px 0;"></div>
+        <p>✅ If you see shadows under the colored rectangles, shadow effects work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>4. Text Effects Test</h3>
+        <div style="font-size: 24px; font-weight: bold; background: linear-gradient(45deg, #2c3e50, #3498db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">GRADIENT TEXT</div>
+        <div style="font-size: 20px; color: #2c3e50; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">SHADOW TEXT</div>
+        <p>✅ If text above has gradient colors and shadows, text effects work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>5. Animation Test</h3>
+        <div class="animation-test" style="background: #f39c12; animation: pulse 2s infinite;">
+            <style>
+            @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+            @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            </style>
+        </div>
+        <div class="animation-test" style="background: #e74c3c; animation: rotate 3s linear infinite;"></div>
+        <p>✅ If circles above are pulsing/rotating, animations work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>6. Icon/Emoji Test</h3>
+        <div style="font-size: 40px; text-align: center; margin: 20px 0;">
+            ⭐ ✍️ 🏢 📜 🎓
+        </div>
+        <p>✅ If you see star, pen, building, scroll, and graduation cap emojis, icons work correctly.</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>📊 Overall Assessment</h3>
+        <p><strong>If ALL tests above show ✅:</strong> Your browser fully supports all certificate graphics!</p>
+        <p><strong>If some tests fail:</strong> Your browser has limited CSS support, but basic certificate will still work.</p>
+        <p><strong>If most tests fail:</strong> Try a different browser (Chrome, Edge, Firefox).</p>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+        <button onclick="window.open('SampleCertificate.html', '_blank')" 
+                style="background: #3498db; color: white; padding: 15px 30px; border: none; border-radius: 25px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            🎓 Open Full Certificate
+        </button>
+    </div>
+</div>
+</body>
+</html>

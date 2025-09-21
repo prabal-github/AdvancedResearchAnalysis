@@ -1,0 +1,1154 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio Stress Testing{% endblock %}
+
+{% block head %}
+<style>
+    .stress-test-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .scenario-card {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .scenario-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        transition: left 0.3s ease;
+    }
+    
+    .scenario-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+    }
+    
+    .scenario-card.selected {
+        border-color: #007bff;
+        background: linear-gradient(135deg, #e7f3ff 0%, #ffffff 100%);
+        box-shadow: 0 8px 25px rgba(0,123,255,0.2);
+    }
+    
+    .scenario-card.selected::before {
+        left: 0;
+    }
+    
+    .scenario-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    
+    .scenario-icon {
+        font-size: 2.5em;
+        margin-right: 15px;
+    }
+    
+    .scenario-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .scenario-impact {
+        background: #ff6b6b;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+    }
+    
+    .scenario-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .scenario-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .stat-icon {
+        font-size: 1.2em;
+    }
+    
+    .stat-label {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .stat-value {
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .risk-score {
+        font-size: 2.5em;
+        font-weight: bold;
+        text-align: center;
+        padding: 30px;
+        border-radius: 15px;
+        margin: 30px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .risk-score::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg);
+        animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    .risk-low { 
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    .risk-moderate { 
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    .risk-high { 
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    }
+    
+    .portfolio-input {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .results-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .enhanced-result-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .enhanced-result-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+    }
+    
+    .enhanced-result-card:hover::before {
+        transform: translateX(100%);
+    }
+    
+    .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .result-scenario-title {
+        font-size: 1.5em;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .result-drawdown {
+        background: rgba(255,255,255,0.2);
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+    
+    .result-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .result-stat {
+        text-align: center;
+    }
+    
+    .result-stat-icon {
+        font-size: 2em;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .result-stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+        margin-bottom: 5px;
+    }
+    
+    .result-stat-value {
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+    
+    .analyst-insights {
+        background: rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .analyst-insights h5 {
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    
+    .insight-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+    
+    .insight-icon {
+        font-size: 1.2em;
+        margin-top: 2px;
+    }
+    
+    .mitigation-strategies {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 25px;
+        color: white;
+    }
+    
+    .mitigation-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+    
+    .mitigation-title {
+        font-size: 1.4em;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .strategy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .strategy-card {
+        background: rgba(255,255,255,0.15);
+        border-radius: 10px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .strategy-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+    }
+    
+    .strategy-type {
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+    
+    .strategy-actions {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .strategy-actions li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+    
+    .stock-input-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    
+    .stock-input-row input {
+        flex: 1;
+    }
+    
+    .loading-spinner {
+        text-align: center;
+        padding: 40px;
+        display: none;
+    }
+    
+    .enhanced-section-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #e9ecef;
+    }
+    
+    .enhanced-section-title h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .section-icon {
+        font-size: 2em;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Profile-based scenario recommendations */
+    .profile-recommendations {
+        background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        color: #2d3436;
+    }
+    
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+    
+    .profile-title {
+        font-size: 1.4em;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .profile-scenarios {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    
+    .profile-scenario {
+        background: rgba(255,255,255,0.3);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-scenario:hover {
+        transform: translateY(-3px);
+    }
+    
+    .profile-scenario-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .profile-scenario-name {
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .profile-scenario-desc {
+        font-size: 0.9em;
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stress-test-container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">🧪 Portfolio Stress Testing</h1>
+            <p class="text-center text-muted mb-5">
+                Test your portfolio against historical market scenarios and get AI-powered recommendations from analyst reports
+            </p>
+        </div>
+    </div>
+
+    <!-- Risk Profile Based Recommendations -->
+    <div class="profile-recommendations">
+        <div class="profile-header">
+            <span class="section-icon">🎯</span>
+            <h3 class="profile-title">Recommended Scenarios Based on Your Profile</h3>
+        </div>
+        <div id="profileBasedRecommendations">
+            <div class="profile-scenarios">
+                <div class="profile-scenario" data-scenarios="covid,financial-crisis">
+                    <div class="profile-scenario-icon">🛡️</div>
+                    <div class="profile-scenario-name">Conservative Investor</div>
+                    <div class="profile-scenario-desc">Focus on pandemic & financial crisis scenarios</div>
+                </div>
+                <div class="profile-scenario" data-scenarios="covid,inflation,war">
+                    <div class="profile-scenario-icon">⚖️</div>
+                    <div class="profile-scenario-name">Moderate Investor</div>
+                    <div class="profile-scenario-desc">Test against COVID, inflation, and geopolitical risks</div>
+                </div>
+                <div class="profile-scenario" data-scenarios="all">
+                    <div class="profile-scenario-icon">🚀</div>
+                    <div class="profile-scenario-name">Aggressive Investor</div>
+                    <div class="profile-scenario-desc">Test all scenarios including extreme events</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Input Section -->
+    <div class="portfolio-input">
+        <div class="enhanced-section-title">
+            <span class="section-icon">💼</span>
+            <h3>Your Portfolio Configuration</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Risk Profile:</label>
+                <select class="form-control form-control-lg" id="riskProfile">
+                    <option value="conservative">🛡️ Conservative (Low Risk, Stable Returns)</option>
+                    <option value="moderate" selected>⚖️ Moderate (Balanced Risk-Return)</option>
+                    <option value="aggressive">🚀 Aggressive (High Risk, High Return)</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Investment Horizon:</label>
+                <select class="form-control form-control-lg" id="investmentHorizon">
+                    <option value="short">📅 Short Term (< 1 year)</option>
+                    <option value="medium" selected>📆 Medium Term (1-5 years)</option>
+                    <option value="long">🕰️ Long Term (> 5 years)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label fw-bold">Portfolio Holdings:</label>
+            <div id="portfolioHoldings">
+                <div class="stock-input-row">
+                    <input type="text" class="form-control form-control-lg ticker-input" placeholder="Stock Ticker (e.g., RELIANCE.NS)" value="RELIANCE.NS">
+                    <input type="number" class="form-control form-control-lg weight-input" placeholder="Weight %" value="20" min="0" max="100">
+                    <button type="button" class="btn btn-danger btn-lg remove-stock">❌</button>
+                </div>
+                <div class="stock-input-row">
+                    <input type="text" class="form-control form-control-lg ticker-input" placeholder="Stock Ticker (e.g., TCS.NS)" value="TCS.NS">
+                    <input type="number" class="form-control form-control-lg weight-input" placeholder="Weight %" value="15" min="0" max="100">
+                    <button type="button" class="btn btn-danger btn-lg remove-stock">❌</button>
+                </div>
+                <div class="stock-input-row">
+                    <input type="text" class="form-control form-control-lg ticker-input" placeholder="Stock Ticker (e.g., INFY.NS)" value="INFY.NS">
+                    <input type="number" class="form-control form-control-lg weight-input" placeholder="Weight %" value="15" min="0" max="100">
+                    <button type="button" class="btn btn-danger btn-lg remove-stock">❌</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-lg mt-3" id="addStock">➕ Add Stock</button>
+            <small class="form-text text-muted mt-2">Weights will be automatically normalized to 100%</small>
+        </div>
+    </div>
+
+    <!-- Enhanced Scenario Selection -->
+    <div class="portfolio-input">
+        <div class="enhanced-section-title">
+            <span class="section-icon">🎭</span>
+            <h3>Market Scenarios to Test</h3>
+        </div>
+        <p class="text-muted mb-4">Select scenarios to understand how your portfolio would perform during major market events:</p>
+        
+        <div class="row">
+            <!-- COVID-19 Scenario -->
+            <div class="col-lg-6 mb-4">
+                <div class="scenario-card" data-scenario="COVID-19 Market Crash">
+                    <div class="scenario-header">
+                        <div class="d-flex align-items-center">
+                            <span class="scenario-icon">🦠</span>
+                            <div>
+                                <h5 class="scenario-title">COVID-19 Market Crash</h5>
+                                <small class="text-muted">Feb 2020 - Apr 2020</small>
+                            </div>
+                        </div>
+                        <span class="scenario-impact">-34% Impact</span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input scenario-checkbox" type="checkbox" value="COVID-19 Market Crash" id="scenario-covid">
+                        <label class="form-check-label fw-bold" for="scenario-covid">
+                            Test COVID-19 Crash Scenario
+                        </label>
+                    </div>
+                    <div class="scenario-details">
+                        <div class="scenario-stat">
+                            <span class="stat-icon">📉</span>
+                            <div>
+                                <p class="stat-label">Market Drawdown</p>
+                                <p class="stat-value">-33.7%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">⚡</span>
+                            <div>
+                                <p class="stat-label">Volatility Spike</p>
+                                <p class="stat-value">+413%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🏭</span>
+                            <div>
+                                <p class="stat-label">Most Affected</p>
+                                <p class="stat-value">Travel, Retail</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🕒</span>
+                            <div>
+                                <p class="stat-label">Recovery Time</p>
+                                <p class="stat-value">6 months</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2008 Financial Crisis -->
+            <div class="col-lg-6 mb-4">
+                <div class="scenario-card" data-scenario="2008 Financial Crisis">
+                    <div class="scenario-header">
+                        <div class="d-flex align-items-center">
+                            <span class="scenario-icon">🏦</span>
+                            <div>
+                                <h5 class="scenario-title">2008 Financial Crisis</h5>
+                                <small class="text-muted">Sep 2008 - Mar 2009</small>
+                            </div>
+                        </div>
+                        <span class="scenario-impact">-45% Impact</span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input scenario-checkbox" type="checkbox" value="2008 Financial Crisis" id="scenario-financial">
+                        <label class="form-check-label fw-bold" for="scenario-financial">
+                            Test Financial Crisis Scenario
+                        </label>
+                    </div>
+                    <div class="scenario-details">
+                        <div class="scenario-stat">
+                            <span class="stat-icon">📉</span>
+                            <div>
+                                <p class="stat-label">Market Drawdown</p>
+                                <p class="stat-value">-45.2%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">⚡</span>
+                            <div>
+                                <p class="stat-label">Volatility Spike</p>
+                                <p class="stat-value">+287%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🏭</span>
+                            <div>
+                                <p class="stat-label">Most Affected</p>
+                                <p class="stat-value">Financials, Real Estate</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🕒</span>
+                            <div>
+                                <p class="stat-label">Recovery Time</p>
+                                <p class="stat-value">18 months</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Russia-Ukraine War -->
+            <div class="col-lg-6 mb-4">
+                <div class="scenario-card" data-scenario="Russia-Ukraine War Impact">
+                    <div class="scenario-header">
+                        <div class="d-flex align-items-center">
+                            <span class="scenario-icon">⚔️</span>
+                            <div>
+                                <h5 class="scenario-title">Russia-Ukraine War</h5>
+                                <small class="text-muted">Feb 2022 - Jun 2022</small>
+                            </div>
+                        </div>
+                        <span class="scenario-impact">-18% Impact</span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input scenario-checkbox" type="checkbox" value="Russia-Ukraine War Impact" id="scenario-war">
+                        <label class="form-check-label fw-bold" for="scenario-war">
+                            Test Geopolitical Crisis Scenario
+                        </label>
+                    </div>
+                    <div class="scenario-details">
+                        <div class="scenario-stat">
+                            <span class="stat-icon">📉</span>
+                            <div>
+                                <p class="stat-label">Market Drawdown</p>
+                                <p class="stat-value">-18.2%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">⚡</span>
+                            <div>
+                                <p class="stat-label">Volatility Spike</p>
+                                <p class="stat-value">+156%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🏭</span>
+                            <div>
+                                <p class="stat-label">Most Affected</p>
+                                <p class="stat-value">Energy, Commodities</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🕒</span>
+                            <div>
+                                <p class="stat-label">Recovery Time</p>
+                                <p class="stat-value">12 months</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Inflation Environment -->
+            <div class="col-lg-6 mb-4">
+                <div class="scenario-card" data-scenario="High Inflation Environment">
+                    <div class="scenario-header">
+                        <div class="d-flex align-items-center">
+                            <span class="scenario-icon">💸</span>
+                            <div>
+                                <h5 class="scenario-title">High Inflation Environment</h5>
+                                <small class="text-muted">Volcker Shock Era (1979-1981)</small>
+                            </div>
+                        </div>
+                        <span class="scenario-impact">-21% Impact</span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input scenario-checkbox" type="checkbox" value="High Inflation Environment" id="scenario-inflation">
+                        <label class="form-check-label fw-bold" for="scenario-inflation">
+                            Test High Inflation Scenario
+                        </label>
+                    </div>
+                    <div class="scenario-details">
+                        <div class="scenario-stat">
+                            <span class="stat-icon">📈</span>
+                            <div>
+                                <p class="stat-label">Inflation Rate</p>
+                                <p class="stat-value">14.8%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🏛️</span>
+                            <div>
+                                <p class="stat-label">Interest Rates</p>
+                                <p class="stat-value">19.1%</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🏭</span>
+                            <div>
+                                <p class="stat-label">Most Affected</p>
+                                <p class="stat-value">Growth Stocks</p>
+                            </div>
+                        </div>
+                        <div class="scenario-stat">
+                            <span class="stat-icon">🕒</span>
+                            <div>
+                                <p class="stat-label">Duration</p>
+                                <p class="stat-value">24 months</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-primary btn-lg px-5 py-3" id="runStressTest">
+                🧪 Run Comprehensive Stress Test
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p class="mt-3 h5">Running comprehensive portfolio stress test...</p>
+        <p class="text-muted">Analyzing historical scenarios and generating AI recommendations...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection" style="display: none;">
+        <div class="enhanced-section-title">
+            <span class="section-icon">�</span>
+            <h3>Stress Test Results & AI Recommendations</h3>
+        </div>
+        <div id="stressTestResults">
+            <!-- Enhanced results will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile-based scenario recommendations
+    document.querySelectorAll('.profile-scenario').forEach(card => {
+        card.addEventListener('click', function() {
+            const scenarios = this.dataset.scenarios;
+            const riskProfile = this.querySelector('.profile-scenario-name').textContent.toLowerCase();
+            
+            // Update risk profile selection
+            if (riskProfile.includes('conservative')) {
+                document.getElementById('riskProfile').value = 'conservative';
+            } else if (riskProfile.includes('aggressive')) {
+                document.getElementById('riskProfile').value = 'aggressive';
+            } else {
+                document.getElementById('riskProfile').value = 'moderate';
+            }
+            
+            // Select recommended scenarios
+            document.querySelectorAll('.scenario-checkbox').forEach(cb => cb.checked = false);
+            
+            if (scenarios === 'all') {
+                document.querySelectorAll('.scenario-checkbox').forEach(cb => cb.checked = true);
+            } else {
+                const scenarioList = scenarios.split(',');
+                scenarioList.forEach(scenarioType => {
+                    if (scenarioType === 'covid') {
+                        document.getElementById('scenario-covid').checked = true;
+                    } else if (scenarioType === 'financial-crisis') {
+                        document.getElementById('scenario-financial').checked = true;
+                    } else if (scenarioType === 'war') {
+                        document.getElementById('scenario-war').checked = true;
+                    } else if (scenarioType === 'inflation') {
+                        document.getElementById('scenario-inflation').checked = true;
+                    }
+                });
+            }
+            
+            // Update scenario cards visual state
+            updateScenarioCardStates();
+            
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+
+    // Add stock functionality
+    document.getElementById('addStock').addEventListener('click', function() {
+        const holdingsDiv = document.getElementById('portfolioHoldings');
+        const newRow = document.createElement('div');
+        newRow.className = 'stock-input-row';
+        newRow.innerHTML = `
+            <input type="text" class="form-control form-control-lg ticker-input" placeholder="Stock Ticker (e.g., HDFCBANK.NS)">
+            <input type="number" class="form-control form-control-lg weight-input" placeholder="Weight %" min="0" max="100">
+            <button type="button" class="btn btn-danger btn-lg remove-stock">❌</button>
+        `;
+        holdingsDiv.appendChild(newRow);
+    });
+
+    // Remove stock functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-stock')) {
+            const stockRows = document.querySelectorAll('.stock-input-row');
+            if (stockRows.length > 1) {
+                e.target.closest('.stock-input-row').remove();
+            } else {
+                alert('Portfolio must have at least one stock');
+            }
+        }
+    });
+
+    // Enhanced scenario selection with visual feedback
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('scenario-checkbox')) {
+            updateScenarioCardStates();
+        }
+    });
+
+    function updateScenarioCardStates() {
+        document.querySelectorAll('.scenario-checkbox').forEach(checkbox => {
+            const card = checkbox.closest('.scenario-card');
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    }
+
+    // Run stress test with enhanced processing
+    document.getElementById('runStressTest').addEventListener('click', function() {
+        const tickers = [];
+        const weights = [];
+        
+        // Collect portfolio data
+        document.querySelectorAll('.stock-input-row').forEach(row => {
+            const ticker = row.querySelector('.ticker-input').value.trim();
+            const weight = parseFloat(row.querySelector('.weight-input').value) || 0;
+            
+            if (ticker) {
+                tickers.push(ticker);
+                weights.push(weight);
+            }
+        });
+
+        if (tickers.length === 0) {
+            alert('Please add at least one stock to your portfolio');
+            return;
+        }
+
+        // Collect selected scenarios
+        const selectedScenarios = [];
+        document.querySelectorAll('.scenario-checkbox:checked').forEach(cb => {
+            selectedScenarios.push(cb.value);
+        });
+
+        if (selectedScenarios.length === 0) {
+            alert('Please select at least one scenario to test');
+            return;
+        }
+
+        // Prepare enhanced request data
+        const requestData = {
+            tickers: tickers,
+            weights: weights,
+            risk_profile: document.getElementById('riskProfile').value,
+            investment_horizon: document.getElementById('investmentHorizon').value,
+            scenarios: selectedScenarios,
+            enhanced_analysis: true
+        };
+
+        // Show loading with enhanced animation
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('resultsSection').style.display = 'none';
+
+        // Make API call
+        fetch('/portfolio_stress_test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            
+            if (data.success) {
+                displayEnhancedStressTestResults(data.stress_test_results);
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error occurred'));
+            }
+        })
+        .catch(error => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            console.error('Error:', error);
+            alert('Network error occurred. Please try again.');
+        });
+    });
+
+    function displayEnhancedStressTestResults(results) {
+        const resultsDiv = document.getElementById('stressTestResults');
+        
+        // Overall risk score with enhanced styling
+        const riskAssessment = results.risk_assessment || {};
+        const riskClass = results.overall_risk_score >= 60 ? 'risk-low' : 
+                         results.overall_risk_score >= 40 ? 'risk-moderate' : 'risk-high';
+        
+        let html = `
+            <div class="risk-score ${riskClass}">
+                <div style="position: relative; z-index: 1;">
+                    ${riskAssessment.icon || '📊'} Overall Risk Score: ${results.overall_risk_score}/100
+                    <div style="font-size: 0.6em; margin-top: 15px; opacity: 0.9;">
+                        ${riskAssessment.description || 'Risk assessment completed'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Enhanced scenario results with example-style cards
+        if (results.scenario_results && results.scenario_results.length > 0) {
+            results.scenario_results.forEach(scenario => {
+                const scenarios = getScenarioExamples();
+                const scenarioData = scenarios[scenario.scenario_name] || scenarios['Default'];
+                
+                html += `
+                    <div class="enhanced-result-card">
+                        <div class="result-header">
+                            <h4 class="result-scenario-title">
+                                ${scenarioData.icon} ${scenario.scenario_name}
+                            </h4>
+                            <span class="result-drawdown">
+                                🔻 ${scenario.portfolio_return}% Portfolio Impact
+                            </span>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="result-stat">
+                                <span class="result-stat-icon">📉</span>
+                                <div class="result-stat-label">Estimated Drawdown</div>
+                                <div class="result-stat-value">${scenario.portfolio_return}%</div>
+                            </div>
+                            <div class="result-stat">
+                                <span class="result-stat-icon">🧩</span>
+                                <div class="result-stat-label">Most Affected</div>
+                                <div class="result-stat-value">${scenarioData.most_affected}</div>
+                            </div>
+                            <div class="result-stat">
+                                <span class="result-stat-icon">⚡</span>
+                                <div class="result-stat-label">Volatility Spike</div>
+                                <div class="result-stat-value">+${scenario.volatility_increase}%</div>
+                            </div>
+                            <div class="result-stat">
+                                <span class="result-stat-icon">🕒</span>
+                                <div class="result-stat-label">Recovery Time</div>
+                                <div class="result-stat-value">${scenario.recovery_estimate}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analyst-insights">
+                            <h5>🛡 Suggested Strategy</h5>
+                            <div class="insight-item">
+                                <span class="insight-icon">💡</span>
+                                <span>${scenarioData.strategy}</span>
+                            </div>
+                            
+                            <h5 style="margin-top: 20px;">💬 Analyst Note</h5>
+                            <div class="insight-item">
+                                <span class="insight-icon">📝</span>
+                                <span><em>${scenarioData.analyst_note}</em></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Mitigation Strategies Section
+        html += generateMitigationStrategies(results);
+
+        // Enhanced recommendations with analyst insights
+        if (results.personalized_recommendations && results.personalized_recommendations.length > 0) {
+            html += `
+                <div class="enhanced-result-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <h4 style="margin-bottom: 20px;">🎯 AI-Powered Recommendations</h4>
+                    <div class="strategy-grid">
+            `;
+            
+            results.personalized_recommendations.forEach((rec, index) => {
+                const icons = ['💡', '🛡️', '⚖️', '🔄', '📊', '🎯'];
+                html += `
+                    <div class="strategy-card">
+                        <div class="insight-item">
+                            <span class="insight-icon">${icons[index % icons.length]}</span>
+                            <span>${rec}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+
+        // Portfolio composition summary
+        if (results.portfolio_composition) {
+            const comp = results.portfolio_composition;
+            html += `
+                <div class="portfolio-input" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h4 style="color: white; margin-bottom: 20px;">📊 Portfolio Analysis Summary</h4>
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div style="font-size: 2em; margin-bottom: 10px;">🏢</div>
+                            <div style="font-size: 1.5em; font-weight: 600;">${comp.tickers.length}</div>
+                            <div style="opacity: 0.8;">Holdings</div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div style="font-size: 2em; margin-bottom: 10px;">📈</div>
+                            <div style="font-size: 1.5em; font-weight: 600;">${comp.diversification_score}/100</div>
+                            <div style="opacity: 0.8;">Diversification</div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div style="font-size: 2em; margin-bottom: 10px;">🎯</div>
+                            <div style="font-size: 1.5em; font-weight: 600;">${results.risk_profile.toUpperCase()}</div>
+                            <div style="opacity: 0.8;">Risk Profile</div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div style="font-size: 2em; margin-bottom: 10px;">🧪</div>
+                            <div style="font-size: 1.5em; font-weight: 600;">${results.scenarios_tested}</div>
+                            <div style="opacity: 0.8;">Scenarios Tested</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        resultsDiv.innerHTML = html;
+    }
+
+    function getScenarioExamples() {
+        return {
+            'COVID-19 Market Crash': {
+                icon: '🦠',
+                most_affected: 'Travel, Hospitality, Retail',
+                strategy: 'Shift 15% to Healthcare & Tech, hedge with defensive stocks',
+                analyst_note: 'Sector rotation to essential services helped recovery in 6 months. Tech and healthcare outperformed.'
+            },
+            '2008 Financial Crisis': {
+                icon: '🏦',
+                most_affected: 'Financials, Real Estate, Auto',
+                strategy: 'Reduce financials exposure by 20%, increase bonds allocation',
+                analyst_note: 'Quality dividend stocks and government bonds provided stability. Recovery took 18+ months.'
+            },
+            'Russia-Ukraine War Impact': {
+                icon: '⚔️',
+                most_affected: 'Energy, Commodities, European stocks',
+                strategy: 'Hedge energy exposure, consider commodity ETFs for inflation protection',
+                analyst_note: 'Energy stocks were volatile but commodities provided hedge against inflation spike.'
+            },
+            'High Inflation Environment': {
+                icon: '💸',
+                most_affected: 'Growth stocks, Bonds, REITs',
+                strategy: 'Shift to value stocks, reduce duration risk in bonds',
+                analyst_note: 'Value stocks and commodities outperformed during high inflation periods.'
+            },
+            'Default': {
+                icon: '📊',
+                most_affected: 'Market-wide impact',
+                strategy: 'Maintain diversified allocation, consider rebalancing',
+                analyst_note: 'Historical analysis suggests maintaining discipline during volatility pays off long-term.'
+            }
+        };
+    }
+
+    function generateMitigationStrategies(results) {
+        const riskProfile = results.risk_profile;
+        let strategies = [];
+        
+        if (riskProfile === 'conservative') {
+            strategies = [
+                { type: 'Defensive Allocation', actions: ['Increase bonds to 40%', 'Add utilities & consumer staples', 'Consider dividend aristocrats'] },
+                { type: 'Risk Management', actions: ['Set stop-losses at 8%', 'Monthly rebalancing', 'Emergency cash reserve'] }
+            ];
+        } else if (riskProfile === 'aggressive') {
+            strategies = [
+                { type: 'Hedging Strategy', actions: ['Put options on index', 'Inverse ETFs allocation', 'Volatility trading strategies'] },
+                { type: 'Diversification', actions: ['International exposure', 'Alternative investments', 'Sector rotation timing'] }
+            ];
+        } else {
+            strategies = [
+                { type: 'Balanced Approach', actions: ['60/40 equity/bonds split', 'Quarterly rebalancing', 'Dollar-cost averaging'] },
+                { type: 'Active Management', actions: ['Tactical asset allocation', 'Momentum indicators', 'Risk parity approach'] }
+            ];
+        }
+
+        let html = `
+            <div class="mitigation-strategies">
+                <div class="mitigation-header">
+                    <span style="font-size: 2em;">🛡️</span>
+                    <h4 class="mitigation-title">Recommended Mitigation Strategies</h4>
+                </div>
+                <div class="strategy-grid">
+        `;
+
+        strategies.forEach(strategy => {
+            html += `
+                <div class="strategy-card">
+                    <div class="strategy-header">
+                        <span style="font-size: 1.5em;">⚡</span>
+                        <span class="strategy-type">${strategy.type}</span>
+                    </div>
+                    <ul class="strategy-actions">
+            `;
+            
+            strategy.actions.forEach(action => {
+                html += `<li><span>✓</span> ${action}</li>`;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        return html;
+    }
+
+    // Initialize scenario card states
+    updateScenarioCardStates();
+});
+</script>
+{% endblock %}

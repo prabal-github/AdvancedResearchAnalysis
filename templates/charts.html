@@ -1,0 +1,261 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio Charts{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Interactive Portfolio Charts</h1>
+        <p class="text-muted mb-0">Advanced visualizations and analytics</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="refreshCharts()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh Data
+        </button>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Chart Navigation Tabs -->
+<ul class="nav nav-tabs mb-4" id="chartTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">
+            <i class="bi bi-pie-chart me-1"></i> Portfolio Overview
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance" type="button">
+            <i class="bi bi-bar-chart me-1"></i> Performance Analysis
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button">
+            <i class="bi bi-speedometer me-1"></i> Technical Indicators
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="sentiment-tab" data-bs-toggle="tab" data-bs-target="#sentiment" type="button">
+            <i class="bi bi-heart me-1"></i> Sentiment Analysis
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="chartTabsContent">
+    <!-- Portfolio Overview Tab -->
+    <div class="tab-pane fade show active" id="overview" role="tabpanel">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Sector Allocation</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if charts_data.sector_pie %}
+                        <div id="sectorPieChart"></div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-pie-chart fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No sector data available</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Portfolio Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="text-primary">{{ portfolio_analysis.risk_metrics.total_value|round(0) }}</h3>
+                                    <p class="text-muted mb-0">Total Value (₹)</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="{% if portfolio_analysis.risk_metrics.total_profit > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ portfolio_analysis.risk_metrics.total_profit|round(0) }}
+                                    </h3>
+                                    <p class="text-muted mb-0">Total P&L (₹)</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="text-info">{{ portfolio_analysis.metadata.total_holdings }}</h3>
+                                    <p class="text-muted mb-0">Holdings</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="text-warning">{{ portfolio_analysis.metadata.sectors_count }}</h3>
+                                    <p class="text-muted mb-0">Sectors</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Analysis Tab -->
+    <div class="tab-pane fade" id="performance" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Holdings Performance</h5>
+            </div>
+            <div class="card-body">
+                {% if charts_data.performance_bar %}
+                <div id="performanceBarChart"></div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-bar-chart fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No performance data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Indicators Tab -->
+    <div class="tab-pane fade" id="technical" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">RSI Indicators</h5>
+            </div>
+            <div class="card-body">
+                {% if charts_data.rsi_gauges %}
+                <div class="row">
+                    {% for rsi_chart in charts_data.rsi_gauges %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div id="rsiGauge{{ loop.index }}"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-speedometer fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No RSI data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sentiment Analysis Tab -->
+    <div class="tab-pane fade" id="sentiment" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">News Sentiment vs Performance</h5>
+            </div>
+            <div class="card-body">
+                {% if charts_data.sentiment_scatter %}
+                <div id="sentimentScatterChart"></div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-heart fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No sentiment data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Detailed Sentiment Analysis -->
+        <div class="row mt-4">
+            {% for holding in portfolio_analysis.holdings %}
+            {% if holding.sentiment_analysis %}
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0">{{ holding.ticker }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Overall Sentiment</span>
+                            <span class="badge 
+                                {% if holding.sentiment_analysis.sentiment_label == 'Positive' %}bg-success
+                                {% elif holding.sentiment_analysis.sentiment_label == 'Negative' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ holding.sentiment_analysis.sentiment_label }}
+                            </span>
+                        </div>
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar 
+                                {% if holding.sentiment_analysis.overall_sentiment > 0 %}bg-success
+                                {% elif holding.sentiment_analysis.overall_sentiment < 0 %}bg-danger
+                                {% else %}bg-secondary{% endif %}" 
+                                style="width: {{ ((holding.sentiment_analysis.overall_sentiment + 1) * 50)|round(0) }}%">
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            Score: {{ holding.sentiment_analysis.overall_sentiment|round(3) }} 
+                            ({{ holding.sentiment_analysis.news_count }} news items)
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Updated Plotly explicit version -->
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load all charts
+    loadCharts();
+});
+
+function loadCharts() {
+    // Sector Pie Chart
+    {% if charts_data.sector_pie %}
+    const sectorData = {{ charts_data.sector_pie|safe }};
+    Plotly.newPlot('sectorPieChart', sectorData.data, sectorData.layout, {responsive: true});
+    {% endif %}
+
+    // Performance Bar Chart
+    {% if charts_data.performance_bar %}
+    const performanceData = {{ charts_data.performance_bar|safe }};
+    Plotly.newPlot('performanceBarChart', performanceData.data, performanceData.layout, {responsive: true});
+    {% endif %}
+
+    // RSI Gauge Charts
+    {% if charts_data.rsi_gauges %}
+    {% for rsi_chart in charts_data.rsi_gauges %}
+    const rsiData{{ loop.index }} = {{ rsi_chart.chart|safe }};
+    Plotly.newPlot('rsiGauge{{ loop.index }}', rsiData{{ loop.index }}.data, rsiData{{ loop.index }}.layout, {responsive: true});
+    {% endfor %}
+    {% endif %}
+
+    // Sentiment Scatter Chart
+    {% if charts_data.sentiment_scatter %}
+    const sentimentData = {{ charts_data.sentiment_scatter|safe }};
+    Plotly.newPlot('sentimentScatterChart', sentimentData.data, sentimentData.layout, {responsive: true});
+    {% endif %}
+}
+
+function refreshCharts() {
+    // Show loading indicator
+    const loadingHtml = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Refreshing charts...</p></div>';
+    
+    // Add loading to all chart containers
+    const chartContainers = ['sectorPieChart', 'performanceBarChart', 'sentimentScatterChart'];
+    chartContainers.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerHTML = loadingHtml;
+        }
+    });
+    
+    // Reload page after 2 seconds
+    setTimeout(() => {
+        window.location.reload();
+    }, 2000);
+}
+</script>
+
+{% endblock %}

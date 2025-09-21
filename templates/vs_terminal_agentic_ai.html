@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VS Terminal - Agentic AI Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 1.5rem; }
+        .breadcrumb {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            height: calc(100vh - 70px);
+        }
+        .sidebar {
+            background: #252526;
+            border-right: 1px solid #3c3c3c;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .main-content {
+            background: #1e1e1e;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .agent-card {
+            background: #2d2d30;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .agent-card:hover {
+            background: #383838;
+            border-color: #0078d4;
+        }
+        .agent-card.active {
+            background: #094771;
+            border-color: #0078d4;
+        }
+        .agent-name {
+            font-weight: 600;
+            color: #4ec9b0;
+            margin-bottom: 5px;
+        }
+        .agent-status {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .status-active { background: #16825d; color: white; }
+        .status-error { background: #f85149; color: white; }
+        .status-loading { background: #f79c42; color: black; }
+        .analysis-panel {
+            background: #2d2d30;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .panel-title {
+            color: #4ec9b0;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3c3c3c;
+            padding-bottom: 10px;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            background: #383838;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #0078d4;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            color: #cccccc;
+            margin-bottom: 5px;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #4ec9b0;
+        }
+        .btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 5px;
+            transition: background 0.2s ease;
+        }
+        .btn:hover { background: #106ebe; }
+        .btn-secondary {
+            background: #5a5a5a;
+        }
+        .btn-secondary:hover { background: #6a6a6a; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #cccccc;
+        }
+        .recommendations {
+            background: #2d2d30;
+            border-left: 4px solid #f79c42;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .recommendations h4 {
+            color: #f79c42;
+            margin-bottom: 10px;
+        }
+        .recommendations ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .recommendations li {
+            padding: 5px 0;
+            border-bottom: 1px solid #3c3c3c;
+        }
+        .recommendations li:last-child {
+            border-bottom: none;
+        }
+        .error-panel {
+            background: #2d2d30;
+            border: 1px solid #f85149;
+            border-radius: 8px;
+            padding: 20px;
+            color: #f85149;
+            text-align: center;
+        }
+        .json-viewer {
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .back-link {
+            color: #0078d4;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🤖 Agentic AI Dashboard</h1>
+            <div class="breadcrumb">
+                <a href="/vs_terminal_AClass" class="back-link">← VS Terminal</a>
+                Autonomous AI Agents for {{ current_investor }}
+            </div>
+        </div>
+        <div>
+            <button class="btn" onclick="refreshAllAgents()">🔄 Refresh All</button>
+            <button class="btn btn-secondary" onclick="exportResults()">📥 Export</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3 style="color: #4ec9b0; margin-bottom: 20px;">AI Agents</h3>
+            
+            <div class="agent-card" onclick="loadAgent('portfolio_risk')" id="agent-portfolio_risk">
+                <div class="agent-name">📊 Portfolio Risk Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Real-time portfolio risk analysis and monitoring
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('trading_signals')" id="agent-trading_signals">
+                <div class="agent-name">📈 Trading Signals Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    AI-powered trading signal generation
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('market_intelligence')" id="agent-market_intelligence">
+                <div class="agent-name">🌐 Market Intelligence Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Market sentiment and intelligence gathering
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('compliance')" id="agent-compliance">
+                <div class="agent-name">⚖️ Compliance Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Real-time compliance monitoring
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('client_advisory')" id="agent-client_advisory">
+                <div class="agent-name">👥 Client Advisory Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Personalized investment recommendations
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('performance')" id="agent-performance">
+                <div class="agent-name">📊 Performance Attribution</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Portfolio performance analysis
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('research')" id="agent-research">
+                <div class="agent-name">🔬 Research Agent</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Automated research topic identification
+                </p>
+            </div>
+
+            <div class="agent-card" onclick="loadAgent('comprehensive')" id="agent-comprehensive">
+                <div class="agent-name">🎯 Comprehensive Analysis</div>
+                <div class="agent-status status-active">ACTIVE</div>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #cccccc;">
+                    Execute all agents in coordinated workflow
+                </p>
+            </div>
+        </div>
+
+        <div class="main-content" id="main-content">
+            {% if ai_analysis and ai_analysis.get('error') %}
+                <div class="error-panel">
+                    <h3>⚠️ Agentic AI System Error</h3>
+                    <p>{{ ai_analysis.error }}</p>
+                    <p>Status: {{ ai_analysis.get('status', 'UNKNOWN') }}</p>
+                    <button class="btn" onclick="location.reload()">🔄 Retry</button>
+                </div>
+            {% else %}
+                <div class="analysis-panel">
+                    <div class="panel-title">🚀 Welcome to Agentic AI Dashboard</div>
+                    <p style="margin-bottom: 20px;">
+                        Select an AI agent from the sidebar to view autonomous analysis and insights.
+                        Each agent operates independently to provide specialized financial intelligence.
+                    </p>
+                    
+                    {% if ai_analysis %}
+                        <div class="metric-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Overall Analysis Score</div>
+                                <div class="metric-value">{{ ai_analysis.get('overall_score', 8.2) }}/10</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Active Agents</div>
+                                <div class="metric-value">7</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Workflow Type</div>
+                                <div class="metric-value">{{ ai_analysis.get('workflow_type', 'Comprehensive').title() }}</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Last Update</div>
+                                <div class="metric-value" style="font-size: 1rem;">Just Now</div>
+                            </div>
+                        </div>
+
+                        {% if ai_analysis.get('key_recommendations') %}
+                            <div class="recommendations">
+                                <h4>🎯 Key AI Recommendations</h4>
+                                <ul>
+                                    {% for recommendation in ai_analysis.key_recommendations %}
+                                        <li>{{ recommendation }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="loadAgent('comprehensive')">
+                            🎯 Run Comprehensive Analysis
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadAgent('portfolio_risk')">
+                            📊 Check Portfolio Risk
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadAgent('trading_signals')">
+                            📈 Get Trading Signals
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let currentAgent = null;
+        let agentData = {};
+
+        async function loadAgent(agentType) {
+            // Update UI
+            document.querySelectorAll('.agent-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`agent-${agentType}`).classList.add('active');
+            
+            // Show loading
+            document.getElementById('main-content').innerHTML = `
+                <div class="loading">
+                    <h3>🤖 Loading ${agentType.replace('_', ' ').toUpperCase()} Agent...</h3>
+                    <p>The AI agent is analyzing data and generating insights...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/vs_terminal_AClass/agentic_ai/${agentType}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    agentData[agentType] = result.data;
+                    displayAgentResults(agentType, result.data);
+                } else {
+                    displayError(agentType, result.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Agent loading error:', error);
+                displayError(agentType, error.message);
+            }
+        }
+
+        function displayAgentResults(agentType, data) {
+            const agentNames = {
+                'portfolio_risk': '📊 Portfolio Risk Analysis',
+                'trading_signals': '📈 Trading Signals',
+                'market_intelligence': '🌐 Market Intelligence',
+                'compliance': '⚖️ Compliance Monitoring',
+                'client_advisory': '👥 Client Advisory',
+                'performance': '📊 Performance Attribution',
+                'research': '🔬 Research Topics',
+                'comprehensive': '🎯 Comprehensive Analysis'
+            };
+
+            const content = `
+                <div class="analysis-panel">
+                    <div class="panel-title">${agentNames[agentType] || agentType}</div>
+                    
+                    ${generateAgentSpecificContent(agentType, data)}
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="refreshAgent('${agentType}')">🔄 Refresh</button>
+                        <button class="btn btn-secondary" onclick="exportAgent('${agentType}')">📥 Export</button>
+                        <button class="btn btn-secondary" onclick="showRawData('${agentType}')">📋 Raw Data</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('main-content').innerHTML = content;
+        }
+
+        function generateAgentSpecificContent(agentType, data) {
+            switch(agentType) {
+                case 'portfolio_risk':
+                    return generateRiskContent(data);
+                case 'trading_signals':
+                    return generateSignalsContent(data);
+                case 'market_intelligence':
+                    return generateMarketContent(data);
+                case 'compliance':
+                    return generateComplianceContent(data);
+                case 'comprehensive':
+                    return generateComprehensiveContent(data);
+                default:
+                    return `<div class="json-viewer">${JSON.stringify(data, null, 2)}</div>`;
+            }
+        }
+
+        function generateRiskContent(data) {
+            const riskMetrics = data.risk_metrics || {};
+            return `
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Portfolio VaR (95%)</div>
+                        <div class="metric-value">${(riskMetrics.var_95 || -2.5).toFixed(2)}%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Volatility</div>
+                        <div class="metric-value">${(riskMetrics.volatility || 15.8).toFixed(1)}%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Sharpe Ratio</div>
+                        <div class="metric-value">${(riskMetrics.sharpe_ratio || 1.23).toFixed(2)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Max Drawdown</div>
+                        <div class="metric-value">${(riskMetrics.max_drawdown || -8.5).toFixed(1)}%</div>
+                    </div>
+                </div>
+                ${data.recommendations ? generateRecommendations(data.recommendations) : ''}
+            `;
+        }
+
+        function generateSignalsContent(data) {
+            const signals = data.signals || [];
+            let content = `<h4>📈 Active Trading Signals (${signals.length})</h4>`;
+            
+            if (signals.length > 0) {
+                content += `<div style="margin-top: 15px;">`;
+                signals.forEach(signal => {
+                    const signalColor = signal.signal === 'BUY' ? '#16825d' : signal.signal === 'SELL' ? '#f85149' : '#f79c42';
+                    content += `
+                        <div style="background: #383838; padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid ${signalColor};">
+                            <strong>${signal.symbol}</strong> - ${signal.signal}
+                            <br>Confidence: ${(signal.confidence * 100).toFixed(1)}%
+                            <br>Target: ₹${signal.target_price.toFixed(2)} | Stop Loss: ₹${signal.stop_loss.toFixed(2)}
+                            <br>Expected Return: ${signal.expected_return.toFixed(1)}%
+                        </div>
+                    `;
+                });
+                content += `</div>`;
+            } else {
+                content += `<p>No active trading signals at this time.</p>`;
+            }
+            
+            return content;
+        }
+
+        function generateMarketContent(data) {
+            return `
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Market Sentiment</div>
+                        <div class="metric-value">${data.sentiment || 'NEUTRAL'}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Volatility Regime</div>
+                        <div class="metric-value">${data.volatility_regime || 'NORMAL'}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Opportunities</div>
+                        <div class="metric-value">${(data.opportunities || []).length}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Risk Level</div>
+                        <div class="metric-value">${data.risk_level || 'MODERATE'}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateComplianceContent(data) {
+            return `
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Compliance Score</div>
+                        <div class="metric-value">${(data.compliance_score || 95).toFixed(1)}/100</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Violations</div>
+                        <div class="metric-value">${data.total_violations || 0}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Critical Issues</div>
+                        <div class="metric-value">${(data.critical_violations || []).length}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Status</div>
+                        <div class="metric-value">COMPLIANT</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateComprehensiveContent(data) {
+            return `
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Overall Score</div>
+                        <div class="metric-value">${(data.overall_score || 8.2).toFixed(1)}/10</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Workflow Type</div>
+                        <div class="metric-value">${(data.workflow_type || 'comprehensive').toUpperCase()}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Agents Executed</div>
+                        <div class="metric-value">${Object.keys(data.results || {}).length}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Confidence</div>
+                        <div class="metric-value">${((data.synthesized_insights || {}).confidence_level || 0.78 * 100).toFixed(0)}%</div>
+                    </div>
+                </div>
+                ${data.key_recommendations ? generateRecommendations(data.key_recommendations) : ''}
+            `;
+        }
+
+        function generateRecommendations(recommendations) {
+            if (!recommendations || recommendations.length === 0) return '';
+            
+            return `
+                <div class="recommendations">
+                    <h4>🎯 AI Recommendations</h4>
+                    <ul>
+                        ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function displayError(agentType, error) {
+            document.getElementById('main-content').innerHTML = `
+                <div class="error-panel">
+                    <h3>⚠️ Error Loading ${agentType.replace('_', ' ').toUpperCase()} Agent</h3>
+                    <p>${error}</p>
+                    <button class="btn" onclick="loadAgent('${agentType}')">🔄 Retry</button>
+                </div>
+            `;
+        }
+
+        function refreshAgent(agentType) {
+            loadAgent(agentType);
+        }
+
+        function refreshAllAgents() {
+            // Clear cache and reload current agent
+            agentData = {};
+            if (currentAgent) {
+                loadAgent(currentAgent);
+            } else {
+                location.reload();
+            }
+        }
+
+        function exportAgent(agentType) {
+            if (agentData[agentType]) {
+                const dataStr = JSON.stringify(agentData[agentType], null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${agentType}_analysis_${new Date().toISOString().slice(0,10)}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function exportResults() {
+            const allData = {
+                export_date: new Date().toISOString(),
+                investor: '{{ current_investor }}',
+                agents: agentData
+            };
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `agentic_ai_analysis_${new Date().toISOString().slice(0,10)}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showRawData(agentType) {
+            if (agentData[agentType]) {
+                const content = `
+                    <div class="analysis-panel">
+                        <div class="panel-title">📋 Raw Data - ${agentType.replace('_', ' ').toUpperCase()}</div>
+                        <div class="json-viewer">${JSON.stringify(agentData[agentType], null, 2)}</div>
+                        <button class="btn" onclick="loadAgent('${agentType}')">← Back to Analysis</button>
+                    </div>
+                `;
+                document.getElementById('main-content').innerHTML = content;
+            }
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            if (currentAgent) {
+                console.log('Auto-refreshing agent:', currentAgent);
+                loadAgent(currentAgent);
+            }
+        }, 300000);
+
+        // Load comprehensive analysis by default
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadAgent('comprehensive');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+{% extends "layout.html" %}
+{% block title %}hAi-Edge ML Model Portfolio - PredictRAM{% endblock %}
+
+{% block header %}
+<div class="container-fluid bg-gradient-primary text-white py-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-robot fa-3x text-light"></i>
+                </div>
+                <div>
+                    <h1 class="h2 mb-1">hAi-Edge ML Model Portfolio</h1>
+                    <p class="mb-0 opacity-75">Hybrid AI/ML Hedge Fund by PredictRAM</p>
+                    <small class="opacity-75">
+                        <i class="fas fa-brain me-1"></i>Symbolic • Statistical • ML • Deep Learning • Event-Driven
+                        {% if user_type %}
+                        | <i class="fas fa-user me-1"></i>{{ user_type.title() }} Access
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex flex-column align-items-md-end">
+                <div class="mb-2">
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        <i class="fas fa-chart-line me-1"></i>Market: +{{ "%.2f"|format(market_return) }}%
+                    </span>
+                </div>
+                <button class="btn btn-light btn-sm" onclick="refreshAllData()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+/* hAi-Edge Custom Styles */
+.hai-edge-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.hai-edge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.performance-metric {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.ai-model-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.model-symbolic { background-color: #FF6B6B; }
+.model-statistical { background-color: #4ECDC4; }
+.model-ml { background-color: #45B7D1; }
+.model-dl { background-color: #96CEB4; }
+.model-sentiment { background-color: #FFEAA7; }
+.model-event { background-color: #DDA0DD; }
+
+.portfolio-card {
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.portfolio-card:hover {
+    border-left-color: #764ba2;
+}
+
+.status-active { color: #28a745; }
+.status-paused { color: #ffc107; }
+.status-closed { color: #dc3545; }
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.signal-strength-strong-buy { color: #28a745; font-weight: bold; }
+.signal-strength-buy { color: #20c997; }
+.signal-strength-hold { color: #6c757d; }
+.signal-strength-sell { color: #fd7e14; }
+.signal-strength-strong-sell { color: #dc3545; font-weight: bold; }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Affordability Banner -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-success border-0 shadow-sm">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="alert-heading mb-1">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            Fixed Quantity Strategy: Smart Stock Holdings!
+                        </h5>
+                        <p class="mb-0">
+                            Our AI models use strategic quantities: <strong>1 stock × 10 shares</strong>, <strong>2 stocks × 5 shares each</strong>, 
+                            or <strong>5+ stocks × 1 share each</strong> for optimal risk-return balance.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            <i class="fas fa-calculator me-1"></i>Fixed Quantity Strategy
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Overview Row -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="hai-edge-card performance-metric">
+                <h3 class="mb-1">{{ portfolios|length }}</h3>
+                <small>Active Portfolios</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="hai-edge-card performance-metric">
+                <h3 class="mb-1">₹{{ "{:,.0f}".format(portfolios|sum(attribute='total_value')|default(0)) }}L</h3>
+                <small>Total AUM</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="hai-edge-card performance-metric">
+                {% set avg_return = (portfolios|sum(attribute='total_return')/portfolios|length) if portfolios else 0 %}
+                <h3 class="mb-1">{{ "%.1f"|format(avg_return) }}%</h3>
+                <small>Avg Return</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="hai-edge-card performance-metric">
+                <h3 class="mb-1">{{ (portfolios|sum(attribute='sharpe_ratio')/portfolios|length)|round(2) if portfolios else 0.0 }}</h3>
+                <small>Avg Sharpe Ratio</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Models Status -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card hai-edge-card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-brain me-2 text-primary"></i>AI/ML Models Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-symbolic"></div>
+                            <strong>Symbolic</strong>
+                            <br><small class="text-muted">Rule-Based</small>
+                            <div class="mt-2">
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-statistical"></div>
+                            <strong>Statistical</strong>
+                            <br><small class="text-muted">Quantitative</small>
+                            <div class="mt-2">
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-ml"></div>
+                            <strong>ML Traditional</strong>
+                            <br><small class="text-muted">Random Forest</small>
+                            <div class="mt-2">
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-dl"></div>
+                            <strong>Deep Learning</strong>
+                            <br><small class="text-muted">LSTM Networks</small>
+                            <div class="mt-2">
+                                <span class="badge bg-warning">Training</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-sentiment"></div>
+                            <strong>Sentiment</strong>
+                            <br><small class="text-muted">News Analysis</small>
+                            <div class="mt-2">
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="ai-model-indicator model-event"></div>
+                            <strong>Event-Driven</strong>
+                            <br><small class="text-muted">Calendar Events</small>
+                            <div class="mt-2">
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio List -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card hai-edge-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-briefcase me-2 text-primary"></i>Active hAi-Edge Models
+                    </h5>
+                    {% if can_create_models %}
+                    <a href="{{ url_for('hai_edge.create_portfolio') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Launch New Model
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    {% if portfolios %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Portfolio Name</th>
+                                    <th>Strategy</th>
+                                    <th>Launch Date</th>
+                                    <th class="text-end">Current Value</th>
+                                    <th class="text-end">Total Return</th>
+                                    <th class="text-end">Sharpe Ratio</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for portfolio in portfolios %}
+                                <tr class="portfolio-card">
+                                    <td>
+                                        <strong>{{ portfolio.name }}</strong>
+                                        <br><small class="text-muted">ID: {{ portfolio.id }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ portfolio.strategy.title() }}</span>
+                                        <br><small class="text-muted">Strategy</small>
+                                    </td>
+                                    <td>{{ portfolio.last_updated.strftime('%Y-%m-%d') if portfolio.last_updated else 'N/A' }}</td>
+                                    <td class="text-end">
+                                        <strong>₹{{ "{:,.0f}".format(portfolio.total_value) }}</strong>
+                                        <br><small class="text-muted">
+                                            {{ portfolio.last_updated.strftime('%Y-%m-%d') if portfolio.last_updated else 'N/A' }}
+                                        </small>
+                                    </td>
+                                    <td class="text-end">
+                                        {% if portfolio.total_return >= 0 %}
+                                        <span class="text-success">+{{ "%.2f"|format(portfolio.total_return) }}%</span>
+                                        {% else %}
+                                        <span class="text-danger">{{ "%.2f"|format(portfolio.total_return) }}%</span>
+                                        {% endif %}
+                                        <br><small class="text-muted">Daily: {{ "%.1f"|format(portfolio.daily_return) }}%</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>{{ "%.2f"|format(portfolio.sharpe_ratio) }}</strong>
+                                        <br><small class="text-muted">Max DD: {{ "%.1f"|format(portfolio.max_drawdown) }}%</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('hai_edge.model_detail', model_id=portfolio.id) }}" 
+                                               class="btn btn-outline-primary btn-sm" title="View Details">
+                                                <i class="fas fa-eye"></i> Details
+                                            </a>
+                                            {% if is_admin %}
+                                            <button class="btn btn-outline-success btn-sm" 
+                                                    onclick="generateSignals({{ portfolio.id }})" title="Generate AI Signals">
+                                                <i class="fas fa-chart-line"></i>
+                                            </button>
+                                            <button class="btn btn-outline-info btn-sm" 
+                                                    onclick="updatePerformance({{ portfolio.id }})" title="Update Performance">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hAi-Edge Models Available</h5>
+                        <p class="text-muted">No active hAi-Edge ML models found.</p>
+                        {% if can_create_models %}
+                        <a href="{{ url_for('hai_edge.create_portfolio') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Launch Your First Model
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card hai-edge-card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="generateAllSignals()">
+                            <i class="fas fa-brain me-2"></i>Generate AI Signals for All Portfolios
+                        </button>
+                        <button class="btn btn-outline-success" onclick="executeAllSignals()">
+                            <i class="fas fa-play me-2"></i>Execute Pending Trades
+                        </button>
+                        <button class="btn btn-outline-info" onclick="runSystemBacktest()">
+                            <i class="fas fa-history me-2"></i>Run System-wide Backtest
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="downloadReports()">
+                            <i class="fas fa-download me-2"></i>Download Performance Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card hai-edge-card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>System Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Data Sources:</strong>
+                            <ul class="list-unstyled mt-1">
+                                <li><i class="fas fa-check text-success me-1"></i>Yahoo Finance</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Upstox News API</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Sensibull Events</li>
+                                <li><i class="fas fa-check text-success me-1"></i>FII/DII Flows</li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <strong>Model Features:</strong>
+                            <ul class="list-unstyled mt-1">
+                                <li><i class="fas fa-check text-success me-1"></i>Technical Analysis</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Fundamental Metrics</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Sentiment Analysis</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Risk Management</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <strong>Last Data Update:</strong>
+                        <span class="text-muted" id="lastUpdate">{{ current_time.strftime('%Y-%m-%d %H:%M:%S') if current_time else 'N/A' }}</span>
+                        <br>
+                        <strong>Next Rebalance:</strong>
+                        <span class="text-primary">Next Monday 9:15 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 id="loadingText">Processing...</h5>
+                <p class="text-muted mb-0" id="loadingSubtext">Please wait while we process your request.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// hAi-Edge Dashboard JavaScript Functions
+
+function showLoading(title, subtitle) {
+    document.getElementById('loadingText').textContent = title;
+    document.getElementById('loadingSubtext').textContent = subtitle;
+    const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    modal.show();
+}
+
+function hideLoading() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+    if (modal) modal.hide();
+}
+
+function generateSignals(portfolioId) {
+    showLoading('Generating AI Signals', 'Analyzing market data with hybrid AI/ML models...');
+    
+    fetch(`/hai-edge/generate-signals/${portfolioId}`)
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                alert(`✅ Generated ${data.signals_generated} signals for portfolio!`);
+                location.reload();
+            } else {
+                alert(`❌ Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            alert(`❌ Error: ${error.message}`);
+        });
+}
+
+function updatePerformance(portfolioId) {
+    showLoading('Updating Performance', 'Fetching latest market prices...');
+    
+    fetch(`/hai-edge/update-performance/${portfolioId}`)
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                alert(`✅ Portfolio updated! Value: ₹${data.portfolio_value.toLocaleString()}, Return: ${data.total_return.toFixed(2)}%`);
+                location.reload();
+            } else {
+                alert(`❌ Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            alert(`❌ Error: ${error.message}`);
+        });
+}
+
+function generateAllSignals() {
+    showLoading('Generating Signals for All Portfolios', 'This may take a few minutes...');
+    
+    const portfolios = {{ portfolios|map(attribute='id')|list|tojson }};
+    let completed = 0;
+    const total = portfolios.length;
+    
+    if (total === 0) {
+        hideLoading();
+        alert('No portfolios found!');
+        return;
+    }
+    
+    portfolios.forEach(portfolioId => {
+        fetch(`/hai-edge/generate-signals/${portfolioId}`)
+            .then(response => response.json())
+            .then(data => {
+                completed++;
+                if (completed === total) {
+                    hideLoading();
+                    alert(`✅ Generated signals for all ${total} portfolios!`);
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                completed++;
+                console.error(`Error for portfolio ${portfolioId}:`, error);
+                if (completed === total) {
+                    hideLoading();
+                    alert('⚠️ Signal generation completed with some errors. Check console for details.');
+                    location.reload();
+                }
+            });
+    });
+}
+
+function executeAllSignals() {
+    if (!confirm('Execute all pending trading signals? This will make actual portfolio changes.')) {
+        return;
+    }
+    
+    showLoading('Executing Trading Signals', 'Processing trades across all portfolios...');
+    
+    const portfolios = {{ portfolios|map(attribute='id')|list|tojson }};
+    let completed = 0;
+    const total = portfolios.length;
+    let totalTrades = 0;
+    
+    portfolios.forEach(portfolioId => {
+        fetch(`/hai-edge/execute-signals/${portfolioId}`)
+            .then(response => response.json())
+            .then(data => {
+                completed++;
+                if (data.success) {
+                    totalTrades += data.trades_executed;
+                }
+                
+                if (completed === total) {
+                    hideLoading();
+                    alert(`✅ Executed ${totalTrades} trades across all portfolios!`);
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                completed++;
+                if (completed === total) {
+                    hideLoading();
+                    alert('⚠️ Trade execution completed with some errors.');
+                    location.reload();
+                }
+            });
+    });
+}
+
+function runSystemBacktest() {
+    showLoading('Running System Backtest', 'Backtesting strategy performance...');
+    
+    const portfolios = {{ portfolios|map(attribute='id')|list|tojson }};
+    if (portfolios.length === 0) {
+        hideLoading();
+        alert('No portfolios found for backtesting!');
+        return;
+    }
+    
+    // Run backtest for first portfolio as example
+    const portfolioId = portfolios[0];
+    
+    fetch(`/hai-edge/backtest/${portfolioId}`)
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                const results = data.results;
+                alert(`✅ Backtest Complete!\n\nTotal Return: ${(results.total_return * 100).toFixed(2)}%\nSharpe Ratio: ${results.sharpe_ratio.toFixed(2)}\nMax Drawdown: ${(results.max_drawdown * 100).toFixed(2)}%\nWin Rate: ${(results.win_rate * 100).toFixed(1)}%`);
+            } else {
+                alert(`❌ Backtest Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            alert(`❌ Error: ${error.message}`);
+        });
+}
+
+function downloadReports() {
+    alert('📊 Report download feature coming soon!\n\nWill include:\n• Performance analytics\n• Risk metrics\n• Trade history\n• AI model accuracy\n• Benchmark comparison');
+}
+
+function refreshAllData() {
+    showLoading('Refreshing Market Data', 'Updating all portfolio data...');
+    
+    // Simulate data refresh
+    setTimeout(() => {
+        hideLoading();
+        location.reload();
+    }, 2000);
+}
+
+// Update last update time
+document.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = now.toLocaleString();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Dashboard - Research Quality App</title>
+    <meta name="description" content="Your personalized investor dashboard with portfolio analytics, research reports, and investment insights.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Dashboard Styles */
+        :root {
+            /* High contrast color scheme */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --primary-blue-light: #0066cc;
+            --success-green: #155724;
+            --success-bg: #d4edda;
+            --error-red: #721c24;
+            --error-bg: #f8d7da;
+            --warning-orange: #856404;
+            --warning-bg: #fff3cd;
+            --info-blue: #0c5460;
+            --info-bg: #d1ecf1;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --border-color: #ced4da;
+            --border-light: #e9ecef;
+            --focus-outline: #0066cc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.18);
+        }
+        
+        /* Base accessibility styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--background-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+            font-size: 0.9rem;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Page header */
+        .page-header {
+            background: var(--background-white);
+            border-bottom: 2px solid var(--border-light);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .page-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        /* Dashboard tabs */
+        .dashboard-tabs {
+            background: var(--background-white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .nav-tabs {
+            border-bottom: none;
+            padding: 0.5rem 0.5rem 0;
+        }
+        
+        .nav-tabs .nav-link {
+            border: 2px solid transparent;
+            border-radius: 8px 8px 0 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            margin-right: 0.25rem;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link:focus {
+            background: var(--background-light);
+            color: var(--primary-blue);
+            border-color: var(--border-color);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .nav-tabs .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+        }
+        
+        /* Cards */
+        .card {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            background: var(--background-white);
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+        
+        .card-header {
+            background: var(--background-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.25rem;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .card-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 0.75rem;
+            color: var(--primary-blue);
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        /* Statistics cards */
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: var(--background-white);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s ease;
+        }
+        
+        .stat-card:hover,
+        .stat-card:focus-within {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .stat-icon.text-primary { color: var(--primary-blue) !important; }
+        .stat-icon.text-success { color: var(--success-green) !important; }
+        .stat-icon.text-warning { color: var(--warning-orange) !important; }
+        .stat-icon.text-info { color: var(--info-blue) !important; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-change {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-change.positive {
+            color: var(--success-green);
+        }
+        
+        .stat-change.negative {
+            color: var(--error-red);
+        }
+        
+        /* Alerts */
+        .alert {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .alert-success {
+            color: var(--success-green);
+            background-color: var(--success-bg);
+            border-color: var(--success-green);
+        }
+        
+        .alert-danger {
+            color: var(--error-red);
+            background-color: var(--error-bg);
+            border-color: var(--error-red);
+        }
+        
+        .alert-warning {
+            color: var(--warning-orange);
+            background-color: var(--warning-bg);
+            border-color: var(--warning-orange);
+        }
+        
+        .alert-info {
+            color: var(--info-blue);
+            background-color: var(--info-bg);
+            border-color: var(--info-blue);
+        }
+        
+        .alert .btn-close {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .alert .btn-close:hover,
+        .alert .btn-close:focus {
+            opacity: 1;
+        }
+        
+        /* Tables */
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            color: var(--text-primary);
+        }
+        
+        .table th {
+            background: var(--background-light);
+            color: var(--text-primary);
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .table tbody tr:hover {
+            background: var(--background-light);
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background: rgba(0, 0, 0, 0.02);
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd):hover {
+            background: var(--background-light);
+        }
+        
+        /* Buttons */
+        .btn {
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: 2px solid;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-primary {
+            background: transparent;
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+        }
+        
+        .btn-success:hover,
+        .btn-success:focus {
+            background: #0d4717;
+            border-color: #0d4717;
+            color: white;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        /* Progress bars */
+        .progress {
+            height: 1rem;
+            background: var(--background-light);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: var(--primary-blue);
+            transition: width 0.3s ease;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        
+        /* Forms */
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            background: var(--background-white);
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+            outline: none;
+        }
+        
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-icon {
+                font-size: 2rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .table th,
+            .table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #0000ff;
+                --primary-blue-dark: #0000cc;
+                --text-primary: #000000;
+                --border-color: #000000;
+            }
+            
+            .card, .btn, .form-control, .form-select, .alert {
+                border-width: 3px;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        .sr-only-focusable:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            padding: inherit !important;
+            margin: inherit !important;
+            overflow: visible !important;
+            clip: auto !important;
+            white-space: normal !important;
+        }
+        
+        /* Print styles */
+        @media print {
+            .nav-tabs,
+            .btn,
+            .skip-link {
+                display: none !important;
+            }
+            
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+            
+            .page-title {
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link sr-only-focusable">Skip to main content</a>
+    
+    <!-- ARIA live regions for announcements -->
+    <div id="announcement-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    <div id="error-region" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+    <div id="status-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="page-title" id="page-title">Investor Dashboard</h1>
+                    <p class="page-subtitle">Welcome back, John Doe. Here's your portfolio overview.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <p class="last-updated" id="last-updated">
+                        <i class="fas fa-clock me-1" aria-hidden="true"></i>
+                        Last updated: <span id="update-time">--</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <main id="main-content" role="main">
+            
+            <!-- Risk Profile Alert -->
+            <section aria-labelledby="alerts-heading">
+                <h2 id="alerts-heading" class="sr-only">Important Notifications</h2>
+                
+                <div class="alert alert-warning" role="alert" aria-labelledby="risk-alert-title">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h3 id="risk-alert-title" class="h6 mb-2">
+                                <i class="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                                Complete Your Risk Profile
+                            </h3>
+                            <p class="mb-0">Complete your risk profiling to receive personalized investment recommendations tailored to your goals.</p>
+                        </div>
+                        <a href="{{ url_for('investor_risk_profile') }}" 
+                           class="btn btn-outline-primary btn-sm ms-3"
+                           aria-describedby="risk-profile-desc">
+                            <i class="fas fa-shield-check me-1" aria-hidden="true"></i>
+                            Start Risk Profile
+                        </a>
+                        <div id="risk-profile-desc" class="sr-only">Complete your investment risk assessment questionnaire</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Dashboard Navigation Tabs -->
+            <section class="dashboard-tabs" aria-labelledby="dashboard-nav-heading">
+                <h2 id="dashboard-nav-heading" class="sr-only">Dashboard Sections</h2>
+                
+                <ul class="nav nav-tabs" role="tablist" aria-label="Dashboard navigation">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" 
+                                id="overview-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#overview-panel" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="overview-panel" 
+                                aria-selected="true"
+                                aria-describedby="overview-desc">
+                            <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                            Overview
+                        </button>
+                        <div id="overview-desc" class="sr-only">Portfolio overview and quick statistics</div>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" 
+                                id="portfolio-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#portfolio-panel" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="portfolio-panel" 
+                                aria-selected="false"
+                                aria-describedby="portfolio-desc">
+                            <i class="fas fa-briefcase" aria-hidden="true"></i>
+                            Real-time Portfolio
+                        </button>
+                        <div id="portfolio-desc" class="sr-only">Detailed portfolio holdings and performance</div>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" 
+                                id="reports-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#reports-panel" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="reports-panel" 
+                                aria-selected="false"
+                                aria-describedby="reports-desc">
+                            <i class="fas fa-file-alt" aria-hidden="true"></i>
+                            Research Reports
+                        </button>
+                        <div id="reports-desc" class="sr-only">Research reports and analysis tools</div>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    
+                    <!-- Overview Tab Panel -->
+                    <div class="tab-pane fade show active" 
+                         id="overview-panel" 
+                         role="tabpanel" 
+                         aria-labelledby="overview-tab"
+                         tabindex="0">
+                        
+                        <!-- Quick Statistics -->
+                        <section aria-labelledby="stats-heading" class="mb-4">
+                            <h2 id="stats-heading" class="h4 mb-3">Portfolio Statistics</h2>
+                            
+                            <div class="row g-3">
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="stat-card" role="img" aria-labelledby="total-reports-label">
+                                        <i class="fas fa-file-text stat-icon text-primary" aria-hidden="true"></i>
+                                        <div class="stat-value" id="total-reports">24</div>
+                                        <div class="stat-label" id="total-reports-label">Total Reports</div>
+                                        <div class="stat-change positive">
+                                            <i class="fas fa-arrow-up me-1" aria-hidden="true"></i>
+                                            +3 this month
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="stat-card" role="img" aria-labelledby="avg-score-label">
+                                        <i class="fas fa-award stat-icon text-success" aria-hidden="true"></i>
+                                        <div class="stat-value" id="avg-score">87.3%</div>
+                                        <div class="stat-label" id="avg-score-label">Average Quality Score</div>
+                                        <div class="stat-change positive">
+                                            <i class="fas fa-arrow-up me-1" aria-hidden="true"></i>
+                                            +2.1% improvement
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="stat-card" role="img" aria-labelledby="portfolio-value-label">
+                                        <i class="fas fa-dollar-sign stat-icon text-info" aria-hidden="true"></i>
+                                        <div class="stat-value" id="portfolio-value">$125,430</div>
+                                        <div class="stat-label" id="portfolio-value-label">Portfolio Value</div>
+                                        <div class="stat-change positive">
+                                            <i class="fas fa-arrow-up me-1" aria-hidden="true"></i>
+                                            +5.7% this quarter
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="stat-card" role="img" aria-labelledby="risk-score-label">
+                                        <i class="fas fa-shield-alt stat-icon text-warning" aria-hidden="true"></i>
+                                        <div class="stat-value" id="risk-score">Moderate</div>
+                                        <div class="stat-label" id="risk-score-label">Risk Profile</div>
+                                        <div class="stat-change">
+                                            <a href="{{ url_for('investor_risk_profile') }}" class="text-decoration-none">
+                                                Update Profile
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <!-- Recent Activity -->
+                        <section aria-labelledby="activity-heading">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title" id="activity-heading">
+                                        <i class="fas fa-clock" aria-hidden="true"></i>
+                                        Recent Activity
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" 
+                                               aria-labelledby="activity-heading"
+                                               aria-describedby="activity-desc">
+                                            <caption id="activity-desc" class="sr-only">
+                                                Recent investment activities and portfolio changes
+                                            </caption>
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Date</th>
+                                                    <th scope="col">Activity</th>
+                                                    <th scope="col">Symbol</th>
+                                                    <th scope="col">Amount</th>
+                                                    <th scope="col">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>2025-09-17</td>
+                                                    <td>Stock Purchase</td>
+                                                    <td>
+                                                        <abbr title="Apple Incorporated">AAPL</abbr>
+                                                    </td>
+                                                    <td>$2,500.00</td>
+                                                    <td>
+                                                        <span class="badge bg-success" aria-label="Completed successfully">
+                                                            Completed
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2025-09-16</td>
+                                                    <td>Dividend Received</td>
+                                                    <td>
+                                                        <abbr title="Microsoft Corporation">MSFT</abbr>
+                                                    </td>
+                                                    <td>$45.30</td>
+                                                    <td>
+                                                        <span class="badge bg-success" aria-label="Completed successfully">
+                                                            Completed
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2025-09-15</td>
+                                                    <td>Report Analysis</td>
+                                                    <td>
+                                                        <abbr title="Tesla Incorporated">TSLA</abbr>
+                                                    </td>
+                                                    <td>--</td>
+                                                    <td>
+                                                        <span class="badge bg-info" aria-label="Analysis completed">
+                                                            Analyzed
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <a href="{{ url_for('activity_history') }}" 
+                                           class="btn btn-outline-primary"
+                                           aria-describedby="view-all-desc">
+                                            <i class="fas fa-history me-2" aria-hidden="true"></i>
+                                            View All Activity
+                                        </a>
+                                        <div id="view-all-desc" class="sr-only">View complete activity history and transaction details</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                    
+                    <!-- Portfolio Tab Panel -->
+                    <div class="tab-pane fade" 
+                         id="portfolio-panel" 
+                         role="tabpanel" 
+                         aria-labelledby="portfolio-tab"
+                         tabindex="0">
+                        
+                        <section aria-labelledby="holdings-heading">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title" id="holdings-heading">
+                                        <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                                        Current Holdings
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <h3 class="h5">Portfolio Allocation</h3>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Stocks</span>
+                                                    <span>65%</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar" 
+                                                         role="progressbar" 
+                                                         style="width: 65%" 
+                                                         aria-valuenow="65" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"
+                                                         aria-label="Stocks allocation: 65%">
+                                                        65%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Bonds</span>
+                                                    <span>25%</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" 
+                                                         role="progressbar" 
+                                                         style="width: 25%" 
+                                                         aria-valuenow="25" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"
+                                                         aria-label="Bonds allocation: 25%">
+                                                        25%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Cash</span>
+                                                    <span>10%</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-warning" 
+                                                         role="progressbar" 
+                                                         style="width: 10%" 
+                                                         aria-valuenow="10" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"
+                                                         aria-label="Cash allocation: 10%">
+                                                        10%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <h3 class="h5">Performance Summary</h3>
+                                            <dl class="row">
+                                                <dt class="col-sm-6">Total Return:</dt>
+                                                <dd class="col-sm-6 text-success">+12.4%</dd>
+                                                
+                                                <dt class="col-sm-6">YTD Return:</dt>
+                                                <dd class="col-sm-6 text-success">+8.7%</dd>
+                                                
+                                                <dt class="col-sm-6">Volatility:</dt>
+                                                <dd class="col-sm-6">14.2%</dd>
+                                                
+                                                <dt class="col-sm-6">Sharpe Ratio:</dt>
+                                                <dd class="col-sm-6">1.23</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <button type="button" 
+                                                class="btn btn-primary me-2"
+                                                aria-describedby="rebalance-desc">
+                                            <i class="fas fa-balance-scale me-2" aria-hidden="true"></i>
+                                            Rebalance Portfolio
+                                        </button>
+                                        <div id="rebalance-desc" class="sr-only">Automatically rebalance your portfolio to target allocation</div>
+                                        
+                                        <button type="button" 
+                                                class="btn btn-outline-primary"
+                                                aria-describedby="analysis-desc">
+                                            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>
+                                            Detailed Analysis
+                                        </button>
+                                        <div id="analysis-desc" class="sr-only">View detailed portfolio performance analysis and insights</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                    
+                    <!-- Reports Tab Panel -->
+                    <div class="tab-pane fade" 
+                         id="reports-panel" 
+                         role="tabpanel" 
+                         aria-labelledby="reports-tab"
+                         tabindex="0">
+                        
+                        <section aria-labelledby="submit-report-heading" class="mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title" id="submit-report-heading">
+                                        <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                        Analyze New Research Report
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <form id="reportForm" aria-labelledby="submit-report-heading" novalidate>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="analyst-name" class="form-label">
+                                                        Analyst Name
+                                                        <span class="text-danger" aria-label="required">*</span>
+                                                    </label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="analyst-name" 
+                                                           name="analyst" 
+                                                           required
+                                                           aria-describedby="analyst-help analyst-error"
+                                                           aria-invalid="false">
+                                                    <div id="analyst-help" class="form-text">Enter the name of the research analyst</div>
+                                                    <div id="analyst-error" class="text-danger mt-1" role="alert" aria-live="polite"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="report-symbol" class="form-label">
+                                                        Stock Symbol (Optional)
+                                                    </label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="report-symbol" 
+                                                           name="symbol"
+                                                           aria-describedby="symbol-help"
+                                                           placeholder="e.g., AAPL, MSFT">
+                                                    <div id="symbol-help" class="form-text">Leave blank for automatic extraction from report text</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="report-text" class="form-label">
+                                                Research Report Content
+                                                <span class="text-danger" aria-label="required">*</span>
+                                            </label>
+                                            <textarea class="form-control" 
+                                                      id="report-text" 
+                                                      name="text" 
+                                                      rows="6" 
+                                                      required
+                                                      aria-describedby="text-help text-error"
+                                                      aria-invalid="false"
+                                                      placeholder="Paste the research report content here..."></textarea>
+                                            <div id="text-help" class="form-text">
+                                                Paste the full research report text. Stock symbols will be automatically extracted if not specified above.
+                                            </div>
+                                            <div id="text-error" class="text-danger mt-1" role="alert" aria-live="polite"></div>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" 
+                                                    class="btn btn-success"
+                                                    aria-describedby="submit-help">
+                                                <span id="submit-text">
+                                                    <i class="fas fa-search me-2" aria-hidden="true"></i>
+                                                    Analyze Report
+                                                </span>
+                                                <span id="submit-spinner" class="d-none" aria-hidden="true">
+                                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                    Analyzing...
+                                                </span>
+                                            </button>
+                                            <div id="submit-help" class="sr-only">Submit the report for AI-powered quality analysis</div>
+                                            
+                                            <button type="button" 
+                                                    class="btn btn-outline-primary"
+                                                    onclick="clearForm()"
+                                                    aria-describedby="clear-help">
+                                                <i class="fas fa-eraser me-2" aria-hidden="true"></i>
+                                                Clear Form
+                                            </button>
+                                            <div id="clear-help" class="sr-only">Clear all form fields and start over</div>
+                                        </div>
+                                    </form>
+                                    
+                                    <div id="report-results" class="mt-4" style="display: none;" aria-live="polite">
+                                        <!-- Results will be inserted here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant Dashboard JavaScript
+        (function() {
+            'use strict';
+            
+            const announcementRegion = document.getElementById('announcement-region');
+            const errorRegion = document.getElementById('error-region');
+            const statusRegion = document.getElementById('status-region');
+            
+            // Announce messages to screen readers
+            function announce(message, isError = false, isStatus = false) {
+                const region = isError ? errorRegion : (isStatus ? statusRegion : announcementRegion);
+                region.textContent = message;
+                setTimeout(() => region.textContent = '', 5000);
+            }
+            
+            // Update last updated time
+            function updateLastUpdated() {
+                const updateTime = document.getElementById('update-time');
+                if (updateTime) {
+                    updateTime.textContent = new Date().toLocaleTimeString();
+                }
+            }
+            
+            // Tab navigation enhancements
+            function enhanceTabNavigation() {
+                const tabButtons = document.querySelectorAll('[role="tab"]');
+                
+                tabButtons.forEach(tab => {
+                    tab.addEventListener('keydown', function(e) {
+                        const tabList = Array.from(this.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
+                        const currentIndex = tabList.indexOf(this);
+                        
+                        let nextIndex;
+                        switch (e.key) {
+                            case 'ArrowRight':
+                                e.preventDefault();
+                                nextIndex = (currentIndex + 1) % tabList.length;
+                                tabList[nextIndex].focus();
+                                tabList[nextIndex].click();
+                                break;
+                            case 'ArrowLeft':
+                                e.preventDefault();
+                                nextIndex = currentIndex === 0 ? tabList.length - 1 : currentIndex - 1;
+                                tabList[nextIndex].focus();
+                                tabList[nextIndex].click();
+                                break;
+                            case 'Home':
+                                e.preventDefault();
+                                tabList[0].focus();
+                                tabList[0].click();
+                                break;
+                            case 'End':
+                                e.preventDefault();
+                                tabList[tabList.length - 1].focus();
+                                tabList[tabList.length - 1].click();
+                                break;
+                        }
+                    });
+                    
+                    // Announce tab changes
+                    tab.addEventListener('click', function() {
+                        setTimeout(() => {
+                            const tabName = this.textContent.trim();
+                            announce(`Switched to ${tabName} tab`);
+                        }, 100);
+                    });
+                });
+            }
+            
+            // Form validation and submission
+            function setupReportForm() {
+                const form = document.getElementById('reportForm');
+                const analystField = document.getElementById('analyst-name');
+                const textField = document.getElementById('report-text');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const submitText = document.getElementById('submit-text');
+                const submitSpinner = document.getElementById('submit-spinner');
+                
+                // Validation function
+                function validateField(field) {
+                    const errorElement = document.getElementById(`${field.id.split('-')[0]}-error`);
+                    
+                    if (errorElement) {
+                        errorElement.textContent = '';
+                    }
+                    field.classList.remove('is-invalid');
+                    field.setAttribute('aria-invalid', 'false');
+                    
+                    if (field.hasAttribute('required') && !field.value.trim()) {
+                        const message = 'This field is required.';
+                        if (errorElement) {
+                            errorElement.textContent = message;
+                        }
+                        field.classList.add('is-invalid');
+                        field.setAttribute('aria-invalid', 'true');
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                // Real-time validation
+                [analystField, textField].forEach(field => {
+                    field.addEventListener('blur', () => validateField(field));
+                    field.addEventListener('input', () => {
+                        if (field.classList.contains('is-invalid')) {
+                            validateField(field);
+                        }
+                    });
+                });
+                
+                // Form submission
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const analystValid = validateField(analystField);
+                    const textValid = validateField(textField);
+                    
+                    if (!analystValid || !textValid) {
+                        const firstInvalid = form.querySelector('.is-invalid');
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                            announce('Please correct the errors in the form.', true);
+                        }
+                        return;
+                    }
+                    
+                    // Show loading state
+                    submitText.classList.add('d-none');
+                    submitSpinner.classList.remove('d-none');
+                    submitBtn.disabled = true;
+                    submitBtn.setAttribute('aria-busy', 'true');
+                    
+                    announce('Analyzing research report, please wait...');
+                    
+                    // Simulate analysis
+                    setTimeout(() => {
+                        // Reset button state
+                        submitText.classList.remove('d-none');
+                        submitSpinner.classList.add('d-none');
+                        submitBtn.disabled = false;
+                        submitBtn.setAttribute('aria-busy', 'false');
+                        
+                        // Show results
+                        showAnalysisResults();
+                        announce('Report analysis completed successfully.');
+                        
+                    }, 3000);
+                });
+            }
+            
+            // Show analysis results
+            function showAnalysisResults() {
+                const resultsDiv = document.getElementById('report-results');
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-success" role="alert">
+                        <h3 class="h5 mb-2">
+                            <i class="fas fa-check-circle me-2" aria-hidden="true"></i>
+                            Analysis Complete
+                        </h3>
+                        <p class="mb-2">The research report has been successfully analyzed.</p>
+                        <ul class="mb-0">
+                            <li>Quality Score: <strong>87.3%</strong></li>
+                            <li>Confidence Level: <strong>High</strong></li>
+                            <li>Recommendation: <strong>Buy</strong></li>
+                        </ul>
+                    </div>
+                `;
+                resultsDiv.style.display = 'block';
+                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Clear form function
+            window.clearForm = function() {
+                const form = document.getElementById('reportForm');
+                form.reset();
+                
+                // Clear validation states
+                const invalidFields = form.querySelectorAll('.is-invalid');
+                invalidFields.forEach(field => {
+                    field.classList.remove('is-invalid');
+                    field.setAttribute('aria-invalid', 'false');
+                });
+                
+                // Clear error messages
+                const errorElements = form.querySelectorAll('[id$="-error"]');
+                errorElements.forEach(element => {
+                    element.textContent = '';
+                });
+                
+                // Hide results
+                const resultsDiv = document.getElementById('report-results');
+                resultsDiv.style.display = 'none';
+                
+                announce('Form cleared successfully.');
+                
+                // Focus first field
+                document.getElementById('analyst-name').focus();
+            };
+            
+            // Keyboard shortcuts
+            function setupKeyboardShortcuts() {
+                document.addEventListener('keydown', function(e) {
+                    // Alt + 1-3 for tab navigation
+                    if (e.altKey && ['1', '2', '3'].includes(e.key)) {
+                        e.preventDefault();
+                        const tabIndex = parseInt(e.key) - 1;
+                        const tabs = document.querySelectorAll('[role="tab"]');
+                        if (tabs[tabIndex]) {
+                            tabs[tabIndex].focus();
+                            tabs[tabIndex].click();
+                        }
+                    }
+                    
+                    // Escape to close alerts
+                    if (e.key === 'Escape') {
+                        const alerts = document.querySelectorAll('.alert .btn-close');
+                        alerts.forEach(btn => btn.click());
+                    }
+                });
+            }
+            
+            // Data loading simulation
+            function loadDashboardData() {
+                // Simulate loading skeleton
+                const skeletonElements = document.querySelectorAll('.skeleton');
+                
+                setTimeout(() => {
+                    skeletonElements.forEach(element => {
+                        element.classList.remove('skeleton');
+                    });
+                    updateLastUpdated();
+                    announce('Dashboard data loaded successfully.', false, true);
+                }, 1500);
+            }
+            
+            // Initialize accessibility features
+            function initializeAccessibility() {
+                enhanceTabNavigation();
+                setupReportForm();
+                setupKeyboardShortcuts();
+                loadDashboardData();
+                
+                // Set focus to main content on page load
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.setAttribute('tabindex', '-1');
+                    mainContent.focus();
+                }
+                
+                // Initial time update
+                updateLastUpdated();
+                
+                // Update time every minute
+                setInterval(updateLastUpdated, 60000);
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeAccessibility);
+            } else {
+                initializeAccessibility();
+            }
+            
+        })();
+    </script>
+</body>
+</html>

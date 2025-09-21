@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WCAG 2.1 Accessible Navigation Component</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Navigation Styles */
+        :root {
+            /* High contrast color scheme */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --primary-blue-light: #0066cc;
+            --success-green: #155724;
+            --error-red: #721c24;
+            --warning-orange: #856404;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --border-color: #ced4da;
+            --focus-outline: #0066cc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Skip to content link for keyboard navigation */
+        .skip-links {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+        }
+        
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 2px solid white;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Main navigation */
+        .main-nav {
+            background: var(--background-white);
+            border-bottom: 2px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-blue) !important;
+            font-size: 1.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand:hover,
+        .navbar-brand:focus {
+            color: var(--primary-blue-dark) !important;
+            text-decoration: none;
+        }
+        
+        .navbar-brand .brand-icon {
+            margin-right: 0.75rem;
+            font-size: 1.75rem;
+        }
+        
+        .navbar-brand .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-top: -0.125rem;
+        }
+        
+        /* Mobile menu toggle */
+        .navbar-toggler {
+            border: 2px solid var(--primary-blue);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .navbar-toggler:hover,
+        .navbar-toggler:focus {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .navbar-toggler[aria-expanded="true"] {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .navbar-toggler-icon {
+            background-image: none;
+            width: auto;
+            height: auto;
+        }
+        
+        /* Navigation menu */
+        .navbar-nav {
+            align-items: center;
+        }
+        
+        .nav-item {
+            margin: 0 0.25rem;
+        }
+        
+        .nav-link {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1rem !important;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-link:hover,
+        .nav-link:focus {
+            background: var(--background-light);
+            color: var(--primary-blue) !important;
+            text-decoration: none;
+        }
+        
+        .nav-link.active {
+            background: var(--primary-blue);
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active:hover,
+        .nav-link.active:focus {
+            background: var(--primary-blue-dark);
+            color: white !important;
+        }
+        
+        .nav-link i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Dropdown menu */
+        .dropdown-menu {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            padding: 0.5rem 0;
+            margin-top: 0.25rem;
+            background: var(--background-white);
+            min-width: 200px;
+        }
+        
+        .dropdown-item {
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover,
+        .dropdown-item:focus {
+            background: var(--background-light);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 1rem;
+            text-align: center;
+        }
+        
+        .dropdown-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 0.5rem 0;
+        }
+        
+        /* User account section */
+        .user-account {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .user-info:hover,
+        .user-info:focus {
+            background: var(--background-light);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Action buttons */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-nav {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: 2px solid;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .btn-nav-primary {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-nav-primary:hover,
+        .btn-nav-primary:focus {
+            background: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .btn-nav-outline {
+            background: transparent;
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .btn-nav-outline:hover,
+        .btn-nav-outline:focus {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Notifications */
+        .notification-btn {
+            position: relative;
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .notification-btn:hover,
+        .notification-btn:focus {
+            background: var(--background-light);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background: var(--error-red);
+            color: white;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        
+        /* Breadcrumb navigation */
+        .breadcrumb-nav {
+            background: var(--background-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 0;
+        }
+        
+        .breadcrumb {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb-item {
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb-item a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .breadcrumb-item a:hover,
+        .breadcrumb-item a:focus {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: var(--background-white);
+                border: 2px solid var(--border-color);
+                border-radius: 8px;
+                margin-top: 0.5rem;
+                padding: 1rem;
+                box-shadow: var(--shadow-md);
+            }
+            
+            .nav-item {
+                margin: 0.25rem 0;
+            }
+            
+            .nav-link {
+                padding: 0.75rem 1rem !important;
+                border-radius: 6px;
+                margin: 0.125rem 0;
+            }
+            
+            .user-account {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .nav-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            
+            .btn-nav {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .navbar-brand .brand-text {
+                display: none;
+            }
+            
+            .navbar-brand .brand-icon {
+                margin-right: 0;
+            }
+            
+            .user-details {
+                display: none;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #0000ff;
+                --primary-blue-dark: #0000cc;
+                --text-primary: #000000;
+                --border-color: #000000;
+            }
+            
+            .nav-link, .dropdown-item, .btn-nav {
+                border-width: 3px;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        .sr-only-focusable:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            padding: inherit !important;
+            margin: inherit !important;
+            overflow: visible !important;
+            clip: auto !important;
+            white-space: normal !important;
+        }
+        
+        /* Current page indicator */
+        .nav-link[aria-current="page"] {
+            background: var(--primary-blue);
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        .nav-link[aria-current="page"]::after {
+            content: " (current page)";
+            position: absolute;
+            left: -9999px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Links -->
+    <div class="skip-links">
+        <a href="#main-content" class="skip-link sr-only-focusable">Skip to main content</a>
+        <a href="#main-nav" class="skip-link sr-only-focusable">Skip to main navigation</a>
+        <a href="#user-menu" class="skip-link sr-only-focusable">Skip to user menu</a>
+    </div>
+    
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg main-nav" role="navigation" aria-label="Main navigation">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}" aria-describedby="brand-desc">
+                <i class="fas fa-chart-line brand-icon" aria-hidden="true"></i>
+                <div class="brand-text">
+                    <div class="brand-name">Research QA</div>
+                    <div class="brand-tagline">Investment Intelligence</div>
+                </div>
+            </a>
+            <div id="brand-desc" class="sr-only">Research Quality App - Return to main dashboard</div>
+            
+            <!-- Mobile menu toggle -->
+            <button class="navbar-toggler" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#main-nav" 
+                    aria-controls="main-nav" 
+                    aria-expanded="false" 
+                    aria-label="Toggle main navigation menu">
+                <i class="fas fa-bars navbar-toggler-icon" aria-hidden="true"></i>
+                <span class="sr-only">Menu</span>
+            </button>
+            
+            <!-- Navigation Menu -->
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="navbar-nav me-auto" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a class="nav-link active" 
+                           href="{{ url_for('investor_dashboard') }}" 
+                           role="menuitem"
+                           aria-current="page"
+                           aria-describedby="dashboard-desc">
+                            <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                            Dashboard
+                        </a>
+                        <div id="dashboard-desc" class="sr-only">Access your investor dashboard with portfolio overview and analytics</div>
+                    </li>
+                    
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" 
+                           href="{{ url_for('portfolio') }}" 
+                           role="menuitem"
+                           aria-describedby="portfolio-desc">
+                            <i class="fas fa-briefcase" aria-hidden="true"></i>
+                            Portfolio
+                        </a>
+                        <div id="portfolio-desc" class="sr-only">Manage and analyze your investment portfolio</div>
+                    </li>
+                    
+                    <li class="nav-item dropdown" role="none">
+                        <a class="nav-link dropdown-toggle" 
+                           href="#" 
+                           role="menuitem"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                           data-bs-toggle="dropdown"
+                           aria-describedby="research-desc"
+                           id="research-menu">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            Research
+                        </a>
+                        <div id="research-desc" class="sr-only">Access research tools and analysis features</div>
+                        
+                        <ul class="dropdown-menu" aria-labelledby="research-menu" role="menu">
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('research_reports') }}" 
+                                   role="menuitem"
+                                   aria-describedby="reports-desc">
+                                    <i class="fas fa-file-alt" aria-hidden="true"></i>
+                                    Research Reports
+                                </a>
+                                <div id="reports-desc" class="sr-only">Browse and analyze research reports</div>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('market_analysis') }}" 
+                                   role="menuitem"
+                                   aria-describedby="analysis-desc">
+                                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                    Market Analysis
+                                </a>
+                                <div id="analysis-desc" class="sr-only">View market trends and analysis tools</div>
+                            </li>
+                            <li><hr class="dropdown-divider" role="separator"></li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('ai_research_assistant') }}" 
+                                   role="menuitem"
+                                   aria-describedby="ai-desc">
+                                    <i class="fas fa-robot" aria-hidden="true"></i>
+                                    AI Research Assistant
+                                </a>
+                                <div id="ai-desc" class="sr-only">Get AI-powered research insights and recommendations</div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" 
+                           href="{{ url_for('vs_terminal_MLClass') }}" 
+                           role="menuitem"
+                           aria-describedby="terminal-desc">
+                            <i class="fas fa-terminal" aria-hidden="true"></i>
+                            ML Terminal
+                        </a>
+                        <div id="terminal-desc" class="sr-only">Access machine learning analysis terminal</div>
+                    </li>
+                    
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" 
+                           href="{{ url_for('risk_profile') }}" 
+                           role="menuitem"
+                           aria-describedby="risk-desc">
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                            Risk Profile
+                        </a>
+                        <div id="risk-desc" class="sr-only">Manage your investment risk profile and preferences</div>
+                    </li>
+                </ul>
+                
+                <!-- User Account Section -->
+                <div class="user-account" id="user-menu">
+                    <!-- Notifications -->
+                    <button class="notification-btn" 
+                            type="button"
+                            aria-label="Notifications (3 unread)"
+                            aria-describedby="notification-desc"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                        <span class="notification-badge" aria-hidden="true">3</span>
+                    </button>
+                    <div id="notification-desc" class="sr-only">View your notifications and alerts</div>
+                    
+                    <!-- User Info Dropdown -->
+                    <div class="dropdown">
+                        <a class="user-info dropdown-toggle" 
+                           href="#" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false"
+                           aria-label="User account menu"
+                           aria-describedby="user-desc">
+                            <div class="user-avatar" aria-hidden="true">JD</div>
+                            <div class="user-details">
+                                <div class="user-name">John Doe</div>
+                                <div class="user-role">Investor</div>
+                            </div>
+                            <i class="fas fa-chevron-down ms-2" aria-hidden="true"></i>
+                        </a>
+                        <div id="user-desc" class="sr-only">Access account settings and user options</div>
+                        
+                        <ul class="dropdown-menu dropdown-menu-end" role="menu">
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('profile') }}" 
+                                   role="menuitem">
+                                    <i class="fas fa-user" aria-hidden="true"></i>
+                                    My Profile
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('account_settings') }}" 
+                                   role="menuitem">
+                                    <i class="fas fa-cog" aria-hidden="true"></i>
+                                    Account Settings
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('billing') }}" 
+                                   role="menuitem">
+                                    <i class="fas fa-credit-card" aria-hidden="true"></i>
+                                    Billing
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider" role="separator"></li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('help') }}" 
+                                   role="menuitem">
+                                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                    Help & Support
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" 
+                                   href="{{ url_for('logout') }}" 
+                                   role="menuitem">
+                                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                                    Sign Out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="nav-actions">
+                        <a href="{{ url_for('upgrade') }}" 
+                           class="btn-nav btn-nav-primary"
+                           aria-describedby="upgrade-desc">
+                            <i class="fas fa-star me-1" aria-hidden="true"></i>
+                            Upgrade
+                        </a>
+                        <div id="upgrade-desc" class="sr-only">Upgrade to premium features</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb navigation">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('dashboard') }}" aria-label="Home page">
+                        <i class="fas fa-home me-1" aria-hidden="true"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('investor_dashboard') }}">Investor</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+            </ol>
+        </div>
+    </nav>
+    
+    <!-- ARIA live region for announcements -->
+    <div id="announcement-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    
+    <!-- Main Content Area -->
+    <main id="main-content" class="container-fluid py-4" role="main">
+        <div class="row">
+            <div class="col-12">
+                <h1>Accessible Navigation Component</h1>
+                <p class="lead">This navigation component follows WCAG 2.1 Level AA guidelines with:</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h2 class="h5 mb-0">
+                                    <i class="fas fa-universal-access me-2 text-primary"></i>
+                                    Accessibility Features
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Skip to content links
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Semantic HTML5 structure
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        ARIA landmarks and roles
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Keyboard navigation support
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        High contrast focus indicators
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Screen reader announcements
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        WCAG 2.1 AA contrast ratios
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h2 class="h5 mb-0">
+                                    <i class="fas fa-keyboard me-2 text-primary"></i>
+                                    Keyboard Navigation
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <kbd>Tab</kbd> - Navigate to next element
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>Shift+Tab</kbd> - Navigate to previous element
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>Enter</kbd> or <kbd>Space</kbd> - Activate link/button
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>Escape</kbd> - Close dropdown menus
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>Arrow Keys</kbd> - Navigate menu items
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>Home</kbd> - First menu item
+                                    </li>
+                                    <li class="mb-2">
+                                        <kbd>End</kbd> - Last menu item
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant Navigation Enhancement
+        (function() {
+            'use strict';
+            
+            const announcementRegion = document.getElementById('announcement-region');
+            
+            // Announce navigation changes to screen readers
+            function announce(message) {
+                announcementRegion.textContent = message;
+                setTimeout(() => announcementRegion.textContent = '', 3000);
+            }
+            
+            // Enhanced keyboard navigation for dropdowns
+            document.addEventListener('keydown', function(e) {
+                const activeElement = document.activeElement;
+                
+                // Handle dropdown menu navigation
+                if (activeElement.classList.contains('dropdown-toggle') && 
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                    e.preventDefault();
+                    
+                    // Open dropdown if not already open
+                    if (!activeElement.getAttribute('aria-expanded') === 'true') {
+                        activeElement.click();
+                    }
+                    
+                    // Focus first item
+                    setTimeout(() => {
+                        const dropdownMenu = activeElement.nextElementSibling;
+                        const firstItem = dropdownMenu?.querySelector('.dropdown-item');
+                        if (firstItem) {
+                            firstItem.focus();
+                            announce('Dropdown menu opened');
+                        }
+                    }, 100);
+                }
+                
+                // Handle dropdown item navigation
+                if (activeElement.classList.contains('dropdown-item')) {
+                    const dropdownItems = Array.from(
+                        activeElement.closest('.dropdown-menu').querySelectorAll('.dropdown-item')
+                    );
+                    const currentIndex = dropdownItems.indexOf(activeElement);
+                    
+                    let nextIndex;
+                    switch (e.key) {
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            nextIndex = (currentIndex + 1) % dropdownItems.length;
+                            dropdownItems[nextIndex].focus();
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            nextIndex = currentIndex === 0 ? dropdownItems.length - 1 : currentIndex - 1;
+                            dropdownItems[nextIndex].focus();
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            dropdownItems[0].focus();
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            dropdownItems[dropdownItems.length - 1].focus();
+                            break;
+                        case 'Escape':
+                            e.preventDefault();
+                            const dropdown = activeElement.closest('.dropdown');
+                            const toggle = dropdown?.querySelector('.dropdown-toggle');
+                            if (toggle) {
+                                toggle.click(); // Close dropdown
+                                toggle.focus();
+                                announce('Dropdown menu closed');
+                            }
+                            break;
+                    }
+                }
+                
+                // Handle main navigation with arrow keys
+                if (activeElement.classList.contains('nav-link') && 
+                    !activeElement.classList.contains('dropdown-toggle')) {
+                    const navItems = Array.from(
+                        document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)')
+                    );
+                    const currentIndex = navItems.indexOf(activeElement);
+                    
+                    let nextIndex;
+                    switch (e.key) {
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            nextIndex = (currentIndex + 1) % navItems.length;
+                            navItems[nextIndex].focus();
+                            break;
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            nextIndex = currentIndex === 0 ? navItems.length - 1 : currentIndex - 1;
+                            navItems[nextIndex].focus();
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            navItems[0].focus();
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            navItems[navItems.length - 1].focus();
+                            break;
+                    }
+                }
+            });
+            
+            // Announce page navigation
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('nav-link') && 
+                    !e.target.classList.contains('dropdown-toggle')) {
+                    const linkText = e.target.textContent.trim();
+                    announce(`Navigating to ${linkText}`);
+                }
+            });
+            
+            // Mobile menu accessibility
+            const navToggle = document.querySelector('.navbar-toggler');
+            const navCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navToggle && navCollapse) {
+                navToggle.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    setTimeout(() => {
+                        announce(isExpanded ? 'Navigation menu closed' : 'Navigation menu opened');
+                    }, 100);
+                });
+            }
+            
+            // Focus management for dropdowns
+            document.addEventListener('shown.bs.dropdown', function(e) {
+                const firstItem = e.target.querySelector('.dropdown-item');
+                if (firstItem) {
+                    // Don't auto-focus on mouse interactions
+                    if (document.activeElement.classList.contains('dropdown-toggle')) {
+                        firstItem.focus();
+                    }
+                }
+            });
+            
+            // Close dropdown on escape
+            document.addEventListener('hidden.bs.dropdown', function(e) {
+                const toggle = e.target.querySelector('.dropdown-toggle');
+                if (toggle && document.activeElement.closest('.dropdown-menu')) {
+                    toggle.focus();
+                }
+            });
+            
+            // Notification count updates
+            function updateNotificationCount(count) {
+                const badge = document.querySelector('.notification-badge');
+                const btn = document.querySelector('.notification-btn');
+                
+                if (badge && btn) {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'flex' : 'none';
+                    
+                    const label = count > 0 
+                        ? `Notifications (${count} unread)` 
+                        : 'Notifications (no unread)';
+                    btn.setAttribute('aria-label', label);
+                }
+            }
+            
+            // Initialize accessibility features
+            function initializeAccessibility() {
+                // Set initial focus to first navigation item when page loads
+                const firstNavLink = document.querySelector('.navbar-nav .nav-link');
+                
+                // Add keyboard event listeners for better navigation
+                document.addEventListener('keydown', function(e) {
+                    // Alt + M to focus main navigation
+                    if (e.altKey && e.key === 'm') {
+                        e.preventDefault();
+                        if (firstNavLink) {
+                            firstNavLink.focus();
+                            announce('Main navigation focused');
+                        }
+                    }
+                });
+                
+                // Announce current page
+                const currentPage = document.querySelector('.nav-link[aria-current="page"]');
+                if (currentPage) {
+                    announce(`Current page: ${currentPage.textContent.trim()}`);
+                }
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeAccessibility);
+            } else {
+                initializeAccessibility();
+            }
+            
+        })();
+    </script>
+</body>
+</html>

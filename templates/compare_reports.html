@@ -1,0 +1,509 @@
+{% extends "layout.html" %}
+{% block title %}Compare Reports - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Compare Research Reports</h1>
+        <p class="text-muted mb-0">Side-by-side analysis of multiple reports on the same stock</p>
+    </div>
+    <div>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Selection Panel -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">Select Reports to Compare</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="tickerSelect" class="form-label">Select Ticker</label>
+                <select class="form-select" id="tickerSelect" onchange="loadReports()">
+                    <option value="">Choose a ticker...</option>
+                    {% for ticker in tickers %}
+                    <option value="{{ ticker }}">{{ ticker }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="reportsContainer" class="form-label">Available Reports</label>
+                <div id="reportsContainer" class="border rounded p-3" style="min-height: 150px; max-height: 300px; overflow-y: auto;">
+                    <p class="text-muted">Select a ticker first to see available reports</p>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="compareBtn" class="btn btn-primary w-100" onclick="compareReports()" disabled>
+                    <i class="bi bi-bar-chart me-1"></i> Compare Reports
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Panel -->
+<div id="loadingPanel" class="card border-0 shadow-sm mb-4" style="display:none;">
+    <div class="card-body text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 mb-0">Comparing reports and analyzing differences...</p>
+    </div>
+</div>
+
+<!-- Comparison Results -->
+<div id="comparisonResults" style="display:none;">
+    <!-- Summary Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Comparison Summary</h5>
+        </div>
+        <div class="card-body">
+            <div id="summaryContent"></div>
+        </div>
+    </div>
+
+    <!-- Quality Comparison Chart -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Quality Metrics Comparison</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="qualityComparisonChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- Plagiarism Analysis -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">🔍 Plagiarism Detection Analysis</h5>
+        </div>
+        <div class="card-body">
+            <div id="plagiarismAnalysisContent"></div>
+        </div>
+    </div>
+
+    <!-- Detailed Comparison Table -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Detailed Metrics</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="detailedComparisonTable">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divergence Analysis -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Consensus Analysis</h5>
+        </div>
+        <div class="card-body">
+            <div id="divergenceContent"></div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Improvement Recommendations</h5>
+        </div>
+        <div class="card-body">
+            <div id="recommendationsContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedReports = [];
+let comparisonChart = null;
+
+function loadReports() {
+    const ticker = document.getElementById('tickerSelect').value;
+    const container = document.getElementById('reportsContainer');
+    
+    if (!ticker) {
+        container.innerHTML = '<p class="text-muted">Select a ticker first to see available reports</p>';
+        return;
+    }
+    
+    fetch(`/api/reports_by_ticker/${ticker}`)
+        .then(response => response.json())
+        .then(reports => {
+            if (reports.length === 0) {
+                container.innerHTML = '<p class="text-warning">No reports found for this ticker</p>';
+                return;
+            }
+            
+            let html = '';
+            reports.forEach(report => {
+                html += `
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" value="${report.id}" 
+                               id="report_${report.id}" onchange="updateSelection()">
+                        <label class="form-check-label" for="report_${report.id}">
+                            <strong>${report.analyst}</strong> - ${report.created_at}
+                            <br><small class="text-muted">${report.preview}</small>
+                        </label>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            container.innerHTML = '<p class="text-danger">Error loading reports. Please try again.</p>';
+        });
+}
+
+function updateSelection() {
+    const checkboxes = document.querySelectorAll('#reportsContainer input[type="checkbox"]:checked');
+    selectedReports = Array.from(checkboxes).map(cb => cb.value);
+    
+    const compareBtn = document.getElementById('compareBtn');
+    compareBtn.disabled = selectedReports.length < 2;
+}
+
+function compareReports() {
+    const ticker = document.getElementById('tickerSelect').value;
+    
+    if (!ticker || selectedReports.length < 2) {
+        alert('Please select a ticker and at least 2 reports');
+        return;
+    }
+    
+    // Show loading
+    document.getElementById('loadingPanel').style.display = 'block';
+    document.getElementById('comparisonResults').style.display = 'none';
+    
+    fetch('/compare_reports', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            report_ids: selectedReports
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loadingPanel').style.display = 'none';
+        
+        if (data.success) {
+            displayComparisonResults(data.comparison, data.ticker);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingPanel').style.display = 'none';
+        console.error('Error:', error);
+        alert('Error comparing reports. Please try again.');
+    });
+}
+
+function displayComparisonResults(comparison, ticker) {
+    // Update summary
+    const summaryHtml = `
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-primary">${comparison.total_reports}</h3>
+                    <p class="mb-0">Reports Compared</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-success">${(comparison.consensus_analysis.average_quality * 100).toFixed(1)}%</h3>
+                    <p class="mb-0">Avg Quality Score</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-info">${(comparison.consensus_analysis.quality_std_dev * 100).toFixed(1)}%</h3>
+                    <p class="mb-0">Quality Deviation</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-warning">${comparison.divergence_points.length}</h3>
+                    <p class="mb-0">Divergence Points</p>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('summaryContent').innerHTML = summaryHtml;
+    
+    // Create comparison chart
+    createComparisonChart(comparison.quality_comparison);
+    
+    // Update detailed table
+    updateDetailedTable(comparison.quality_comparison);
+    
+    // Update divergence analysis
+    const divergenceHtml = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Quality Range:</h6>
+                <p>${(comparison.consensus_analysis.quality_range[0] * 100).toFixed(1)}% - ${(comparison.consensus_analysis.quality_range[1] * 100).toFixed(1)}%</p>
+                
+                <h6>Consensus Bias:</h6>
+                <p>${comparison.consensus_analysis.consensus_bias > 0 ? 'Bullish' : comparison.consensus_analysis.consensus_bias < 0 ? 'Bearish' : 'Neutral'} 
+                   (${(comparison.consensus_analysis.consensus_bias * 100).toFixed(1)}%)</p>
+            </div>
+            <div class="col-md-6">
+                <h6>Divergence Points:</h6>
+                ${comparison.divergence_points.length > 0 ? 
+                    '<ul>' + comparison.divergence_points.map(point => `<li>${point}</li>`).join('') + '</ul>' :
+                    '<p class="text-success">No major divergences detected</p>'}
+            </div>
+        </div>
+    `;
+    document.getElementById('divergenceContent').innerHTML = divergenceHtml;
+    
+    // Update plagiarism analysis
+    updatePlagiarismAnalysis(comparison.plagiarism_analysis, comparison.consensus_analysis);
+    
+    // Update recommendations
+    const recommendationsHtml = comparison.recommendations.length > 0 ?
+        '<ul class="list-group list-group-flush">' +
+        comparison.recommendations.map(rec => `<li class="list-group-item">${rec}</li>`).join('') +
+        '</ul>' :
+        '<p class="text-success">No specific recommendations - reports show good consistency</p>';
+    
+    document.getElementById('recommendationsContent').innerHTML = recommendationsHtml;
+    
+    // Show results
+    document.getElementById('comparisonResults').style.display = 'block';
+    document.getElementById('comparisonResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+function createComparisonChart(qualityComparison) {
+    const ctx = document.getElementById('qualityComparisonChart').getContext('2d');
+    
+    // Destroy existing chart
+    if (comparisonChart) {
+        comparisonChart.destroy();
+    }
+    
+    const labels = Object.keys(qualityComparison);
+    const compositeScores = labels.map(key => (qualityComparison[key].composite_score * 100).toFixed(1));
+    const factualAccuracy = labels.map(key => (qualityComparison[key].factual_accuracy * 100).toFixed(1));
+    const predictivePower = labels.map(key => (qualityComparison[key].predictive_power * 100).toFixed(1));
+    
+    comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(key => qualityComparison[key].analyst),
+            datasets: [{
+                label: 'Composite Score',
+                data: compositeScores,
+                backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                borderColor: 'rgba(67, 97, 238, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Factual Accuracy',
+                data: factualAccuracy,
+                backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                borderColor: 'rgba(76, 201, 240, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Predictive Power',
+                data: predictivePower,
+                backgroundColor: 'rgba(255, 206, 84, 0.7)',
+                borderColor: 'rgba(255, 206, 84, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Quality Metrics Comparison by Analyst'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateDetailedTable(qualityComparison) {
+    const tbody = document.querySelector('#detailedComparisonTable tbody');
+    const thead = document.querySelector('#detailedComparisonTable thead tr');
+    
+    // Update header
+    const headers = ['Metric'];
+    Object.keys(qualityComparison).forEach(key => {
+        headers.push(qualityComparison[key].analyst);
+    });
+    
+    thead.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+    
+    // Metrics to compare
+    const metrics = [
+        { key: 'composite_score', label: 'Composite Score', format: 'percentage' },
+        { key: 'base_composite_score', label: 'Base Score (Before Penalty)', format: 'percentage' },
+        { key: 'plagiarism_score', label: 'Plagiarism Score', format: 'percentage' },
+        { key: 'plagiarism_penalty', label: 'Plagiarism Penalty', format: 'percentage' },
+        { key: 'factual_accuracy', label: 'Factual Accuracy', format: 'percentage' },
+        { key: 'predictive_power', label: 'Predictive Power', format: 'percentage' },
+        { key: 'bias_score', label: 'Bias Score', format: 'bias' },
+        { key: 'geopolitical_score', label: 'Geopolitical Risk', format: 'percentage' },
+        { key: 'sebi_compliance', label: 'SEBI Compliance', format: 'percentage' }
+    ];
+    
+    let tableHtml = '';
+    metrics.forEach(metric => {
+        let row = `<tr><td><strong>${metric.label}</strong></td>`;
+        Object.keys(qualityComparison).forEach(key => {
+            const value = qualityComparison[key][metric.key];
+            let formattedValue;
+            
+            if (metric.format === 'percentage') {
+                formattedValue = `${(value * 100).toFixed(1)}%`;
+            } else if (metric.format === 'bias') {
+                formattedValue = value > 0 ? `+${(value * 100).toFixed(1)}%` : `${(value * 100).toFixed(1)}%`;
+            } else {
+                formattedValue = value.toFixed(3);
+            }
+            
+            row += `<td>${formattedValue}</td>`;
+        });
+        row += '</tr>';
+        tableHtml += row;
+    });
+    
+    tbody.innerHTML = tableHtml;
+}
+
+function updatePlagiarismAnalysis(plagiarismAnalysis, consensusAnalysis) {
+    if (!plagiarismAnalysis) {
+        document.getElementById('plagiarismAnalysisContent').innerHTML = '<p class="text-muted">Plagiarism analysis not available</p>';
+        return;
+    }
+
+    let html = '';
+    
+    // Summary metrics
+    html += `
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h4 class="text-${plagiarismAnalysis.summary.max_similarity > 0.7 ? 'danger' : plagiarismAnalysis.summary.max_similarity > 0.5 ? 'warning' : 'success'}">
+                        ${(plagiarismAnalysis.summary.max_similarity * 100).toFixed(1)}%
+                    </h4>
+                    <p class="mb-0">Max Similarity</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h4 class="text-info">${(plagiarismAnalysis.summary.average_similarity * 100).toFixed(1)}%</h4>
+                    <p class="mb-0">Avg Similarity</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h4 class="text-secondary">${plagiarismAnalysis.summary.total_comparisons}</h4>
+                    <p class="mb-0">Comparisons</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h4 class="text-${consensusAnalysis.total_plagiarism_penalty > 0.2 ? 'danger' : consensusAnalysis.total_plagiarism_penalty > 0.1 ? 'warning' : 'success'}">
+                        ${(consensusAnalysis.total_plagiarism_penalty * 100).toFixed(1)}%
+                    </h4>
+                    <p class="mb-0">Total Penalty</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // High similarity pairs
+    if (plagiarismAnalysis.high_similarity_pairs && plagiarismAnalysis.high_similarity_pairs.length > 0) {
+        html += '<h6>⚠️ High Similarity Pairs Detected:</h6>';
+        html += '<div class="table-responsive"><table class="table table-sm">';
+        html += '<thead><tr><th>Report 1</th><th>Report 2</th><th>Similarity</th><th>Severity</th></tr></thead><tbody>';
+        
+        plagiarismAnalysis.high_similarity_pairs.forEach(pair => {
+            const severityClass = {
+                'Critical': 'danger',
+                'High': 'warning',
+                'Medium': 'info',
+                'Low': 'secondary'
+            }[pair.severity] || 'secondary';
+            
+            html += `
+                <tr>
+                    <td>${pair.report1_analyst}</td>
+                    <td>${pair.report2_analyst}</td>
+                    <td><span class="badge bg-${severityClass}">${(pair.similarity * 100).toFixed(1)}%</span></td>
+                    <td><span class="badge bg-${severityClass}">${pair.severity}</span></td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table></div>';
+    } else {
+        html += '<div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>No high similarity detected - All reports appear to be original content.</div>';
+    }
+
+    // Similarity matrix visualization
+    if (plagiarismAnalysis.similarity_matrix && Object.keys(plagiarismAnalysis.similarity_matrix).length > 1) {
+        html += '<h6 class="mt-4">Similarity Matrix:</h6>';
+        html += '<div class="table-responsive"><table class="table table-sm text-center">';
+        
+        const reportIds = Object.keys(plagiarismAnalysis.similarity_matrix);
+        
+        // Header
+        html += '<thead><tr><th></th>';
+        reportIds.forEach(id => {
+            html += `<th class="text-truncate" style="max-width: 100px;">${id}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        
+        // Matrix rows
+        reportIds.forEach(id1 => {
+            html += `<tr><th class="text-truncate" style="max-width: 100px;">${id1}</th>`;
+            reportIds.forEach(id2 => {
+                const similarity = plagiarismAnalysis.similarity_matrix[id1][id2];
+                let cellClass = 'table-light';
+                if (similarity >= 0.7) cellClass = 'table-danger';
+                else if (similarity >= 0.5) cellClass = 'table-warning';
+                else if (similarity >= 0.3) cellClass = 'table-info';
+                
+                html += `<td class="${cellClass}">${(similarity * 100).toFixed(0)}%</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+    }
+
+    document.getElementById('plagiarismAnalysisContent').innerHTML = html;
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,289 @@
+{% extends 'layout.html' %}
+{% block title %}Code Artifact{% endblock %}
+{% block content %}
+<div class="container py-3" id="code-artifact-app" data-slug="{{ slug or '' }}">
+  <div id="global-spinner" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.6);z-index:2000;align-items:center;justify-content:center;">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+  </div>
+  <div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:2100;"></div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2 id="ca-title" class="mb-0">Loading...</h2>
+      <small class="text-muted" id="ca-slug"></small>
+    </div>
+    <div>
+      <button class="btn btn-sm btn-outline-primary" id="btn-star">⭐ <span id="star-count">0</span></button>
+      <button class="btn btn-sm btn-outline-secondary" id="btn-refresh">Refresh</button>
+    </div>
+  </div>
+  <div id="meta-bar" class="mb-3 small text-muted">
+    <span id="meta-visibility" class="badge bg-secondary me-2">vis</span>
+    <span>Views: <span id="meta-views">0</span></span>
+    <span class="ms-3">Runs: <span id="meta-runs">0</span></span>
+    <span class="ms-3">Stars: <span id="meta-stars">0</span></span>
+    <span class="ms-3">Current Version: <span id="meta-version">-</span></span>
+    <span class="ms-3">Updated: <span id="meta-updated">-</span></span>
+  </div>
+  <ul class="nav nav-tabs" id="artifactTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-code" type="button">Code</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-versions" type="button">Versions</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-run" type="button">Run</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-perms" type="button">Permissions</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-requests" type="button">Run Requests</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-activity" type="button">Activity</button></li>
+  </ul>
+  <div class="tab-content border border-top-0 p-3">
+    <div class="tab-pane fade show active" id="tab-code">
+      <div class="mb-2 d-flex align-items-center">
+        <label class="me-2">Changelog:</label>
+        <input id="input-changelog" class="form-control form-control-sm" style="max-width:320px" placeholder="Describe changes for new version" />
+        <button id="btn-save-version" class="btn btn-sm btn-success ms-2">Save New Version</button>
+      </div>
+      <textarea id="code-editor" class="form-control" rows="18" spellcheck="false"></textarea>
+    </div>
+    <div class="tab-pane fade" id="tab-versions">
+      <table class="table table-sm" id="versions-table"><thead><tr><th>Version</th><th>Author</th><th>Created</th><th>Changelog</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="tab-pane fade" id="tab-run">
+      <h5>Request Run</h5>
+      <textarea id="run-params" class="form-control mb-2" rows="4" placeholder='{"param":123}'></textarea>
+      <button id="btn-request-run" class="btn btn-primary btn-sm">Submit Run Request</button>
+      <div class="mt-3" id="run-output" style="white-space:pre; font-family:monospace;"></div>
+    </div>
+    <div class="tab-pane fade" id="tab-perms">
+      <form id="perm-form" class="row gy-2 gx-2 align-items-end">
+        <div class="col-auto"><input class="form-control form-control-sm" id="perm-user" placeholder="Username" /></div>
+        <div class="col-auto form-check"><input class="form-check-input" type="checkbox" id="perm-view" checked><label class="form-check-label" for="perm-view">View</label></div>
+        <div class="col-auto form-check"><input class="form-check-input" type="checkbox" id="perm-run"><label class="form-check-label" for="perm-run">Run</label></div>
+        <div class="col-auto form-check"><input class="form-check-input" type="checkbox" id="perm-edit"><label class="form-check-label" for="perm-edit">Edit</label></div>
+        <div class="col-auto form-check"><input class="form-check-input" type="checkbox" id="perm-admin"><label class="form-check-label" for="perm-admin">Admin</label></div>
+        <div class="col-auto"><button class="btn btn-sm btn-outline-primary" id="btn-add-perm">Add/Update</button></div>
+      </form>
+      <div class="mt-3">
+        <h6>Existing Permissions</h6>
+        <table class="table table-sm" id="perm-table"><thead><tr><th>User</th><th>View</th><th>Run</th><th>Edit</th><th>Admin</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="tab-requests">
+      <h6>Run Requests</h6>
+      <table class="table table-sm" id="requests-table"><thead><tr><th>ID</th><th>User</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="tab-pane fade" id="tab-activity">
+      <h6>Recent Activity</h6>
+      <div class="small text-muted mb-2">Last 50 events</div>
+      <ul class="list-group" id="activity-list" style="max-height:320px; overflow:auto;"></ul>
+    </div>
+  </div>
+</div>
+<script>
+(async function(){
+  const slug = document.getElementById('code-artifact-app').dataset.slug || new URLSearchParams(location.search).get('slug');
+  if(!slug){ document.getElementById('ca-title').textContent='No slug'; return; }
+  const headers = { 'X-User': window.currentUser || '' };
+  async function fetchJSON(url, opts={}){ const r = await fetch(url, opts); return r.json(); }
+  function showSpinner(show){ document.getElementById('global-spinner').style.display = show? 'flex':'none'; }
+  function showToast(msg, type='info'){
+    const container = document.getElementById('toast-container');
+    const id = 't'+Date.now()+Math.random().toString(36).slice(2);
+    const colors = {info:'bg-primary', success:'bg-success', danger:'bg-danger', warning:'bg-warning text-dark'};
+    const klass = colors[type] || colors.info;
+    const div = document.createElement('div');
+    div.className = 'toast text-white '+klass;
+    div.id=id;
+    div.role='alert';
+    div.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+    container.appendChild(div);
+    const t = new bootstrap.Toast(div, {delay: 4000});
+    t.show();
+    div.addEventListener('hidden.bs.toast', ()=>div.remove());
+  }
+  async function safeFetchJSON(url, opts={}){ showSpinner(true); try { return await fetchJSON(url, opts); } finally { showSpinner(false);} }
+  async function load(){
+  const data = await safeFetchJSON(`/api/code/artifacts/${slug}?versions=1`, {headers});
+  if(!data.ok){ showToast(data.error||'Load failed','danger'); return; }
+    const a = data.artifact; 
+    document.getElementById('ca-title').textContent = a.title;
+    document.getElementById('ca-slug').textContent = a.slug;
+    document.getElementById('meta-visibility').textContent = a.visibility;
+    document.getElementById('meta-views').textContent = a.views;
+    document.getElementById('meta-runs').textContent = a.run_count;
+    document.getElementById('meta-stars').textContent = a.stars;
+    document.getElementById('meta-version').textContent = a.current_version;
+    document.getElementById('meta-updated').textContent = (a.updated_at||'').split('T')[0];
+    document.getElementById('code-editor').value = a.code || '';
+    const tbody = document.querySelector('#versions-table tbody');
+    tbody.innerHTML='';
+    (a.versions||[]).forEach(v=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${v.version}</td><td>${v.created_by||''}</td><td>${(v.created_at||'').replace('T',' ')}</td><td>${v.changelog||''}</td><td>
+        <div class='btn-group btn-group-sm'>
+          <button data-v='${v.version}' class='btn btn-outline-secondary btn-diff'>Diff</button>
+          <button data-v='${v.version}' class='btn btn-outline-danger btn-rollback'>Rollback</button>
+        </div>
+      </td>`;
+      tbody.appendChild(tr);
+    });
+    bindVersionButtons();
+    // Conditional UI based on effective permissions
+    const perms = a.effective_perms || {};
+    if(!perms.can_edit){
+      document.getElementById('btn-save-version').disabled = true;
+      document.getElementById('btn-save-version').classList.add('disabled');
+      document.getElementById('code-editor').readOnly = true;
+    }
+    if(!perms.can_admin){
+      document.getElementById('perm-form').classList.add('d-none');
+    }
+    // Hide rollback buttons if cannot edit
+    if(!perms.can_edit){
+      document.querySelectorAll('.btn-rollback').forEach(b=> b.remove());
+    }
+    // Hide run request submission if cannot run
+    if(!perms.can_run){
+      const runBtn = document.getElementById('btn-request-run');
+      if(runBtn){ runBtn.disabled=true; runBtn.classList.add('disabled'); runBtn.title='No run permission'; }
+    }
+  }
+  document.getElementById('btn-refresh').addEventListener('click', load);
+  document.getElementById('btn-save-version').addEventListener('click', async ()=>{
+    const code = document.getElementById('code-editor').value;
+    const changelog = document.getElementById('input-changelog').value;
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}`, {method:'PATCH', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify({code, changelog})});
+  if(!r.ok){ showToast(r.error||'Save failed','danger'); return; }
+    document.getElementById('input-changelog').value='';
+    load();
+  });
+  document.getElementById('btn-star').addEventListener('click', async ()=>{
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/star`, {method:'POST', headers});
+    if(r.ok){ document.getElementById('meta-stars').textContent = r.stars; }
+  });
+  document.getElementById('btn-request-run').addEventListener('click', async ()=>{
+    let params={};
+  try{ params = JSON.parse(document.getElementById('run-params').value||'{}'); }catch(e){ showToast('Invalid JSON','danger'); return; }
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/run_request`, {method:'POST', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify({params})});
+  if(!r.ok){ showToast(r.error||'Request failed','danger'); return; }
+  showToast('Run request submitted','success');
+    loadRequests();
+  });
+  document.getElementById('perm-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const username = document.getElementById('perm-user').value.trim();
+    if(!username) return;
+    const body = {
+      username,
+      can_view: document.getElementById('perm-view').checked,
+      can_run: document.getElementById('perm-run').checked,
+      can_edit: document.getElementById('perm-edit').checked,
+      can_admin: document.getElementById('perm-admin').checked,
+    };
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/permissions`, {method:'POST', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  if(!r.ok){ showToast(r.error||'Permission failed','danger'); return; }
+    loadPermissions();
+  });
+  async function loadPermissions(){
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/permissions`, {headers});
+    if(!r.ok){ return; }
+    const tbody = document.querySelector('#perm-table tbody');
+    tbody.innerHTML='';
+    (r.permissions||[]).forEach(p=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${p.username}</td><td>${p.can_view?'✅':''}</td><td>${p.can_run?'✅':''}</td><td>${p.can_edit?'✅':''}</td><td>${p.can_admin?'✅':''}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  async function loadRequests(){
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/run_requests`, {headers});
+    if(!r.ok) return;
+    const tbody = document.querySelector('#requests-table tbody');
+    tbody.innerHTML='';
+    (r.requests||[]).forEach(req=>{
+      const tr = document.createElement('tr');
+  const statusBadge = req.status==='approved' ? 'success' : (req.status==='pending' ? 'secondary' : (req.status==='executed' ? 'primary' : (req.status==='rejected'?'danger':'dark')));
+  tr.innerHTML = `<td>${req.id}</td><td>${req.requested_by}</td><td><span class='badge bg-${statusBadge} text-capitalize'>${req.status}</span></td><td>${(req.created_at||'').replace('T',' ')}</td><td></td>`;
+      const actionsTd = tr.querySelector('td:last-child');
+      if(req.status==='pending'){
+        const approveBtn = document.createElement('button');
+        approveBtn.className='btn btn-sm btn-success me-1'; approveBtn.textContent='Approve';
+        approveBtn.onclick=()=> decideRequest(req.id,true);
+        const denyBtn = document.createElement('button');
+        denyBtn.className='btn btn-sm btn-outline-danger me-1'; denyBtn.textContent='Deny';
+        denyBtn.onclick=()=> decideRequest(req.id,false);
+        actionsTd.append(approveBtn, denyBtn);
+      }
+      if(req.status==='approved'){
+        const execBtn = document.createElement('button');
+        execBtn.className='btn btn-sm btn-primary'; execBtn.textContent='Execute';
+        execBtn.onclick=()=> executeRequest(req.id);
+        actionsTd.append(execBtn);
+      }
+      tbody.appendChild(tr);
+    });
+  }
+  async function decideRequest(id, approve){
+  const decision = approve? 'approve':'reject';
+  const r = await safeFetchJSON(`/api/code/run_requests/${id}/decide`, {method:'POST', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify({decision})});
+  if(!r.ok){ showToast(r.error||'Decision failed','danger'); return; }
+  showToast('Decision saved','success');
+    loadRequests();
+  }
+  async function executeRequest(id){
+  const r = await safeFetchJSON(`/api/code/run_requests/${id}/execute`, {method:'POST', headers});
+  if(!r.ok){ showToast(r.error||'Execution failed','danger'); }
+  else { showToast('Executed','success'); }
+    document.getElementById('run-output').textContent = r.output || '(no output)';
+    loadRequests();
+  }
+  async function loadActivities(){
+  const r = await safeFetchJSON(`/api/code/artifacts/${slug}/activities`, {headers});
+    if(!r.ok) return;
+    const list = document.getElementById('activity-list');
+    list.innerHTML='';
+    (r.activities||[]).forEach(act=>{
+      const li = document.createElement('li');
+      li.className='list-group-item py-1';
+      const ts = (act.created_at||'').replace('T',' ');
+      li.textContent = `[${ts}] ${act.event} by ${act.username||'-'} ${(act.metadata && act.metadata.version)?'v'+act.metadata.version:''}`;
+      list.appendChild(li);
+    });
+  }
+  function bindVersionButtons(){
+    document.querySelectorAll('.btn-diff').forEach(btn=>{
+      btn.onclick = ()=> showDiff(btn.dataset.v);
+    });
+    document.querySelectorAll('.btn-rollback').forEach(btn=>{
+      btn.onclick = ()=> rollbackVersion(btn.dataset.v);
+    });
+  }
+  async function showDiff(version){
+    const v = parseInt(version,10);
+    if(v<=1){ showToast('No previous version to diff','warning'); return; }
+    const r = await safeFetchJSON(`/api/code/artifacts/${slug}/diff?from=${v-1}&to=${v}`, {headers});
+    if(!r.ok){ showToast(r.error||'Diff failed','danger'); return; }
+    const w = window.open('', '_blank');
+    w.document.write(`<pre style=\"white-space:pre-wrap;font-family:monospace;\">${r.diff.map(l=>l.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))).join('\n')}</pre>`);
+  }
+  async function rollbackVersion(version){
+    if(!confirm(`Rollback to version ${version}?`)) return;
+    const r = await safeFetchJSON(`/api/code/artifacts/${slug}/rollback`, {method:'POST', headers:{...headers,'Content-Type':'application/json'}, body: JSON.stringify({version})});
+    if(!r.ok){ showToast(r.error||'Rollback failed','danger'); return; }
+    showToast('Rollback created new version '+ (r.artifact?.current_version || ''),'success');
+    load();
+  }
+  // Refresh auxiliary data when switching tabs
+  document.getElementById('artifactTabs').addEventListener('click', e=>{
+    if(e.target && e.target.dataset.bsTarget){
+      const t = e.target.dataset.bsTarget;
+      if(t==='#tab-perms') loadPermissions();
+      else if(t==='#tab-requests') loadRequests();
+      else if(t==='#tab-activity') loadActivities();
+    }
+  });
+  load();
+  loadPermissions();
+  loadRequests();
+  loadActivities();
+})();
+</script>
+{% endblock %}

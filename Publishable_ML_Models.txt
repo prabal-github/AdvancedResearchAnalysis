@@ -1,0 +1,91 @@
+Proposed Publishable ML Model Catalog (Initial List – scores to be added later)
+
+⚡ Ultra Short-Term (minutes–1 day)
+Overnight Gap Edge (Index & Large-cap)
+BTST Momentum Score (EOD + volume/volatility blend)
+Intraday Volatility Breakout (ATR + microstructure filter)
+Mean Reversion Pair (NIFTY vs BANKNIFTY spread / z‑score)
+Options Expected Move vs Realized Divergence (IV vs HV)
+Opening Range Fade / Continuation Classifier
+High-Frequency News Sentiment Spike Filter (headline sentiment + price reaction)
+🕐 Short-Term (2–15 days)
+Swing Factor Composite (Value * Momentum * Volatility dampener)
+Earnings Post‑Announcement Drift Tracker
+Short-Term Relative Strength Rotation (sector + stock)
+Gap Fill Probability Model
+Reversal Probability (candlestick + oscillators ensemble)
+Short-Term Options Skew Arbitrage Indicator
+📈 Medium-Term (1–3 months)
+Sector Rotation Regime Model (breadth + macro proxies)
+Quality + Momentum Composite Selector
+Mean Reversion Factor Decay Monitor
+Insider & Institutional Flow Overlay (FII/DII + price impact)
+Medium-Term Volatility Regime Classifier
+Factor Crowding Risk Monitor
+📊 Long-Term (6–24 months)
+Fundamental Quality Scoring (profitability, stability, leverage)
+Dividend Sustainability & Growth Predictor
+Economic Scenario Impact Mapper (macro → sector sensitivities)
+Multi-Factor Expected Return Model (value, quality, momentum, size, low vol)
+ESG / Governance Signal Integrator (lite textual + ratio blend)
+Long-Term Earnings Revision Momentum
+🏛️ Fundamental Models
+Altman + Piotroski Composite Distress/Quality
+Capital Efficiency Trend Analyzer (ROIC spread decomposition)
+Cash Flow Reliability Score (OCF vs earnings quality)
+Valuation Relative Percentile Engine (historical & peer)
+Fundamental Surprise Impact Predictor (guidance vs realized)
+📉 Technical Models
+Adaptive Trend Strength Index (multi-timeframe slopes)
+Volatility Compression Breakout Probability
+Market Breadth Health Score (adv/decline + new highs/lows)
+Multi-Timeframe Support/Resistance Elasticity Model
+🔢 Quantitative / Statistical
+Regime Detection (HMM / Bayesian) for volatility & trend
+Residual Factor Alpha (orthogonalizing against major factors)
+Cross-Sectional Return Dispersion Forecaster
+Tail Risk Early Warning (higher-moment + skew shift)
+Intraday Liquidity Stress Indicator (spread & depth proxy)
+🔀 Hybrid Models
+Fundamental + Technical Fusion Score (blended z‑scores)
+Macro Regime → Factor Weight Adapter
+News + Price Reaction Latency Explainer
+Scenario-Based Portfolio Shock Translator
+Hybrid Risk-On/Risk-Off Allocation Switcher
+🛡️ Risk Management Models
+Dynamic Position Sizing Engine (volatility + conviction)
+Multi-Horizon VaR & Expected Shortfall (parametric + MC)
+Stop-Loss Optimization (drawdown & volatility surface)
+Correlation Regime Shift Detector
+Portfolio Drawdown Early Warning (entropy / breadth)
+Liquidity Risk Estimator (slippage impact model)
+💼 Portfolio Optimization
+Constrained Mean-Variance with Turnover Control
+Risk Parity + Factor Parity Hybrid Allocator
+Scenario Robust Optimizer (CVaR + stress weights)
+Tax / Lot Aware Rebalancing Simulator
+Factor Exposure Neutralizer (minimize unintended bets)
+Dividend Income Stability Optimizer
+🔴 High Risk Candidates
+(Primarily leveraged / fast-changing data)
+
+Intraday Volatility Breakout
+Options Expected Move Divergence
+High-Frequency Sentiment Spike
+Tail Risk Early Warning
+Leverage / Derivative Based Allocators
+🟡 Medium Risk Core
+Swing Factor Composite
+Sector Rotation Regime
+Quality + Momentum Composite
+Regime Detection
+Dynamic Position Sizing
+🟢 Low Risk / Foundational
+Fundamental Quality Scoring
+Dividend Sustainability
+Valuation Relative Percentile
+Breadth Health Score
+Risk Parity Allocator
+Next step: pick one model to start; will then assign detailed scores across: Risk & Return | Data Quality | Model Logic | Code Quality | Testing & Validation | Governance & Compliance.
+
+Indicate which one to build first.

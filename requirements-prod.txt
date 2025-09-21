@@ -1,0 +1,48 @@
+# Production requirements with additional dependencies
+flask
+flask_sqlalchemy
+flask-cors
+yfinance
+requests
+pandas
+numpy
+textblob
+plotly
+websockets
+flask-socketio
+psycopg2-binary
+Flask-Migrate
+
+# Calendar Integration
+google-api-python-client
+google-auth
+google-auth-oauthlib
+
+# Plagiarism Detection Dependencies
+scikit-learn
+
+# Enhanced AI with Claude API
+anthropic
+
+# Payments
+razorpay
+PyJWT
+
+# Production WSGI Server
+gunicorn
+
+# Health checks and monitoring
+healthcheck
+
+# Environment management
+python-dotenv
+
+# Security enhancements
+flask-talisman
+
+# Rate limiting
+flask-limiter
+
+# Additional production dependencies
+boto3  # For AWS services
+redis  # For caching and sessions

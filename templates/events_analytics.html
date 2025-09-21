@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Events Analytics{% endblock %}
+{% block content %}
+{% endblock %}
+      rows.push(`<div class="border rounded p-2 mb-2">
+        <div><strong>${s.name}</strong> <span class="badge bg-light text-dark">${s.type}</span></div>
+        <div class="small text-muted">${s.why || ''}</div>
+      </div>`);
+    });
+  }
+  box.innerHTML = rows.join('');
+}
+
+document.getElementById('refreshBtn').addEventListener('click', fetchEvents);
+
+document.getElementById('suggestBtn').addEventListener('click', () => suggestModels());
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('freeText').value = '';
+  document.getElementById('suggestions').innerHTML = '';
+});
+
+const root = document.getElementById('events-root');
+const isAuth = (root?.dataset?.auth === '1');
+if (isAuth) {
+  const btn = document.getElementById('useModelBtn');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      const model = document.getElementById('modelName').value.trim();
+      if (!model) return;
+      const res = await fetch(`/models/use?model=${encodeURIComponent(model)}`);
+      const data = await res.json();
+      document.getElementById('useModelMsg').textContent = data.message || 'Done';
+    });
+  }
+}
+
+function renderUpcoming() {
+  const container = document.getElementById('upcomingList');
+  if (!container) return;
+  container.innerHTML = '';
+  const windowDays = parseInt(document.getElementById('upcomingWindow').value || '14', 10);
+  const now = new Date();
+  const max = new Date(now.getTime() + windowDays*24*3600*1000);
+  const events = (FEED_CACHE || []).filter(it => (it.source_code || '').toLowerCase() === 'sensibull');
+  const parsed = events.map(it => ({
+    item: it,
+    when: it.published_at ? new Date(it.published_at) : null
+  })).filter(x => x.when && x.when >= now && x.when <= max)
+    .sort((a,b) => a.when - b.when);
+
+  if (parsed.length === 0) {
+    container.innerHTML = '<div class="list-group-item">No upcoming events in the selected window.</div>';
+    return;
+  }
+
+  parsed.forEach(({item, when}) => {
+    const row = document.createElement('div');
+    row.className = 'list-group-item';
+    row.innerHTML = `
+      <div class="d-flex w-100 justify-content-between align-items-start">
+        <div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <strong>${item.title || 'Event'}</strong>
+            <span class="badge bg-primary">${item.category || 'event'}</span>
+            ${item.geo ? `<span class=\"badge bg-light text-dark\">${item.geo}</span>` : ''}
+            ${typeof item.impact !== 'undefined' && item.impact !== null ? `<span class=\"badge ${item.impact >= 3 ? 'bg-danger' : (item.impact === 2 ? 'bg-warning text-dark' : 'bg-secondary')}\">Impact ${item.impact}</span>` : ''}
+          </div>
+          <div class="small text-muted mt-1">${(item.description || '').slice(0, 240)}</div>
+        </div>
+        <div class="text-end">
+          <div class="badge bg-info text-white">${relTimeFromNow(when.toISOString())}</div>
+          <div class="small text-muted">${when.toLocaleString()}</div>
+          <button class="btn btn-sm btn-outline-primary mt-2" data-action="playbook">🚀 Get Playbook</button>
+        </div>
+      </div>
+      <div class="mt-2" data-slot="playbook"></div>
+    `;
+    // Show precomputed preview models if present
+    try {
+      const slot = row.querySelector('[data-slot="playbook"]');
+      const prev = Array.isArray(item.preview_models) ? item.preview_models : [];
+      if (prev.length) {
+        slot.innerHTML = prev.map(s => `
+          <span class="badge rounded-pill ${s.alpha ? 'bg-success' : (s.risk ? 'bg-warning text-dark' : 'bg-secondary') } me-1 mb-1" title="${s.why || ''}">${s.model}</span>
+        `).join('');
+      }
+    } catch {}
+    row.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action="playbook"]');
+      if (!btn) return;
+      const slot = row.querySelector('[data-slot="playbook"]');
+      const text = `${item.title || ''}. ${item.description || ''}`;
+      slot.innerHTML = '<div class="small text-muted">Analyzing...</div>';
+      const res = await fetch('/api/events/suggest_models', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({text}) });
+      const data = await res.json();
+      const suggestions = data.suggestions || [];
+      if (!suggestions.length) {
+        slot.innerHTML = '<div class="small text-muted">No direct playbook suggestions.</div>';
+        return;
+      }
+      slot.innerHTML = suggestions.map(s => `
+        <span class="badge rounded-pill ${s.alpha ? 'bg-success' : (s.risk ? 'bg-warning text-dark' : 'bg-secondary') } me-1 mb-1" title="${s.why || ''}">${s.model}</span>
+      `).join('');
+    });
+    container.appendChild(row);
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', fetchEvents);
+document.getElementById('upcomingWindow').addEventListener('change', renderUpcoming);
+
+fetchEvents();
+</script>
+{% endblock %}

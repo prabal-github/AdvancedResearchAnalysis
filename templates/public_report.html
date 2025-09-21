@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- LinkedIn Sharing Meta Tags -->
+    {% if report and analysis and not error %}
+    {% set title_prefix = report.topic + ': ' if report.topic else 'Research Report: ' %}
+    {% set title_content = (title_prefix + sharing_data.tickers | join(', ') + ' by ' + report.analyst) %}
+    {% set description_parts = [] %}
+    {% if report.sub_heading %}
+        {% set _ = description_parts.append(report.sub_heading) %}
+    {% endif %}
+    {% set _ = description_parts.append('Quality Score: ' + '%.1f' | format(analysis.composite_quality_score * 100) + '%') %}
+    {% set _ = description_parts.append(analyst_performance.analyst_rating) %}
+    {% set _ = description_parts.append(analyst_performance.total_reports|string + ' reports published') %}
+    
+    <meta property="og:title" content="{{ title_content }}">
+    <meta property="og:description" content="{{ description_parts | join(' | ') }}">
+    <meta property="og:url" content="{{ sharing_data.url }}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Investment Research Platform">
+    
+    <!-- LinkedIn specific -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title_content }}">
+    <meta name="twitter:description" content="{{ description_parts | join(' | ') }}">
+    {% endif %}
+    
+    <title>
+        {% if error %}
+            Report Error
+        {% else %}
+            {% if report.topic %}{{ report.topic }}: {% endif %}{{ sharing_data.tickers | join(', ') }} by {{ report.analyst }}
+        {% endif %}
+    </title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .public-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+        
+        .quality-badge {
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+        
+        .quality-excellent { background: linear-gradient(45deg, #00C851, #007E33); color: white; }
+        .quality-good { background: linear-gradient(45deg, #ffbb33, #ff8800); color: white; }
+        .quality-average { background: linear-gradient(45deg, #ff4444, #cc0000); color: white; }
+        
+        .analyst-card {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .sharing-section {
+            background: linear-gradient(135deg, #0077B5, #005885);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .linkedin-btn {
+            background: #0077B5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .linkedin-btn:hover {
+            background: #005885;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 119, 181, 0.3);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0077B5;
+        }
+        
+        .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="public-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="mb-0">
+                        <i class="fas fa-chart-line text-primary"></i>
+                        Investment Research Platform
+                    </h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="badge bg-primary fs-6">Public Report View</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if error %}
+            <div class="main-container">
+                <div class="error-container">
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                    <h2 class="mt-3 text-danger">{{ error }}</h2>
+                    <p class="text-muted">Report ID: {{ report_id }}</p>
+                    <a href="/" class="btn btn-primary mt-3">
+                        <i class="fas fa-home"></i> Return to Platform
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="main-container">
+                <!-- Report Header -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-center mb-4">
+                            {% if report.topic %}
+                            <div class="mb-2">
+                                <span class="badge bg-primary fs-6 px-3 py-2">{{ report.topic }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            <h1 class="display-4 text-primary">
+                                <i class="fas fa-file-alt"></i>
+                                Research Report
+                            </h1>
+                            
+                            {% if report.sub_heading %}
+                            <h2 class="h4 text-secondary mb-3">{{ report.sub_heading }}</h2>
+                            {% endif %}
+                            
+                            <h3 class="text-secondary">{{ sharing_data.tickers | join(', ') }}</h3>
+                            <p class="lead">Generated on {{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Score Banner -->
+                <div class="row">
+                    <div class="col-12 text-center">
+                        {% set quality_score = analysis.composite_quality_score * 100 %}
+                        <div class="quality-badge 
+                            {% if quality_score >= 80 %}quality-excellent
+                            {% elif quality_score >= 60 %}quality-good
+                            {% else %}quality-average{% endif %}">
+                            <i class="fas fa-star"></i>
+                            Quality Score: {{ '%.1f' | format(quality_score) }}%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyst Information -->
+                <div class="analyst-card">
+                    <h3><i class="fas fa-user-tie"></i> {{ report.analyst }}</h3>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <h4>{{ analyst_performance.total_reports }}</h4>
+                            <p>Reports Published</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>{{ '%.1f' | format(analyst_performance.avg_quality_score) }}%</h4>
+                            <p>Average Quality Score</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>{{ analyst_performance.analyst_rating }}</h4>
+                            <p>Analyst Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LinkedIn Sharing Section -->
+                <div class="sharing-section">
+                    <h3><i class="fab fa-linkedin"></i> Share This Report on LinkedIn</h3>
+                    <p>Share this research report and analytics with your professional network</p>
+                    
+                    <div class="mt-3">
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ sharing_data.url | urlencode }}" 
+                           target="_blank" 
+                           class="linkedin-btn">
+                            <i class="fab fa-linkedin"></i> Share Report
+                        </a>
+                        
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ sharing_data.url | urlencode }}&title={{ sharing_data.title | urlencode }}&summary={{ sharing_data.description | urlencode }}" 
+                           target="_blank" 
+                           class="linkedin-btn">
+                            <i class="fas fa-share-alt"></i> Share with Details
+                        </a>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <small>Click to share this report on LinkedIn. The link will remain publicly accessible.</small>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                {% if analysis %}
+                <div class="metrics-grid">
+                    {% if analysis.composite_quality_score %}
+                    <div class="metric-card">
+                        <div class="metric-value">{{ '%.1f' | format(analysis.composite_quality_score * 100) }}%</div>
+                        <div class="metric-label">Overall Quality Score</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if analysis.technical_analysis_score %}
+                    <div class="metric-card">
+                        <div class="metric-value">{{ '%.1f' | format(analysis.technical_analysis_score * 100) }}%</div>
+                        <div class="metric-label">Technical Analysis</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if analysis.fundamental_analysis_score %}
+                    <div class="metric-card">
+                        <div class="metric-value">{{ '%.1f' | format(analysis.fundamental_analysis_score * 100) }}%</div>
+                        <div class="metric-label">Fundamental Analysis</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if analysis.risk_assessment_score %}
+                    <div class="metric-card">
+                        <div class="metric-value">{{ '%.1f' | format(analysis.risk_assessment_score * 100) }}%</div>
+                        <div class="metric-label">Risk Assessment</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Report Content Preview -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h4><i class="fas fa-clipboard-list"></i> Report Summary</h4>
+                            </div>
+                            <div class="card-body">
+                                {% if report.original_text %}
+                                    {% set words = report.original_text.split() %}
+                                    {% set first_200_words = words[:200] %}
+                                    <div class="report-preview">
+                                        <p class="lead">{{ first_200_words | join(' ') }}{% if words|length > 200 %}...{% endif %}</p>
+                                        
+                                        {% if words|length > 200 %}
+                                        <div class="mt-3 p-3 bg-light rounded">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Showing first 200 words of {{ words|length }} total words. 
+                                                Access the full platform to read the complete analysis.
+                                            </small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Full report content available through the platform.</p>
+                                {% endif %}
+                                
+                                <div class="mt-3">
+                                    <h6>Analyzed Tickers:</h6>
+                                    {% for ticker in sharing_data.tickers %}
+                                        <span class="badge bg-secondary me-2">{{ ticker }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="text-center mt-4 p-4 bg-light rounded">
+                    <h5>Want to see more detailed analysis?</h5>
+                    <p class="text-muted">Access the full platform for comprehensive research tools and analytics.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Explore Platform
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Watermark -->
+    <div class="watermark">
+        <i class="fas fa-chart-line"></i>
+        Investment Research Platform - Public Report
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Copy URL functionality
+        function copyReportURL() {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert('Report URL copied to clipboard!');
+            });
+        }
+        
+        // Track LinkedIn shares (optional analytics)
+        document.querySelectorAll('.linkedin-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                // Optional: Track sharing analytics
+                console.log('LinkedIn share clicked for report: {{ report_id if report else "unknown" }}');
+            });
+        });
+    </script>
+</body>
+</html>

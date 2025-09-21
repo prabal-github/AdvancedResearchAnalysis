@@ -1,0 +1,172 @@
+>> ECONOMIC SCENARIO IMPACT MAPPER REPORT
+=================================================================
+Analysis Date: 2025-08-23 15:31:22
+>> Total Stocks Analyzed: 50
+
+>> ECONOMIC SCENARIO DEFINITIONS:
+----------------------------------------
+   Base Case            | Probability: 40.0% | Moderate growth with stable inflation
+   Strong Growth        | Probability: 20.0% | High GDP growth with rising demand
+   Economic Slowdown    | Probability: 25.0% | Below-trend growth with weak demand
+   High Inflation       | Probability: 10.0% | Rising prices with monetary tightening
+   Interest Rate Shock  | Probability:  5.0% | Sharp rate increases
+
+>> TOP EXPECTED PERFORMERS:
+-----------------------------------
+   RELIANCE.NS     | Return:  -1.00% | Volatility: 13.91% | Sector: Energy
+   BEL.NS          | Return:  -1.10% | Volatility:  4.05% | Sector: Defense
+   HDFCLIFE.NS     | Return:  -1.14% | Volatility:  8.43% | Sector: Insurance
+   SBILIFE.NS      | Return:  -1.28% | Volatility:  7.85% | Sector: Insurance
+   BPCL.NS         | Return:  -1.28% | Volatility: 14.30% | Sector: Energy
+   ONGC.NS         | Return:  -1.47% | Volatility: 14.69% | Sector: Energy
+   DRREDDY.NS      | Return:  -2.02% | Volatility:  5.65% | Sector: Pharmaceuticals
+   CIPLA.NS        | Return:  -2.03% | Volatility:  6.39% | Sector: Pharmaceuticals
+   APOLLOHOSP.NS   | Return:  -2.16% | Volatility:  5.04% | Sector: Healthcare
+   SUNPHARMA.NS    | Return:  -2.16% | Volatility:  6.32% | Sector: Pharmaceuticals
+
+>> STRONG GROWTH SCENARIO WINNERS:
+----------------------------------------
+   COALINDIA.NS    | Impact: +23.59% | GDP Sensitivity: +0.358 | Sector: Mining
+   TATASTEEL.NS    | Impact: +21.36% | GDP Sensitivity: +0.357 | Sector: Metals
+   HINDALCO.NS     | Impact: +20.37% | GDP Sensitivity: +0.346 | Sector: Metals
+   ONGC.NS         | Impact: +20.28% | GDP Sensitivity: +0.250 | Sector: Energy
+   BPCL.NS         | Impact: +19.77% | GDP Sensitivity: +0.241 | Sector: Energy
+   JSWSTEEL.NS     | Impact: +19.46% | GDP Sensitivity: +0.320 | Sector: Metals
+   RELIANCE.NS     | Impact: +19.24% | GDP Sensitivity: +0.221 | Sector: Energy
+   INDUSINDBK.NS   | Impact: +13.57% | GDP Sensitivity: +0.326 | Sector: Banking
+   ICICIBANK.NS    | Impact: +13.56% | GDP Sensitivity: +0.303 | Sector: Banking
+   SBIN.NS         | Impact: +13.43% | GDP Sensitivity: +0.314 | Sector: Banking
+
+>> ECONOMIC SLOWDOWN VULNERABLE STOCKS:
+---------------------------------------------
+   COALINDIA.NS    | Impact: -26.03% | VaR 5%: -24.77% | Sector: Mining
+   TATASTEEL.NS    | Impact: -23.95% | VaR 5%: -23.35% | Sector: Metals
+   HINDALCO.NS     | Impact: -22.96% | VaR 5%: -22.71% | Sector: Metals
+   ONGC.NS         | Impact: -22.30% | VaR 5%: -20.23% | Sector: Energy
+   JSWSTEEL.NS     | Impact: -21.84% | VaR 5%: -21.44% | Sector: Metals
+   BPCL.NS         | Impact: -21.61% | VaR 5%: -19.49% | Sector: Energy
+   RELIANCE.NS     | Impact: -20.85% | VaR 5%: -18.63% | Sector: Energy
+   INDUSINDBK.NS   | Impact: -18.65% | VaR 5%: -16.89% | Sector: Banking
+   ICICIBANK.NS    | Impact: -18.34% | VaR 5%: -15.78% | Sector: Banking
+   SBIN.NS         | Impact: -18.16% | VaR 5%: -16.16% | Sector: Banking
+
+>> HIGH INFLATION RESISTANT STOCKS:
+--------------------------------------
+   RELIANCE.NS     | Impact:  +8.48% | Inflation Sensitivity: +0.159 | Sector: Energy
+   BPCL.NS         | Impact:  +7.21% | Inflation Sensitivity: +0.133 | Sector: Energy
+   ONGC.NS         | Impact:  +6.44% | Inflation Sensitivity: +0.129 | Sector: Energy
+   COALINDIA.NS    | Impact:  +2.44% | Inflation Sensitivity: +0.174 | Sector: Mining
+   HDFCLIFE.NS     | Impact:  +1.57% | Inflation Sensitivity: -0.063 | Sector: Insurance
+   SBILIFE.NS      | Impact:  +0.16% | Inflation Sensitivity: -0.073 | Sector: Insurance
+   TATASTEEL.NS    | Impact:  -1.54% | Inflation Sensitivity: +0.117 | Sector: Metals
+   JSWSTEEL.NS     | Impact:  -2.07% | Inflation Sensitivity: +0.093 | Sector: Metals
+   BEL.NS          | Impact:  -3.29% | Inflation Sensitivity: -0.023 | Sector: Defense
+   HINDALCO.NS     | Impact:  -3.35% | Inflation Sensitivity: +0.083 | Sector: Metals
+
+>> INTEREST RATE SENSITIVE STOCKS:
+--------------------------------------
+   BAJAJ-AUTO.NS   | Impact: -42.52% | Rate Sensitivity: -0.310 | Sector: Automotive
+   TATAMOTORS.NS   | Impact: -42.42% | Rate Sensitivity: -0.319 | Sector: Automotive
+   HEROMOTOCO.NS   | Impact: -39.86% | Rate Sensitivity: -0.306 | Sector: Automotive
+   M&M.NS          | Impact: -39.59% | Rate Sensitivity: -0.281 | Sector: Automotive
+   EICHERMOT.NS    | Impact: -37.56% | Rate Sensitivity: -0.252 | Sector: Automotive
+   MARUTI.NS       | Impact: -37.49% | Rate Sensitivity: -0.255 | Sector: Automotive
+   TRENT.NS        | Impact: -33.25% | Rate Sensitivity: -0.225 | Sector: Consumer Discretionary
+   ASIANPAINT.NS   | Impact: -30.87% | Rate Sensitivity: -0.258 | Sector: Building Materials
+   TITAN.NS        | Impact: -30.42% | Rate Sensitivity: -0.184 | Sector: Consumer Discretionary
+   ADANIPORTS.NS   | Impact: -30.11% | Rate Sensitivity: -0.213 | Sector: Infrastructure
+
+>> SECTOR ANALYSIS:
+--------------------
+   Automotive           | Exp Return:  -5.70% | Growth Impact: +10.87% | GDP Sens: +0.410
+   Banking              | Exp Return:  -2.86% | Growth Impact: +13.08% | GDP Sens: +0.300
+   Building Materials   | Exp Return:  -3.99% | Growth Impact:  +8.71% | GDP Sens: +0.300
+   Consumer Discretionary | Exp Return:  -4.69% | Growth Impact:  +9.14% | GDP Sens: +0.340
+   Defense              | Exp Return:  -1.10% | Growth Impact:  +5.05% | GDP Sens: +0.110
+   Energy               | Exp Return:  -1.25% | Growth Impact: +19.76% | GDP Sens: +0.240
+   FMCG                 | Exp Return:  -3.38% | Growth Impact:  +1.06% | GDP Sens: +0.180
+   Financial Services   | Exp Return:  -2.85% | Growth Impact:  +9.75% | GDP Sens: +0.270
+   Healthcare           | Exp Return:  -2.16% | Growth Impact:  +3.99% | GDP Sens: +0.130
+   IT Services          | Exp Return:  -2.23% | Growth Impact: +10.47% | GDP Sens: +0.130
+   Infrastructure       | Exp Return:  -4.30% | Growth Impact: +12.56% | GDP Sens: +0.350
+   Insurance            | Exp Return:  -1.21% | Growth Impact:  +9.74% | GDP Sens: +0.210
+   Metals               | Exp Return:  -2.93% | Growth Impact: +20.40% | GDP Sens: +0.340
+   Mining               | Exp Return:  -2.53% | Growth Impact: +23.59% | GDP Sens: +0.360
+   Pharmaceuticals      | Exp Return:  -2.07% | Growth Impact:  +7.09% | GDP Sens: +0.100
+   Telecommunications   | Exp Return:  -3.14% | Growth Impact:  +6.30% | GDP Sens: +0.210
+   Utilities            | Exp Return:  -2.76% | Growth Impact:  +5.12% | GDP Sens: +0.180
+
+>> PORTFOLIO STATISTICS:
+-------------------------
+Average Expected Return: -3.16%
+Average Volatility: 10.16%
+Average VaR (5%): -21.09%
+Average Scenario Range: 33.08%
+Best Growth Impact: 23.59%
+Worst Slowdown Impact: -26.03%
+Most GDP Sensitive: 0.433
+Most Rate Sensitive: -0.319
+
+>> SCENARIO-BASED INVESTMENT RECOMMENDATIONS:
+--------------------------------------------------
+FOR DEFENSIVE POSITIONING:
+  APOLLOHOSP.NS (Healthcare) - -4.8% slowdown impact
+  BRITANNIA.NS (FMCG) - -0.3% slowdown impact
+  HINDUNILVR.NS (FMCG) - -1.0% slowdown impact
+  NESTLEIND.NS (FMCG) - -2.5% slowdown impact
+  TATACONSUM.NS (FMCG) - -1.8% slowdown impact
+
+====================================================================================================================================================================================
+>> DETAILED RESULTS:
+====================================================================================================================================================================================
+ Rank        Symbol                 Sector  Current_Price  Expected_Return  Volatility  Best_Case  Worst_Case  VaR_5  Scenario_Range  Strong_Growth_Impact  Base_Case_Impact  Economic_Slowdown_Impact  High_Inflation_Impact  Interest_Rate_Shock_Impact  GDP_Sensitivity  Interest_Sensitivity  Inflation_Sensitivity  USD_Sensitivity  Oil_Sensitivity
+    1   RELIANCE.NS                 Energy        1409.20            -1.00       13.91      19.24      -20.85 -18.63           40.08                 19.24               0.0                    -20.85                   8.48                       -9.77            0.221                -0.102                  0.159           -0.021            0.468
+    2        BEL.NS                Defense         374.85            -1.10        4.05       5.05       -9.69  -8.79           14.74                  5.05               0.0                     -5.20                  -3.29                       -9.69            0.112                -0.107                 -0.023           -0.095            0.170
+    3   HDFCLIFE.NS              Insurance         788.75            -1.14        8.43      10.06      -14.24 -11.39           24.29                 10.06               0.0                    -14.24                   1.57                        5.00            0.208                 0.322                 -0.063           -0.236            0.118
+    4    SBILIFE.NS              Insurance        1859.00            -1.28        7.85       9.42      -13.40 -10.72           22.82                  9.42               0.0                    -13.40                   0.16                        3.45            0.206                 0.297                 -0.073           -0.226            0.103
+    5       BPCL.NS                 Energy         316.45            -1.28       14.30      19.77      -21.61 -19.49           41.38                 19.77               0.0                    -21.61                   7.21                      -11.00            0.241                -0.094                  0.133           -0.024            0.492
+    6       ONGC.NS                 Energy         236.29            -1.47       14.69      20.28      -22.30 -20.23           42.58                 20.28               0.0                    -22.30                   6.44                      -11.94            0.250                -0.090                  0.129           -0.015            0.476
+    7    DRREDDY.NS        Pharmaceuticals        1277.60            -2.02        5.65       6.36      -12.26 -11.34           18.62                  6.36               0.0                     -7.66                  -7.59                      -12.26            0.085                -0.013                 -0.086           -0.026            0.104
+    8      CIPLA.NS        Pharmaceuticals        1592.80            -2.03        6.39       7.66      -13.51 -12.57           21.16                  7.66               0.0                     -8.84                  -6.73                      -13.51            0.112                -0.052                 -0.053           -0.029            0.119
+    9 APOLLOHOSP.NS             Healthcare        7922.50            -2.16        5.04       3.99      -14.15 -13.43           18.15                  3.99               0.0                     -4.79                 -10.53                      -14.15            0.134                -0.069                 -0.127           -0.118            0.100
+   10  SUNPHARMA.NS        Pharmaceuticals        1641.80            -2.16        6.32       7.25      -14.20 -13.05           21.45                  7.25               0.0                     -8.44                  -7.86                      -14.20            0.104                -0.049                 -0.070           -0.035            0.110
+   11      WIPRO.NS            IT Services         248.64            -2.18        8.00      10.17      -14.97 -14.30           25.13                 10.17               0.0                    -11.62                  -5.61                      -14.97            0.127                -0.065                 -0.015            0.097            0.125
+   12    HCLTECH.NS            IT Services        1466.30            -2.20        7.73       9.66      -15.58 -14.66           25.24                  9.66               0.0                    -10.94                  -6.19                      -15.58            0.128                -0.082                 -0.017            0.092            0.115
+   13      TECHM.NS            IT Services        1505.00            -2.22        8.13      10.32      -15.18 -14.51           25.50                 10.32               0.0                    -11.82                  -5.67                      -15.18            0.137                -0.069                 -0.002            0.121            0.094
+   14       INFY.NS            IT Services        1487.50            -2.25        7.97       9.98      -16.11 -15.14           26.10                  9.98               0.0                    -11.27                  -6.26                      -16.11            0.129                -0.088                 -0.017            0.097            0.126
+   15        TCS.NS            IT Services        3054.00            -2.30        9.36      12.21      -16.03 -15.59           28.23                 12.21               0.0                    -13.87                  -4.75                      -16.03            0.152                -0.077                  0.023            0.103            0.115
+   16   AXISBANK.NS                Banking        1070.90            -2.52        9.86      12.25      -16.63 -14.39           28.88                 12.25               0.0                    -16.63                  -5.41                       -5.30            0.276                 0.240                 -0.102           -0.256            0.089
+   17  COALINDIA.NS                 Mining         374.45            -2.53       17.16      23.59      -26.03 -24.77           49.62                 23.59               0.0                    -26.03                   2.44                      -19.70            0.358                -0.165                  0.174           -0.056            0.347
+   18 SHRIRAMFIN.NS     Financial Services         615.85            -2.68        8.60      10.38      -14.05 -12.96           24.43                 10.38               0.0                    -14.05                  -8.10                       -8.58            0.267                 0.166                 -0.116           -0.290            0.059
+   19  ICICIBANK.NS                Banking        1436.40            -2.69       10.87      13.56      -18.34 -15.78           31.90                 13.56               0.0                    -18.34                  -5.35                       -5.52            0.303                 0.259                 -0.096           -0.255            0.082
+   20       NTPC.NS              Utilities         337.00            -2.73        6.71       4.99      -20.99 -19.51           25.98                  4.99               0.0                     -5.27                 -13.60                      -20.99            0.181                -0.188                 -0.089           -0.207            0.031
+   21  KOTAKBANK.NS                Banking        1986.60            -2.76       10.42      12.83      -17.62 -15.37           30.45                 12.83               0.0                    -17.62                  -6.37                       -5.67            0.299                 0.267                 -0.129           -0.244            0.107
+   22   JSWSTEEL.NS                 Metals        1054.60            -2.77       14.40      19.46      -21.84 -21.44           41.31                 19.46               0.0                    -21.84                  -2.07                      -19.84            0.320                -0.134                  0.093            0.042            0.252
+   23   HDFCBANK.NS                Banking        1964.60            -2.78       10.45      12.82      -17.72 -15.47           30.54                 12.82               0.0                    -17.72                  -6.48                       -5.29            0.293                 0.284                 -0.138           -0.265            0.111
+   24  POWERGRID.NS              Utilities         283.35            -2.79        6.80       5.25      -20.70 -19.31           25.95                  5.25               0.0                     -5.74                 -13.73                      -20.70            0.189                -0.169                 -0.100           -0.207            0.041
+   25 BAJAJFINSV.NS     Financial Services        1965.90            -2.86        7.79       8.76      -12.28 -11.93           21.04                  8.76               0.0                    -12.28                 -10.54                       -9.72            0.254                 0.163                 -0.168           -0.298            0.073
+   26  TATASTEEL.NS                 Metals         158.55            -2.92       15.76      21.36      -23.95 -23.35           45.31                 21.36               0.0                    -23.95                  -1.54                      -20.96            0.357                -0.147                  0.117            0.021            0.264
+   27  BRITANNIA.NS                   FMCG        5545.50            -2.98        6.85       0.00      -19.77 -19.62           19.77                 -0.04               0.0                     -0.33                 -19.02                      -19.77            0.151                -0.114                 -0.242           -0.266            0.038
+   28 BAJFINANCE.NS     Financial Services         894.50            -3.00        8.70      10.10      -13.97 -13.23           24.06                 10.10               0.0                    -13.97                 -10.30                       -9.89            0.283                 0.177                 -0.162           -0.308            0.079
+   29       SBIN.NS                Banking         816.25            -3.03       10.89      13.43      -18.16 -16.16           31.58                 13.43               0.0                    -18.16                  -7.66                       -8.18            0.314                 0.236                 -0.128           -0.258            0.100
+   30   HINDALCO.NS                 Metals         704.20            -3.09       15.16      20.37      -22.96 -22.71           43.33                 20.37               0.0                    -22.96                  -3.35                      -21.70            0.346                -0.139                  0.083            0.022            0.256
+   31 BHARTIARTL.NS     Telecommunications        1933.30            -3.14        7.62       6.30      -22.17 -20.75           28.46                  6.30               0.0                     -7.14                 -15.07                      -22.17            0.211                -0.154                 -0.119           -0.248            0.050
+   32 HINDUNILVR.NS                   FMCG        2629.90            -3.30        7.50       0.59      -22.17 -21.85           22.77                  0.59               0.0                     -1.03                 -20.54                      -22.17            0.178                -0.136                 -0.250           -0.256            0.036
+   33  NESTLEIND.NS                   FMCG        1162.90            -3.37        7.42       1.81      -22.03 -21.61           23.84                  1.81               0.0                     -2.54                 -19.97                      -22.03            0.181                -0.117                 -0.236           -0.275            0.029
+   34 INDUSINDBK.NS                Banking         760.10            -3.40       11.24      13.57      -18.65 -16.89           32.22                 13.57               0.0                    -18.65                  -9.84                       -9.43            0.326                 0.262                 -0.175           -0.277            0.119
+   35 TATACONSUM.NS                   FMCG        1084.10            -3.53        7.90       1.25      -23.52 -23.11           24.77                  1.25               0.0                     -1.83                 -21.45                      -23.52            0.182                -0.135                 -0.260           -0.267            0.043
+   36        ITC.NS                   FMCG         398.30            -3.70        8.13       1.69      -23.99 -23.61           25.68                  1.69               0.0                     -2.49                 -22.09                      -23.99            0.207                -0.127                 -0.271           -0.263            0.046
+   37 ULTRACEMCO.NS     Building Materials       12589.00            -3.70        9.62       9.28      -26.79 -24.68           36.06                  9.28               0.0                    -10.36                 -16.24                      -26.79            0.292                -0.211                 -0.093           -0.240            0.055
+   38     GRASIM.NS     Building Materials        2813.80            -4.12       10.59      10.07      -29.47 -27.23           39.53                 10.07               0.0                    -11.33                 -18.28                      -29.47            0.325                -0.225                 -0.112           -0.251            0.059
+   39   ADANIENT.NS         Infrastructure        2324.90            -4.15       11.08      11.38      -28.85 -26.56           40.23                 11.38               0.0                    -12.99                 -17.40                      -28.85            0.332                -0.198                 -0.097           -0.287            0.057
+   40 ASIANPAINT.NS     Building Materials        2504.50            -4.16        9.92       6.79      -30.87 -28.95           37.66                  6.79               0.0                     -7.39                 -21.26                      -30.87            0.288                -0.258                 -0.181           -0.266            0.091
+   41 ADANIPORTS.NS         Infrastructure        1341.20            -4.30       12.10      13.19      -30.11 -27.47           43.30                 13.19               0.0                    -14.97                 -16.93                      -30.11            0.362                -0.213                 -0.067           -0.295            0.054
+   42         LT.NS         Infrastructure        3595.80            -4.45       12.19      13.12      -29.92 -27.49           43.04                 13.12               0.0                    -15.19                 -17.75                      -29.92            0.370                -0.187                 -0.087           -0.276            0.041
+   43      TITAN.NS Consumer Discretionary        3621.00            -4.55       10.49       7.67      -30.42 -28.89           38.09                  7.67               0.0                     -9.16                 -22.77                      -30.42            0.313                -0.184                 -0.196           -0.286            0.011
+   44      TRENT.NS Consumer Discretionary        5418.00            -4.82       11.89      10.60      -33.25 -31.04           43.85                 10.60               0.0                    -12.23                 -22.22                      -33.25            0.360                -0.225                 -0.157           -0.311            0.041
+   45     MARUTI.NS             Automotive       14349.00            -5.45       12.90      10.17      -37.49 -35.29           47.66                 10.17               0.0                    -11.82                 -26.50                      -37.49            0.389                -0.255                 -0.198           -0.345            0.003
+   46  EICHERMOT.NS             Automotive        5924.50            -5.47       12.87       9.91      -37.56 -35.42           47.48                  9.91               0.0                    -11.57                 -26.83                      -37.56            0.382                -0.252                 -0.200           -0.329           -0.014
+   47 HEROMOTOCO.NS             Automotive        4997.90            -5.57       13.89      12.32      -39.86 -37.03           52.18                 12.32               0.0                    -13.87                 -25.71                      -39.86            0.421                -0.306                 -0.153           -0.363            0.018
+   48        M&M.NS             Automotive        3403.00            -5.69       13.37       9.98      -39.59 -37.31           49.57                  9.98               0.0                    -11.53                 -28.19                      -39.59            0.402                -0.281                 -0.203           -0.347           -0.026
+   49 TATAMOTORS.NS             Automotive         680.30            -5.97       14.35      11.42      -42.42 -39.72           53.84                 11.42               0.0                    -12.98                 -28.90                      -42.42            0.429                -0.319                 -0.194           -0.337           -0.006
+   50 BAJAJ-AUTO.NS             Automotive        8679.50            -6.05       14.45      11.42      -42.52 -39.89           53.94                 11.42               0.0                    -13.06                 -29.38                      -42.52            0.433                -0.310                 -0.207           -0.364            0.002

@@ -1,0 +1,416 @@
+{% extends "layout.html" %}
+{% block title %}Report {{ report.id }} - Research QA{% endblock %}
+{% block header %}Report Details{% endblock %}
+{% block content %}
+
+<a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary mb-4">
+    <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+</a>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Report Analysis</h4>
+                        <span class="badge bg-primary fs-6">ID: {{ report.id }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Analyst</h6>
+                            <p class="fw-semibold">{{ report.analyst }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Created At</h6>
+                            <p class="fw-semibold">{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted">Tickers</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for ticker in report.tickers|loads %}
+                            <span class="badge bg-light text-dark border">{{ ticker }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Composite Quality Score -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">Composite Quality Score</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-3" style="height: 30px;">
+                                {% set score_percentage = (analysis.composite_quality_score * 100) %}
+                                <div class="progress-bar 
+                                    {% if analysis.composite_quality_score >= 0.8 %}bg-success
+                                    {% elif analysis.composite_quality_score >= 0.6 %}bg-warning
+                                    {% else %}bg-danger{% endif %}" 
+                                    role="progressbar" 
+                                    style="width: {{ score_percentage }}%" 
+                                    aria-valuenow="{{ score_percentage }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                            <span class="fw-bold fs-4">{{ score_percentage | round(1) }}%</span>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown Chart -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">Score Breakdown</h6>
+                        <div style="height: 400px;">
+                            <canvas id="scoreBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OHLC Chart -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">OHLC Price Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <div id="ohlcChart" style="height: 500px;"></div>
+                </div>
+            </div>
+
+            <!-- Backtesting Results -->
+            {% if analysis.backtest_results %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Backtesting Results</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for ticker, data in analysis.backtest_results.items() %}
+                        <div class="col-md-6 mb-3">
+                            <div class="border rounded p-3">
+                                <h6 class="mb-3">{{ ticker }}</h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <small class="text-muted">Current Price</small>
+                                        <div class="fw-bold">${{ "%.2f"|format(data.current_price) }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">52W High</small>
+                                        <div class="fw-bold">${{ "%.2f"|format(data['52w_high']) }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">52W Low</small>
+                                        <div class="fw-bold">${{ "%.2f"|format(data['52w_low']) }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Target Achievement</small>
+                                        {% set target_percentage = (data.target_achievement * 100) %}
+                                        <div class="fw-bold 
+                                            {% if data.target_achievement >= 0.9 %}text-success
+                                            {% elif data.target_achievement >= 0.7 %}text-warning
+                                            {% else %}text-danger{% endif %}">
+                                            {{ target_percentage | round(1) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quality Metrics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Quality Metrics</h5>
+                </div>
+                <div class="card-body">
+                    {% set metrics = [
+                        ('factual_accuracy', 'Factual Accuracy', 'bi-check-circle', 'primary'),
+                        ('predictive_power', 'Predictive Power', 'bi-graph-up', 'success'),
+                        ('bias_score', 'Bias Score', 'bi-sliders', 'warning'),
+                        ('originality', 'Originality', 'bi-lightbulb', 'info'),
+                        ('risk_disclosure', 'Risk Disclosure', 'bi-exclamation-triangle', 'danger'),
+                        ('transparency', 'Transparency', 'bi-eye', 'purple')
+                    ] %}
+                    
+                    {% for metric_key, metric_name, icon, color in metrics %}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0 me-3">
+                            <span class="symbol symbol-35px">
+                                <span class="symbol-label bg-light-{{ color }} text-{{ color }}">
+                                    <i class="bi {{ icon }}"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold">{{ metric_name }}</span>
+                                <span class="badge bg-light text-dark">
+                                    {% if analysis.scores[metric_key] is defined %}
+                                        {% set metric_percentage = (analysis.scores[metric_key] * 100) %}
+                                        {{ metric_percentage | round(1) }}%
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if analysis.scores[metric_key] is defined %}
+                            <div class="progress mt-1" style="height: 6px;">
+                                {% if metric_key == 'bias_score' %}
+                                    {% set progress_width = ((1 - (analysis.scores[metric_key]|abs)) * 100) %}
+                                {% else %}
+                                    {% set progress_width = (analysis.scores[metric_key] * 100) %}
+                                {% endif %}
+                                <div class="progress-bar bg-{{ color }}" style="width: {{ progress_width }}%"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sentiment Trend -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Sentiment Trend</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 250px;">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flagged Alerts -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Flagged Alerts</h5>
+                </div>
+                <div class="card-body">
+                    {% set alerts = [] %}
+                    {% if analysis.scores.risk_disclosure is defined and analysis.scores.risk_disclosure < 0.4 %}
+                        {% set _ = alerts.append(('warning', 'Low Risk Disclosure', 'Risk disclosure score is below 40%')) %}
+                    {% endif %}
+                    {% if analysis.scores.bias_score is defined and analysis.scores.bias_score < -0.5 %}
+                        {% set _ = alerts.append(('danger', 'High Negative Bias', 'Bias score indicates strong negative sentiment')) %}
+                    {% endif %}
+                    {% if analysis.scores.predictive_power is defined and analysis.scores.predictive_power > 0.8 %}
+                        {% set _ = alerts.append(('success', 'Strong Predictive Power', 'Predictive power above 80%')) %}
+                    {% endif %}
+                    
+                    {% if alerts %}
+                        {% for alert_type, title, description in alerts %}
+                        <div class="alert alert-{{ alert_type }} d-flex align-items-center mb-2">
+                            <i class="bi bi-{% if alert_type == 'success' %}check-circle{% elif alert_type == 'warning' %}exclamation-triangle{% else %}x-circle{% endif %} me-2"></i>
+                            <div>
+                                <div class="fw-semibold">{{ title }}</div>
+                                <small>{{ description }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+                            <p>No alerts triggered</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .symbol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+    .symbol.symbol-circle {
+        border-radius: 50%;
+    }
+    .symbol.symbol-35px {
+        width: 35px;
+        height: 35px;
+    }
+    .symbol-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        width: 100%;
+        height: 100%;
+    }
+    .bg-light-primary { background-color: rgba(13, 110, 253, 0.1) !important; }
+    .bg-light-success { background-color: rgba(25, 135, 84, 0.1) !important; }
+    .bg-light-warning { background-color: rgba(255, 193, 7, 0.1) !important; }
+    .bg-light-info { background-color: rgba(13, 202, 240, 0.1) !important; }
+    .bg-light-danger { background-color: rgba(220, 53, 69, 0.1) !important; }
+    .bg-light-purple { background-color: rgba(111, 66, 193, 0.1) !important; }
+    .text-purple { color: #6f42c1 !important; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get analysis data
+    const analysisData = JSON.parse('{{ analysis | tojson | safe }}');
+    
+    // Score Breakdown Chart
+    const scoreCtx = document.getElementById('scoreBreakdownChart').getContext('2d');
+    
+    const scoreData = {
+        labels: ['Factual Accuracy', 'Predictive Power', 'Bias Score', 'Originality', 'Risk Disclosure', 'Transparency'],
+        datasets: [{
+            label: 'Quality Scores',
+            data: [
+                (analysisData.scores.factual_accuracy * 100).toFixed(1),
+                (analysisData.scores.predictive_power * 100).toFixed(1),
+                (Math.abs(analysisData.scores.bias_score) * 100).toFixed(1),
+                (analysisData.scores.originality * 100).toFixed(1),
+                (analysisData.scores.risk_disclosure * 100).toFixed(1),
+                (analysisData.scores.transparency * 100).toFixed(1)
+            ],
+            backgroundColor: [
+                'rgba(13, 110, 253, 0.8)',
+                'rgba(25, 135, 84, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(13, 202, 240, 0.8)',
+                'rgba(220, 53, 69, 0.8)',
+                'rgba(111, 66, 193, 0.8)'
+            ],
+            borderColor: [
+                'rgba(13, 110, 253, 1)',
+                'rgba(25, 135, 84, 1)',
+                'rgba(255, 193, 7, 1)',
+                'rgba(13, 202, 240, 1)',
+                'rgba(220, 53, 69, 1)',
+                'rgba(111, 66, 193, 1)'
+            ],
+            borderWidth: 2
+        }]
+    };
+
+    new Chart(scoreCtx, {
+        type: 'radar',
+        data: scoreData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Sentiment Trend Chart
+    const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+    
+    // Generate sample sentiment data based on bias score
+    const biasScore = analysisData.scores.bias_score;
+    const sentimentData = [];
+    const labels = [];
+    
+    for (let i = 0; i < 7; i++) {
+        labels.push('Day ' + (i + 1));
+        sentimentData.push((biasScore + Math.random() * 0.4 - 0.2) * 100);
+    }
+
+    new Chart(sentimentCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sentiment Score',
+                data: sentimentData,
+                borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: -100,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // OHLC Chart using Plotly
+    const tickers = JSON.parse('{{ report.tickers | tojson | safe }}');
+    const backtestData = analysisData.backtest_results;
+    
+    if (tickers && tickers.length > 0) {
+        const traces = [];
+        
+        tickers.forEach(function(ticker, index) {
+            if (backtestData && backtestData[ticker]) {
+                const data = backtestData[ticker];
+                traces.push({
+                    x: ['Current', '52W Low', '52W High'],
+                    y: [data.current_price, data['52w_low'], data['52w_high']],
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: ticker,
+                    line: {
+                        color: ['#007bff', '#28a745', '#dc3545', '#ffc107'][index % 4]
+                    }
+                });
+            }
+        });
+
+        const layout = {
+            title: 'Price Comparison',
+            xaxis: { title: 'Period' },
+            yaxis: { title: 'Price ($)' },
+            showlegend: true,
+            margin: { t: 50, r: 50, b: 50, l: 50 }
+        };
+
+        Plotly.newPlot('ohlcChart', traces, layout, {responsive: true});
+    } else {
+        document.getElementById('ohlcChart').innerHTML = '<div class="text-center text-muted p-4">No OHLC data available</div>';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+Below is a precise walkthrough you can execute manually (no further code changes needed) to validate the full publish → request edit → approve → update flow and confirm the AUTHOR MGMT panel behavior.
+
+Checklist
+
+Reload VS Terminal (analyst session) and verify AUTHOR MGMT auto-load shows “(none)”.
+Publish a model as analyst (ensure allowed_functions set).
+Log out (or open separate browser) and log in as investor.
+Visit /published, locate model, submit edit request.
+Reload VS Terminal (analyst) → AUTHOR MGMT should list the pending request.
+Approve request from panel.
+Switch back to investor; fetch model details (or re-open /published), then call update endpoint to modify README or allowed_functions; confirm success.
+(Optional) Re-run function to verify run_count increments.
+Detailed Steps
+
+Analyst side (Session A):
+
+Navigate to /vs_terminal.
+Enter or load code in the editor. Include at least one safe public function, for example: def add(a, b): return a + b
+Click Publish. When prompted for name, use something distinctive, e.g. demo_pub1.
+(If you need allowed functions) After initial publish, republish including publish UI logic (if your current publishModel() doesn’t send allowed_functions, you can later add them by update once you approve yourself or modify publish call—current JS sends only name/code; allowed list starts empty, so investor won’t be able to run until you republish with allowed_functions or update after publishing.) To ensure run works, you can manually publish again after editing publishModel() to send allowed_functions, or after approving investor, perform an update with allowed_functions.
+
+
+Investor side (Session B): 
+5. Log in as investor; go to /published. 6. Find demo_pub1 (search if needed). Click Request (permission dialog) and submit a reason like “Need to enhance function.” 7. (Optional) If allowed_functions was empty, you can still request edit; run may be limited until functions added.
+
+Analyst approval: 8. Return to Session A (/vs_terminal). Wait 1–2 seconds (panel auto loads) or click Refresh in AUTHOR MGMT panel. 9. Pending request should appear with Approve / Deny buttons. Click Approve. Panel refreshes; request disappears (if you want to confirm, refresh again—should now show (none)).
+
+Investor update: 10. In investor session, fetch model details: GET /api/published_models/<model_id> (You can capture id by viewing network in /published or using the request output in browser console: the catalog fetch returns an array with id.) 11. Update README or allowed functions: POST /api/published_models/<model_id>/update JSON body example (to enable running add): { "readme_md": "Updated README by investor after approval", "allowed_functions": ["add"] } Expect response: {"ok": true, "changed": {"readme_md": true, "allowed_functions": true}, ...}
+
+Run test (investor): 12. Use Run button (either from /published run dialog or VS Terminal published details if you add an investor-facing UI) selecting add with args [2,3]. Should return 5 and increment run_count.
+
+AUTHOR MGMT Panel Confirmation:
+
+Before investor request: (none)
+After request: shows one entry with pending.
+After approval: entry disappears on refresh; investor can update.
+Troubleshooting Tips
+
+If request doesn’t appear: Ensure _user_key for analyst returns a value matching author_user_key created at publish time. Check /api/published_models response for author_user_key.
+If approving returns unauthorized: Confirm you’re logged in as the same user who published (author).
+If update from investor returns unauthorized: Confirm the edit request status became approved (panel refresh or GET /api/published_models/<id>/requests).
+If run endpoint rejects function not allowed: Confirm allowed_functions array includes that function via update.
+Optional Improvement (future):
+
+Modify publishModel() JS to prompt for allowed functions and send them with initial publish (add allowed_functions array to body).
+Show editor visibility and a quick button to add default allowed functions from introspection.
+Let me know if you want me to patch the publishModel() call to include allowed functions or add an investor run convenience panel.

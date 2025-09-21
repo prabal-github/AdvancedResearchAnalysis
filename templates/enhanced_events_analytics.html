@@ -1,0 +1,1649 @@
+{% extends 'base.html' %}
+{% block title %}Enhanced Predictive Events Analytics{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div id="enhanced-events-root" class="container-fluid py-3">
+  <style>
+    /* Enhanced Theme with Professional Dashboard Styling */
+    :root {
+      --primary-blue: #272bab;
+      --accent-gold: #5f5b00;
+      --medium-purple: #9b82e1;
+      --dark-green: #2c3300;
+      --success-green: #28a745;
+      --warning-orange: #fd7e14;
+      --danger-red: #dc3545;
+      --info-blue: #17a2b8;
+      --light-gray: #f8f9fa;
+      --dark-gray: #343a40;
+    }
+
+    body {
+      background: linear-gradient(135deg, rgba(39, 43, 171, 0.05) 0%, rgba(155, 130, 225, 0.1) 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(155, 130, 225, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(39, 43, 171, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(39, 43, 171, 0.15);
+    }
+
+    .card-header-enhanced {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--medium-purple) 100%);
+      color: white;
+      border-radius: 16px 16px 0 0;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      border: none;
+    }
+
+    .metric-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.9) 100%);
+      border: 1px solid rgba(155, 130, 225, 0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(39, 43, 171, 0.1);
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prediction-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-left: 4px solid var(--primary-blue);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .prediction-card:hover {
+      border-left-color: var(--medium-purple);
+      box-shadow: 0 4px 15px rgba(39, 43, 171, 0.1);
+    }
+
+    .probability-bar {
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .probability-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success-green) 0%, var(--warning-orange) 50%, var(--danger-red) 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .model-recommendation {
+      background: rgba(40, 167, 69, 0.1);
+      border: 1px solid rgba(40, 167, 69, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+    }
+
+    .model-recommendation.risk {
+      background: rgba(253, 126, 20, 0.1);
+      border-color: rgba(253, 126, 20, 0.3);
+    }
+
+    .model-recommendation.hybrid {
+      background: rgba(23, 162, 184, 0.1);
+      border-color: rgba(23, 162, 184, 0.3);
+    }
+
+    .alert-item {
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-pills-enhanced .nav-link {
+      background: transparent;
+      border: 2px solid var(--primary-blue);
+      color: var(--primary-blue);
+      font-weight: 600;
+      border-radius: 25px;
+      margin-right: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-pills-enhanced .nav-link.active {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--medium-purple) 100%);
+      border-color: var(--medium-purple);
+      color: white;
+    }
+
+    .event-item {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border-left: 4px solid #dee2e6;
+      transition: all 0.3s ease;
+    }
+
+    .event-item:hover {
+      border-left-color: var(--primary-blue);
+      box-shadow: 0 4px 15px rgba(39, 43, 171, 0.1);
+    }
+
+    .event-item.high-impact {
+      border-left-color: var(--danger-red);
+    }
+
+    .event-item.medium-impact {
+      border-left-color: var(--warning-orange);
+    }
+
+    .event-item.low-impact {
+      border-left-color: var(--success-green);
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(39, 43, 171, 0.08);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+
+    .status-indicator.online {
+      background: var(--success-green);
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.offline {
+      background: var(--danger-red);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary-blue);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .confidence-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .confidence-high {
+      background: rgba(40, 167, 69, 0.2);
+      color: var(--success-green);
+    }
+
+    .confidence-medium {
+      background: rgba(253, 126, 20, 0.2);
+      color: var(--warning-orange);
+    }
+
+    .confidence-low {
+      background: rgba(220, 53, 69, 0.2);
+      color: var(--danger-red);
+    }
+
+    /* Sentiment chips */
+    .sentiment-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+      background: #e9ecef;
+      color: #495057;
+    }
+    .sentiment-positive { background: rgba(40,167,69,0.15); color: var(--success-green); }
+    .sentiment-neutral { background: rgba(23,162,184,0.15); color: var(--info-blue); }
+    .sentiment-negative { background: rgba(220,53,69,0.15); color: var(--danger-red); }
+
+    /* Calibration panel */
+    #reliabilityChart { height: 320px; }
+    .calibration-metric { font-size: 1.25rem; font-weight: 600; }
+    .calibration-badge { font-size: 0.75rem; }
+  </style>
+
+  <!-- Header Section -->
+  {% include 'partials/_brand_header.html' %}
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+      <h2 class="mb-0 me-3"><i class="fas fa-chart-bar"></i> Enhanced Predictive Analytics Dashboard</h2>
+      <span class="status-indicator online"></span>
+      <small class="text-muted">Live Data</small>
+  <span id="analyzerModeBadge" class="badge bg-secondary ms-2" title="Indicates which analytics engine provided data">mode?</span>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- Authentication Section -->
+      {% if not is_authenticated %}
+      <div class="btn-group me-3" role="group" aria-label="Login Options">
+        <a href="/investor_login" class="btn btn-success btn-sm">
+          <i class="fas fa-user-tie"></i> Investor Login
+        </a>
+        <a href="/analyst_login" class="btn btn-info btn-sm">
+          <i class="fas fa-chart-line"></i> Analyst Login
+        </a>
+      </div>
+      {% else %}
+      <div class="me-3">
+        <span class="badge bg-success">
+          <i class="fas fa-check-circle"></i> Logged In
+        </span>
+      </div>
+      {% endif %}
+      
+      <!-- Navigation Buttons -->
+      <button id="refreshBtn" class="btn btn-outline-primary btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
+  <div class="btn-group btn-group-sm" role="group" aria-label="Model badge toggles">
+    <button id="toggleModelsBtn" class="btn btn-outline-dark"><i class="fas fa-brain"></i> Models: On</button>
+  <button id="modelModeBasicBtn" class="btn btn-outline-primary active" title="Show only high-signal model badges">Basic</button>
+  <button id="modelModeAllBtn" class="btn btn-outline-secondary" title="Show all (including lower-score) matches">All</button>
+  <button id="modelModeTooltipBtn" class="btn btn-outline-secondary" title="Compact icon with tooltip list">Tooltip</button>
+  </div>
+      <!-- hAi-Edge Portfolios temporarily disabled -->
+      <!-- <a href="/hai_edge_event_portfolios" class="btn btn-success btn-sm"><i class="fas fa-robot"></i> hAi-Edge Portfolios</a> -->
+      <a href="/" class="btn btn-primary btn-sm"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+
+  <!-- Summary Metrics Row -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="metric-value" id="todayEvents">0</div>
+        <div class="metric-label">Today's Events</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="metric-value" id="highImpactEvents">0</div>
+        <div class="metric-label">High Impact</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="metric-value" id="predictedEvents">0</div>
+        <div class="metric-label">Predicted Events</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="metric-value" id="marketVolatility">--</div>
+        <div class="metric-label">VIX Level</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <ul class="nav nav-pills nav-pills-enhanced mb-4" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview-pane">
+        <i class="fas fa-chart-pie"></i> Overview
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="predictions-tab" data-bs-toggle="pill" data-bs-target="#predictions-pane">
+        <i class="fas fa-crystal-ball"></i> Predictions
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="calibration-tab" data-bs-toggle="pill" data-bs-target="#calibration-pane">
+        <i class="fas fa-bullseye"></i> Calibration
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="models-tab" data-bs-toggle="pill" data-bs-target="#models-pane">
+        <i class="fas fa-robot"></i> ML Models
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" data-bs-target="#analytics-pane">
+        <i class="fas fa-chart-line"></i> Analytics
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="alerts-tab" data-bs-toggle="pill" data-bs-target="#alerts-pane">
+        <i class="fas fa-exclamation-triangle"></i> Alerts
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    
+    <!-- Overview Tab -->
+    <div class="tab-pane fade show active" id="overview-pane">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-broadcast-tower"></i> Live Events & News Feed</h5>
+            </div>
+            <div class="card-body">
+              <div id="liveEventsList" style="max-height: 400px; overflow-y: auto;">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-crosshairs"></i> Market Context</h5>
+            </div>
+            <div class="card-body">
+              <div id="marketContext">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Event Patterns</h5>
+            </div>
+            <div class="card-body">
+              <div id="eventPatterns">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Predictions Tab -->
+    <div class="tab-pane fade" id="predictions-pane">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="dashboard-card">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-crystal-ball"></i> Upcoming Event Predictions</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <label class="form-label">Prediction Window:</label>
+                  <select id="predictionWindow" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                    <option value="3">Next 3 Days</option>
+                    <option value="7" selected>Next 7 Days</option>
+                    <option value="14">Next 14 Days</option>
+                    <option value="30">Next 30 Days</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Min Impact:</label>
+                  <select id="minImpact" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                    <option value="1">All Events</option>
+                    <option value="2" selected>Medium+</option>
+                    <option value="3">High+</option>
+                    <option value="4">Critical</option>
+                  </select>
+                </div>
+              </div>
+              <div id="predictionsList">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4">
+          <div class="dashboard-card">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-chart-line"></i> Prediction Accuracy</h5>
+            </div>
+            <div class="card-body">
+              <div id="predictionAccuracy">
+                <div class="text-center mb-3">
+                  <div class="metric-value" style="font-size: 2rem;">87%</div>
+                  <div class="metric-label">Overall Accuracy</div>
+                </div>
+                <div class="mb-2">
+                  <small class="text-muted">Last 30 Days Performance</small>
+                  <div class="progress">
+                    <div class="progress-bar bg-success" style="width: 87%"></div>
+                  </div>
+                </div>
+                <div class="small text-muted">
+                  • High Impact: 92% accuracy<br>
+                  • Medium Impact: 85% accuracy<br>
+                  • Low Impact: 78% accuracy
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calibration Tab -->
+    <div class="tab-pane fade" id="calibration-pane">
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-bullseye"></i> Reliability Diagram</h5>
+            </div>
+            <div class="card-body">
+              <div id="reliabilityChart"><div class="loading-spinner"></div></div>
+              <small class="text-muted">Shows how predicted probabilities align with actual occurrence rates. Perfect calibration lies on the 45° line.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Calibration Metrics</h5>
+            </div>
+            <div class="card-body" id="calibrationStats">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-tools"></i> Model Version</h5>
+            </div>
+            <div class="card-body" id="modelVersionInfo">
+              <small class="text-muted">Loading...</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ML Models Tab -->
+    <div class="tab-pane fade" id="models-pane">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-bullseye"></i> Alpha Generation Models</h5>
+            </div>
+            <div class="card-body">
+              <div id="alphaModels">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0">🛡️ Risk Management Models</h5>
+            </div>
+            <div class="card-body">
+              <div id="riskModels">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="card-header-enhanced">
+          <h5 class="mb-0">🔗 Hybrid Models (Alpha + Risk)</h5>
+        </div>
+        <div class="card-body">
+          <div id="hybridModels">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div class="tab-pane fade" id="analytics-pane">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="chart-container">
+            <h5><i class="fas fa-chart-bar"></i> Events Timeline & Impact Analysis</h5>
+            <div id="eventsChart" style="height: 300px;"></div>
+          </div>
+          
+          <div class="chart-container">
+            <h5><i class="fas fa-chart-line"></i> Market Performance vs Events</h5>
+            <div id="marketChart" style="height: 300px;"></div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4">
+          <div class="dashboard-card mb-4">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-brain"></i> AI Insights</h5>
+            </div>
+            <div class="card-body">
+              <div id="aiInsights">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="card-header-enhanced">
+              <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Statistics</h5>
+            </div>
+            <div class="card-body">
+              <div id="analyticsStats">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts Tab -->
+    <div class="tab-pane fade" id="alerts-pane">
+      <div class="dashboard-card">
+        <div class="card-header-enhanced">
+          <h5 class="mb-0">🚨 Real-time Alerts & Notifications</h5>
+        </div>
+        <div class="card-body">
+          <div id="alertsList">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Model Details Modal -->
+<div class="modal fade" id="modelModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Model Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modelModalBody">
+        <!-- Model details will be populated here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        {% if is_authenticated %}
+        <button type="button" class="btn btn-primary" id="implementModelBtn">Implement Model</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Updated to explicit Plotly version to avoid deprecated latest alias -->
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<script>
+class EnhancedEventsAnalytics {
+  constructor() {
+    this.dashboardData = null;
+    this.refreshInterval = null;
+  this.showModelBadges = true;
+  this.modelBadgeMode = 'basic'; // basic | all | tooltip
+  this.minModelScore = 0.28;
+    this.init();
+  }
+
+  async init() {
+    console.log('[EventsUI] Init: loading proxy fallback first');
+    await this.loadFallbackData();
+    this.tryEnhancedUpgrade();
+    this.setupEventListeners();
+    this.startAutoRefresh();
+    this.renderDashboard();
+  // Preload calibration if tab present
+  this.loadCalibrationData();
+  // Advanced model matching for predictions (async; enrich after initial render)
+  setTimeout(()=>this.fetchAdvancedModelMatches(), 800);
+  }
+
+  async tryEnhancedUpgrade() {
+    try {
+      const controller = new AbortController();
+      const to = setTimeout(()=>controller.abort(), 4000);
+      const resp = await fetch('/api/enhanced/market_dashboard', {signal: controller.signal});
+      clearTimeout(to);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data?.live_events?.events) {
+          const incomingMode = data.analyzer_mode || 'unknown';
+          const incomingCount = data.live_events.events.length;
+          const currentCount = this.dashboardData?.live_events?.events?.length || 0;
+          // If analyzer is stub and has fewer events than proxy fallback, merge instead of replace
+          if (incomingMode === 'stub' && incomingCount < currentCount) {
+            console.log('[EventsUI] Keeping richer proxy events; merging stub predictions/models');
+            // Merge predictions and model recommendations if present
+            if (data.predictions) this.dashboardData.predictions = data.predictions;
+            if (data.model_recommendations) this.dashboardData.model_recommendations = data.model_recommendations;
+            this.dashboardData.analyzer_mode = 'proxy+stub';
+            this.updateAnalyzerModeBadge();
+          } else {
+            console.log('[EventsUI] Enhanced upgrade applied (mode:', incomingMode, ', events:', incomingCount, ')');
+            // Replace but keep fallback if enhanced has strictly more events or is full
+            this.dashboardData = {
+              ...data,
+              analyzer_mode: incomingMode
+            };
+            this.renderLiveEvents();
+            this.renderSummaryMetrics();
+            this.updateAnalyzerModeBadge();
+          }
+        } else {
+          console.log('[EventsUI] Enhanced empty, keeping fallback');
+        }
+      } else {
+        console.log('[EventsUI] Enhanced API not ready (status', resp.status, ')');
+      }
+    } catch(e) {
+      console.log('[EventsUI] Enhanced fetch skipped:', e.message);
+    }
+  }
+
+  async loadFallbackData() {
+    try {
+  // Use server-side proxy that aggregates and normalizes
+  const proxyResp = await fetch('/api/proxy/events_news');
+  if (!proxyResp.ok) throw new Error('Proxy fetch failed');
+  const proxyData = await proxyResp.json();
+  const combined = proxyData.items || [];
+      this.dashboardData = {
+        summary: {
+          total_events_today: combined.length,
+          high_impact_events: combined.filter(x=>x.impact==='high').length,
+          predicted_events: 0,
+          market_volatility: 'N/A'
+        },
+        live_events: { events: combined, count: combined.length },
+        predictions: { upcoming_events: proxyData.predictions || [], prediction_count: (proxyData.predictions||[]).length },
+        patterns: { insights: ['Live external API fallback mode'] },
+        model_recommendations: { models: proxyData.model_recommendations || [] },
+        market_context: { indices: {}, vix: proxyData.vix || null },
+        charts: {},
+        alerts: [],
+        analyzer_mode: 'proxy'
+      };
+      this.updateAnalyzerModeBadge();
+    } catch (error) {
+      console.error('Error loading fallback data:', error);
+      this.dashboardData = this.createEmptyDashboard();
+    }
+  }
+
+  createEmptyDashboard() {
+    return {
+      summary: { total_events_today: 0, high_impact_events: 0, predicted_events: 0, market_volatility: 'N/A' },
+      live_events: { events: [], count: 0 },
+      predictions: { upcoming_events: [], prediction_count: 0 },
+      patterns: { insights: ['No data available'] },
+      model_recommendations: {},
+      market_context: { indices: {} },
+      charts: {},
+      alerts: []
+    };
+  }
+
+  renderDashboard() {
+    this.renderSummaryMetrics();
+    this.renderLiveEvents();
+    this.renderPredictions();
+  this.renderMarketContext();
+    this.renderEventPatterns();
+    this.renderAlerts();
+    this.renderCharts();
+  this.renderModelRecommendations();
+  this.renderFullModelCatalog();
+  this.updateAnalyzerModeBadge();
+  }
+
+  renderSummaryMetrics() {
+    const summary = this.dashboardData.summary || {};
+    
+    document.getElementById('todayEvents').textContent = summary.total_events_today || 0;
+    document.getElementById('highImpactEvents').textContent = summary.high_impact_events || 0;
+    document.getElementById('predictedEvents').textContent = summary.predicted_events || 0;
+    document.getElementById('marketVolatility').textContent = summary.market_volatility || '--';
+  }
+
+  renderLiveEvents() {
+    const container = document.getElementById('liveEventsList');
+    const events = this.dashboardData.live_events?.events || [];
+    
+    if (events.length === 0) {
+      container.innerHTML = '<p class="text-muted">No events available</p>';
+      return;
+    }
+
+    const eventsHtml = events.slice(0, 10).map(event => {
+      const impact = event.impact || 2;
+      const impactClass = impact >= 4 ? 'high-impact' : impact >= 3 ? 'medium-impact' : 'low-impact';
+      const impactBadge = impact >= 4 ? 'danger' : impact >= 3 ? 'warning' : 'success';
+      
+      return `
+        <div class="event-item ${impactClass}" data-event-id="${event.id || ''}">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h6 class="mb-1">${event.title || 'Untitled Event'}</h6>
+            <span class="badge bg-${impactBadge}">Impact ${impact}</span>
+          </div>
+          <p class="mb-2 small text-muted">${(event.description || '').substring(0, 120)}...</p>
+          ${this.renderModelBadges(event.matched_models_details, 'event')}
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="fas fa-calendar"></i> ${this.formatEventTime(event.published_at)}
+              ${event.category ? `• <i class="fas fa-tag"></i> ${event.category}` : ''}
+            </small>
+            <button class="btn btn-sm btn-outline-primary analyze-event-btn" data-event='${JSON.stringify(event)}'>
+              <i class="fas fa-search"></i> Analyze
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    container.innerHTML = eventsHtml;
+    
+    // Add event listeners for analyze buttons
+    container.querySelectorAll('.analyze-event-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const eventData = JSON.parse(e.target.dataset.event);
+        this.analyzeEvent(eventData);
+      });
+    });
+    container.querySelectorAll('.show-all-models').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        try {
+          const hidden = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-hidden')));
+          const parent = e.currentTarget.closest('.small');
+          if(parent){
+            const extra = hidden.map(m=>`<span class='badge bg-secondary me-1' data-score='${m.score}' title='score ${m.score}\n${(m.reasons||[]).join(', ')}'>${m.model}</span>`).join('');
+            e.currentTarget.outerHTML = extra; // replace button with badges
+          }
+        } catch(_){ }
+      });
+    });
+  }
+
+  renderPredictions() {
+    const container = document.getElementById('predictionsList');
+  const predictions = this.dashboardData.predictions?.upcoming_events || [];
+  const catalog = this.dashboardData.model_catalog || [];
+    // Explicit mapping model -> regex patterns (mirrors backend KEYWORD_MAP)
+    const modelPatterns = [
+      {model:'Macro Inflation Nowcast Model', re: /(cpi|inflation|price)/i},
+      {model:'Policy Rate Decision Impact Model', re: /(fed|fomc|rbi|policy rate|central bank)/i},
+      {model:'Earnings Surprise Gradient Booster', re: /(earnings|results|quarterly|q[1-4])/i},
+      {model:'Commodity Shock Spillover Model', re: /(oil|brent|crude|energy)/i},
+      {model:'Labor Market Momentum Model', re: /(jobless|employment|unemployment|payrolls|claims)/i},
+      {model:'Growth Cycle Phase Classifier', re: /(gdp|growth|pmi)/i},
+      {model:'Volatility Regime Classifier', re: /(volatility|vix|fear index)/i},
+      {model:'Options Skew Arbitrage Model', re: /(skew|gamma|option)/i},
+    ];
+    
+    if (predictions.length === 0) {
+      container.innerHTML = '<p class="text-muted">No predictions available</p>';
+      return;
+    }
+
+    const predictionsHtml = predictions.map(prediction => {
+      const probability = (prediction.probability * 100).toFixed(1);
+      const confidence = this.getConfidenceClass(prediction.confidence);
+      // Simple related models heuristic: match sentiment/keywords in title/description
+  const text = (prediction.title || prediction.description || '');
+  const relatedNames = modelPatterns.filter(mp=> mp.re.test(text)).map(mp=> mp.model);
+  const related = catalog.filter(m=> relatedNames.includes(m.model)).slice(0,4);
+      const factors = (prediction.probability_factors || []).map(f=>`
+        <tr>
+          <td>${f.name}</td>
+          <td>${f.value?.toFixed ? f.value.toFixed(3) : f.value}</td>
+          <td>${f.weight?.toFixed ? f.weight.toFixed(3) : f.weight}</td>
+          <td>${f.contribution?.toFixed ? f.contribution.toFixed(3) : f.contribution}</td>
+          <td class="small text-muted">${f.description || ''}</td>
+        </tr>
+      `).join('');
+      return `
+        <div class="prediction-card">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <h6 class="mb-1">📅 ${prediction.scheduled_time || prediction.date || ''}</h6>
+              <p class="mb-1 small">${prediction.title || prediction.description || ''}
+                ${prediction.sentiment ? `<span class="sentiment-chip sentiment-${prediction.sentiment}">${prediction.sentiment}</span>` : ''}
+              </p>
+              ${this.renderModelBadges(prediction.matched_models_details, 'prediction')}
+            </div>
+            <span class="confidence-badge confidence-${confidence}">
+              ${(prediction.confidence * 100).toFixed(0)}% confident
+            </span>
+          </div>
+          <div class="probability-bar">
+            <div class="probability-fill" style="width: ${probability}%"></div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <small class="text-muted">
+              Probability: ${probability}% • Impact: ${prediction.predicted_impact}/5
+            </small>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-success get-models-btn" data-prediction='${JSON.stringify(prediction)}'>🤖 Models</button>
+              <button class="btn btn-sm btn-outline-secondary factors-toggle-btn" data-event-id="${prediction.event_id}">ℹ️ Factors</button>
+            </div>
+          </div>
+          <div class="factors-panel collapse" id="factors-${prediction.event_id}">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr><th>Factor</th><th>Value</th><th>Weight</th><th>Contribution</th><th>Note</th></tr>
+                </thead>
+                <tbody>${factors || '<tr><td colspan="5" class="text-muted">No factor data</td></tr>'}</tbody>
+              </table>
+            </div>
+            ${related.length ? `<div class="mt-2 small related-models" data-event-id="${prediction.event_id}"><strong>Related Models:</strong> ${related.map(r=>`<span class='badge bg-info text-dark me-1'>${r.model}</span>`).join('')}</div>`:''}
+            <div class="mt-1 small adv-related" id="adv-related-${prediction.event_id}"></div>
+          </div>
+        </div>`;
+    }).join('');
+    
+    container.innerHTML = predictionsHtml;
+    
+    // Add event listeners for model recommendation buttons
+    container.querySelectorAll('.get-models-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const predictionData = JSON.parse(e.target.dataset.prediction);
+        this.getModelRecommendations(predictionData);
+      });
+    });
+    container.querySelectorAll('.factors-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', (e)=>{
+        const id = e.currentTarget.getAttribute('data-event-id');
+        const panel = document.getElementById('factors-'+id);
+        if(panel){
+          panel.classList.toggle('show');
+          if(panel.classList.contains('show') && !panel.dataset.loaded){
+            fetch(`/api/probability/explain?event_id=${id}`).then(r=>r.json()).then(data=>{
+              if(data.factors){
+                const tbody = panel.querySelector('tbody');
+                tbody.innerHTML = data.factors.map(f=>`<tr><td>${f.name}</td><td>${f.value}</td><td>${f.weight}</td><td>${f.contribution}</td><td class='small text-muted'>${f.description||''}</td></tr>`).join('');
+                panel.dataset.loaded = '1';
+              }
+            }).catch(()=>{});
+          }
+        }
+      });
+    });
+    container.querySelectorAll('.show-all-models').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        try {
+          const hidden = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-hidden')));
+          const parent = e.currentTarget.closest('.small');
+            if(parent){
+              const extra = hidden.map(m=>`<span class='badge bg-secondary me-1' data-score='${m.score}' title='score ${m.score}\n${(m.reasons||[]).join(', ')}'>${m.model}</span>`).join('');
+              e.currentTarget.outerHTML = extra;
+            }
+        } catch(_){ }
+      });
+    });
+  }
+
+  renderMarketContext() {
+    const container = document.getElementById('marketContext');
+  const context = this.dashboardData.market_context || {};
+  const indices = context.indices || {};
+  const vix = context.vix || null;
+    
+    let contextHtml = '';
+    
+    if (vix && vix.level) {
+      const vixClass = vix.level > 20 ? 'danger' : vix.level > 15 ? 'warning' : 'success';
+      contextHtml += `<div class="d-flex justify-content-between align-items-center py-2 border-bottom"><span><strong>India VIX</strong></span><span class="badge bg-${vixClass}">${vix.level.toFixed(2)}</span></div>`;
+      if (Array.isArray(vix.series) && vix.series.length) {
+        contextHtml += `<small class="text-muted d-block mb-2">Last closes: ${vix.series.map(x=>x.toFixed(1)).join(', ')}</small>`;
+      }
+    }
+    if (Object.keys(indices).length > 0) {
+      contextHtml += '<h6><i class="fas fa-chart-bar"></i> Market Indices</h6>';
+      Object.entries(indices).forEach(([symbol, data]) => {
+        const changeColor = data.change_pct >= 0 ? 'success' : 'danger';
+        const changeIcon = data.change_pct >= 0 ? '<i class="fas fa-arrow-up"></i>' : '<i class="fas fa-arrow-down"></i>';
+        
+        contextHtml += `
+          <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+            <span><strong>${symbol.replace('^', '')}</strong></span>
+            <span class="text-${changeColor}">
+              ${changeIcon} ${data.change_pct?.toFixed(2) || 0}%
+            </span>
+          </div>
+        `;
+      });
+    } else {
+      contextHtml = '<p class="text-muted">Market data not available</p>';
+    }
+    
+    // Add risk indicators if available
+    const riskIndicators = context.risk_indicators || {};
+    if (Object.keys(riskIndicators).length > 0) {
+      contextHtml += '<h6 class="mt-3">⚠️ Risk Indicators</h6>';
+      if (riskIndicators.vix_level) {
+        const vixClass = riskIndicators.vix_level > 30 ? 'danger' : 
+                        riskIndicators.vix_level > 20 ? 'warning' : 'success';
+        contextHtml += `
+          <div class="d-flex justify-content-between align-items-center py-2">
+            <span>VIX Level</span>
+            <span class="badge bg-${vixClass}">${riskIndicators.vix_level.toFixed(1)}</span>
+          </div>
+        `;
+      }
+      if (riskIndicators.market_trend) {
+        const trendIcon = riskIndicators.market_trend === 'bullish' ? '🐂' : 
+                         riskIndicators.market_trend === 'bearish' ? '🐻' : '⚖️';
+        contextHtml += `
+          <div class="d-flex justify-content-between align-items-center py-2">
+            <span>Market Trend</span>
+            <span>${trendIcon} ${riskIndicators.market_trend}</span>
+          </div>
+        `;
+      }
+    }
+    
+    container.innerHTML = contextHtml;
+  }
+
+  renderModelRecommendations() {
+    const container = document.getElementById('aiInsights');
+    const triggered = this.dashboardData.model_recommendations || [];
+    const catalog = this.dashboardData.model_catalog || [];
+    if(!catalog.length && !triggered.length){
+      container.innerHTML = '<p class="text-muted">No model data</p>';
+      return;
+    }
+    const triggeredSet = new Set(triggered.map(m=>m.model));
+    const list = catalog.length ? catalog : triggered;
+    container.innerHTML = list.map(m=>`
+      <div class="mb-2 p-2 border rounded small model-card ${triggeredSet.has(m.model)?'border-success':''}" data-model='${JSON.stringify(m)}'>
+        <strong>${m.model}</strong> ${triggeredSet.has(m.model)?'<span class="badge bg-success ms-1">Triggered</span>':'<span class="badge bg-secondary ms-1">Idle</span>'}<br/>
+        <span class="text-muted">${m.why || m.trigger_reason || ''}</span><br/>
+        <small>Alpha: ${m.alpha_potential} • Risk Mitigation: ${m.risk_mitigation}</small>
+      </div>`).join('');
+    // attach click handlers for detail modal
+    container.querySelectorAll('.model-card').forEach(card=>{
+      card.addEventListener('click', (e)=>{
+        try { const data = JSON.parse(card.getAttribute('data-model')); this.showModelDetail(data);} catch(_){}
+      });
+    });
+  }
+
+  renderEventPatterns() {
+    const container = document.getElementById('eventPatterns');
+    const patterns = this.dashboardData.patterns || {};
+    const insights = patterns.insights || ['No insights available'];
+    
+    let patternsHtml = '<h6>🧠 Key Insights</h6>';
+    insights.forEach(insight => {
+      patternsHtml += `<p class="small mb-2">• ${insight}</p>`;
+    });
+    
+    container.innerHTML = patternsHtml;
+  }
+
+  renderAlerts() {
+    const container = document.getElementById('alertsList');
+    const alerts = this.dashboardData.alerts || [];
+    
+    if (alerts.length === 0) {
+      container.innerHTML = '<p class="text-muted">No active alerts</p>';
+      return;
+    }
+
+    const alertsHtml = alerts.map(alert => {
+      const alertClass = alert.severity === 'danger' ? 'danger' : 
+                        alert.severity === 'warning' ? 'warning' : 'info';
+      const alertIcon = alert.severity === 'danger' ? '🚨' : 
+                       alert.severity === 'warning' ? '⚠️' : 'ℹ️';
+      
+      return `
+        <div class="alert alert-${alertClass} alert-item">
+          <div class="d-flex align-items-center">
+            <span class="me-2">${alertIcon}</span>
+            <div>
+              <strong>${alert.type.replace('_', ' ').toUpperCase()}</strong>
+              <p class="mb-0">${alert.message}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    container.innerHTML = alertsHtml;
+  }
+
+  renderCharts() {
+    // Render charts using Plotly
+    this.renderEventsChart();
+    this.renderMarketChart();
+  this.renderReliabilityChart();
+  }
+
+  renderEventsChart() {
+    const chartData = this.dashboardData.charts?.events_timeline;
+    if (!chartData || !document.getElementById('eventsChart')) return;
+    
+    const trace = {
+      x: chartData.x,
+      y: chartData.y,
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'Events Count',
+      line: { color: '#272bab', width: 3 },
+      marker: { size: 8 }
+    };
+    
+    const layout = {
+      title: false,
+      xaxis: { title: 'Hour of Day' },
+      yaxis: { title: 'Event Count' },
+      margin: { t: 20, r: 20, b: 40, l: 40 },
+      showlegend: false
+    };
+    
+    Plotly.newPlot('eventsChart', [trace], layout, { responsive: true });
+  }
+
+  renderMarketChart() {
+    const chartData = this.dashboardData.charts?.market_performance;
+    if (!chartData || !document.getElementById('marketChart')) return;
+    
+    const trace = {
+      x: chartData.x,
+      y: chartData.y,
+      type: 'bar',
+      name: 'Market Performance',
+      marker: {
+        color: chartData.y.map(val => val >= 0 ? '#28a745' : '#dc3545')
+      }
+    };
+    
+    const layout = {
+      title: false,
+      xaxis: { title: 'Index' },
+      yaxis: { title: 'Change (%)' },
+      margin: { t: 20, r: 20, b: 40, l: 40 },
+      showlegend: false
+    };
+    
+    Plotly.newPlot('marketChart', [trace], layout, { responsive: true });
+  }
+
+  setupEventListeners() {
+    // Refresh button
+    document.getElementById('refreshBtn')?.addEventListener('click', () => {
+      this.refresh();
+    });
+    
+    // Export button
+    document.getElementById('exportBtn')?.addEventListener('click', () => {
+      this.exportData();
+    });
+    document.getElementById('toggleModelsBtn')?.addEventListener('click', ()=>{
+      this.showModelBadges = !this.showModelBadges;
+      const btn = document.getElementById('toggleModelsBtn');
+      if(btn) btn.textContent = this.showModelBadges ? '🧠 Models: On' : '🧠 Models: Off';
+      this.renderLiveEvents();
+      this.renderPredictions();
+    });
+    document.getElementById('modelModeBasicBtn')?.addEventListener('click', ()=>{
+      this.modelBadgeMode = 'basic';
+      document.getElementById('modelModeBasicBtn').classList.add('active');
+      document.getElementById('modelModeAllBtn').classList.remove('active');
+      this.renderLiveEvents();
+      this.renderPredictions();
+    });
+    document.getElementById('modelModeAllBtn')?.addEventListener('click', ()=>{
+      this.modelBadgeMode = 'all';
+      document.getElementById('modelModeAllBtn').classList.add('active');
+      document.getElementById('modelModeBasicBtn').classList.remove('active');
+      document.getElementById('modelModeTooltipBtn').classList.remove('active');
+      this.renderLiveEvents();
+      this.renderPredictions();
+    });
+    document.getElementById('modelModeTooltipBtn')?.addEventListener('click', ()=>{
+      this.modelBadgeMode = 'tooltip';
+      document.getElementById('modelModeTooltipBtn').classList.add('active');
+      document.getElementById('modelModeAllBtn').classList.remove('active');
+      document.getElementById('modelModeBasicBtn').classList.remove('active');
+      this.renderLiveEvents();
+      this.renderPredictions();
+    });
+    
+    // Prediction window change
+    document.getElementById('predictionWindow')?.addEventListener('change', (e) => {
+      this.updatePredictions(parseInt(e.target.value));
+    });
+    
+    // Min impact change
+    document.getElementById('minImpact')?.addEventListener('change', (e) => {
+      this.filterPredictions(parseInt(e.target.value));
+    });
+  }
+
+  renderModelBadges(list, kind){
+    if(!this.showModelBadges) return '';
+    if(!Array.isArray(list) || !list.length) return '';
+    if(this.modelBadgeMode === 'tooltip'){
+      const tooltip = list.map(m=>`${m.model} (${m.score})`).join('\n');
+      return `<div class='small mb-2'><span class='badge bg-dark' title='${tooltip}'>🧠 ${list.length} models</span></div>`;
+    }
+    let items = list;
+    if(this.modelBadgeMode === 'basic'){
+      const high = list.filter(m=> (m.score||0) >= this.minModelScore);
+      if(high.length){
+        items = high;
+      }
+    }
+    const hidden = this.modelBadgeMode==='basic' ? list.filter(m=> (m.score||0) < this.minModelScore) : [];
+    const badges = items.map(m=>`<span class='badge bg-dark me-1' data-score='${m.score}' title='score ${m.score}\n${(m.reasons||[]).join(', ')}'>${m.model}</span>`).join('');
+    const moreBtn = hidden.length ? `<button class='btn btn-link btn-sm p-0 ms-1 show-all-models' data-kind='${kind}' data-hidden='${encodeURIComponent(JSON.stringify(hidden))}'>+${hidden.length} more</button>`:'';
+    return `<div class='small mb-2'><strong>Models:</strong> ${badges}${moreBtn}</div>`;
+  }
+
+  startAutoRefresh() {
+    // Refresh every 5 minutes
+    this.refreshInterval = setInterval(() => {
+      this.refresh();
+    }, 5 * 60 * 1000);
+  }
+
+  async refresh() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+      refreshBtn.innerHTML = '🔄 Refreshing...';
+      refreshBtn.disabled = true;
+    }
+    // Always refresh via proxy first
+    await this.loadFallbackData();
+    this.tryEnhancedUpgrade();
+    this.renderDashboard();
+  this.loadCalibrationData();
+    
+    if (refreshBtn) {
+      refreshBtn.innerHTML = '🔄 Refresh';
+      refreshBtn.disabled = false;
+    }
+  }
+
+  async analyzeEvent(eventData) {
+    try {
+      const response = await fetch('/api/enhanced/event_analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_id: eventData.id, text: eventData.description })
+      });
+      
+      if (response.ok) {
+        const analysis = await response.json();
+        this.showEventAnalysis(analysis);
+      } else {
+        this.showBasicEventAnalysis(eventData);
+      }
+    } catch (error) {
+      console.error('Error analyzing event:', error);
+      this.showBasicEventAnalysis(eventData);
+    }
+  }
+
+  showEventAnalysis(analysis) {
+    const modalBody = document.getElementById('modelModalBody');
+    modalBody.innerHTML = `
+      <h6><i class="fas fa-chart-bar"></i> Event Analysis</h6>
+      <div class="mb-3">
+        <strong>Impact Assessment:</strong>
+        <ul>
+          <li>Level: ${analysis.impact_analysis?.level || 'Unknown'}/5</li>
+          <li>Category: ${analysis.impact_analysis?.category || 'Unknown'}</li>
+          <li>Duration: ${analysis.impact_analysis?.estimated_duration || 'Unknown'}</li>
+        </ul>
+      </div>
+      
+      <h6>🤖 Recommended Models</h6>
+      <div class="row">
+        ${this.renderModelRecommendationsModal(analysis.model_recommendations)}
+      </div>
+      
+      <h6>⚠️ Risk Assessment</h6>
+      <div class="alert alert-info">
+        ${JSON.stringify(analysis.risk_assessment || {}, null, 2)}
+      </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modelModal'));
+  modal.show();
+  }
+
+  showBasicEventAnalysis(eventData) {
+    const modalBody = document.getElementById('modelModalBody');
+    modalBody.innerHTML = `
+      <h6><i class="fas fa-chart-bar"></i> Basic Event Analysis</h6>
+      <p><strong>Title:</strong> ${eventData.title}</p>
+      <p><strong>Description:</strong> ${eventData.description}</p>
+      <p><strong>Impact:</strong> ${eventData.impact || 2}/5</p>
+      <p><strong>Category:</strong> ${eventData.category || 'Unknown'}</p>
+      
+      <div class="alert alert-info">
+        Enhanced analysis not available. Consider upgrading to premium analytics.
+      </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modelModal'));
+  modal.show();
+  }
+
+  async getModelRecommendations(predictionData) {
+    try {
+      const response = await fetch('/api/enhanced/recommend_models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(predictionData)
+      });
+      
+      if (response.ok) {
+        const recommendations = await response.json();
+        this.showModelRecommendations(recommendations);
+      } else {
+        this.showBasicModelRecommendations(predictionData);
+      }
+    } catch (error) {
+      console.error('Error getting model recommendations:', error);
+      this.showBasicModelRecommendations(predictionData);
+    }
+  }
+
+  showModelRecommendations(recommendations) {
+    const modalBody = document.getElementById('modelModalBody');
+    modalBody.innerHTML = `
+      <h6>🤖 ML Model Recommendations</h6>
+      ${this.renderModelRecommendationsModal(recommendations.recommendations)}
+      
+      <h6>📋 Implementation Guidance</h6>
+      <div class="alert alert-success">
+        <h6>Priority Models:</h6>
+        ${recommendations.implementation_guidance?.priority_models?.map(m => 
+          `<span class="badge bg-primary me-1">${m.model.name}</span>`
+        ).join('') || 'None'}
+      </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modelModal'));
+  modal.show();
+  }
+
+  renderModelRecommendationsModal(recommendations) {
+    if (!recommendations) return '<p>No recommendations available</p>';
+    
+    let html = '';
+    
+    // Alpha models
+    if (recommendations.alpha_models?.length > 0) {
+      html += '<div class="col-md-6"><h6>🎯 Alpha Models</h6>';
+      recommendations.alpha_models.forEach(model => {
+        html += `
+          <div class="model-recommendation">
+            <strong>${model.name}</strong><br>
+            <small>${model.description}</small><br>
+            <span class="badge bg-success">Expected: ${model.expected_return || 'N/A'}</span>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+    
+    // Risk models
+    if (recommendations.risk_models?.length > 0) {
+      html += '<div class="col-md-6"><h6>🛡️ Risk Models</h6>';
+      recommendations.risk_models.forEach(model => {
+        html += `
+          <div class="model-recommendation risk">
+            <strong>${model.name}</strong><br>
+            <small>${model.description}</small><br>
+            <span class="badge bg-warning">Protection: ${model.protection_level || 'N/A'}</span>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+    
+    return html;
+  }
+
+  renderFullModelCatalog() {
+    const catalog = this.dashboardData.model_catalog || [];
+    if(!catalog.length) return;
+    // Group by category
+    const byCat = catalog.reduce((acc,m)=>{(acc[m.category]=acc[m.category]||[]).push(m);return acc;},{});
+    const containerAlpha = document.getElementById('alphaModels');
+    const containerRisk = document.getElementById('riskModels');
+    const containerHybrid = document.getElementById('hybridModels');
+    const triggeredSet = new Set((this.dashboardData.model_recommendations||[]).map(m=>m.model));
+    const versions = this.dashboardData.model_version_info || {};
+    function card(m){
+      const ver = versions[m.model]?.version || '—';
+      return `<div class='model-recommendation ${m.category==='risk'?'risk':''} mb-2 model-card' data-model='${JSON.stringify(m)}'>
+        <strong>${m.model}</strong> ${triggeredSet.has(m.model)?'<span class="badge bg-success ms-1">Triggered</span>':''} <span class='badge bg-dark ms-1'>v${ver}</span><br/>
+        <small>${m.why || m.trigger_reason || ''}</small><br/>
+        <span class='badge bg-light text-dark me-1'>Alpha: ${m.alpha_potential}</span>
+        <span class='badge bg-light text-dark me-1'>Risk: ${m.risk_mitigation}</span>
+        <span class='badge bg-secondary'>${m.retrain_frequency}</span>
+      </div>`;
+    }
+    if(containerAlpha){
+      containerAlpha.innerHTML = (byCat['alpha']||[]).map(card).join('')||'<p class="text-muted">No alpha models</p>';
+    }
+    if(containerRisk){
+      containerRisk.innerHTML = (byCat['risk']||[]).map(card).join('')||'<p class="text-muted">No risk models</p>';
+    }
+    if(containerHybrid){
+      const hybrid = (byCat['macro']||[]).concat(byCat['hedge']||[]);
+      containerHybrid.innerHTML = hybrid.map(card).join('')||'<p class="text-muted">No hybrid/macro models</p>';
+    }
+    // bind modal events
+    document.querySelectorAll('#alphaModels .model-card, #riskModels .model-card, #hybridModels .model-card').forEach(card=>{
+      card.addEventListener('click', ()=>{ try { this.showModelDetail(JSON.parse(card.getAttribute('data-model')));} catch(_){} });
+    });
+  }
+
+  showModelDetail(model){
+    const modalBody = document.getElementById('modelModalBody');
+    const versions = this.dashboardData.model_version_info || {};
+    const verInfo = versions[model.model] || {};
+    modalBody.innerHTML = `
+      <h5>${model.model}</h5>
+      <p class='small text-muted mb-2'>${model.why || model.trigger_reason || ''}</p>
+      <div class='mb-2'><strong>Category:</strong> ${model.category}</div>
+      <div class='mb-2'><strong>Alpha Potential:</strong> ${model.alpha_potential} &nbsp; | &nbsp; <strong>Risk Mitigation:</strong> ${model.risk_mitigation}</div>
+      <div class='mb-2'><strong>Features:</strong> ${(model.features||[]).join(', ')}</div>
+      <div class='mb-2'><strong>Lookback Window:</strong> ${model.lookback_window} &nbsp; | &nbsp; <strong>Retrain Frequency:</strong> ${model.retrain_frequency}</div>
+      <div class='mb-2'><strong>Version Hash:</strong> <code>${verInfo.version || 'n/a'}</code></div>
+      <div class='mb-2'><strong>Generated:</strong> ${verInfo.generated_at ? new Date(verInfo.generated_at*1000).toLocaleString() : 'n/a'}</div>
+      <div class='alert alert-info small mb-0'>Click Implement Model to integrate this signal into a strategy pipeline.</div>
+    `;
+    const modal = new bootstrap.Modal(document.getElementById('modelModal'));
+    modal.show();
+  }
+
+  showBasicModelRecommendations(predictionData) {
+    const modalBody = document.getElementById('modelModalBody');
+    modalBody.innerHTML = `
+      <h6>🤖 Basic Model Suggestions</h6>
+      <p>For event with impact level ${predictionData.predicted_impact}/5:</p>
+      
+      <div class="model-recommendation">
+        <strong>Multi-Factor Alpha Model</strong><br>
+        <small>Diversified factor exposure for consistent alpha</small><br>
+        <span class="badge bg-success">Expected: 0.8-2.0%</span>
+      </div>
+      
+      <div class="model-recommendation risk">
+        <strong>Portfolio VaR Monitor</strong><br>
+        <small>Continuous portfolio risk monitoring</small><br>
+        <span class="badge bg-warning">Protection: 95%</span>
+      </div>
+      
+      <div class="alert alert-info">
+        Enhanced model recommendations available with premium analytics.
+      </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modelModal'));
+  modal.show();
+  }
+
+  async updatePredictions(days) {
+    try {
+      const response = await fetch(`/api/enhanced/predict_events?days=${days}`);
+      if (response.ok) {
+        const data = await response.json();
+        this.dashboardData.predictions = data;
+        this.renderPredictions();
+      }
+    } catch (error) {
+      console.error('Error updating predictions:', error);
+    }
+  }
+
+  filterPredictions(minImpact) {
+    // Filter current predictions by minimum impact
+    if (this.dashboardData.predictions?.upcoming_events) {
+      const filtered = this.dashboardData.predictions.upcoming_events.filter(
+        p => p.predicted_impact >= minImpact
+      );
+      
+      // Temporarily update display
+      const original = this.dashboardData.predictions.upcoming_events;
+      this.dashboardData.predictions.upcoming_events = filtered;
+      this.renderPredictions();
+      this.dashboardData.predictions.upcoming_events = original;
+    }
+  }
+
+  exportData() {
+    const data = {
+      timestamp: new Date().toISOString(),
+      dashboard_data: this.dashboardData
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `events_analytics_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  formatEventTime(timestamp) {
+    if (!timestamp) return 'Unknown time';
+    
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      
+      if (diffHours < 1) {
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        return `${diffMins}m ago`;
+      } else if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    } catch {
+      return 'Invalid time';
+    }
+  }
+
+  getConfidenceClass(confidence) {
+    if (confidence >= 0.8) return 'high';
+    if (confidence >= 0.6) return 'medium';
+    return 'low';
+  }
+
+  updateAnalyzerModeBadge() {
+    const badge = document.getElementById('analyzerModeBadge');
+    if (!badge) return;
+    const mode = this.dashboardData?.analyzer_mode || 'unknown';
+    const map = {
+      'full': {cls: 'bg-success', label: 'FULL'},
+      'stub': {cls: 'bg-warning text-dark', label: 'STUB'},
+      'proxy': {cls: 'bg-info', label: 'PROXY'},
+      'proxy+stub': {cls: 'bg-info', label: 'PROXY+STUB'},
+      'none': {cls: 'bg-secondary', label: 'NONE'},
+      'error': {cls: 'bg-danger', label: 'ERROR'}
+    };
+    const conf = map[mode] || {cls:'bg-secondary', label: mode.toUpperCase()};
+    badge.className = 'badge ms-2 ' + conf.cls;
+    badge.textContent = conf.label;
+    badge.title = 'Analyzer mode: ' + conf.label;
+  }
+
+  async loadCalibrationData() {
+    try {
+      const resp = await fetch('/api/probability/calibration');
+      if(!resp.ok) return;
+      const data = await resp.json();
+      this.calibrationData = data;
+      this.renderCalibrationStats();
+      this.renderReliabilityChart();
+  this.populateModelVersionPanel();
+    } catch(e) { console.warn('Calibration load failed', e.message); }
+  }
+
+  renderCalibrationStats() {
+    const container = document.getElementById('calibrationStats');
+    if(!container) return;
+    const d = this.calibrationData || {};
+    if(!d.brier_score && !d.total_predictions){
+      container.innerHTML = '<p class="text-muted small">No calibration data yet. As predictions accumulate and outcomes are labeled this will populate.</p>';
+      return;
+    }
+    container.innerHTML = `
+      <div class="row text-center mb-3">
+        <div class="col-4"><div class="calibration-metric">${d.brier_score?.toFixed?.(3) ?? '--'}</div><div class="small text-muted">Brier</div></div>
+        <div class="col-4"><div class="calibration-metric">${d.total_predictions || 0}</div><div class="small text-muted">Preds</div></div>
+        <div class="col-4"><div class="calibration-metric">${d.total_labeled || 0}</div><div class="small text-muted">Labeled</div></div>
+      </div>
+      <div class="mb-2 small"><strong>Trained:</strong> ${d.model_trained ? '<span class="badge bg-success calibration-badge">YES</span>' : '<span class="badge bg-secondary calibration-badge">NO</span>'}</div>
+      <div class="small text-muted mb-2">Last Retrain: ${d.last_retrain_time || 'n/a'}</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered mb-0">
+          <thead class="table-light"><tr><th>Bin</th><th>Count</th><th>Avg P</th><th>Actual</th><th>Gap</th></tr></thead>
+          <tbody>
+            ${(d.reliability_bins||[]).map(b=>`<tr><td>${b.bin_start.toFixed(2)}-${b.bin_end.toFixed(2)}</td><td>${b.count}</td><td>${(b.avg_pred||0).toFixed(2)}</td><td>${(b.actual_rate||0).toFixed(2)}</td><td>${( (b.avg_pred||0)-(b.actual_rate||0) ).toFixed(2)}</td></tr>`).join('') || '<tr><td colspan="5" class="text-muted">No bins</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  populateModelVersionPanel(){
+    const panel = document.getElementById('modelVersionInfo');
+    if(!panel) return;
+    const versions = this.dashboardData.model_version_info || {};
+    if(!Object.keys(versions).length){
+      // attempt fetch
+      fetch('/api/models/versions').then(r=>r.json()).then(v=>{
+        if(v.versions){ this.dashboardData.model_version_info = v.versions; this.populateModelVersionPanel(); }
+      }).catch(()=>{});
+      panel.innerHTML = '<small class="text-muted">No version data yet...</small>';
+      return;
+    }
+    const rows = Object.entries(versions).slice(0,8).map(([name,info])=>`<tr><td>${name}</td><td><code>${info.version}</code></td><td>${info.retrain_frequency}</td></tr>`).join('');
+    panel.innerHTML = `<div class='table-responsive'>
+      <table class='table table-sm table-bordered mb-0'>
+        <thead class='table-light'><tr><th>Model</th><th>Version</th><th>Retrain</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <small class='text-muted d-block mt-2'>Hash changes if architecture/feature spec changes.</small>
+    </div>`;
+  }
+
+  async fetchAdvancedModelMatches(){
+    try {
+      const preds = (this.dashboardData.predictions?.upcoming_events||[]).map(p=>({id:p.event_id, text:(p.title||p.description||'')}));
+      if(!preds.length) return;
+      const vix = this.dashboardData?.market_context?.vix?.level || this.dashboardData?.vix?.level;
+      const resp = await fetch('/api/models/match_batch', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({items: preds, vix})});
+      if(!resp.ok) return;
+      const data = await resp.json();
+      if(data.matches){
+        Object.entries(data.matches).forEach(([id, arr])=>{
+          const el = document.getElementById('adv-related-'+id);
+          if(el && Array.isArray(arr) && arr.length){
+            el.innerHTML = `<strong>Advanced:</strong> ${arr.map(m=>`<span class='badge bg-dark me-1'>${m.model} (${m.score})</span>`).join('')}`;
+          }
+        });
+      }
+    } catch(e){ console.warn('Advanced match fetch failed', e.message); }
+  }
+
+  renderReliabilityChart() {
+    const el = document.getElementById('reliabilityChart');
+    if(!el || !this.calibrationData?.reliability_bins) return;
+    const bins = this.calibrationData.reliability_bins;
+    if(!bins.length) return;
+    const avgPred = bins.map(b=>b.avg_pred);
+    const actual = bins.map(b=>b.actual_rate);
+    const trace1 = {x: avgPred, y: actual, mode:'lines+markers', name:'Observed', line:{color:'#272bab'}};
+    const trace2 = {x:[0,1], y:[0,1], mode:'lines', name:'Perfect', line:{dash:'dash', color:'#6c757d'}};
+    const layout = {margin:{t:10,r:10,b:40,l:50}, xaxis:{title:'Predicted Probability'}, yaxis:{title:'Observed Frequency', range:[0,1]}, legend:{orientation:'h'}};
+    Plotly.newPlot(el, [trace1, trace2], layout, {displayModeBar:false, responsive:true});
+  }
+}
+
+// Initialize the dashboard when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new EnhancedEventsAnalytics();
+});
+</script>
+
+{% endblock %}

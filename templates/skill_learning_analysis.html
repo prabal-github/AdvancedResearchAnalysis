@@ -1,0 +1,530 @@
+{% extends "layout.html" %}
+{% block title %}Skill Learning Analysis - {{ report.analyst }} - Research QA{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">
+            <i class="bi bi-mortarboard-fill me-2 text-primary"></i>
+            Skill Learning Analysis
+        </h1>
+        <p class="text-muted mb-0">Master Financial Analysis with Python, SQL & AI - Based on Your Report</p>
+    </div>
+    <div>
+        <a href="/report/{{ report.id }}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-file-text me-1"></i> Standard View
+        </a>
+        <a href="/enhanced_analysis/{{ report.id }}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-graph-up me-1"></i> Enhanced Analysis
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Introduction Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-primary text-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>Perfect Fusion of Financial Reporting + Upskilling
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="lead mb-3">
+                            <strong>Financial analysts are not coders, but coding skills are a plus point in interviews and jobs!</strong>
+                        </p>
+                        <p class="mb-3">
+                            Especially <strong>SQL</strong>, <strong>Python</strong>, and <strong>AI/ML</strong> skills. 
+                            This analysis shows you how to implement your financial insights using professional coding techniques.
+                        </p>
+                        <div class="alert alert-success">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>How it works:</strong> We analyzed your report text and found sections about financial data, market analysis, and insights. 
+                            Each section below shows <strong>"What You Wrote" → "How to Code It"</strong> with expandable code examples in Python, SQL, and AI/ML.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-code-slash fs-1 text-primary"></i>
+                                    <p class="mt-2 mb-0 small"><strong>Python</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-database fs-1 text-info"></i>
+                                    <p class="mt-2 mb-0 small"><strong>SQL</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="bg-light p-3 rounded">
+                                    <i class="bi bi-robot fs-1 text-success"></i>
+                                    <p class="mt-2 mb-0 small"><strong>AI/ML</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-text me-2"></i>Report Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Analyst:</strong> {{ report.analyst }}</p>
+                        <p><strong>Date:</strong> {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Report ID:</strong> {{ report.id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Learning Modules Available:</strong> {{ skill_learning_data|length }}</p>
+                        <p><strong>Skills Covered:</strong> 
+                            {% set skills = [] %}
+                            {% for module in skill_learning_data %}
+                                {% if module.skill_category not in skills %}
+                                    {% set _ = skills.append(module.skill_category) %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for skill in skills %}
+                                <span class="badge bg-primary me-1">{{ skill.upper() }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if skill_learning_data %}
+<!-- Skill Learning Modules -->
+<div class="row">
+    <div class="col-12">
+        {% for module in skill_learning_data %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">
+                            {% if module.skill_category == 'python' %}
+                                <i class="bi bi-code-slash me-2 text-primary"></i>
+                            {% elif module.skill_category == 'sql' %}
+                                <i class="bi bi-database me-2 text-info"></i>
+                            {% elif module.skill_category == 'ai_ml' %}
+                                <i class="bi bi-robot me-2 text-success"></i>
+                            {% else %}
+                                <i class="bi bi-gear me-2 text-secondary"></i>
+                            {% endif %}
+                            {{ module.title }}
+                        </h5>
+                        <p class="text-muted mb-0">{{ module.insight }}</p>
+                    </div>
+                    <div>
+                        <span class="badge bg-{{ 'primary' if module.skill_category == 'python' else 'info' if module.skill_category == 'sql' else 'success' if module.skill_category == 'ai_ml' else 'secondary' }} me-2">
+                            {{ module.skill_category.upper().replace('_', '/') }}
+                        </span>
+                        <span class="badge bg-outline-secondary">{{ module.skill_level.title() }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Business Insight -->
+                <div class="alert alert-light border-start border-4 border-warning">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-lightbulb me-2"></i>Business Insight
+                    </h6>
+                    <p class="mb-0">{{ module.business_insight }}</p>
+                </div>
+
+                <!-- Original Analyst Content Section -->
+                {% if module.original_content and module.original_content|length > 0 %}
+                <div class="alert alert-info border-start border-4 border-info">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-person-check me-2"></i>What You Wrote in Your Report
+                    </h6>
+                    <p class="text-muted small mb-2">Here's the original content from your analysis that inspired this code example:</p>
+                    {% for content in module.original_content %}
+                        <div class="bg-white p-3 rounded border-start border-4 border-secondary mb-2">
+                            <i class="bi bi-quote text-muted me-2"></i>
+                            <em>"{{ content }}"</em>
+                        </div>
+                    {% endfor %}
+                    <div class="mt-2">
+                        <small class="text-primary">
+                            <i class="bi bi-arrow-down me-1"></i>
+                            <strong>Now see how to implement this analysis using code ↓</strong>
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Expandable Code Section -->
+                <div class="mt-3">
+                    <button class="btn btn-outline-primary btn-lg" type="button" data-bs-toggle="collapse" data-bs-target="#code{{ loop.index }}" aria-expanded="false">
+                        <i class="bi bi-code-square me-2"></i>
+                        {% if module.original_content and module.original_content|length > 0 %}
+                            See How YOUR Analysis Was Done in Code
+                        {% else %}
+                            Click to See How This Was Done in Code
+                        {% endif %}
+                        <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                    
+                    <div class="collapse mt-3" id="code{{ loop.index }}">
+                        <div class="card border-start border-4 border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-terminal me-2"></i>
+                                    {{ module.title }} - Code Implementation
+                                    {% if module.original_content and module.original_content|length > 0 %}
+                                        <span class="badge bg-light text-primary ms-2">
+                                            <i class="bi bi-arrow-right me-1"></i>Your Analysis → Code
+                                        </span>
+                                    {% endif %}
+                                </h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <pre><code class="language-{{ 'python' if module.skill_category == 'python' or module.skill_category == 'ai_ml' else 'sql' if module.skill_category == 'sql' else 'text' }}" style="max-height: 400px; overflow-y: auto;">{{ module.code_example }}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <!-- Explanation -->
+                        <div class="card mt-3 border-start border-4 border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-chat-text me-2"></i>Code Explanation
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ module.explanation }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Learning Objectives -->
+                        <div class="card mt-3 border-start border-4 border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-mortarboard me-2"></i>What You Learned from This
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <ul class="list-unstyled">
+                                            {% for objective in module.learning_objectives %}
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                {{ objective }}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="bg-light p-3 rounded">
+                                            <h6 class="text-success">
+                                                <i class="bi bi-trophy me-2"></i>Skill Level
+                                            </h6>
+                                            <span class="badge bg-{{ 'success' if module.skill_level == 'beginner' else 'warning' if module.skill_level == 'intermediate' else 'danger' }} fs-6">
+                                                {{ module.skill_level.title() }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Completion Section -->
+                        <div class="card mt-3 border-start border-4 border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-check-square me-2"></i>Mark This Skill as Completed
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p class="text-muted mb-3">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            Did you understand this skill? Mark it as completed to track your learning progress!
+                                        </p>
+                                        <div class="mb-3">
+                                            <label class="form-label small text-muted">Rate your understanding (1-5 stars):</label>
+                                            <div class="skill-rating" data-module-index="{{ loop.index }}">
+                                                <i class="bi bi-star rating-star" data-rating="1"></i>
+                                                <i class="bi bi-star rating-star" data-rating="2"></i>
+                                                <i class="bi bi-star rating-star" data-rating="3"></i>
+                                                <i class="bi bi-star rating-star" data-rating="4"></i>
+                                                <i class="bi bi-star rating-star" data-rating="5"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes{{ loop.index }}" class="form-label small text-muted">Notes (optional):</label>
+                                            <textarea class="form-control form-control-sm" id="notes{{ loop.index }}" rows="2" placeholder="Add any notes about your learning..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-grid">
+                                            <button class="btn btn-success btn-lg complete-skill-btn" 
+                                                    data-analyst="{{ report.analyst }}"
+                                                    data-report-id="{{ report.id }}"
+                                                    data-skill-category="{{ module.skill_category }}"
+                                                    data-skill-title="{{ module.title }}"
+                                                    data-analysis-type="{{ module.analysis_type }}"
+                                                    data-module-index="{{ loop.index }}">
+                                                <i class="bi bi-check-circle me-2"></i>
+                                                Mark as Completed
+                                            </button>
+                                        </div>
+                                        <div class="mt-2 text-center">
+                                            <small class="text-muted">
+                                                <i class="bi bi-graph-up me-1"></i>
+                                                Track your progress
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Completion Status (Hidden initially) -->
+                                <div class="alert alert-success mt-3 skill-completed-alert" id="completed{{ loop.index }}" style="display: none;">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <strong>Skill Completed!</strong> Added to your profile.
+                                    <a href="/analyst_skill_profile/{{ report.analyst }}" class="btn btn-sm btn-outline-success ms-2">
+                                        <i class="bi bi-person me-1"></i>View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- JavaScript for Skill Completion -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle star rating
+    document.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            const moduleIndex = this.closest('.skill-rating').dataset.moduleIndex;
+            const container = this.closest('.skill-rating');
+            
+            // Update star display
+            container.querySelectorAll('.rating-star').forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.remove('bi-star');
+                    s.classList.add('bi-star-fill');
+                    s.style.color = '#ffc107';
+                } else {
+                    s.classList.remove('bi-star-fill');
+                    s.classList.add('bi-star');
+                    s.style.color = '#dee2e6';
+                }
+            });
+            
+            // Store rating
+            container.dataset.selectedRating = rating;
+        });
+    });
+    
+    // Handle skill completion
+    document.querySelectorAll('.complete-skill-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const moduleIndex = this.dataset.moduleIndex;
+            const ratingContainer = document.querySelector(`[data-module-index="${moduleIndex}"]`);
+            const rating = ratingContainer.dataset.selectedRating || 3;
+            const notes = document.getElementById(`notes${moduleIndex}`).value;
+            
+            const data = {
+                analyst_name: this.dataset.analyst,
+                report_id: this.dataset.reportId,
+                skill_category: this.dataset.skillCategory,
+                skill_title: this.dataset.skillTitle,
+                analysis_type: this.dataset.analysisType,
+                rating: parseInt(rating),
+                notes: notes
+            };
+            
+            // Show loading state
+            this.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Marking as Completed...';
+            this.disabled = true;
+            
+            fetch('/api/complete_skill', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Show success message
+                    document.getElementById(`completed${moduleIndex}`).style.display = 'block';
+                    this.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Completed!';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-success');
+                } else {
+                    throw new Error(result.error || 'Failed to mark skill as completed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error marking skill as completed: ' + error.message);
+                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>Mark as Completed';
+                this.disabled = false;
+            });
+        });
+    });
+});
+</script>
+
+<!-- Skills Summary -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-success text-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-award me-2"></i>Skills Summary & Next Steps
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Skills Demonstrated:</h6>
+                        <ul class="list-unstyled">
+                            {% set all_skills = [] %}
+                            {% for module in skill_learning_data %}
+                                {% for skill in module.learning_objectives %}
+                                    {% if skill not in all_skills %}
+                                        {% set _ = all_skills.append(skill) %}
+                                        <li><i class="bi bi-check text-success me-2"></i>{{ skill }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Recommended Next Steps:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-arrow-right text-primary me-2"></i>Practice these code examples with real data</li>
+                            <li><i class="bi bi-arrow-right text-primary me-2"></i>Build a personal financial analysis portfolio</li>
+                            <li><i class="bi bi-arrow-right text-primary me-2"></i>Learn advanced ML techniques for predictions</li>
+                            <li><i class="bi bi-arrow-right text-primary me-2"></i>Combine multiple analysis methods</li>
+                            <li><i class="bi bi-arrow-right text-primary me-2"></i>Create automated reporting dashboards</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="lead text-success">
+                        <i class="bi bi-stars me-2"></i>
+                        <strong>Perfect fusion of reporting + upskilling achieved!</strong>
+                    </p>
+                    <p class="text-muted">
+                        You're now equipped with both financial insights and technical implementation skills.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- No Learning Modules -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-info-circle text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 text-muted">No Learning Modules Available</h4>
+                <p class="text-muted">
+                    This report doesn't contain content that matches our skill learning patterns.
+                    Try submitting a report with financial data, stock analysis, or market insights.
+                </p>
+                <a href="/analyze_new" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Analyze New Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+}
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+pre {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 0;
+}
+code {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+.border-start {
+    border-left-width: 0.25rem !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+    
+    // Add copy functionality to code blocks
+    document.querySelectorAll('pre code').forEach((block) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2';
+        button.innerHTML = '<i class="bi bi-clipboard"></i>';
+        button.title = 'Copy code';
+        
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(block.textContent);
+            button.innerHTML = '<i class="bi bi-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = '<i class="bi bi-clipboard"></i>';
+            }, 2000);
+        });
+        
+        block.parentElement.style.position = 'relative';
+        block.parentElement.appendChild(button);
+    });
+});
+</script>
+{% endblock %}

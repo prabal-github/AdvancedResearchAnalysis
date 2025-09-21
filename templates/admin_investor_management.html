@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Investor Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .admin-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 0; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border: none; transition: transform 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; }
+        .investor-table { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .btn-create-investor { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; border-radius: 10px; padding: 12px 25px; font-weight: 600; }
+        .btn-create-investor:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-user-shield me-3"></i>Admin - Investor Management</h1>
+                    <p class="mb-0 fs-5">Create and manage investor accounts</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Main Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                    <div class="stat-icon bg-primary text-white mx-auto"><i class="fas fa-users"></i></div>
+                    <h3 class="text-primary">{{ investors|length if investors else 0 }}</h3>
+                    <p class="text-muted mb-0">Total Investors</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                    <div class="stat-icon bg-success text-white mx-auto"><i class="fas fa-file-alt"></i></div>
+                    <h3 class="text-success">{{ total_reports if total_reports else 0 }}</h3>
+                    <p class="text-muted mb-0">Total Reports</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                    <div class="stat-icon bg-warning text-white mx-auto"><i class="fas fa-user-tie"></i></div>
+                    <h3 class="text-warning">{{ total_analysts if total_analysts else 0 }}</h3>
+                    <p class="text-muted mb-0">Total Analysts</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                    <div class="stat-icon bg-info text-white mx-auto"><i class="fas fa-user-check"></i></div>
+                    <h3 class="text-info">{{ (investors|selectattr('is_active')|list|length) if investors else 0 }}</h3>
+                    <p class="text-muted mb-0">Active Investors</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-12 text-end">
+                <button class="btn btn-create-investor" data-bs-toggle="modal" data-bs-target="#createInvestorModal">
+                    <i class="fas fa-plus me-2"></i>Create New Investor
+                </button>
+            </div>
+        </div>
+        
+        <div class="investor-table">
+            <div class="card-header bg-white border-bottom-0 p-4">
+                <h4 class="mb-0"><i class="fas fa-users me-2"></i>Investor Accounts</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="investorsTable">
+                        <thead class="table-light">
+                            <tr><th>Investor ID</th><th>Name</th><th>Email</th><th>Status</th><th>Created</th><th>Last Login</th><th>Login Count</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            {% if investors %}
+                                {% for investor in investors %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ investor.id }}</span></td>
+                                    <td><strong>{{ investor.name }}</strong></td>
+                                    <td>{{ investor.email }}</td>
+                                    <td>{% if investor.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
+                                    <td><small>{{ investor.created_at.strftime('%Y-%m-%d %H:%M') }}</small></td>
+                                    <td>{% if investor.last_login %}<small>{{ investor.last_login.strftime('%Y-%m-%d %H:%M') }}</small>{% else %}<small class="text-muted">Never</small>{% endif %}</td>
+                                    <td><span class="badge bg-info">{{ investor.login_count }}</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" onclick="editInvestor('{{ investor.id }}')"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-outline-danger" onclick="toggleInvestorStatus('{{ investor.id }}', {{ investor.is_active|tojson }})"><i class="fas fa-{{ 'ban' if investor.is_active else 'check' }}"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr><td colspan="8" class="text-center py-4"><em>No investors found. Create your first investor account.</em></td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="createInvestorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Create New Investor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createInvestorForm">
+                        <div class="mb-3">
+                            <label for="investorName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="investorName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="investorEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="investorEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="investorPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="investorPassword" name="password" required>
+                            <div class="form-text">Minimum 6 characters</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createInvestor()"><i class="fas fa-save me-2"></i>Create Investor</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#investorsTable').DataTable({ pageLength: 25, order: [[4, 'desc']], columnDefs: [{ targets: [7], orderable: false }] });
+        });
+        
+        function createInvestor() {
+            const form = document.getElementById('createInvestorForm');
+            const formData = new FormData(form);
+            
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirm_password');
+            
+            if (password !== confirmPassword) { alert('Passwords do not match!'); return; }
+            if (password.length < 6) { alert('Password must be at least 6 characters long!'); return; }
+            
+            const data = { name: formData.get('name'), email: formData.get('email'), password: password };
+            
+            fetch('{{ url_for("create_investor") }}', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            }).then(response => response.json()).then(data => {
+                if (data.success) { alert('Investor created successfully! ID: ' + data.investor_id); location.reload(); } else { alert('Error: ' + data.error); }
+            }).catch(error => { console.error('Error:', error); alert('Failed to create investor. Please try again.'); });
+        }
+        
+        function editInvestor(investorId) { alert('Edit functionality coming soon for investor: ' + investorId); }
+        function toggleInvestorStatus(investorId, currentStatus) { const action = currentStatus ? 'deactivate' : 'activate'; if (confirm(`Are you sure you want to ${action} this investor?`)) { alert(`${action} functionality coming soon for investor: ${investorId}`); } }
+    </script>
+</body>
+</html>

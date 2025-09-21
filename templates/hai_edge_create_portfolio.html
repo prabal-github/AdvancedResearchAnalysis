@@ -1,0 +1,415 @@
+{% extends "layout.html" %}
+{% block title %}Create hAi-Edge Portfolio - PredictRAM{% endblock %}
+
+{% block header %}
+<div class="container-fluid bg-gradient-primary text-white py-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="h2 mb-1">Create hAi-Edge ML Portfolio</h1>
+            <p class="mb-0 opacity-75">Configure your hybrid AI/ML investment strategy</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('hai_edge.hai_edge_dashboard') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.form-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.strategy-option {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.strategy-option:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.strategy-option.selected {
+    border-color: #667eea;
+    background-color: #667eea;
+    color: white;
+}
+
+.risk-indicator {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.risk-conservative { background: linear-gradient(to right, #28a745, #20c997); }
+.risk-moderate { background: linear-gradient(to right, #ffc107, #fd7e14); }
+.risk-aggressive { background: linear-gradient(to right, #dc3545, #e74c3c); }
+</style>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card form-card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-robot me-2 text-primary"></i>Portfolio Configuration
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('hai_edge.create_portfolio') }}">
+                        <!-- Basic Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle me-1"></i>Basic Information
+                                </h6>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Portfolio Name *</label>
+                                <input type="text" class="form-control" name="portfolio_name" 
+                                       placeholder="e.g., Tech Growth hAi-Edge Fund" required>
+                                <small class="text-muted">Choose a descriptive name for your portfolio</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Initial Capital *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" name="initial_capital" 
+                                           value="1000000" min="100000" step="100000" required>
+                                </div>
+                                <small class="text-muted">Minimum ₹1 Lakh</small>
+                            </div>
+                        </div>
+
+                        <!-- Strategy Selection -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-brain me-1"></i>AI/ML Strategy Type
+                                </h6>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="strategy-option" data-strategy="hybrid">
+                                    <div class="text-center">
+                                        <i class="fas fa-layer-group fa-2x mb-2 text-primary"></i>
+                                        <h6>Hybrid AI/ML</h6>
+                                        <small>Combines all AI models with equal weights</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="strategy-option" data-strategy="ml_focused">
+                                    <div class="text-center">
+                                        <i class="fas fa-chart-line fa-2x mb-2 text-success"></i>
+                                        <h6>ML Focused</h6>
+                                        <small>Emphasizes machine learning models</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="strategy-option" data-strategy="event_driven">
+                                    <div class="text-center">
+                                        <i class="fas fa-calendar-alt fa-2x mb-2 text-warning"></i>
+                                        <h6>Event-Driven</h6>
+                                        <small>Focuses on news and market events</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="strategy_type" id="strategy_type" value="hybrid">
+
+                        <!-- Risk Configuration -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-shield-alt me-1"></i>Risk Management
+                                </h6>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Risk Level</label>
+                                <select class="form-select" name="risk_level" id="risk_level">
+                                    <option value="conservative">Conservative</option>
+                                    <option value="moderate" selected>Moderate</option>
+                                    <option value="aggressive">Aggressive</option>
+                                </select>
+                                <div class="risk-indicator risk-moderate" id="risk_indicator"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Target Annual Return (%)</label>
+                                <input type="number" class="form-control" name="target_return" 
+                                       value="15" min="5" max="50" step="1" id="target_return">
+                                <small class="text-muted">Realistic expectation: 12-20%</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Max Drawdown (%)</label>
+                                <input type="number" class="form-control" name="max_drawdown" 
+                                       value="10" min="3" max="25" step="1">
+                                <small class="text-muted">Maximum acceptable loss</small>
+                            </div>
+                        </div>
+
+                        <!-- AI Model Weights -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-sliders-h me-1"></i>AI Model Configuration
+                                </h6>
+                                <p class="text-muted small">Adjust the weights for different AI/ML models (must sum to 100%)</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Symbolic/Rules</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="50" value="20" 
+                                                   id="weight_symbolic" name="weight_symbolic">
+                                            <span class="input-group-text" id="symbolic_value">20%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Statistical</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="50" value="15" 
+                                                   id="weight_statistical" name="weight_statistical">
+                                            <span class="input-group-text" id="statistical_value">15%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Machine Learning</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="50" value="25" 
+                                                   id="weight_ml" name="weight_ml">
+                                            <span class="input-group-text" id="ml_value">25%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Deep Learning</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="50" value="20" 
+                                                   id="weight_dl" name="weight_dl">
+                                            <span class="input-group-text" id="dl_value">20%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Sentiment Analysis</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="30" value="10" 
+                                                   id="weight_sentiment" name="weight_sentiment">
+                                            <span class="input-group-text" id="sentiment_value">10%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Event-Driven</label>
+                                        <div class="input-group">
+                                            <input type="range" class="form-range" min="0" max="30" value="10" 
+                                                   id="weight_event" name="weight_event">
+                                            <span class="input-group-text" id="event_value">10%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <div class="alert alert-info" id="weight_alert">
+                                    <strong>Total Weight: <span id="total_weight">100</span>%</strong>
+                                    <span id="weight_status" class="ms-2 badge bg-success">Perfect!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-cogs me-1"></i>Advanced Settings
+                                </h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Rebalancing Frequency</label>
+                                <select class="form-select" name="rebalance_frequency">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Portfolio Visibility</label>
+                                <select class="form-select" name="is_public">
+                                    <option value="true" selected>Public (Visible to all)</option>
+                                    <option value="false">Private (Admin only)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <label class="form-label">Description (Optional)</label>
+                                <textarea class="form-control" name="description" rows="3" 
+                                          placeholder="Describe the investment thesis and goals for this portfolio..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="history.back()">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary px-4" id="createButton">
+                                    <i class="fas fa-rocket me-1"></i>Create hAi-Edge Portfolio
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Portfolio Creation JavaScript
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Strategy selection
+    const strategyOptions = document.querySelectorAll('.strategy-option');
+    const strategyInput = document.getElementById('strategy_type');
+    
+    strategyOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            strategyOptions.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            strategyInput.value = this.dataset.strategy;
+        });
+    });
+    
+    // Risk level indicator
+    const riskLevel = document.getElementById('risk_level');
+    const riskIndicator = document.getElementById('risk_indicator');
+    const targetReturn = document.getElementById('target_return');
+    
+    riskLevel.addEventListener('change', function() {
+        const level = this.value;
+        riskIndicator.className = `risk-indicator risk-${level}`;
+        
+        // Adjust target return based on risk level
+        if (level === 'conservative') {
+            targetReturn.value = 12;
+        } else if (level === 'moderate') {
+            targetReturn.value = 15;
+        } else if (level === 'aggressive') {
+            targetReturn.value = 20;
+        }
+    });
+    
+    // Model weight management
+    const weights = {
+        symbolic: document.getElementById('weight_symbolic'),
+        statistical: document.getElementById('weight_statistical'),
+        ml: document.getElementById('weight_ml'),
+        dl: document.getElementById('weight_dl'),
+        sentiment: document.getElementById('weight_sentiment'),
+        event: document.getElementById('weight_event')
+    };
+    
+    const values = {
+        symbolic: document.getElementById('symbolic_value'),
+        statistical: document.getElementById('statistical_value'),
+        ml: document.getElementById('ml_value'),
+        dl: document.getElementById('dl_value'),
+        sentiment: document.getElementById('sentiment_value'),
+        event: document.getElementById('event_value')
+    };
+    
+    const totalWeightSpan = document.getElementById('total_weight');
+    const weightStatus = document.getElementById('weight_status');
+    const createButton = document.getElementById('createButton');
+    
+    function updateWeights() {
+        let total = 0;
+        
+        Object.keys(weights).forEach(key => {
+            const value = parseInt(weights[key].value);
+            values[key].textContent = value + '%';
+            total += value;
+        });
+        
+        totalWeightSpan.textContent = total;
+        
+        if (total === 100) {
+            weightStatus.textContent = 'Perfect!';
+            weightStatus.className = 'ms-2 badge bg-success';
+            createButton.disabled = false;
+        } else if (total < 100) {
+            weightStatus.textContent = `Need ${100 - total}% more`;
+            weightStatus.className = 'ms-2 badge bg-warning';
+            createButton.disabled = true;
+        } else {
+            weightStatus.textContent = `${total - 100}% over limit`;
+            weightStatus.className = 'ms-2 badge bg-danger';
+            createButton.disabled = true;
+        }
+    }
+    
+    // Add event listeners to all weight sliders
+    Object.values(weights).forEach(slider => {
+        slider.addEventListener('input', updateWeights);
+    });
+    
+    // Initialize
+    updateWeights();
+    
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const portfolioName = document.querySelector('input[name="portfolio_name"]').value;
+        const initialCapital = document.querySelector('input[name="initial_capital"]').value;
+        
+        if (!portfolioName.trim()) {
+            alert('Please enter a portfolio name');
+            e.preventDefault();
+            return;
+        }
+        
+        if (parseInt(initialCapital) < 100000) {
+            alert('Minimum initial capital is ₹1 Lakh');
+            e.preventDefault();
+            return;
+        }
+        
+        const totalWeight = parseInt(totalWeightSpan.textContent);
+        if (totalWeight !== 100) {
+            alert('Model weights must sum to exactly 100%');
+            e.preventDefault();
+            return;
+        }
+        
+        // Show loading state
+        createButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Creating Portfolio...';
+        createButton.disabled = true;
+    });
+});
+</script>
+{% endblock %}

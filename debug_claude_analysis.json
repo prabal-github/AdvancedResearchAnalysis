@@ -1,0 +1,91 @@
+{
+  "basic_insight": "BTST Strategy Analysis: 2 opportunities from 50 stocks (4.0% success rate). Script shows 0.0% execution success with 2 total runs. Monthly return: 0.93% if monthly_return is not None else 'N/A'.",
+  "insights": [
+    {
+      "type": "info",
+      "title": "Limited BTST Opportunities",
+      "description": "Only 2 BTST opportunities found (4.0% rate) - market conditions may be limiting."
+    },
+    {
+      "type": "info",
+      "title": "Good Technical Coverage",
+      "description": "Employs 7 technical indicators: Candlestick (Bullish Engulfing), TSI, Candlestick (Bearish Engulfing)."
+    },
+    {
+      "type": "info",
+      "title": "Conservative Approach",
+      "description": "Only 38.0% actionable recommendations, showing conservative strategy with 31 neutral positions."
+    },
+    {
+      "type": "info",
+      "title": "Positive Performance",
+      "description": "Script maintains 0.93% monthly returns with room for optimization."
+    },
+    {
+      "type": "info",
+      "title": "Moderate Confidence",
+      "description": "Average confidence of 52.6% with potential for improvement."
+    },
+    {
+      "type": "warning",
+      "title": "Low BTST Accuracy",
+      "description": "Only 4.0% accuracy - BTST criteria may be too aggressive or market timing off."
+    },
+    {
+      "type": "info",
+      "title": "Active BTST Trading",
+      "description": "Generated 2 BTST buy signals out of 50 total recommendations."
+    }
+  ],
+  "summary": "Comprehensive BTST analysis of BTSTjson.py: 2 BTST opportunities identified from 50 stocks using 7 technical indicators.",
+  "detailed_analysis": "The BTST strategy demonstrates strong performance with 52.6% average confidence. Technical analysis uses Candlestick (Bullish Engulfing), TSI, Candlestick (Bearish Engulfing), BTST, RSI indicators. Recommendation accuracy of 4.0% if accuracy is not None else 'N/A' with 2 BTST buy signals generated.",
+  "best_stock": {
+    "symbol": "HEROMOTOCO.NS",
+    "return": "7.51%"
+  },
+  "worst_stock": {
+    "symbol": "ASIANPAINT.NS",
+    "return": "-0.76%"
+  },
+  "strategy_breakdown": {
+    "Buy": 8,
+    "Sell": 9,
+    "BTST Buy": 2,
+    "Neutral": 31
+  },
+  "timing_analysis": {
+    "btst_opportunities": 2,
+    "stocks_analyzed": 50,
+    "success_rate": "4.0%",
+    "avg_confidence": "52.6%"
+  },
+  "sector_analysis": {
+    "technical_indicators": [
+      "Candlestick (Bullish Engulfing)",
+      "TSI",
+      "Candlestick (Bearish Engulfing)",
+      "BTST",
+      "RSI",
+      "Open-High",
+      "MACD"
+    ],
+    "recommendation_distribution": {
+      "Buy": 8,
+      "Sell": 9,
+      "BTST Buy": 2,
+      "Neutral": 31
+    },
+    "analysis_depth": 7
+  },
+  "btst_effectiveness": {
+    "opportunities_found": 2,
+    "total_stocks": 50,
+    "detection_rate": "4.0%",
+    "avg_confidence": 52.6
+  },
+  "risk_management": {
+    "accuracy_level": "Low",
+    "confidence_level": "Medium",
+    "diversification": "Good"
+  }
+}

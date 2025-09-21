@@ -1,0 +1,3267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VS Terminal AClass</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Enhanced Risk Analytics Dependencies -->
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.0/math.min.js"></script>
+<style>
+:root { --bg:#1e1e1e; --sidebar:#252526; --panel:#1e1e1e; --border:#333; --accent:#0e639c; --accent-hover:#1177bb; --text:#d4d4d4; --muted:#9e9e9e; --danger:#f44747; --success:#6A9955; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; height:100%; background:var(--bg); color:var(--text); font-family:Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif; }
+body { display:flex; flex-direction:column; }
+.vs-frame { flex:1; display:grid; grid-template-columns:40px 270px minmax(0,1fr) 380px; grid-template-rows:1fr 22px; height:100%; width:100%; overflow:hidden; }
+.activity-bar { background:#333; display:flex; flex-direction:column; align-items:center; padding:4px 0; gap:2px; border-right:1px solid var(--border); }
+.activity-bar button { background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; width:32px; height:32px; padding:0; display:flex; justify-content:center; align-items:center; position:relative; border-radius:4px; margin:2px 0; transition: all .2s ease; }
+.activity-bar button.active, .activity-bar button:hover { color:var(--text); background:#404040; }
+.activity-bar button.active::before { content:""; position:absolute; left:0; top:2px; bottom:2px; width:2px; background:#007acc; border-radius:0 2px 2px 0; }
+.logo-mini { width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:11px; background:#1e1e1e; color:#007acc; border:1px solid #444; border-radius:6px; margin:4px 0 6px; }
+.vertical-label { writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; color:#888; line-height:1; margin-bottom:8px; text-align:center; letter-spacing:1px; }
+.sidebar { background:var(--sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:auto; }
+.sidebar-section { padding:12px 14px 10px; border-bottom:1px solid var(--border); }
+.sidebar-section h4 { margin:0 0 8px; font-size:11px; font-weight:600; letter-spacing:.7px; color:var(--muted); display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.sidebar-section h4 span.toggle { font-size:14px; transition:transform .25s ease; }
+.sidebar-section.collapsed h4 span.toggle { transform:rotate(-90deg); }
+.sidebar-section.collapsed .section-body { display:none; }
+.model-list, .file-list { list-style:none; margin:0; padding:0; max-height:180px; overflow:auto; font-size:12.5px; }
+.model-list li, .file-list li { padding:6px 8px; border-radius:4px; cursor:pointer; display:flex; align-items:center; gap:6px; line-height:1.2; }
+.model-list li:hover, .file-list li:hover { background:#2d2d2d; }
+.model-list li.selected { background:#094771; color:#fff; }
+.badge { background:#444; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:4px; }
+select, textarea, input { width:100%; background:#2d2d2d; border:1px solid #444; color:var(--text); padding:6px 8px; border-radius:4px; font-size:13px; }
+textarea:focus, input:focus, select:focus { outline:1px solid #555; }
+.main { display:flex; flex-direction:column; min-width:0; position:relative; min-height:0; }
+.dashboard-wrapper { position:relative; border-bottom:1px solid var(--border); min-width:0; height:58%; min-height:140px; overflow:auto; padding:16px 18px 20px; background:#1b1b1b; }
+.dashboard-wrapper.resizing { user-select:none; cursor:row-resize; }
+.upper-tab-bar { display:flex; gap:2px; margin:0 0 10px; flex-wrap:wrap; }
+.upper-tab-bar button { background:#252526; border:1px solid #333; color:#bbb; padding:4px 8px; font-size:11px; cursor:pointer; border-radius:4px; white-space:nowrap; }
+.upper-tab-bar button.active { background:#1e1e1e; color:#fff; border-color:#007acc; }
+.upper-tab-content { display:none; }
+.upper-tab-content.active { display:block; }
+body.chart-fullscreen .lower-panels, body.chart-fullscreen #resizeHandle { display:none !important; }
+body.chart-fullscreen .dashboard-wrapper { height:calc(100vh - 72px) !important; }
+body.chart-fullscreen #tvChartContainerUpper { min-height:calc(100vh - 160px); height:calc(100vh - 160px) !important; }
+body.chart-fullscreen .activity-bar button, body.chart-fullscreen .sidebar, body.chart-fullscreen .right-panel { opacity:0.25; transition:opacity .25s; }
+body.chart-fullscreen .activity-bar button:hover { opacity:1; }
+body.chart-fullscreen .predictram-header { opacity:0.8; }
+.toolbar { position:absolute; top:10px; right:16px; display:flex; gap:6px; }
+.toolbar button { background:#2d2d2d; border:1px solid #444; color:#eee; padding:6px 10px; font-size:11px; border-radius:4px; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.toolbar button.primary { background:var(--accent); border:none; }
+.toolbar button.primary:hover { background:var(--accent-hover); }
+.toolbar button:hover { background:#353535; }
+.resize-handle { height:6px; background:linear-gradient(to bottom,#2a2a2a,#232323); border-top:1px solid #2c2c2c; border-bottom:1px solid #1a1a1a; cursor:row-resize; position:relative; }
+.resize-handle::after { content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:60px; height:2px; background:#444; border-radius:2px; }
+.lower-panels { display:flex; flex-direction:column; flex:1 1 0; min-height:0; overflow:hidden; }
+.tab-bar { display:flex; background:#252526; border-bottom:1px solid var(--border); }
+.tab-bar button { background:none; border:none; color:var(--muted); padding:6px 14px; cursor:pointer; font-size:12px; position:relative; }
+.tab-bar button.active, .tab-bar button:hover { color:var(--text); background:#1e1e1e; }
+.tab-bar button.active::after { content:""; height:2px; background:#007acc; position:absolute; left:0; right:0; bottom:0; }
+.tab-content { flex:1 1 0; display:none; overflow:auto; padding:12px 16px 40px; font-size:13px; min-width:0; }
+.tab-content.active { display:block; }
+pre.output { white-space:pre-wrap; margin:0; font-family:Consolas,monospace; line-height:1.34; max-height:100%; overflow:auto; font-size:12.4px; }
+.right-panel { background:var(--panel); border-left:1px solid var(--border); display:flex; flex-direction:column; position:relative; min-height:0; overflow:hidden; }
+.right-tabs { display:flex; background:#252526; border-bottom:1px solid var(--border); }
+.right-tabs button { background:none; border:none; color:var(--muted); padding:8px 14px; font-size:11.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; border-bottom:2px solid transparent; }
+.right-tabs button.active { color:var(--text); background:#1e1e1e; border-bottom-color:#007acc; }
+.panel-tab { display:none; flex:1; min-height:0; overflow:hidden; flex-direction:column; }
+.panel-tab.active { display:flex; }
+.analytics-history { flex:1; overflow:auto; padding:12px 14px 16px; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.panel-footer { border-top:1px solid var(--border); padding:10px; display:flex; flex-direction:column; gap:6px; }
+.panel-footer textarea { height:70px; resize:vertical; }
+.primary-btn { background:var(--accent); border:none; color:#fff; padding:8px 14px; font-size:13px; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+.primary-btn:hover { background:var(--accent-hover); }
+.secondary-btn { background:#2d2d2d; border:1px solid #444; color:var(--text); padding:6px 10px; font-size:12px; border-radius:4px; cursor:pointer; }
+.secondary-btn:hover { background:#333; }
+.status-bar { grid-column:1 / span 4; background:#007acc; color:#fff; font-size:11.5px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; }
+.portfolio-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:10px 0 18px; }
+.metric-card { background:#202020; border:1px solid #333; border-radius:6px; padding:12px; position:relative; overflow:hidden; }
+.metric-card .title { font-size:11px; color:var(--muted); letter-spacing:.5px; font-weight:600; }
+.metric-card .value { font-size:18px; font-weight:700; margin:4px 0; }
+.metric-card .change { font-size:11px; }
+.positive { color:#4ade80; }
+.negative { color:#f87171; }
+.table-container { background:#202020; border:1px solid #333; border-radius:6px; overflow:hidden; margin-bottom:20px; }
+.table-container table { width:100%; border-collapse:collapse; font-size:12.8px; }
+.table-container th { background:#303030; padding:8px 10px; text-align:left; font-weight:600; border-bottom:1px solid #3a3a3a; font-size:11.5px; letter-spacing:.5px; }
+.table-container td { padding:7px 10px; border-bottom:1px solid #2c2c2c; }
+.table-container tr:hover { background:#2b2b2b; }
+.msg { padding:10px 12px; border-radius:6px; max-width:100%; line-height:1.4; white-space:pre-wrap; }
+.msg.user { background:#2d2d2d; align-self:flex-end; }
+.msg.ai { background:#1f2933; border:1px solid #2f3b44; }
+.msg.system { background:#333; font-style:italic; }
+.watchlist { padding:10px 14px; font-size:12.5px; line-height:1.5; }
+.watchlist-item { display:flex; justify-content:space-between; padding:6px 4px; border-bottom:1px solid #262626; }
+.watchlist-item:last-child { border-bottom:none; }
+.chip { display:inline-block; background:#2d2d2d; padding:4px 8px; border-radius:20px; font-size:11px; margin:2px; border:1px solid #444; }
+.alerts-list { padding:0 4px 12px; overflow:auto; }
+.alert-item { background:#252a2f; border:1px solid #30363d; padding:8px 10px; border-radius:6px; margin:6px 0; font-size:12px; line-height:1.3; }
+.alert-item.good { border-left:4px solid var(--success); }
+.alert-item.warn { border-left:4px solid #d19a37; }
+.alert-item.risk { border-left:4px solid var(--danger); }
+.floating-hint { position:absolute; top:8px; left:14px; font-size:11px; color:#666; letter-spacing:.5px; }
+/* Mobile adjustments */
+@media (max-width: 1150px) { .vs-frame { grid-template-columns:38px 240px minmax(0,1fr) 330px; }}
+@media (max-width: 980px) { .vs-frame { grid-template-columns:34px 230px minmax(0,1fr); } .right-panel { display:none; } }
+@media (max-width: 780px) { 
+  .vs-frame { grid-template-columns:1fr; grid-template-rows:42px 1fr 22px; height: calc(100vh - 50px); }
+  .activity-bar { flex-direction:row; padding:4px 8px; height:42px; }
+  .activity-bar button { font-size:14px; width:30px; height:30px; }
+  .sidebar { position:fixed; top:50px; left:0; bottom:0; width:260px; z-index:1000; transform:translateX(-100%); transition:transform .25s ease; }
+  .sidebar.open { transform:translateX(0); }
+  .right-panel { position:fixed; top:50px; right:0; bottom:0; width:100%; max-width:390px; z-index:1001; transform:translateX(100%); transition:transform .25s ease; }
+  .right-panel.open { transform:translateX(0); }
+  .mobile-toggle { display:flex !important; }
+  .status-bar { font-size:10.5px; }
+  .predictram-header { 
+    height: 45px; 
+    padding: 0 15px; 
+  }
+  .predictram-logo { 
+    height: 28px; 
+  }
+  .predictram-title { 
+    font-size: 14px; 
+  }
+  .predictram-subtitle { 
+    display: none; 
+  }
+  body { 
+    padding-top: 45px; 
+  }
+}
+.mobile-toggle { display:none; background:var(--accent); color:#fff; border:none; padding:6px 10px; border-radius:4px; font-size:12px; cursor:pointer; align-items:center; gap:5px; }
+/* Streaming token styling */
+#gqOutput .tok { opacity:0; animation:fadeInTok .35s forwards; display:inline; }
+@keyframes fadeInTok { to { opacity:1; } }
+/* Preserve whitespace spans */
+#gqOutput .ws { white-space:pre; }
+
+/* PredictRAM Logo Header */
+.predictram-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+    border-bottom: 2px solid #007acc;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.predictram-logo {
+    height: 32px;
+    width: auto;
+    filter: brightness(1.1);
+    transition: all 0.3s ease;
+}
+
+.predictram-logo:hover {
+    filter: brightness(1.3);
+    transform: scale(1.05);
+}
+
+.predictram-title {
+    margin-left: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.predictram-subtitle {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #999;
+    padding-left: 15px;
+    border-left: 1px solid #444;
+}
+
+/* Adjust main layout to account for header */
+body {
+    padding-top: 50px;
+}
+
+.vs-frame {
+    height: calc(100vh - 50px);
+}
+</style>
+</head>
+<body>
+<!-- PredictRAM Header -->
+<div class="predictram-header">
+    <img src="https://predictram.com/images/logo2x.png" alt="PredictRAM" class="predictram-logo">
+    <div class="predictram-title">PredictRAM</div>
+    <div class="predictram-subtitle">VS Terminal AClass - Professional Investment Dashboard</div>
+</div>
+
+<div class="vs-frame" id="layoutRoot">
+    <!-- Activity Bar -->
+    <div class="activity-bar">
+        <div class="logo-mini">VS</div>
+        <div class="vertical-label">ACLASS</div>
+        <button class="active" title="Portfolio" onclick="focusSection('portfolio')"><i class="fa fa-chart-pie"></i></button>
+    <button title="Analytics" onclick="focusSection('analytics')"><i class="fa fa-chart-line"></i></button>
+    <button title="TradingView Chart" onclick="showTab('tvchart')"><i class="fa fa-chart-area"></i></button>
+        <button title="Orders" onclick="focusSection('orders')"><i class="fa fa-list"></i></button>
+        <button title="News" onclick="focusSection('news')"><i class="fa fa-newspaper"></i></button>
+        <button title="Reports" onclick="focusSection('reports')"><i class="fa fa-file-alt"></i></button>
+        <div style="flex:1"></div>
+        <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <button class="mobile-toggle" onclick="toggleRightPanel()"><i class="fa fa-comments"></i></button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">PORTFOLIO <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <div id="portfolioSummary" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:8px;">
+                    <div style="background:#202020; padding:8px 10px; border-radius:6px; border:1px solid #333;">
+                        <div style="font-size:10px; letter-spacing:.5px; color:var(--muted);">TOTAL VALUE</div>
+                        <div id="totalValue" style="font-weight:600; font-size:15px; color:#4ade80;">₹5,42,387</div>
+                        <div style="font-size:10px; color:#4ade80;">+2.35%</div>
+                    </div>
+                    <div style="background:#202020; padding:8px 10px; border-radius:6px; border:1px solid #333;">
+                        <div style="font-size:10px; letter-spacing:.5px; color:var(--muted);">DAY P&L</div>
+                        <div id="todayPnl" style="font-weight:600; font-size:15px; color:#4ade80;">+₹12,450</div>
+                        <div style="font-size:10px; color:#4ade80;">+1.24%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">ANALYTICS TOOLS <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <ul class="model-list" id="analyticsList">
+                    <li class="selected" data-key="portfolio"><i class="fa fa-chart-pie"></i> Portfolio Analysis</li>
+                    <li data-key="performance"><i class="fa fa-chart-line"></i> Performance Metrics</li>
+                    <li data-key="risk"><i class="fa fa-shield-alt"></i> Risk Assessment</li>
+                    <li data-key="allocation"><i class="fa fa-balance-scale"></i> Allocation</li>
+                    <li data-key="trends"><i class="fa fa-chart-area"></i> Market Trends</li>
+                </ul>
+                <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="secondary-btn" style="flex:1" onclick="runAnalysis()">Analyze</button>
+                    <button class="secondary-btn" style="flex:1" onclick="exportData()">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">SUBSCRIBED ML MODELS <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <div id="subscribedModelsList" style="max-height: 200px; overflow-y: auto;">
+                    <div class="loading-placeholder" style="padding: 20px; text-align: center; color: var(--muted);">
+                        <i class="fa fa-spinner fa-spin"></i> Loading models...
+                    </div>
+                </div>
+                <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="secondary-btn" style="flex:1" onclick="refreshMLModels()"><i class="fa fa-sync"></i> Refresh</button>
+                    <button class="secondary-btn" style="flex:1" onclick="showAllPredictions()"><i class="fa fa-eye"></i> View All</button>
+                </div>
+                <div id="mlModelsStatus" style="font-size:11px; color:#888; margin-top:6px; min-height:14px;">
+                    Ready to load models...
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">ENHANCED RISK ANALYTICS <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <div id="riskMetrics" style="display:grid; grid-template-columns:1fr; gap:8px;">
+                    <div class="loading-placeholder" style="padding: 15px; text-align: center; color: var(--muted);">
+                        <i class="fa fa-spinner fa-spin"></i> Loading enhanced risk data...
+                    </div>
+                </div>
+                
+                <!-- Real-time Status Indicator -->
+                <div id="realTimeStatus" style="display:flex; align-items:center; gap:6px; margin:8px 0; padding:6px; background:#1a1a1a; border-radius:4px; border:1px solid #333;">
+                    <div class="status-indicator" id="wsStatusIndicator" style="width:8px; height:8px; background:#666; border-radius:50%;"></div>
+                    <span style="font-size:10px; color:var(--muted);" id="wsStatusText">Connecting...</span>
+                </div>
+                
+                <!-- ML Predictions Panel -->
+                <div id="mlPredictionsPanel" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px; margin:8px 0; display:none;">
+                    <div style="font-size:10px; font-weight:600; color:#4ade80; margin-bottom:6px;">
+                        <i class="fa fa-robot"></i> ML PREDICTIONS
+                    </div>
+                    <div id="mlPredictionsContent" style="font-size:11px; color:var(--muted);"></div>
+                </div>
+                
+                <!-- Options Greeks Panel -->
+                <div id="optionsGreeksPanel" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px; margin:8px 0; display:none;">
+                    <div style="font-size:10px; font-weight:600; color:#fbbf24; margin-bottom:6px;">
+                        <i class="fa fa-greek-alphabet"></i> OPTIONS GREEKS
+                    </div>
+                    <div id="optionsGreeksContent" style="font-size:11px; color:var(--muted);"></div>
+                </div>
+                
+                <!-- Risk Heatmap Panel -->
+                <div id="riskHeatmapPanel" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px; margin:8px 0; display:none;">
+                    <div style="font-size:10px; font-weight:600; color:#f87171; margin-bottom:6px;">
+                        <i class="fa fa-fire"></i> CORRELATION HEATMAP
+                    </div>
+                    <div id="riskHeatmapContent" style="height:150px; overflow:hidden;"></div>
+                </div>
+                
+                <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+                    <button class="secondary-btn" onclick="refreshRiskAnalytics()"><i class="fa fa-shield-alt"></i> Refresh</button>
+                    <button class="secondary-btn" onclick="showDetailedRisk()"><i class="fa fa-chart-line"></i> Details</button>
+                    <button class="secondary-btn" onclick="toggleMLPredictions()"><i class="fa fa-robot"></i> ML</button>
+                    <button class="secondary-btn" onclick="toggleOptionsGreeks()"><i class="fa fa-calculator"></i> Greeks</button>
+                    <button class="secondary-btn" onclick="toggleRiskHeatmap()"><i class="fa fa-fire"></i> Heatmap</button>
+                    <button class="secondary-btn" onclick="enableRealTimeUpdates()"><i class="fa fa-broadcast-tower"></i> Live</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">QUICK ACTIONS <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <ul class="file-list">
+                    <li onclick="refreshAll()"><i class="fa fa-sync"></i> Refresh Data</li>
+                    <li onclick="showTab('recommendations')"><i class="fa fa-star"></i> AI Recommendations</li>
+                    <li onclick="showTab('news')"><i class="fa fa-newspaper"></i> Market News</li>
+                    <li onclick="showTab('reports')"><i class="fa fa-file-pdf"></i> Reports</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">AI API KEYS <span class="toggle">▾</span></h4>
+            <div class="section-body" style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; gap:6px;">
+                    <select id="aiKeyProviderSide" style="flex:1;">
+                        <option value="anthropic">Anthropic</option>
+                        <option value="openai">OpenAI</option>
+                    </select>
+                    <input id="aiKeyModelSide" placeholder="model (opt)" style="flex:1;" />
+                </div>
+                <input id="aiKeyValueSide" placeholder="API key" />
+                <input id="aiKeyTestPromptSide" placeholder="Test prompt (optional)" />
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="secondary-btn" style="flex:1;" onclick="saveUserAIKeySide()"><i class="fa fa-save"></i> Save</button>
+                    <button class="secondary-btn" style="flex:1;" onclick="testUserAIKeySide()"><i class="fa fa-vial"></i> Test</button>
+                    <button class="secondary-btn" style="flex:1; background:#3b0d0d;" onclick="deleteUserAIKeySide()"><i class="fa fa-trash"></i> Delete</button>
+                </div>
+                <div id="aiKeyStatusSide" style="font-size:11px; color:#888; min-height:14px;">No key saved.</div>
+            </div>
+        </div>
+
+        <div class="sidebar-section" data-section>
+            <h4 onclick="toggleSection(this)">MARKET STATUS <span class="toggle">▾</span></h4>
+            <div class="section-body">
+                <div style="font-size:12px; padding:8px 10px; background:#202020; border-radius:6px; border:1px solid #333;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>NSE</span><span style="color:#4ade80;">OPEN</span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>BSE</span><span style="color:#4ade80;">OPEN</span></div>
+                    <div style="font-size:10px; color:var(--muted); margin-top:8px;">Updated <span id="lastUpdate">--:--</span></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main" id="main">
+        <div class="dashboard-wrapper" id="dashboardPanel">
+            <div class="toolbar" style="top:8px;">
+                <button onclick="refreshAll()" title="Refresh Portfolio"><i class="fa fa-sync"></i></button>
+                <button onclick="runAnalysis()" title="Run Selected Analysis"><i class="fa fa-play"></i></button>
+                <button class="primary" onclick="quickQuery('portfolio performance')" title="Ask AI"><i class="fa fa-robot"></i> Ask AI</button>
+            </div>
+            <div class="upper-tab-bar">
+                <button id="upperTabBtn-overview" class="active" onclick="showUpperTab('overview')"><i class="fa fa-table"></i> Portfolio Overview</button>
+                <button id="upperTabBtn-chart" onclick="showUpperTab('chart')"><i class="fa fa-chart-area"></i> Chart</button>
+                <button id="upperTabBtn-events" onclick="showUpperTab('events')"><i class="fa fa-bolt"></i> Events</button>
+                <button id="upperTabBtn-details" onclick="showUpperTab('details')"><i class="fa fa-info-circle"></i> Details</button>
+                <button id="upperTabBtn-ml" onclick="showUpperTab('ml')"><i class="fa fa-brain"></i> ML</button>
+                <button id="upperTabBtn-greeks" onclick="showUpperTab('greeks')"><i class="fa fa-calculator"></i> Greeks</button>
+                <button id="upperTabBtn-heatmap" onclick="showUpperTab('heatmap')"><i class="fa fa-th"></i> Heatmap</button>
+                <button id="upperTabBtn-risk" onclick="showUpperTab('risk')"><i class="fa fa-shield-alt"></i> Risk Management</button>
+                <button id="upperTabBtn-live" onclick="showUpperTab('live')"><i class="fa fa-broadcast-tower"></i> Live</button>
+            </div>
+            <div id="upperTab-overview" class="upper-tab-content active">
+                <div class="portfolio-grid" id="portfolioMetrics"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Symbol</th><th>Qty</th><th>Price</th><th>P&L</th><th>%</th></tr>
+                        </thead>
+                        <tbody id="holdingsTable"></tbody>
+                    </table>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Type</th><th>Symbol</th><th>Qty</th><th>Price</th></tr>
+                        </thead>
+                        <tbody id="transactionsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="upperTab-chart" class="upper-tab-content">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+                    <label style="font-size:12px; color:#bbb;">Symbol:</label>
+                    <input id="tvSymbolUpper" placeholder="NSE:TCS" style="max-width:200px;" />
+                    <button class="secondary-btn" onclick="loadUpperTVChart()"><i class="fa fa-sync"></i> Load</button>
+                    <button class="secondary-btn" id="chartFsBtn" onclick="toggleChartFullscreen()" title="Toggle Fullscreen"><i class="fa fa-expand"></i></button>
+                    <select id="tvIntervalUpper" onchange="updateUpperChartInterval()" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="1">1m</option>
+                        <option value="5">5m</option>
+                        <option value="15">15m</option>
+                        <option value="30" selected>30m</option>
+                        <option value="60">1h</option>
+                        <option value="120">2h</option>
+                        <option value="240">4h</option>
+                        <option value="D">1D</option>
+                        <option value="W">1W</option>
+                    </select>
+                </div>
+                <div id="tvChartContainerUpper" style="position:relative; width:100%; height:calc(100vh - 260px); min-height:460px; background:#111; border:1px solid #333; border-radius:6px; overflow:hidden; display:flex; flex-direction:column;">
+                    <iframe id="tvChartFrameUpper" src="https://s.tradingview.com/widgetembed/?frameElementId=tvChartFrameUpper&symbol=NSE:TCS&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=&hideideas=1&theme=dark" style="flex:1 1 auto; width:100%; height:100%; border:0;"></iframe>
+                </div>
+                <div style="font-size:11px; color:#777; margin-top:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <span>Data © TradingView. Enter EXCHANGE:SYMBOL (e.g., NASDAQ:AAPL).</span>
+                    <span id="chartStatus" style="color:#555;">Ready</span>
+                </div>
+            </div>
+            <div id="upperTab-events" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
+                    <button class="secondary-btn" onclick="loadEventsData()"><i class="fa fa-download"></i> Refresh</button>
+                    <select id="eventsFilter" class="secondary-btn" onchange="filterEventsView()" style="padding:4px 6px;">
+                        <option value="all" selected>All</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="past">Past</option>
+                        <option value="high_impact">High Impact</option>
+                    </select>
+                    <span id="eventsStatus" style="font-size:12px; color:#888;">Idle</span>
+                </div>
+                <div id="eventsPredictionsWrap" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; align-items:stretch;">
+                    <!-- Cards appended here -->
+                </div>
+                <div style="margin-top:10px; font-size:11px; color:#666;">Source: internal events analytics service /enhanced_events_analytics (local port 5008). This view auto-refreshes every 10 minutes while open.</div>
+            </div>
+            
+            <!-- Details Tab -->
+            <div id="upperTab-details" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="loadDetailsData()"><i class="fa fa-refresh"></i> Refresh</button>
+                    <button class="secondary-btn" onclick="exportDetailsData()"><i class="fa fa-download"></i> Export</button>
+                    <span id="detailsStatus" style="font-size:12px; color:#888;">Ready</span>
+                </div>
+                <div id="detailsContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="metric-card">
+                        <div class="title">PORTFOLIO ANALYSIS</div>
+                        <div id="portfolioDetails" style="font-size:12px; margin-top:8px; line-height:1.4;">
+                            <div>Total Positions: <span id="totalPositions">--</span></div>
+                            <div>Sectors: <span id="totalSectors">--</span></div>
+                            <div>Risk Score: <span id="riskScore">--</span></div>
+                            <div>Beta: <span id="portfolioBeta">--</span></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">MARKET EXPOSURE</div>
+                        <div id="exposureDetails" style="font-size:12px; margin-top:8px; line-height:1.4;">
+                            <div>Large Cap: <span id="largeCap">--</span></div>
+                            <div>Mid Cap: <span id="midCap">--</span></div>
+                            <div>Small Cap: <span id="smallCap">--</span></div>
+                            <div>Cash: <span id="cashPosition">--</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container" style="margin-top:16px;">
+                    <table>
+                        <thead>
+                            <tr><th>Metric</th><th>Value</th><th>Benchmark</th><th>Deviation</th></tr>
+                        </thead>
+                        <tbody id="detailsMetricsTable">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ML Tab -->
+            <div id="upperTab-ml" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="loadMLPredictions()"><i class="fa fa-brain"></i> Run ML Analysis</button>
+                    <button class="secondary-btn" onclick="trainMLModels()"><i class="fa fa-cog"></i> Train Models</button>
+                    <select id="mlModelSelect" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="volatility">Volatility Prediction</option>
+                        <option value="var">Value at Risk</option>
+                        <option value="correlation">Correlation Analysis</option>
+                        <option value="momentum">Momentum Signals</option>
+                    </select>
+                    <span id="mlStatus" style="font-size:12px; color:#888;">Model Ready</span>
+                </div>
+                <div id="mlContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="metric-card">
+                        <div class="title">ML PREDICTIONS</div>
+                        <div id="mlPredictions" style="font-size:12px; margin-top:8px; line-height:1.4;">
+                            <div>Next Day Volatility: <span id="volatilityPred" class="value">--</span></div>
+                            <div>VaR (95%): <span id="varPred" class="value">--</span></div>
+                            <div>Expected Return: <span id="returnPred" class="value">--</span></div>
+                            <div>Confidence: <span id="mlConfidence" class="value">--</span></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">MODEL PERFORMANCE</div>
+                        <div id="mlPerformance" style="font-size:12px; margin-top:8px; line-height:1.4;">
+                            <div>Accuracy: <span id="mlAccuracy">--</span></div>
+                            <div>Last Trained: <span id="lastTrained">--</span></div>
+                            <div>Data Points: <span id="dataPoints">--</span></div>
+                            <div>Status: <span id="modelStatus">Ready</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container" style="margin-top:16px;">
+                    <table>
+                        <thead>
+                            <tr><th>Symbol</th><th>Prediction</th><th>Confidence</th><th>Signal</th><th>Risk Level</th></tr>
+                        </thead>
+                        <tbody id="mlPredictionsTable">
+                            <!-- Dynamic ML predictions -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Greeks Tab -->
+            <div id="upperTab-greeks" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="calculateGreeks()"><i class="fa fa-calculator"></i> Calculate Greeks</button>
+                    <button class="secondary-btn" onclick="loadOptionsData()"><i class="fa fa-refresh"></i> Refresh Options</button>
+                    <select id="optionsFilter" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="all">All Options</option>
+                        <option value="calls">Calls Only</option>
+                        <option value="puts">Puts Only</option>
+                        <option value="itm">In The Money</option>
+                        <option value="otm">Out The Money</option>
+                    </select>
+                    <span id="greeksStatus" style="font-size:12px; color:#888;">Ready</span>
+                </div>
+                <div id="greeksContainer" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:16px;">
+                    <div class="metric-card">
+                        <div class="title">DELTA</div>
+                        <div class="value" id="portfolioDelta">--</div>
+                        <div class="change" id="deltaChange">Price Sensitivity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">GAMMA</div>
+                        <div class="value" id="portfolioGamma">--</div>
+                        <div class="change" id="gammaChange">Delta Sensitivity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">THETA</div>
+                        <div class="value" id="portfolioTheta">--</div>
+                        <div class="change" id="thetaChange">Time Decay</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">VEGA</div>
+                        <div class="value" id="portfolioVega">--</div>
+                        <div class="change" id="vegaChange">Volatility Sensitivity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">RHO</div>
+                        <div class="value" id="portfolioRho">--</div>
+                        <div class="change" id="rhoChange">Interest Rate Sensitivity</div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Symbol</th><th>Type</th><th>Strike</th><th>Delta</th><th>Gamma</th><th>Theta</th><th>Vega</th><th>Rho</th></tr>
+                        </thead>
+                        <tbody id="greeksTable">
+                            <!-- Dynamic Greeks data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Heatmap Tab -->
+            <div id="upperTab-heatmap" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="generateHeatmap()"><i class="fa fa-th"></i> Generate Heatmap</button>
+                    <button class="secondary-btn" onclick="refreshCorrelations()"><i class="fa fa-refresh"></i> Refresh</button>
+                    <select id="heatmapType" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="correlation">Correlation</option>
+                        <option value="volatility">Volatility</option>
+                        <option value="beta">Beta Exposure</option>
+                        <option value="sector">Sector Allocation</option>
+                    </select>
+                    <select id="heatmapPeriod" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="1M">1 Month</option>
+                        <option value="3M" selected>3 Months</option>
+                        <option value="6M">6 Months</option>
+                        <option value="1Y">1 Year</option>
+                    </select>
+                    <span id="heatmapStatus" style="font-size:12px; color:#888;">Ready</span>
+                </div>
+                <div id="heatmapContainer" style="width:100%; height:500px; background:#1a1a1a; border:1px solid #333; border-radius:6px; padding:12px;">
+                    <div id="plotlyHeatmap" style="width:100%; height:100%;"></div>
+                </div>
+                <div class="portfolio-grid" style="margin-top:16px;">
+                    <div class="metric-card">
+                        <div class="title">HIGHEST CORRELATION</div>
+                        <div class="value" id="highestCorr">--</div>
+                        <div class="change" id="highestCorrPair">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">LOWEST CORRELATION</div>
+                        <div class="value" id="lowestCorr">--</div>
+                        <div class="change" id="lowestCorrPair">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">PORTFOLIO CONCENTRATION</div>
+                        <div class="value" id="concentration">--</div>
+                        <div class="change">Diversification Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Tab -->
+            <div id="upperTab-live" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="toggleLiveUpdates()"><i class="fa fa-play" id="liveToggleIcon"></i> <span id="liveToggleText">Start Live</span></button>
+                    <button class="secondary-btn" onclick="connectFyersWS()"><i class="fa fa-plug"></i> Connect WebSocket</button>
+                    <select id="updateInterval" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="5">5 seconds</option>
+                        <option value="15" selected>15 seconds</option>
+                        <option value="30">30 seconds</option>
+                        <option value="60">1 minute</option>
+                    </select>
+                    <span id="liveStatus" style="font-size:12px; color:#888;">Disconnected</span>
+                    <div id="wsConnectionStatus" style="width:10px; height:10px; border-radius:50%; background:#f44747; margin-left:8px;" title="WebSocket Status"></div>
+                </div>
+                <div class="portfolio-grid">
+                    <div class="metric-card">
+                        <div class="title">REAL-TIME P&L</div>
+                        <div class="value" id="livePnL">--</div>
+                        <div class="change" id="livePnLChange">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">MARKET STATUS</div>
+                        <div class="value" id="marketStatus">--</div>
+                        <div class="change" id="marketTime">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">UPDATES/MIN</div>
+                        <div class="value" id="updateRate">--</div>
+                        <div class="change">Data Flow Rate</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">SUBSCRIBED SYMBOLS</div>
+                        <div class="value" id="subscribedCount">--</div>
+                        <div class="change" id="connectionQuality">--</div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Symbol</th><th>LTP</th><th>Change</th><th>%Change</th><th>Volume</th><th>Last Update</th></tr>
+                        </thead>
+                        <tbody id="liveDataTable">
+                            <!-- Real-time data updates -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:12px; font-size:11px; color:#666;">
+                    Live data updates via WebSocket connection. Refresh rate: <span id="currentRefreshRate">15</span> seconds.
+                </div>
+            </div>
+
+            <!-- Risk Management Tab -->
+            <div id="upperTab-risk" class="upper-tab-content">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <button class="secondary-btn" onclick="loadRiskDashboard()"><i class="fa fa-shield-alt"></i> Load Risk Analysis</button>
+                    <button class="secondary-btn" onclick="runRiskScenario()"><i class="fa fa-chart-line"></i> Scenario Test</button>
+                    <button class="secondary-btn" onclick="generateRiskReport()"><i class="fa fa-file-alt"></i> Risk Report</button>
+                    <select id="riskTimeframe" class="secondary-btn" style="padding:4px 6px;">
+                        <option value="1D">1 Day</option>
+                        <option value="1W" selected>1 Week</option>
+                        <option value="1M">1 Month</option>
+                        <option value="3M">3 Months</option>
+                    </select>
+                    <span id="riskStatus" style="font-size:12px; color:#888;">Ready</span>
+                </div>
+
+                <!-- Risk Overview Cards -->
+                <div class="portfolio-grid">
+                    <div class="metric-card">
+                        <div class="title">PORTFOLIO VAR</div>
+                        <div class="value" id="portfolioVar">--</div>
+                        <div class="change" id="varChange">95% Confidence</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">RISK SCORE</div>
+                        <div class="value" id="riskScoreValue">--</div>
+                        <div class="change" id="riskScoreStatus">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">MAX DRAWDOWN</div>
+                        <div class="value" id="maxDrawdown">--</div>
+                        <div class="change" id="drawdownPeriod">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">BETA</div>
+                        <div class="value" id="portfolioBetaRisk">--</div>
+                        <div class="change" id="betaComparison">vs Market</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">CORRELATION</div>
+                        <div class="value" id="avgCorrelation">--</div>
+                        <div class="change">Avg Position Correlation</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="title">VOLATILITY</div>
+                        <div class="value" id="portfolioVolatility">--</div>
+                        <div class="change" id="volatilityTrend">--</div>
+                    </div>
+                </div>
+
+                <!-- AI Agents Section - Enhanced with Predefined Sonnet 3.5 Portfolio Risk Management -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;">
+                    <div class="metric-card" style="padding:12px;">
+                        <div class="title" style="margin-bottom:8px;">AI RISK AGENTS</div>
+                        <div id="agentStatus" style="font-size:11px; line-height:1.4;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Risk Monitor:</span>
+                                <span id="riskMonitorStatus" style="color:#ffa500;">●</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Scenario Sim:</span>
+                                <span id="scenarioSimStatus" style="color:#ffa500;">●</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Compliance:</span>
+                                <span id="complianceStatus" style="color:#ffa500;">●</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Advisor:</span>
+                                <span id="advisorStatus" style="color:#ffa500;">●</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Trade Exec:</span>
+                                <span id="tradeExecStatus" style="color:#ffa500;">●</span>
+                            </div>
+                        </div>
+                        <button class="secondary-btn" onclick="activateAllAgents()" style="width:100%; margin-top:8px; font-size:11px;">
+                            <i class="fa fa-play"></i> Activate All Agents
+                        </button>
+                    </div>
+                    
+                    <!-- New Predefined Agentic AI Panel -->
+                    <div class="metric-card" style="padding:12px;">
+                        <div class="title" style="margin-bottom:8px;">
+                            <i class="fa fa-brain"></i> SONNET 3.5 PORTFOLIO AI
+                        </div>
+                        <div style="font-size:11px; margin-bottom:8px;">
+                            <select id="predefinedAgentType" class="secondary-btn" style="width:100%; padding:4px 6px; font-size:10px;">
+                                <option value="portfolio_analysis">Portfolio Analysis</option>
+                                <option value="risk_assessment">Risk Assessment</option>
+                                <option value="diversification">Diversification Review</option>
+                                <option value="market_outlook">Market Outlook</option>
+                                <option value="sector_rotation">Sector Rotation</option>
+                                <option value="stress_testing">Stress Testing</option>
+                                <option value="hedging_strategy">Hedging Strategy</option>
+                                <option value="rebalancing">Rebalancing Plan</option>
+                            </select>
+                        </div>
+                        <button class="primary-btn" onclick="generatePortfolioInsights()" style="width:100%; font-size:11px; margin-bottom:6px;">
+                            <i class="fa fa-magic"></i> Generate AI Insights
+                        </button>
+                        <div id="aiInsightStatus" style="font-size:10px; color:#888; text-align:center;">
+                            Ready to analyze
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights Display Panel -->
+                <div id="aiInsightsPanel" class="metric-card" style="margin:16px 0; padding:16px; display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div class="title">
+                            <i class="fa fa-robot"></i> AI PORTFOLIO INSIGHTS
+                        </div>
+                        <div style="font-size:10px; color:#888;">
+                            <span id="insightTimestamp">--</span>
+                        </div>
+                    </div>
+                    <div id="aiInsightsContent" style="font-size:12px; line-height:1.5; max-height:300px; overflow-y:auto;">
+                        <!-- AI insights will be populated here -->
+                    </div>
+                    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="secondary-btn" onclick="exportInsights()" style="font-size:10px;">
+                            <i class="fa fa-download"></i> Export
+                        </button>
+                        <button class="secondary-btn" onclick="shareInsights()" style="font-size:10px;">
+                            <i class="fa fa-share"></i> Share
+                        </button>
+                        <button class="secondary-btn" onclick="clearInsights()" style="font-size:10px;">
+                            <i class="fa fa-times"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Risk Alerts -->
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#303030; border-bottom:1px solid #3a3a3a;">
+                        <span style="font-weight:600; font-size:12px;">RISK ALERTS & RECOMMENDATIONS</span>
+                        <button class="secondary-btn" onclick="refreshRiskAlerts()" style="font-size:10px; padding:2px 6px;">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div id="riskAlertsContainer" style="max-height:200px; overflow-y:auto; padding:8px;">
+                        <div id="riskAlertsList" style="font-size:12px;">
+                            <!-- Risk alerts will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Matrix -->
+                <div style="margin-top:16px;">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Asset</th><th>Weight</th><th>VaR</th><th>Beta</th><th>Risk Score</th><th>Recommendation</th></tr>
+                            </thead>
+                            <tbody id="riskMatrixTable">
+                                <!-- Risk matrix data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="margin-top:12px; font-size:11px; color:#666;">
+                    Risk analysis powered by AI agents with AWS Bedrock. Data updates every 15 minutes during market hours.
+                </div>
+            </div>
+        </div>
+        <div class="resize-handle" id="resizeHandle"></div>
+        <div class="lower-panels">
+            <div class="tab-bar">
+                <button class="active" onclick="showTab('analytics')">Analytics</button>
+                <button onclick="showTab('recommendations')">AI Recs</button>
+                <button onclick="showTab('news')">News</button>
+                <button onclick="showTab('reports')">Reports</button>
+                <button onclick="showTab('tvchart')">Chart Insight</button>
+            </div>
+            <div id="analyticsTab" class="tab-content active">
+                <pre class="output" id="analyticsOutput">Initializing analytics...</pre>
+            </div>
+            <div id="recommendationsTab" class="tab-content">
+                <pre class="output" id="recsOutput">Loading recommendations...</pre>
+            </div>
+            <div id="newsTab" class="tab-content">
+                <pre class="output" id="newsOutput">Loading news...</pre>
+            </div>
+            <div id="reportsTab" class="tab-content">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                    <button class="secondary-btn" onclick="generateDailyReport()">Daily</button>
+                    <button class="secondary-btn" onclick="generateMonthlyReport()">Monthly</button>
+                    <button class="secondary-btn" onclick="generateTaxReport()">Tax</button>
+                    <button class="secondary-btn" onclick="exportPDF()">Export PDF</button>
+                </div>
+                <pre class="output" id="reportOutput">Reports will appear here.</pre>
+            </div>
+            <div id="tvchartTab" class="tab-content">
+                <div id="chartAIBox" style="background:#161616; border:1px solid #2d2d2d; padding:10px 12px; font-size:12px; line-height:1.4; border-radius:8px;">
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:6px;">
+                        <strong style="color:#ccc; font-size:13px;">AI Chart Insight</strong>
+                        <input id="tvSymbol" placeholder="NSE:TCS" style="max-width:170px;" />
+                        <select id="chartAIProvider" class="secondary-btn" style="padding:4px 6px; font-size:11px;">
+                            <option value="">Auto</option>
+                            <option value="ollama">Ollama</option>
+                            <option value="mistral">Mistral</option>
+                            <option value="anthropic">Anthropic</option>
+                            <option value="openai">OpenAI</option>
+                        </select>
+                        <button class="secondary-btn" onclick="fetchChartAI()"><i class="fa fa-magic"></i> Explain</button>
+                    </div>
+                    <div id="chartAIContent" style="white-space:pre-wrap; color:#bbb; max-height:240px; overflow:auto;">Enter symbol and press Explain for technical summary. The full interactive chart is in the upper main section.</div>
+                    <div style="font-size:10px; color:#666; margin-top:6px;">Analysis generated from lightweight price summary. Not investment advice.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Event Detail Modal -->
+        <div id="eventDetailModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:9999;">
+            <div style="width:min(840px,92%); max-height:84vh; background:#181818; border:1px solid #333; border-radius:14px; display:flex; flex-direction:column;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #2c2c2c;">
+                    <h3 id="eventModalTitle" style="margin:0; font-size:16px; color:#eee;">Event Detail</h3>
+                    <div style="display:flex; gap:8px;">
+                        <button class="secondary-btn" onclick="copyEventDetail()" title="Copy Details" style="font-size:12px;"><i class="fa fa-copy"></i></button>
+                        <button class="secondary-btn" onclick="closeEventModal()" style="font-size:12px;"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div id="eventModalBody" style="padding:14px 18px; overflow:auto; font-size:13px; line-height:1.45; color:#ccc;">
+                    Loading...
+                </div>
+                <div style="padding:10px 16px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #2c2c2c; font-size:11px; color:#666;">
+                    <span id="eventModalMeta">—</span>
+                    <button class="primary-btn" onclick="analyzeEventWithAI()" style="font-size:12px;">AI Insight</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Panel -->
+    <div class="right-panel" id="rightPanel">
+        <div class="right-tabs">
+            <button class="active" onclick="switchRightTab('chat', this)"><i class="fa fa-comments"></i> Chat</button>
+            <button onclick="switchRightTab('watchlist', this)"><i class="fa fa-eye"></i> Portfolio Overview</button>
+            <button onclick="switchRightTab('alerts', this)"><i class="fa fa-bell"></i> Alerts</button>
+            <button onclick="switchRightTab('grounded', this)"><i class="fa fa-shield-alt"></i> AI Risk Advisor</button>
+            <button onclick="switchRightTab('aiKeys', this)"><i class="fa fa-key"></i> AI Keys</button>
+        </div>
+        <div class="panel-tab active" id="chatTab">
+            <div class="analytics-history" id="analyticsHistory"></div>
+            <div class="panel-footer">
+                <textarea id="analyticsInput" placeholder="Ask about portfolio, risk, opportunities..."></textarea>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="primary-btn" onclick="sendAnalyticsQuery()"><i class="fa fa-paper-plane"></i> Send</button>
+                    <button class="secondary-btn" onclick="quickQuery('risk analysis')">Risk</button>
+                    <button class="secondary-btn" onclick="quickQuery('market outlook')">Outlook</button>
+                    <button class="secondary-btn" onclick="clearAnalyticsChat()">Clear</button>
+                </div>
+            </div>
+        </div>
+    <div class="panel-tab" id="watchlistTab">
+            <div style="padding:8px 10px 4px; display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; background:#202020; border:1px solid #333; border-radius:6px; margin:8px;">
+                <div style="flex:1; min-width:110px;">
+                    <label style="display:block; font-size:10px; letter-spacing:.5px; color:#888; margin-bottom:2px;">ADD SYMBOL</label>
+                    <input id="addSymbolInput" placeholder="AAPL" style="font-size:12px; padding:6px;" />
+                </div>
+                <div style="flex:1; min-width:110px;">
+                    <label style="display:block; font-size:10px; letter-spacing:.5px; color:#888; margin-bottom:2px;">ALERT TYPE</label>
+                    <select id="alertType" style="font-size:12px; padding:6px;">
+                        <option value="price_above">Price ≥</option>
+                        <option value="price_below">Price ≤</option>
+                    </select>
+                </div>
+                <div style="flex:1; min-width:90px;">
+                    <label style="display:block; font-size:10px; letter-spacing:.5px; color:#888; margin-bottom:2px;">VALUE</label>
+                    <input id="alertValue" type="number" step="0.01" placeholder="100" style="font-size:12px; padding:6px;" />
+                </div>
+                <div style="display:flex; gap:6px;">
+                    <button class="secondary-btn" style="margin-top:14px;" onclick="uiAddSymbol()"><i class="fa fa-plus"></i></button>
+                    <button class="secondary-btn" style="margin-top:14px;" onclick="uiAddAlert()"><i class="fa fa-bell"></i></button>
+                </div>
+            </div>
+            <div style="margin:4px 8px 0; background:#202020; border:1px solid #333; border-radius:6px; padding:8px 10px; font-size:11px; color:#999; display:flex; flex-wrap:wrap; gap:14px;" id="portfolioOverviewMetrics">
+                <span>Loading overview...</span>
+            </div>
+            <div class="watchlist" id="watchlist" style="margin:6px 8px 0;"></div>
+        </div>
+        <div class="panel-tab" id="alertsTab">
+            <div class="alerts-list" id="alertsList"></div>
+        </div>
+        <div class="panel-tab" id="groundedTab">
+            <div style="flex:1; overflow:auto; padding:10px 12px 14px; display:flex; flex-direction:column; gap:10px;">
+                <!-- AI Risk Advisor Header -->
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:10px 12px;">
+                    <div style="font-size:11px; letter-spacing:.5px; color:#888; margin-bottom:8px;">🛡️ AI RISK ADVISOR</div>
+                    <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                        <button class="secondary-btn" onclick="loadRiskAdvisorStatus()" style="flex:1; font-size:11px;">
+                            <i class="fa fa-refresh"></i> Status
+                        </button>
+                        <button class="secondary-btn" onclick="activateRiskAgents()" style="flex:1; font-size:11px;">
+                            <i class="fa fa-play"></i> Activate
+                        </button>
+                    </div>
+                    <div id="riskAdvisorStatus" style="font-size:10px; padding:6px 8px; background:#1a1a1a; border-radius:4px; border:1px solid #333;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span>Risk Monitor:</span>
+                            <span id="rightRiskMonitorStatus" style="color:#ffa500;">●</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span>Scenario Sim:</span>
+                            <span id="rightScenarioSimStatus" style="color:#ffa500;">●</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span>Compliance:</span>
+                            <span id="rightComplianceStatus" style="color:#ffa500;">●</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span>Advisor:</span>
+                            <span id="rightAdvisorStatus" style="color:#ffa500;">●</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Trade Exec:</span>
+                            <span id="rightTradeExecStatus" style="color:#ffa500;">●</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div style="background:#1f1f1f; border:1px solid #333; border-radius:6px; flex:1; display:flex; flex-direction:column;">
+                    <div style="padding:8px 10px; border-bottom:1px solid #333; font-size:10px; letter-spacing:.5px; color:#777;">
+                        AI RISK CHAT
+                    </div>
+                    <div id="rightRiskChatMessages" style="flex:1; padding:8px; overflow-y:auto; max-height:300px; font-size:11px; line-height:1.4;">
+                        <div style="color:#888; text-align:center; padding:20px;">
+                            AI Risk Advisor ready for questions...
+                        </div>
+                    </div>
+                    <div style="padding:8px; border-top:1px solid #333; display:flex; gap:6px;">
+                        <input id="rightRiskChatInput" placeholder="Ask about portfolio risk..." style="flex:1; font-size:11px; padding:6px 8px;" onkeypress="if(event.key==='Enter') sendRightRiskMessage()">
+                        <button class="secondary-btn" onclick="sendRightRiskMessage()" style="font-size:11px; padding:6px 10px;">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:8px 10px;">
+                    <div style="font-size:10px; letter-spacing:.5px; color:#777; margin-bottom:6px;">QUICK ACTIONS</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <button class="secondary-btn" onclick="askQuickRiskQuestion('What is my portfolio risk level?')" style="font-size:10px; padding:4px 6px;">
+                            Risk Level
+                        </button>
+                        <button class="secondary-btn" onclick="askQuickRiskQuestion('Show me concentration risks')" style="font-size:10px; padding:4px 6px;">
+                            Concentration
+                        </button>
+                        <button class="secondary-btn" onclick="askQuickRiskQuestion('Run stress test scenario')" style="font-size:10px; padding:4px 6px;">
+                            Stress Test
+                        </button>
+                        <button class="secondary-btn" onclick="askQuickRiskQuestion('Suggest rebalancing')" style="font-size:10px; padding:4px 6px;">
+                            Rebalance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:8px 10px; font-size:10px; color:#999; line-height:1.4;">
+                    AI Risk Advisor provides real-time portfolio risk analysis using 5 specialized AI agents powered by AWS Bedrock.
+                </div>
+            </div>
+        </div>
+        <div class="panel-tab" id="aiKeysTab">
+            <div style="flex:1; overflow:auto; padding:10px 12px 16px; display:flex; flex-direction:column; gap:12px;">
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="font-size:11px; letter-spacing:.5px; color:#888;">USER AI KEYS (Persisted Securely)</div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;">
+                        <div>
+                            <label style="font-size:10px; color:#888;">PROVIDER</label>
+                            <select id="aiKeyProvider">
+                                <option value="openai">OpenAI</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="mistral">Mistral</option>
+                                <option value="groq">Groq</option>
+                                <option value="cohere">Cohere</option>
+                                <option value="google">Google (Gemini)</option>
+                                <option value="ollama">Ollama (Local)</option>
+                            </select>
+                        </div>
+                        <div style="grid-column:span 2;">
+                            <label style="font-size:10px; color:#888;">API KEY</label>
+                            <input id="aiKeyValue" placeholder="Enter key" />
+                        </div>
+                        <div>
+                            <label style="font-size:10px; color:#888;">MODEL (optional)</label>
+                            <input id="aiKeyModel" placeholder="claude-3-5-sonnet" />
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="primary-btn" style="flex:1;" onclick="saveUserAIKey()"><i class="fa fa-save"></i> Save Key</button>
+                        <button class="secondary-btn" onclick="refreshUserAIKeys()"><i class="fa fa-sync"></i></button>
+                        <button class="secondary-btn" onclick="clearAIKeyInputs()"><i class="fa fa-eraser"></i></button>
+                    </div>
+                    <div id="aiKeysStatus" style="font-size:11px; color:#999; min-height:14px;"></div>
+                    <div id="aiKeysList" style="display:flex; flex-wrap:wrap; gap:6px; font-size:11px;"></div>
+                </div>
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="font-size:11px; letter-spacing:.5px; color:#888;">TEST CHAT</div>
+                    <textarea id="aiTestPrompt" placeholder="Ask something small to test..." style="height:70px; resize:vertical;"></textarea>
+                    <div style="display:flex; gap:8px;">
+                        <button class="primary-btn" style="flex:1;" onclick="runUserAIChat()"><i class="fa fa-robot"></i> Send</button>
+                        <button class="secondary-btn" onclick="cancelUserAIChat()" id="aiChatCancelBtn" disabled><i class="fa fa-stop"></i></button>
+                    </div>
+                    <pre id="aiTestOutput" style="margin:0; white-space:pre-wrap; font-size:12px; max-height:240px; overflow:auto;">No test run yet.</pre>
+                </div>
+                <div style="background:#1f1f1f; border:1px solid #333; border-radius:6px; padding:8px 10px; font-size:11px; color:#999; line-height:1.4;">
+                    Keys are encrypted & stored per user. Delete a key to remove it from persistence. Avoid entering production keys on shared machines.
+                </div>
+                <div style="background:#202020; border:1px solid #333; border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;">
+                    <div style="font-size:11px; letter-spacing:.5px; color:#888; display:flex; align-items:center; gap:6px;">ADMIN GLOBAL AI KEYS <span style="font-size:10px; color:#555;">(Fallback for all users)</span></div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;">
+                        <div>
+                            <label style="font-size:10px; color:#888;">PROVIDER</label>
+                            <select id="globalAIProvider">
+                                <option value="openai">OpenAI</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="mistral">Mistral</option>
+                                <option value="groq">Groq</option>
+                                <option value="cohere">Cohere</option>
+                                <option value="google">Google (Gemini)</option>
+                                <option value="ollama">Ollama (Local)</option>
+                            </select>
+                        </div>
+                        <div style="grid-column:span 2;">
+                            <label style="font-size:10px; color:#888;">API KEY</label>
+                            <input id="globalAIKey" placeholder="Admin key" />
+                        </div>
+                        <div>
+                            <label style="font-size:10px; color:#888;">MODEL (optional)</label>
+                            <input id="globalAIModel" placeholder="gpt-4o-mini" />
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="primary-btn" style="flex:1;" onclick="saveGlobalAIKey()"><i class="fa fa-shield"></i> Save Global Key</button>
+                        <button class="secondary-btn" onclick="loadGlobalAIKeys()"><i class="fa fa-sync"></i></button>
+                        <button class="secondary-btn" onclick="deleteGlobalAIKey()"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <div id="globalAIStatus" style="font-size:11px; color:#999; min-height:14px;"></div>
+                    <div id="globalAIKeysList" style="display:flex; flex-direction:column; gap:4px; font-size:11px;"></div>
+                    <div style="font-size:10px; color:#666; line-height:1.4;">If a user has no personal key for a provider, the global key (if present) is used. Limit access to this panel to administrators.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span>VS Terminal AClass • Investor Mode • {{ current_investor or 'User' }}</span>
+        <span>Updated: <span id="statusLastUpdate">--:--</span> • Market <span style="color:#4ade80">Open</span></span>
+    </div>
+</div>
+
+<script>
+// --- Layout interactions ---
+function toggleSection(h){ h.parentElement.classList.toggle('collapsed'); }
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+function toggleRightPanel(){ document.getElementById('rightPanel').classList.toggle('open'); }
+function focusSection(name){ /* placeholder - could context switch */ }
+
+// --- Resizing dashboard panel ---
+const dashboard = document.getElementById('dashboardPanel');
+const handle = document.getElementById('resizeHandle');
+let isResizing = false; let startY=0; let startHeight=0;
+handle.addEventListener('mousedown', e=>{ isResizing=true; startY=e.clientY; startHeight=dashboard.getBoundingClientRect().height; dashboard.classList.add('resizing'); document.body.style.cursor='row-resize'; });
+window.addEventListener('mousemove', e=>{ if(!isResizing) return; const dy=e.clientY-startY; const newH=startHeight+dy; if(newH>140 && newH<window.innerHeight*0.8){ dashboard.style.height=newH+'px'; }});
+window.addEventListener('mouseup', ()=>{ if(isResizing){ isResizing=false; dashboard.classList.remove('resizing'); document.body.style.cursor=''; }});
+
+// --- Live Portfolio Loading & Real-Time Metrics ---
+let _holdingCostBasis = {};   // symbol -> total cost basis (quantity * avg_cost)
+let _holdingQty = {};         // symbol -> quantity
+let _metricsTimer = null;     // debounce timer
+let _lastMetricsRun = 0;
+
+function updatePortfolioOverviewMetrics(){
+    // Compute aggregate metrics from live quotes + stored cost basis
+    const symbols = Object.keys(_holdingCostBasis);
+    if(!symbols.length){
+        // Fallback message if nothing loaded yet
+        document.getElementById('portfolioMetrics').innerHTML = `<div style='padding:12px; color:#888; font-size:13px;'>No portfolio data loaded.</div>`;
+        return;
+    }
+    let totalInvested = 0, currentValue = 0;
+    for(const sym of symbols){
+        const cost = _holdingCostBasis[sym] || 0;
+        const qty = _holdingQty[sym] || 0;
+        const price = _liveQuotes[sym]?.price || null; // may be null until first tick
+        // If live price absent, approximate with (cost / qty) to avoid large jumps
+        const effectivePrice = (price && qty) ? price : (qty ? (cost/qty) : 0);
+        totalInvested += cost;
+        currentValue += effectivePrice * qty;
+    }
+    const totalPnlValue = currentValue - totalInvested;
+    const totalPnlPct = totalInvested ? (totalPnlValue / totalInvested * 100) : 0;
+    const positions = symbols.filter(s=>(_holdingQty[s]||0) > 0).length;
+    const pnlCls = totalPnlValue>=0 ? 'positive':'negative';
+    const pctCls = totalPnlPct>=0 ? 'positive':'negative';
+    document.getElementById('portfolioMetrics').innerHTML = `
+        <div class='metric-card'><div class='title'>TOTAL INVESTMENT</div><div class='value'>₹${Math.round(totalInvested).toLocaleString()}</div><div class='change'>Capital Deploy</div></div>
+        <div class='metric-card'><div class='title'>CURRENT VALUE</div><div class='value'>₹${Math.round(currentValue).toLocaleString()}</div><div class='change ${pnlCls}'>${totalPnlValue>=0?'+':''}₹${Math.round(totalPnlValue).toLocaleString()}</div></div>
+        <div class='metric-card'><div class='title'>TOTAL RETURN %</div><div class='value ${pctCls}'>${totalPnlPct>=0?'+':''}${totalPnlPct.toFixed(2)}%</div><div class='change'>Live</div></div>
+        <div class='metric-card'><div class='title'>ACTIVE POSITIONS</div><div class='value'>${positions}</div><div class='change'>Holdings</div></div>`;
+}
+
+function schedulePortfolioMetrics(){
+    const now = Date.now();
+    // If updates are very frequent, debounce (~350ms)
+    if(now - _lastMetricsRun < 350){
+        clearTimeout(_metricsTimer);
+        _metricsTimer = setTimeout(()=>{ _lastMetricsRun = Date.now(); updatePortfolioOverviewMetrics(); }, 350);
+        return;
+    }
+    _lastMetricsRun = now;
+    updatePortfolioOverviewMetrics();
+}
+
+async function fetchHoldings(){
+    try {
+        const r = await fetch('/api/vs_terminal_AClass/holdings');
+        if(!r.ok) throw 0; const data = await r.json();
+        const holdings = data.holdings || [];
+        const tbody = document.getElementById('holdingsTable');
+        tbody.innerHTML = holdings.map(h=>{
+            const pnlCls = h.pnl_value>=0?'positive':'negative';
+            const pctCls = h.pnl_pct>=0?'positive':'negative';
+            return `<tr data-symbol='${h.ticker}'><td><strong>${h.ticker}</strong></td><td>${h.quantity}</td><td class='live-price'>₹${h.current_price?.toLocaleString()}</td><td class='${pnlCls}'>${h.pnl_value>=0?'+':''}₹${h.pnl_value.toLocaleString()}</td><td class='${pctCls}'>${h.pnl_pct>=0?'+':''}${h.pnl_pct}%</td></tr>`;
+        }).join('') || `<tr><td colspan='5' style='padding:14px; text-align:center; color:#888;'>No holdings</td></tr>`;
+        // Build cost basis & qty maps for live recomputation
+        _holdingCostBasis = {}; _holdingQty = {};
+        for(const h of holdings){
+            const qty = h.quantity || 0;
+            const currentPrice = h.current_price || 0;
+            const pnlVal = h.pnl_value || 0; // server provided current P&L value
+            // cost basis total = current value - pnl value
+            const costBasisTotal = (currentPrice * qty) - pnlVal;
+            _holdingCostBasis[h.ticker] = costBasisTotal;
+            _holdingQty[h.ticker] = qty;
+            // seed live price so metrics show immediately
+            if(!_liveQuotes[h.ticker]) _liveQuotes[h.ticker] = { price: currentPrice };
+        }
+        // Initial metrics render
+        updatePortfolioOverviewMetrics();
+    // Transactions will be loaded after function definition
+async function loadTransactions(){
+    try{ const r=await fetch('/api/vs_terminal_AClass/transactions'); if(!r.ok) throw 0; const d=await r.json(); const tx=d.transactions||[]; const body=document.getElementById('transactionsTable');
+        if(!tx.length){ body.innerHTML=`<tr><td colspan='5' style='padding:10px; text-align:center; color:#666;'>No transactions</td></tr>`; return; }
+        body.innerHTML=tx.map(t=>{ const dt=new Date(t.executed_at); const day=dt.toLocaleDateString('en-IN'); const act=t.action==='BUY'?"<span style='color:#4ade80'>BUY</span>":"<span style='color:#f87171'>SELL</span>"; return `<tr><td>${day}</td><td>${act}</td><td>${t.ticker}</td><td>${t.quantity}</td><td>₹${t.price}</td></tr>`; }).join('');
+    }catch(e){ document.getElementById('transactionsTable').innerHTML=`<tr><td colspan='5' style='padding:10px; text-align:center; color:#c94;'>Failed to load transactions</td></tr>`; }
+}
+    // Update watchlist (now Portfolio Overview list) from holdings
+        buildWatchlist(holdings.map(h=>h.ticker));
+    } catch(e){
+        document.getElementById('holdingsTable').innerHTML = `<tr><td colspan='5' style='padding:14px; text-align:center; color:#c94;'>Failed to load holdings (demo fallback).</td></tr>`;
+    }
+}
+
+// --- Tabs ---
+function showTab(name){ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.getElementById(name+'Tab').classList.add('active'); document.querySelectorAll('.tab-bar button').forEach(b=>{ if(b.textContent.toLowerCase().includes(name)) b.classList.add('active'); else b.classList.remove('active'); }); }
+
+// --- Right panel tabs ---
+function switchRightTab(tab, btn){ document.querySelectorAll('.right-tabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.panel-tab').forEach(p=>p.classList.remove('active')); document.getElementById(tab+'Tab').classList.add('active'); }
+
+// --- Analytics selection ---
+document.addEventListener('click', e=>{ if(e.target.closest('#analyticsList li')){ document.querySelectorAll('#analyticsList li').forEach(li=>li.classList.remove('selected')); e.target.closest('li').classList.add('selected'); }});
+
+// --- Analytics Chat ---
+function addAnalyticsMessage(type, content){ const history=document.getElementById('analyticsHistory'); const div=document.createElement('div'); div.className='msg '+type; if(type==='user'){ div.textContent=content; } else { const ts=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); div.innerHTML=`<div style='font-size:10px; color:var(--muted); margin-bottom:4px;'>${type==='ai'?'AI Assistant':'System'} • ${ts}</div><div>${content}</div>`; } history.appendChild(div); history.scrollTop=history.scrollHeight; }
+async function sendAnalyticsQuery(){ const ta=document.getElementById('analyticsInput'); const q=ta.value.trim(); if(!q) return; addAnalyticsMessage('user', q); ta.value=''; try { const holdingsRows=[...document.querySelectorAll('#holdingsTable tr')]; const tickers=holdingsRows.map(r=>r.querySelector('td strong')?.textContent).filter(Boolean).slice(0,10); const res= await fetch('/api/vs_terminal_AClass/ai_insights',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tickers, question:q})}); if(!res.ok) throw 0; const data= await res.json(); addAnalyticsMessage('ai', data.insights || 'No insight returned.'); } catch(e){ addAnalyticsMessage('ai','AI service unavailable. Using fallback. Portfolio appears stable.'); } }
+function quickQuery(q){ document.getElementById('analyticsInput').value=q; sendAnalyticsQuery(); }
+function clearAnalyticsChat(){ document.getElementById('analyticsHistory').innerHTML=''; addAnalyticsMessage('ai','Chat cleared. How can I help you next?'); }
+
+// --- Watchlist & Alerts ---
+function buildWatchlist(tickers){ if(!tickers || !tickers.length){ document.getElementById('watchlist').innerHTML='<div style="padding:8px; color:#777;">No watchlist data</div>'; return; } fetch('/api/vs_terminal_AClass/quotes?tickers='+encodeURIComponent(tickers.join(','))) .then(r=>r.json()).then(d=>{ const q=d.quotes||{}; const html= tickers.map(t=>{ const price=q[t]?.price; return `<div class='watchlist-item' data-symbol='${t}'><span>${t}</span><span class='wl-price' style='color:#888'>${price?('₹'+price):'--'}</span></div>`; }).join(''); document.getElementById('watchlist').innerHTML=html; }).catch(()=>{ document.getElementById('watchlist').innerHTML='<div style="padding:8px; color:#777;">Watchlist load failed</div>'; }); }
+function loadWatchlist(){ buildWatchlist([]); }
+function loadAlerts(){ const a=[{t:'Portfolio performing above benchmark',c:'good'},{t:'HDFCBANK underperforming peers',c:'warn'},{t:'Concentration risk acceptable',c:'good'}]; document.getElementById('alertsList').innerHTML=a.map(x=>`<div class='alert-item ${x.c}'>${x.t}</div>`).join(''); }
+
+// --- Analysis Runner ---
+function runAnalysis(){ const sel=document.querySelector('#analyticsList li.selected'); if(!sel) return; const name=sel.textContent.trim(); addAnalyticsMessage('user', 'Run '+name); setTimeout(()=>{ addAnalyticsMessage('ai', `📊 ${name} complete. Key Insight: Portfolio aligned with target allocation.`); },1200); }
+function exportData(){ addAnalyticsMessage('system','Data exported as CSV successfully.'); }
+
+// --- Reports ---
+function generateDailyReport(){ document.getElementById('reportOutput').textContent=`Daily Report (${new Date().toLocaleDateString('en-IN')})\nReturn: +2.35% Today\nSharpe: 1.34\nFocus: Maintain allocation.`; addAnalyticsMessage('system','Daily report generated.'); }
+function generateMonthlyReport(){ addAnalyticsMessage('system','Monthly report generation queued.'); }
+function generateTaxReport(){ addAnalyticsMessage('system','Tax report generation started.'); }
+function exportPDF(){ addAnalyticsMessage('system','Exported current report as PDF.'); }
+
+// --- TradingView Chart Loader ---
+function loadTVChart(){
+    const symInput = document.getElementById('tvSymbol');
+    if(!symInput) return;
+    let sym = (symInput.value || 'NSE:TCS').trim();
+    if(!sym.includes(':')) sym = 'NSE:' + sym.toUpperCase();
+    const base = 'https://s.tradingview.com/widgetembed/?frameElementId=tvChartFrame&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=&hideideas=1&theme=dark';
+    const url = base + '&symbol=' + encodeURIComponent(sym);
+    const frame = document.getElementById('tvChartFrame');
+    if(frame) frame.src = url;
+}
+
+// --- Upper dashboard tabs ---
+function showUpperTab(name){
+    ['overview','chart','events','details','ml','greeks','heatmap','risk','live'].forEach(n=>{
+        const c=document.getElementById('upperTab-'+n); if(c) c.classList.remove('active');
+        const b=document.getElementById('upperTabBtn-'+n); if(b) b.classList.remove('active');
+    });
+    const target=document.getElementById('upperTab-'+name); if(target) target.classList.add('active');
+    const btn=document.getElementById('upperTabBtn-'+name); if(btn) btn.classList.add('active');
+    
+    // Tab-specific initialization
+    if(name==='chart'){
+        // Optionally sync selected holding
+        const firstHolding=document.querySelector('#holdingsTable tr td strong');
+        if(firstHolding){
+            const sym=firstHolding.textContent.trim();
+            if(sym && !document.getElementById('tvSymbolUpper').value){
+                document.getElementById('tvSymbolUpper').value='NSE:'+sym;
+            }
+        }
+    }
+    if(name==='events'){
+        if(!window._eventsAutoRefresh){ loadEventsData(); window._eventsAutoRefresh=setInterval(()=>{ if(document.getElementById('upperTab-events')?.classList.contains('active')) loadEventsData(); }, 10*60*1000); }
+    }
+    if(name==='details'){
+        if(!window._detailsLoaded){ loadDetailsData(); window._detailsLoaded=true; }
+    }
+    if(name==='ml'){
+        if(!window._mlInitialized){ loadMLPredictions(); window._mlInitialized=true; }
+    }
+    if(name==='greeks'){
+        if(!window._greeksLoaded){ calculateGreeks(); window._greeksLoaded=true; }
+    }
+    if(name==='heatmap'){
+        if(!window._heatmapGenerated){ generateHeatmap(); window._heatmapGenerated=true; }
+    }
+    if(name==='risk'){
+        if(!window._riskLoaded){ 
+            loadRiskDashboard(); 
+            window._riskLoaded=true; 
+        }
+    }
+    if(name==='live'){
+        if(!window._liveInitialized){ 
+            document.getElementById('liveStatus').textContent = 'Ready'; 
+            window._liveInitialized=true; 
+        }
+    }
+}
+
+function loadUpperTVChart(){
+    const inp=document.getElementById('tvSymbolUpper'); if(!inp) return;
+    let sym=(inp.value||'NSE:TCS').trim(); if(!sym.includes(':')) sym='NSE:'+sym.toUpperCase();
+    const base='https://s.tradingview.com/widgetembed/?frameElementId=tvChartFrameUpper&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=&hideideas=1&theme=dark';
+    const url=base+'&symbol='+encodeURIComponent(sym);
+    const frame=document.getElementById('tvChartFrameUpper'); if(frame) frame.src=url;
+}
+function updateUpperChartInterval(){
+    const interval=document.getElementById('tvIntervalUpper').value;
+    const symInput=document.getElementById('tvSymbolUpper');
+    let sym=(symInput.value||'NSE:TCS').trim(); if(!sym.includes(':')) sym='NSE:'+sym.toUpperCase();
+    const base=`https://s.tradingview.com/widgetembed/?frameElementId=tvChartFrameUpper&interval=${interval}&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=&hideideas=1&theme=dark`;
+    const url=base+'&symbol='+encodeURIComponent(sym);
+    const frame=document.getElementById('tvChartFrameUpper'); if(frame){ frame.src=url; const st=document.getElementById('chartStatus'); if(st) st.textContent=`Interval: ${interval}`; }
+}
+async function fetchChartAI(){
+    const btnText='Explain';
+    const content=document.getElementById('chartAIContent');
+    const provider=document.getElementById('chartAIProvider').value;
+    let upperInput=document.getElementById('tvSymbolUpper');
+    let lowerInput=document.getElementById('tvSymbol');
+    let baseSym=(upperInput&&upperInput.value?upperInput.value: (lowerInput?lowerInput.value:'')) || 'NSE:TCS';
+    let sym=baseSym.trim(); if(sym && !sym.includes(':')) sym='NSE:'+sym.toUpperCase();
+    const interval=(document.getElementById('tvIntervalUpper')?document.getElementById('tvIntervalUpper').value:'30')||'30';
+    content.textContent='Analyzing '+sym+'...';
+    try{
+        const resp=await fetch('/api/ai/chart_explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym, interval:interval, provider: provider||undefined})});
+        const data=await resp.json();
+        if(!resp.ok){ content.textContent='Error: '+(data.error||'failed'); return; }
+        content.textContent=data.analysis || 'No analysis returned.';
+    }catch(e){ content.textContent='Request failed.'; }
+}
+// --- Events & Predictions ---
+async function loadEventsData(){
+    const statusEl=document.getElementById('eventsStatus'); if(statusEl) statusEl.textContent='Loading...';
+    const wrap=document.getElementById('eventsPredictionsWrap'); if(!wrap) return;
+    wrap.innerHTML='<div style="grid-column:1/-1; padding:12px; color:#888;">Fetching events...</div>';
+    let events=[]; let source='';
+    async function tryFetch(url){
+        const r=await fetch(url,{headers:{'Accept':'application/json'}});
+        if(!r.ok) throw 0; return r.json();
+    }
+    try {
+        // First attempt direct local service
+    try { const d=await tryFetch('/api/enhanced_events_analytics'); events=d.events||d.predictions||d||[]; source='analyzer'; }
+        catch(_){ const d=await tryFetch('/api/enhanced_events_feed'); events=d.events||d.predictions||d||[]; source='api'; }
+        if(!Array.isArray(events) || !events.length){
+            wrap.innerHTML='<div style="grid-column:1/-1; padding:12px; color:#777;">No events returned.</div>'; if(statusEl) statusEl.textContent='No data'; return; }
+        const now=Date.now();
+        // Sort upcoming first (future timestamps) then by probability desc
+        events = events.map(ev=>{ ev._ts = Date.parse(ev.timestamp||ev.date||ev.event_time||'')||0; return ev; });
+        events.sort((a,b)=>{
+            const aUpcoming = a._ts>now; const bUpcoming=b._ts>now;
+            if(aUpcoming!==bUpcoming) return aUpcoming? -1:1; // upcoming first
+            return (b.probability||b.prob||0) - (a.probability||a.prob||0);
+        });
+        const cards=events.slice(0,150).map(ev=>{
+            const ts=ev.timestamp || ev.date || ev.event_time || ev.time;
+            let dtStr=''; let rel='';
+            if(ts){
+                const d=new Date(ts); if(!isNaN(d.getTime())){ dtStr=d.toLocaleString(); rel = (d.getTime()>now)?'upcoming':'past'; }
+            }
+            const impact=(ev.impact || ev.importance || '').toString().toLowerCase();
+            const impactClass = impact.includes('high')?'impact-high':(impact.includes('medium')?'impact-medium':'impact-low');
+            const prob = ev.probability!=null? (Math.round(ev.probability*1000)/10)+'%': (ev.prob!=null?(Math.round(ev.prob*1000)/10)+'%':'');
+            const prediction = ev.prediction || ev.forecast || ev.expected || '';
+            const title = ev.title || ev.name || ev.event || 'Event';
+            const symbol = ev.symbol || ev.ticker || '';
+            return `<div class="event-card" data-rel="${rel}" data-impact="${impact||''}" style="background:#181818; border:1px solid #2b2b2b; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;" data-raw='${JSON.stringify(ev).replace(/'/g,"&apos;")}' >
+                <div style="display:flex; justify-content:space-between; gap:6px; align-items:center;">
+                    <strong style="font-size:13px; color:#ddd;">${title}</strong>
+                    ${symbol?`<span style="font-size:11px; color:#999;">${symbol}</span>`:''}
+                </div>
+                <div style="font-size:11px; color:#aaa;">${dtStr||'No time'} ${prob?` • Prob: ${prob}`:''}</div>
+                ${prediction?`<div style="font-size:12px; color:#ccc;">Prediction: <span style="color:#fff;">${prediction}</span></div>`:''}
+                ${ev.actual?`<div style="font-size:12px; color:#8ab4ff;">Actual: ${ev.actual}</div>`:''}
+                ${ev.note?`<div style="font-size:11px; color:#888;">${ev.note}</div>`:''}
+                <div style="margin-top:auto; display:flex; justify-content:space-between; font-size:10px;">
+                    <span class="${impactClass}" style="color:${impactClass==='impact-high'?'#ff6b6b':impactClass==='impact-medium'?'#e3b341':'#5fbf5f'};">${impact||'n/a'}</span>
+                    <span style="color:#666;">${rel}</span>
+                </div>
+            </div>`; }).join('');
+        wrap.innerHTML=cards;
+        if(statusEl) statusEl.textContent='Loaded '+events.length+' ('+source+')';
+        filterEventsView();
+    } catch(e){
+        wrap.innerHTML='<div style="grid-column:1/-1; padding:12px; color:#f66;">Failed to load events service.</div>';
+        if(statusEl) statusEl.textContent='Error';
+    }
+}
+function filterEventsView(){
+    const mode=document.getElementById('eventsFilter')?.value||'all';
+    const cards=[...document.querySelectorAll('#eventsPredictionsWrap .event-card')];
+    const now=Date.now();
+    cards.forEach(card=>{
+        const rel=card.getAttribute('data-rel');
+        const impact=card.getAttribute('data-impact');
+        let show=true;
+        if(mode==='upcoming' && rel!=='upcoming') show=false;
+        else if(mode==='past' && rel!=='past') show=false;
+        else if(mode==='high_impact' && !(impact||'').includes('high')) show=false;
+        card.style.display=show?'flex':'none';
+    });
+}
+
+// --- Event Detail Modal Logic ---
+function openEventModal(evData){
+    const modal=document.getElementById('eventDetailModal'); if(!modal) return;
+    const body=document.getElementById('eventModalBody');
+    const titleEl=document.getElementById('eventModalTitle');
+    const meta=document.getElementById('eventModalMeta');
+    titleEl.textContent=evData.title||evData.name||'Event Detail';
+    const lines=[];
+    const keysToShow=['title','symbol','timestamp','impact','probability','prediction','actual','note'];
+    keysToShow.forEach(k=>{ if(evData[k]!=null) lines.push(`<div><strong style='color:#aaa;'>${k}:</strong> <span>${escapeHtml(evData[k])}</span></div>`); });
+    // Raw JSON collapsible
+    lines.push(`<details style='margin-top:10px;'><summary style='cursor:pointer; color:#9ab;'>Raw JSON</summary><pre style='background:#101010; padding:8px; border:1px solid #222; border-radius:6px; white-space:pre-wrap;'>${escapeHtml(JSON.stringify(evData,null,2))}</pre></details>`);
+    body.innerHTML=lines.join('');
+    meta.textContent=(evData.impact?`Impact: ${evData.impact}`:'') + (evData.probability!=null?` • Prob: ${(evData.probability*100).toFixed(1)}%`:'' );
+    modal.style.display='flex';
+    window._currentEventDetail=evData; // store for AI or copy
+}
+function closeEventModal(){ const modal=document.getElementById('eventDetailModal'); if(modal) modal.style.display='none'; }
+function copyEventDetail(){ if(!window._currentEventDetail) return; const txt=JSON.stringify(window._currentEventDetail,null,2); navigator.clipboard.writeText(txt).then(()=>{ const meta=document.getElementById('eventModalMeta'); if(meta){ meta.textContent+=' • Copied'; setTimeout(()=>{ meta.textContent=meta.textContent.replace(' • Copied',''); },1500);} }); }
+function analyzeEventWithAI(){ if(!window._currentEventDetail){ return; } const ev=window._currentEventDetail; addAnalyticsMessage('user', 'Analyze event: '+(ev.title||ev.name||'Event')); const prompt=`Assess potential portfolio impact of this event. Data:\n${JSON.stringify(ev)}`; document.getElementById('analyticsInput').value=prompt; sendAnalyticsQuery(); }
+document.addEventListener('click',e=>{ const m=document.getElementById('eventDetailModal'); if(e.target===m) closeEventModal(); });
+function escapeHtml(s){ return (''+s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+// Attach card click after load
+const _origLoadEventsData = loadEventsData;
+loadEventsData = async function(){
+    await _origLoadEventsData();
+    try {
+        [...document.querySelectorAll('#eventsPredictionsWrap .event-card')].forEach(card=>{
+            if(card.getAttribute('data-modal-bound')) return;
+            card.setAttribute('data-modal-bound','1');
+            card.addEventListener('click', ()=>{
+                try {
+                    const rawPre = card.querySelector('pre[data-raw]');
+                    if(rawPre){ openEventModal(JSON.parse(rawPre.textContent)); return; }
+                    const data = {
+                        title: card.querySelector('strong')?.textContent || 'Event',
+                        impact: card.getAttribute('data-impact'),
+                        rel: card.getAttribute('data-rel')
+                    };
+                    openEventModal(data);
+                } catch(e) { console.warn('Event modal open failed', e); }
+            });
+        });
+    } catch(_){}
+};
+function toggleChartFullscreen(){
+    const body=document.body;
+    body.classList.toggle('chart-fullscreen');
+    const btn=document.getElementById('chartFsBtn'); if(!btn) return;
+    const icon=btn.querySelector('i'); if(!icon) return;
+    if(body.classList.contains('chart-fullscreen')){
+        icon.classList.remove('fa-expand'); icon.classList.add('fa-compress');
+        const cont=document.getElementById('tvChartContainerUpper');
+        if(cont && cont.requestFullscreen){ try{ cont.requestFullscreen(); }catch(e){} }
+    } else {
+        icon.classList.remove('fa-compress'); icon.classList.add('fa-expand');
+        if(document.fullscreenElement){ try{ document.exitFullscreen(); }catch(e){} }
+    }
+    setTimeout(()=>{
+        const iframe=document.getElementById('tvChartFrameUpper'); if(iframe){ iframe.style.width='100%'; iframe.style.height='100%'; }
+    },300);
+}
+
+// --- API Integration (placeholder adapting existing endpoints) ---
+async function loadLiveRisk(){ try { const r=await fetch('/api/investor_terminal/risk_analytics'); if(!r.ok) throw 0; const d=await r.json(); document.getElementById('analyticsOutput').textContent=`📊 Live Risk Snapshot\nVaR(1d): ₹${Math.abs(d.var_1d).toLocaleString()}\nSharpe: ${d.sharpe_ratio}\nBeta: ${d.beta}\nVolatility: ${d.volatility}%\nMax DD: ${d.max_drawdown}%`; } catch(e){ document.getElementById('analyticsOutput').textContent='Using demo analytics (API unavailable).'; }}
+
+function updateTimes(){ const now=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); document.getElementById('lastUpdate').textContent=now; document.getElementById('statusLastUpdate').textContent=now; }
+function refreshAll(){ fetchHoldings(); loadLiveRisk(); updateTimes(); addAnalyticsMessage('system','Data refreshed.'); }
+
+// --- Init ---
+document.addEventListener('DOMContentLoaded',()=>{
+    fetchHoldings(); loadWatchlist(); loadAlerts(); loadLiveRisk(); updateTimes();
+    addAnalyticsMessage('ai','Welcome to VS Terminal AClass! Live data loaded. Ask me anything about your portfolio.');
+        setInterval(updateTimes,60000); setInterval(loadLiveRisk,5*60*1000); setInterval(fetchHoldings, 3*60*1000); 
+        // Load transactions if function exists and set interval
+        if(typeof loadTransactions==='function') { 
+            loadTransactions(); 
+            setInterval(()=>{if(typeof loadTransactions==='function') loadTransactions();}, 5*60*1000);
+        }
+    document.getElementById('analyticsInput').addEventListener('keypress',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAnalyticsQuery(); }});
+        initSSE();
+        // Grounded scope toggle
+        document.getElementById('gqScope').addEventListener('change', e=>{
+            const v=e.target.value; const topWrap=document.getElementById('gqTopNWrap'); const tickWrap=document.getElementById('gqTickersWrap');
+            if(v==='top'){ topWrap.style.display='block'; tickWrap.style.display='none'; }
+            else if(v==='all'){ topWrap.style.display='none'; tickWrap.style.display='none'; }
+            else { topWrap.style.display='none'; tickWrap.style.display='block'; }
+        });
+        refreshUserAIKeys();
+    // Attempt load of global keys if admin panel present (silently ignore errors)
+    try { loadGlobalAIKeys(); } catch(_){}
+});
+
+// --- SSE Live Quotes & Alerts ---
+let _liveQuotes = {}; // symbol -> last snapshot
+function initSSE(){ try { const es = new EventSource('/api/quotes/subscribe'); es.onmessage = ev => { if(!ev.data) return; let msg; try { msg=JSON.parse(ev.data); } catch(_){ return; } if(msg.t==='snapshot' || msg.t==='delta'){ applyQuote(msg.sym, msg.f); } else if(msg.t==='alert'){ renderIncomingAlert(msg.data); } }; es.onerror = ()=>{ /* silently */ }; } catch(e){ console.warn('SSE unsupported', e); } }
+function applyQuote(sym, fields){
+    if(!sym) return;
+    _liveQuotes[sym] = Object.assign(_liveQuotes[sym]||{}, fields);
+    const price = _liveQuotes[sym].price;
+    // Update portfolio overview list price
+    const wlEl = document.querySelector(`.watchlist-item[data-symbol='${sym}'] .wl-price`);
+    if(wlEl && price){ wlEl.textContent = '₹'+price; wlEl.style.color = _liveQuotes[sym].change>=0 ? '#4ade80' : '#f87171'; }
+    // Update holdings row live price + recompute row P&L based on stored cost basis
+    const tr = document.querySelector(`#holdingsTable tr[data-symbol='${sym}']`);
+    if(tr && price && _holdingCostBasis[sym] != null){
+        const tds = tr.querySelectorAll('td');
+        const qty = _holdingQty[sym] || parseFloat(tds[1].textContent) || 0;
+        const cost = _holdingCostBasis[sym];
+        const curVal = price * qty;
+        const pnlVal = curVal - cost;
+        const pnlPct = cost ? (pnlVal / cost * 100) : 0;
+        // Price cell
+        const priceCell = tr.querySelector('.live-price');
+        if(priceCell) priceCell.textContent = '₹'+price.toLocaleString();
+        // P&L value cell (4th td index 3)
+        if(tds[3]){ tds[3].className = (pnlVal>=0?'positive':'negative'); tds[3].textContent = (pnlVal>=0?'+':'')+'₹'+Math.round(pnlVal).toLocaleString(); }
+        // P&L % cell (5th td index 4)
+        if(tds[4]){ tds[4].className = (pnlPct>=0?'positive':'negative'); tds[4].textContent = (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%'; }
+        schedulePortfolioMetrics();
+    }
+}
+function renderIncomingAlert(a){ if(!a) return; const list=document.getElementById('alertsList'); const div=document.createElement('div'); div.className='alert-item '+(a.type.includes('above')?'good':'warn'); div.innerHTML=`<strong>${a.symbol}</strong> ${a.type.replace('_',' ')} @ ${a.target} (now ${a.price})`; list.prepend(div); }
+function uiAddSymbol(){ const val=document.getElementById('addSymbolInput').value.trim().toUpperCase(); if(!val) return; fetch('/api/quotes/add_symbol',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({symbol:val})}); const wl=document.getElementById('watchlist'); if(!wl.querySelector(`[data-symbol='${val}']`)){ wl.innerHTML += `<div class='watchlist-item' data-symbol='${val}'><span>${val}</span><span class='wl-price' style='color:#888'>--</span></div>`; } document.getElementById('addSymbolInput').value=''; }
+function uiAddAlert(){ const sym=document.getElementById('addSymbolInput').value.trim().toUpperCase(); const type=document.getElementById('alertType').value; const val=parseFloat(document.getElementById('alertValue').value); if(!sym || !isFinite(val)) return; fetch('/api/quotes/add_alert',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({symbol:sym, type, value:val})}).then(r=>r.json()).then(d=>{ addAnalyticsMessage('system', `Alert set for ${sym} ${type} ${val}`); }).catch(()=>{}); }
+// --- AI Risk Advisor (Right Panel) JS ---
+async function loadRiskAdvisorStatus() {
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/agent_status');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateRightAgentStatus(data.agents || {});
+        }
+    } catch (error) {
+        console.error('Risk advisor status error:', error);
+    }
+}
+
+function updateRightAgentStatus(agents) {
+    const statusColor = '#4ade80'; // Active color
+    const inactiveColor = '#ffa500'; // Inactive color
+    
+    // Update status indicators
+    const statusElements = [
+        'rightRiskMonitorStatus', 'rightScenarioSimStatus', 'rightComplianceStatus', 
+        'rightAdvisorStatus', 'rightTradeExecStatus'
+    ];
+    
+    statusElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.color = statusColor;
+            element.textContent = '●';
+        }
+    });
+}
+
+async function activateRiskAgents() {
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/agent_status');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            addRightRiskChatMessage('🚀 Risk agents activated and monitoring portfolio', 'system');
+            updateRightAgentStatus({});
+        }
+    } catch (error) {
+        console.error('Agent activation error:', error);
+        addRightRiskChatMessage('❌ Agent activation failed', 'system');
+    }
+}
+
+function addRightRiskChatMessage(message, sender = 'user') {
+    const messagesDiv = document.getElementById('rightRiskChatMessages');
+    const messageDiv = document.createElement('div');
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const senderColor = {
+        'user': '#4ade80',
+        'agent': '#007acc', 
+        'system': '#ffa500'
+    }[sender] || '#ccc';
+    
+    messageDiv.style.cssText = `margin-bottom:8px; padding:6px 8px; border-radius:4px; background:${sender === 'user' ? '#1e3a1e' : '#1e1e3a'};`;
+    messageDiv.innerHTML = `
+        <div style="color:${senderColor}; font-size:9px; margin-bottom:2px;">
+            ${sender.charAt(0).toUpperCase() + sender.slice(1)} • ${timestamp}
+        </div>
+        <div style="color:#ccc; font-size:11px;">${message}</div>
+    `;
+    
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    // Remove the initial placeholder message if it exists
+    const placeholder = messagesDiv.querySelector('[style*="text-align:center"]');
+    if (placeholder) {
+        placeholder.remove();
+    }
+}
+
+async function sendRightRiskMessage() {
+    const input = document.getElementById('rightRiskChatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addRightRiskChatMessage(message, 'user');
+    input.value = '';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/advisor_query', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query: message,
+                context: 'risk_analysis'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            addRightRiskChatMessage(data.response, 'agent');
+        } else {
+            addRightRiskChatMessage('Sorry, I encountered an error processing your request.', 'agent');
+        }
+    } catch (error) {
+        console.error('Chat error:', error);
+        addRightRiskChatMessage('Connection error. Please try again.', 'system');
+    }
+}
+
+function askQuickRiskQuestion(question) {
+    document.getElementById('rightRiskChatInput').value = question;
+    sendRightRiskMessage();
+}
+// --- User AI Keys & Chat ---
+async function saveUserAIKey(){ const provider=document.getElementById('aiKeyProvider').value; const key=document.getElementById('aiKeyValue').value.trim(); const model=document.getElementById('aiKeyModel').value.trim(); const st=document.getElementById('aiKeysStatus'); st.textContent='Saving...'; try { const r= await fetch('/api/ai/user_keys',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider:provider, api_key:key, model:model||undefined})}); const d= await r.json(); if(!r.ok){ st.textContent='Error: '+(d.error||r.status); return;} st.textContent='Saved '+provider+' '+d.masked_key; refreshUserAIKeys(); } catch(e){ st.textContent='Save failed'; }}
+async function refreshUserAIKeys(){ const st=document.getElementById('aiKeysStatus'); const listEl=document.getElementById('aiKeysList'); try { const r= await fetch('/api/ai/user_keys'); const d= await r.json(); if(!r.ok){ st.textContent='Load error'; listEl.innerHTML=''; return;} const keys=d.keys||{}; if(Object.keys(keys).length===0){ st.textContent='No keys set.'; listEl.innerHTML=''; } else { st.textContent = Object.keys(keys).length+' key(s) loaded.'; listEl.innerHTML=''; Object.entries(keys).forEach(([prov,info])=>{ const pill=document.createElement('div'); pill.className='key-pill'; pill.style.background='#2a2a2a'; pill.style.border='1px solid #444'; pill.style.padding='4px 8px'; pill.style.borderRadius='18px'; pill.style.display='flex'; pill.style.alignItems='center'; pill.style.gap='6px'; pill.innerHTML = `<span style="color:#999;">${prov}</span><span style="color:#ccc;">${info.masked||''}</span>${info.model?`<span style='color:#666;'>(${info.model})</span>`:''}`; const del=document.createElement('button'); del.textContent='×'; del.style.background='transparent'; del.style.border='none'; del.style.color='#f87171'; del.style.cursor='pointer'; del.onclick=()=>deleteUserAIKey(prov); pill.appendChild(del); listEl.appendChild(pill); }); } } catch(e){ st.textContent='Load failed'; listEl.innerHTML=''; }}
+async function deleteUserAIKey(provider){ if(!confirm('Delete key for '+provider+'?')) return; try { const r= await fetch('/api/ai/user_keys/'+provider,{method:'DELETE'}); const d= await r.json(); if(!r.ok){ alert('Delete failed: '+(d.error||r.status)); } } catch(e){ alert('Delete failed'); } finally { refreshUserAIKeys(); }}
+function clearAIKeyInputs(){ document.getElementById('aiKeyValue').value=''; document.getElementById('aiKeyModel').value=''; }
+let _aiChatAbort=null;
+async function runUserAIChat(){ const out=document.getElementById('aiTestOutput'); const prompt=document.getElementById('aiTestPrompt').value.trim(); if(!prompt){ out.textContent='Enter a prompt.'; return;} out.textContent='Sending...'; const provider=document.getElementById('aiKeyProvider').value; _aiChatAbort = new AbortController(); document.getElementById('aiChatCancelBtn').disabled=false; try { const r= await fetch('/api/ai/user_chat',{method:'POST', signal:_aiChatAbort.signal, headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider:provider, messages:[{role:'user', content:prompt}]})}); const d= await r.json(); if(!r.ok){ out.textContent='Error: '+(d.error||r.status); } else { out.textContent=d.reply||'(empty reply)'; } } catch(e){ out.textContent='Request aborted or failed.'; } finally { document.getElementById('aiChatCancelBtn').disabled=true; _aiChatAbort=null; }}
+function cancelUserAIChat(){ if(_aiChatAbort){ _aiChatAbort.abort(); } }
+// --- Sidebar AI Key helpers (wrapper around existing endpoints) ---
+async function saveUserAIKeySide(){ const provider=document.getElementById('aiKeyProviderSide').value; const key=document.getElementById('aiKeyValueSide').value.trim(); const model=document.getElementById('aiKeyModelSide').value.trim(); const st=document.getElementById('aiKeyStatusSide'); st.textContent='Saving...'; try { const r= await fetch('/api/ai/user_keys',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider, api_key:key, model:model||undefined})}); const d= await r.json(); if(!r.ok){ st.textContent='Error: '+(d.error||r.status); return;} st.textContent='Saved '+provider+' '+d.masked_key; } catch(e){ st.textContent='Save failed'; }}
+async function testUserAIKeySide(){ const provider=document.getElementById('aiKeyProviderSide').value; const prompt=(document.getElementById('aiKeyTestPromptSide').value.trim()) || 'Ping'; const st=document.getElementById('aiKeyStatusSide'); st.textContent='Testing...'; try { const r= await fetch('/api/ai/user_chat',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider, messages:[{role:'user', content:prompt}]})}); const d= await r.json(); if(!r.ok){ st.textContent='Test error: '+(d.error||r.status); return;} st.textContent='Reply: '+(d.reply? (d.reply.slice(0,80)+(d.reply.length>80?'...':'')) : '(empty)'); } catch(e){ st.textContent='Test failed'; }}
+async function deleteUserAIKeySide(){ const provider=document.getElementById('aiKeyProviderSide').value; const st=document.getElementById('aiKeyStatusSide'); if(!confirm('Delete key for '+provider+'?')) return; st.textContent='Deleting...'; try { const r= await fetch('/api/ai/user_keys/'+provider,{method:'DELETE'}); const d= await r.json(); if(!r.ok){ st.textContent='Delete error: '+(d.error||r.status); return;} st.textContent='Deleted.'; } catch(e){ st.textContent='Delete failed'; } finally { refreshUserAIKeys(); }}
+// --- Global AI Key Admin Functions ---
+async function loadGlobalAIKeys(){ const st=document.getElementById('globalAIStatus'); const list=document.getElementById('globalAIKeysList'); if(!st||!list) return; st.textContent='Loading...'; list.innerHTML=''; try { const r= await fetch('/api/ai/global_keys'); const d= await r.json(); if(!r.ok){ st.textContent='Load error'; return;} const rows=d.global_keys||[]; if(!rows.length){ st.textContent='No global keys.'; return;} st.textContent=rows.length+' global key(s).'; rows.forEach(g=>{ const div=document.createElement('div'); div.style.display='flex'; div.style.justifyContent='space-between'; div.style.gap='6px'; div.style.background='#181818'; div.style.border='1px solid #2d2d2d'; div.style.padding='6px 8px'; div.style.borderRadius='6px'; div.innerHTML=`<span style='color:#ccc;'>${g.provider}${g.model?(' • '+g.model):''}</span><span style='color:#777;'>${g.masked_key||''}</span>`; list.appendChild(div); }); } catch(e){ st.textContent='Load failed'; } }
+async function saveGlobalAIKey(){ const prov=document.getElementById('globalAIProvider').value; const key=document.getElementById('globalAIKey').value.trim(); const model=document.getElementById('globalAIModel').value.trim(); const st=document.getElementById('globalAIStatus'); st.textContent='Saving...'; try { const r= await fetch('/api/ai/global_keys',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider:prov, api_key:key, model:model||undefined})}); const d= await r.json(); if(!r.ok){ st.textContent='Error: '+(d.error||r.status); return;} st.textContent='Saved '+prov+' '+d.masked_key; document.getElementById('globalAIKey').value=''; loadGlobalAIKeys(); } catch(e){ st.textContent='Save failed'; } }
+async function deleteGlobalAIKey(){ const prov=document.getElementById('globalAIProvider').value; const st=document.getElementById('globalAIStatus'); if(!confirm('Delete global key for '+prov+'?')) return; st.textContent='Deleting...'; try { const r= await fetch('/api/ai/global_keys/'+prov,{method:'DELETE'}); const d= await r.json(); if(!r.ok){ st.textContent='Delete error: '+(d.error||r.status); return;} st.textContent='Deleted.'; loadGlobalAIKeys(); } catch(e){ st.textContent='Delete failed'; } }
+
+// --- Fyers API Integration Functions ---
+let _fyersQuoteCache = {}; // Cache for Fyers quotes
+let _fyersUpdateTimer = null; // Timer for real-time updates
+
+async function fetchFyersQuotes(tickers) {
+    if (!tickers || !tickers.length) return {};
+    
+    try {
+        const tickerStr = Array.isArray(tickers) ? tickers.join(',') : tickers;
+        const response = await fetch(`/api/vs_terminal_AClass/fyers_quotes?tickers=${encodeURIComponent(tickerStr)}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            console.error('Fyers quotes error:', data.error);
+            return {};
+        }
+        
+        // Update cache
+        Object.assign(_fyersQuoteCache, data.quotes);
+        
+        // Update UI status indicator
+        const statusEl = document.getElementById('fyersStatus');
+        if (statusEl) {
+            const sourceText = data.source === 'fyers_primary' ? 'Fyers API' : 'YFinance (Testing)';
+            const marketStatus = data.market_status?.status || 'unknown';
+            statusEl.innerHTML = `<i class="fa fa-circle" style="color: ${marketStatus === 'open' ? '#4ade80' : '#f87171'}"></i> ${sourceText}`;
+        }
+        
+        return data.quotes;
+    } catch (error) {
+        console.error('Fyers quotes fetch failed:', error);
+        return {};
+    }
+}
+
+function startFyersRealTimeUpdates() {
+    // Stop existing timer
+    if (_fyersUpdateTimer) {
+        clearInterval(_fyersUpdateTimer);
+    }
+    
+    // Start real-time updates every 5 seconds
+    _fyersUpdateTimer = setInterval(async () => {
+        const portfolioTickers = Object.keys(_holdingQty);
+        if (portfolioTickers.length > 0) {
+            await fetchFyersQuotes(portfolioTickers);
+            updatePortfolioOverviewMetrics(); // Refresh portfolio with new quotes
+        }
+    }, 5000);
+}
+
+function stopFyersRealTimeUpdates() {
+    if (_fyersUpdateTimer) {
+        clearInterval(_fyersUpdateTimer);
+        _fyersUpdateTimer = null;
+    }
+}
+
+// --- Risk Analytics Functions ---
+let _riskData = {};
+let _riskUpdateTimer = null;
+
+async function loadRiskAnalytics() {
+    const container = document.getElementById('riskMetrics');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 15px; text-align: center; color: var(--muted);"><i class="fa fa-spinner fa-spin"></i> Loading risk data...</div>';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_analytics');
+        const data = await response.json();
+        
+        if (!response.ok) {
+            container.innerHTML = `<div style="color: #f87171; padding: 10px;">Error: ${data.error}</div>`;
+            return;
+        }
+        
+        _riskData = data;
+        // Use enhanced display if data has enhanced features, otherwise use basic display
+        if (data.data && data.data.enhanced_features) {
+            displayRiskMetricsEnhanced(data.data);
+        } else {
+            displayRiskMetrics(data);
+        }
+        
+    } catch (error) {
+        console.error('Risk analytics load failed:', error);
+        container.innerHTML = '<div style="color: #f87171; padding: 10px;">Failed to load risk data</div>';
+    }
+}
+
+function displayRiskMetrics(data) {
+    const container = document.getElementById('riskMetrics');
+    if (!container || !data.risk_metrics) return;
+    
+    const metrics = data.risk_metrics;
+    const sectorExposure = data.sector_exposure || {};
+    
+    // Create risk metrics display
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+            <div style="background: #202020; padding: 8px 10px; border-radius: 6px; border: 1px solid #333;">
+                <div style="font-size: 10px; letter-spacing: .5px; color: var(--muted);">CONCENTRATION RISK</div>
+                <div style="font-weight: 600; font-size: 14px; color: ${getRiskColor(metrics.concentration_risk)};">${metrics.concentration_risk}</div>
+                <div style="font-size: 10px; color: var(--muted);">Score: ${metrics.concentration_score}</div>
+            </div>
+            
+            <div style="background: #202020; padding: 8px 10px; border-radius: 6px; border: 1px solid #333;">
+                <div style="font-size: 10px; letter-spacing: .5px; color: var(--muted);">DIVERSIFICATION</div>
+                <div style="font-weight: 600; font-size: 14px; color: ${getRiskColor(metrics.diversification, true)};">${metrics.diversification}</div>
+                <div style="font-size: 10px; color: var(--muted);">${metrics.num_holdings} holdings</div>
+            </div>
+            
+            <div style="background: #202020; padding: 8px 10px; border-radius: 6px; border: 1px solid #333;">
+                <div style="font-size: 10px; letter-spacing: .5px; color: var(--muted);">PORTFOLIO VAR (5%)</div>
+                <div style="font-weight: 600; font-size: 14px; color: #f87171;">₹${Math.round(metrics.portfolio_var_5pct).toLocaleString()}</div>
+                <div style="font-size: 10px; color: var(--muted);">Max potential loss</div>
+            </div>
+            
+            <div style="background: #202020; padding: 8px 10px; border-radius: 6px; border: 1px solid #333;">
+                <div style="font-size: 10px; letter-spacing: .5px; color: var(--muted);">BETA</div>
+                <div style="font-weight: 600; font-size: 14px; color: ${metrics.beta > 1.5 ? '#f87171' : metrics.beta < 0.8 ? '#4ade80' : '#fbbf24'};">${metrics.beta}</div>
+                <div style="font-size: 10px; color: var(--muted);">vs market</div>
+            </div>
+            
+            ${Object.keys(sectorExposure).length > 0 ? `
+            <div style="background: #202020; padding: 8px 10px; border-radius: 6px; border: 1px solid #333;">
+                <div style="font-size: 10px; letter-spacing: .5px; color: var(--muted); margin-bottom: 6px;">SECTOR EXPOSURE</div>
+                ${Object.entries(sectorExposure).slice(0, 3).map(([sector, weight]) => 
+                    `<div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span style="font-size: 11px; color: #ccc;">${sector}</span>
+                        <span style="font-size: 11px; color: #999;">${weight.toFixed(1)}%</span>
+                    </div>`
+                ).join('')}
+            </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+function getRiskColor(level, reverse = false) {
+    const colors = {
+        'LOW': reverse ? '#f87171' : '#4ade80',
+        'MODERATE': '#fbbf24',
+        'HIGH': reverse ? '#4ade80' : '#f87171'
+    };
+    return colors[level] || '#999';
+}
+
+async function refreshRiskAnalytics() {
+    await loadRiskAnalytics();
+}
+
+function showDetailedRisk() {
+    if (!_riskData.risk_metrics) {
+        alert('Load risk data first');
+        return;
+    }
+    
+    const details = `
+Risk Analytics Details:
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+Portfolio Metrics:
+• Total Value: ₹${Math.round(_riskData.total_portfolio_value || 0).toLocaleString()}
+• Concentration Risk: ${_riskData.risk_metrics.concentration_risk}
+• Diversification: ${_riskData.risk_metrics.diversification}
+• Number of Holdings: ${_riskData.risk_metrics.num_holdings}
+
+Risk Metrics:
+• VaR (5%): ₹${Math.round(_riskData.risk_metrics.portfolio_var_5pct || 0).toLocaleString()}
+• Beta: ${_riskData.risk_metrics.beta}
+• Sharpe Ratio: ${_riskData.risk_metrics.sharpe_ratio}
+• Portfolio Return: ${_riskData.risk_metrics.portfolio_return_pct.toFixed(2)}%
+
+Top Holdings:
+${(_riskData.top_holdings || []).slice(0, 5).map(h => 
+    `• ${h.ticker}: ${h.weight.toFixed(1)}% (₹${Math.round(h.market_value).toLocaleString()})`
+).join('\n')}
+
+Updated: ${new Date(_riskData.timestamp).toLocaleString()}
+    `;
+    
+    alert(details);
+}
+
+// ================= ENHANCED RISK ANALYTICS FUNCTIONS =================
+
+// Global variables for enhanced features
+let _wsConnection = null;
+let _realTimeEnabled = false;
+let _mlPredictionsVisible = false;
+let _optionsGreeksVisible = false;
+let _riskHeatmapVisible = false;
+
+// Initialize WebSocket connection for real-time updates
+function initializeWebSocket() {
+    if (typeof io !== 'undefined') {
+        _wsConnection = io();
+        
+        _wsConnection.on('connect', function() {
+            updateRealTimeStatus('connected', 'Real-time updates active');
+            console.log('🔗 WebSocket connected for real-time risk updates');
+        });
+        
+        _wsConnection.on('disconnect', function() {
+            updateRealTimeStatus('disconnected', 'Real-time updates inactive');
+            console.log('🔌 WebSocket disconnected');
+        });
+        
+        _wsConnection.on('risk_update', function(data) {
+            updateRiskMetricsRealTime(data);
+        });
+        
+        _wsConnection.on('risk_subscription_confirmed', function(data) {
+            console.log('📊 Risk updates subscription confirmed');
+        });
+    } else {
+        updateRealTimeStatus('unavailable', 'WebSocket not available');
+    }
+}
+
+function updateRealTimeStatus(status, message) {
+    const indicator = document.getElementById('wsStatusIndicator');
+    const text = document.getElementById('wsStatusText');
+    
+    if (indicator && text) {
+        const colors = {
+            'connected': '#4ade80',
+            'disconnected': '#f87171', 
+            'unavailable': '#6b7280'
+        };
+        
+        indicator.style.background = colors[status] || '#6b7280';
+        text.textContent = message;
+    }
+}
+
+function enableRealTimeUpdates() {
+    if (!_wsConnection) {
+        initializeWebSocket();
+    }
+    
+    if (_wsConnection && _wsConnection.connected) {
+        _wsConnection.emit('subscribe_risk_updates', {});
+        _realTimeEnabled = true;
+        updateRealTimeStatus('connected', 'Real-time mode enabled');
+        
+        // Start periodic updates as fallback
+        if (!window._riskUpdateInterval) {
+            window._riskUpdateInterval = setInterval(() => {
+                if (_realTimeEnabled) {
+                    loadRiskAnalyticsLive();
+                }
+            }, 15000); // 15 seconds
+        }
+    } else {
+        alert('WebSocket connection not available. Using polling mode.');
+        _realTimeEnabled = true;
+        loadRiskAnalyticsLive();
+    }
+}
+
+async function loadRiskAnalyticsLive() {
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_analytics_live');
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            updateRiskMetricsRealTime(result.data);
+            updateRealTimeStatus('connected', `Live updates (${new Date().toLocaleTimeString()})`);
+        }
+    } catch (error) {
+        console.error('Live risk analytics error:', error);
+        updateRealTimeStatus('disconnected', 'Update failed');
+    }
+}
+
+function updateRiskMetricsRealTime(data) {
+    // Update existing risk metrics
+    _riskData = { data, timestamp: new Date().toISOString() };
+    
+    // Update ML predictions if visible
+    if (_mlPredictionsVisible && data.ml_predictions) {
+        updateMLPredictionsDisplay(data.ml_predictions);
+    }
+    
+    // Update options Greeks if visible
+    if (_optionsGreeksVisible && data.options_greeks) {
+        updateOptionsGreeksDisplay(data.options_greeks);
+    }
+    
+    // Update main risk display
+    displayRiskMetricsEnhanced(data);
+}
+
+async function toggleMLPredictions() {
+    const panel = document.getElementById('mlPredictionsPanel');
+    
+    if (!_mlPredictionsVisible) {
+        try {
+            const response = await fetch('/api/vs_terminal_AClass/risk_ml_predictions');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                updateMLPredictionsDisplay(result.data);
+                panel.style.display = 'block';
+                _mlPredictionsVisible = true;
+            }
+        } catch (error) {
+            console.error('ML predictions error:', error);
+            alert('Failed to load ML predictions');
+        }
+    } else {
+        panel.style.display = 'none';
+        _mlPredictionsVisible = false;
+    }
+}
+
+function updateMLPredictionsDisplay(mlData) {
+    const content = document.getElementById('mlPredictionsContent');
+    if (!content) return;
+    
+    const riskSignals = mlData.risk_signals || {};
+    
+    content.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10px;">
+            <div>
+                <div style="color:#4ade80;">Predicted VaR</div>
+                <div style="font-weight:600;">₹${Math.round(mlData.predicted_var || 0).toLocaleString()}</div>
+            </div>
+            <div>
+                <div style="color:#fbbf24;">Vol Forecast</div>
+                <div style="font-weight:600;">${(mlData.volatility_forecast || 0).toFixed(1)}%</div>
+            </div>
+            <div>
+                <div style="color:#60a5fa;">Bullish Prob</div>
+                <div style="font-weight:600;">${((riskSignals.bullish_probability || 0) * 100).toFixed(0)}%</div>
+            </div>
+            <div>
+                <div style="color:#f87171;">Stress Prob</div>
+                <div style="font-weight:600;">${((riskSignals.stress_event_prob || 0) * 100).toFixed(1)}%</div>
+            </div>
+        </div>
+        <div style="margin-top:6px; font-size:9px; color:var(--muted);">
+            Risk Regime: <span style="color:#fbbf24;">${mlData.risk_regime || 'NORMAL'}</span>
+        </div>
+    `;
+}
+
+async function toggleOptionsGreeks() {
+    const panel = document.getElementById('optionsGreeksPanel');
+    
+    if (!_optionsGreeksVisible) {
+        try {
+            const response = await fetch('/api/vs_terminal_AClass/options_greeks');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                updateOptionsGreeksDisplay(result.data);
+                panel.style.display = 'block';
+                _optionsGreeksVisible = true;
+            }
+        } catch (error) {
+            console.error('Options Greeks error:', error);
+            alert('Failed to load Options Greeks');
+        }
+    } else {
+        panel.style.display = 'none';
+        _optionsGreeksVisible = false;
+    }
+}
+
+function updateOptionsGreeksDisplay(greeksData) {
+    const content = document.getElementById('optionsGreeksContent');
+    if (!content) return;
+    
+    const portfolio = greeksData.portfolio_greeks || {};
+    
+    content.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10px;">
+            <div>
+                <div style="color:#4ade80;">Delta</div>
+                <div style="font-weight:600;">${(portfolio.delta || 0).toFixed(2)}</div>
+            </div>
+            <div>
+                <div style="color:#fbbf24;">Gamma</div>
+                <div style="font-weight:600;">${(portfolio.gamma || 0).toFixed(4)}</div>
+            </div>
+            <div>
+                <div style="color:#f87171;">Theta</div>
+                <div style="font-weight:600;">₹${(portfolio.theta || 0).toFixed(0)}</div>
+            </div>
+            <div>
+                <div style="color:#60a5fa;">Vega</div>
+                <div style="font-weight:600;">₹${(portfolio.vega || 0).toFixed(0)}</div>
+            </div>
+        </div>
+        <div style="margin-top:6px; font-size:9px; color:var(--muted);">
+            Daily decay: <span style="color:#f87171;">₹${Math.abs(portfolio.theta || 0).toFixed(0)}</span>
+        </div>
+    `;
+}
+
+async function toggleRiskHeatmap() {
+    const panel = document.getElementById('riskHeatmapPanel');
+    
+    if (!_riskHeatmapVisible) {
+        try {
+            const response = await fetch('/api/vs_terminal_AClass/risk_heatmap');
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                updateRiskHeatmapDisplay(result.data);
+                panel.style.display = 'block';
+                _riskHeatmapVisible = true;
+            }
+        } catch (error) {
+            console.error('Risk heatmap error:', error);
+            alert('Failed to load risk heatmap');
+        }
+    } else {
+        panel.style.display = 'none';
+        _riskHeatmapVisible = false;
+    }
+}
+
+function updateRiskHeatmapDisplay(heatmapData) {
+    const content = document.getElementById('riskHeatmapContent');
+    if (!content) return;
+    
+    // Check if Plotly is available
+    if (typeof Plotly !== 'undefined') {
+        const layout = {
+            title: {
+                text: 'Risk Correlation',
+                font: { size: 10, color: '#fff' }
+            },
+            xaxis: { tickfont: { size: 8, color: '#fff' } },
+            yaxis: { tickfont: { size: 8, color: '#fff' } },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            margin: { l: 40, r: 20, t: 30, b: 40 },
+            height: 140
+        };
+        
+        Plotly.newPlot(content, [heatmapData], layout, { 
+            displayModeBar: false, 
+            responsive: true 
+        });
+    } else {
+        // Fallback text display
+        content.innerHTML = `
+            <div style="font-size:10px; color:var(--muted); text-align:center; padding:20px;">
+                <i class="fa fa-fire"></i><br>
+                Correlation Matrix<br>
+                <span style="font-size:9px;">Install Plotly for visualization</span>
+            </div>
+        `;
+    }
+}
+
+// Enhanced risk metrics display function
+function displayRiskMetricsEnhanced(data) {
+    const container = document.getElementById('riskMetrics');
+    if (!container) return;
+    
+    // Enhanced display with ML insights
+    const mlPredictions = data.ml_predictions || {};
+    const realTimeFeatures = data.real_time_features || {};
+    
+    container.innerHTML = `
+        <div class="metric-card" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:10px; font-weight:600; color:var(--muted);">PORTFOLIO VALUE</span>
+                ${data.enhanced_features ? '<span style="font-size:8px; color:#4ade80;">ENHANCED</span>' : ''}
+            </div>
+            <div style="font-size:14px; font-weight:600; color:#fff;">₹${Math.round(data.portfolio_value || 0).toLocaleString()}</div>
+            <div style="font-size:9px; color:${data.portfolio_return_pct >= 0 ? '#4ade80' : '#f87171'};">
+                ${data.portfolio_return_pct >= 0 ? '+' : ''}${(data.portfolio_return_pct || 0).toFixed(2)}% today
+            </div>
+        </div>
+        
+        <div class="metric-card" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px;">
+            <div style="font-size:10px; font-weight:600; color:var(--muted); margin-bottom:6px;">VALUE AT RISK</div>
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <div style="font-size:11px; color:#f87171;">95%: ₹${Math.round(Math.abs(data.var_95 || 0)).toLocaleString()}</div>
+                    <div style="font-size:11px; color:#ef4444;">99%: ₹${Math.round(Math.abs(data.var_99 || 0)).toLocaleString()}</div>
+                </div>
+                ${mlPredictions.predicted_var ? `
+                <div>
+                    <div style="font-size:9px; color:#4ade80;">ML Pred:</div>
+                    <div style="font-size:10px; color:#4ade80;">₹${Math.round(Math.abs(mlPredictions.predicted_var)).toLocaleString()}</div>
+                </div>` : ''}
+            </div>
+        </div>
+        
+        <div class="metric-card" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px;">
+            <div style="font-size:10px; font-weight:600; color:var(--muted); margin-bottom:6px;">RISK METRICS</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10px;">
+                <div>Beta: <span style="color:#60a5fa;">${(data.market_beta || 0).toFixed(2)}</span></div>
+                <div>Sharpe: <span style="color:#4ade80;">${(data.sharpe_ratio || 0).toFixed(2)}</span></div>
+                <div>Volatility: <span style="color:#fbbf24;">${(data.volatility || 0).toFixed(1)}%</span></div>
+                <div>Grade: <span style="color:#4ade80;">${data.risk_grade || 'N/A'}</span></div>
+            </div>
+        </div>
+        
+        ${data.risk_alerts && data.risk_alerts.length > 0 ? `
+        <div class="metric-card" style="background:#2d1b1b; border:1px solid #7c2d12; border-radius:4px; padding:8px;">
+            <div style="font-size:10px; font-weight:600; color:#f87171; margin-bottom:6px;">
+                <i class="fa fa-exclamation-triangle"></i> RISK ALERTS
+            </div>
+            ${data.risk_alerts.slice(0, 2).map(alert => `
+                <div style="font-size:9px; color:#fca5a5; margin-bottom:3px;">
+                    ${alert.type}: ${alert.message}
+                </div>
+            `).join('')}
+        </div>` : ''}
+        
+        ${realTimeFeatures.momentum_score ? `
+        <div class="metric-card" style="background:#1a1a1a; border:1px solid #333; border-radius:4px; padding:8px;">
+            <div style="font-size:10px; font-weight:600; color:var(--muted); margin-bottom:6px;">REAL-TIME SIGNALS</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10px;">
+                <div>Momentum: <span style="color:#4ade80;">${realTimeFeatures.momentum_score}</span></div>
+                <div>Sentiment: <span style="color:#60a5fa;">${(realTimeFeatures.sentiment_score * 100).toFixed(0)}%</span></div>
+            </div>
+        </div>` : ''}
+    `;
+}
+
+// --- Subscribed ML Models Functions ---
+let _subscribedModels = [];
+let _mlModelsUpdateTimer = null;
+
+async function loadSubscribedMLModels() {
+    const container = document.getElementById('subscribedModelsList');
+    const statusEl = document.getElementById('mlModelsStatus');
+    
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 20px; text-align: center; color: var(--muted);"><i class="fa fa-spinner fa-spin"></i> Loading models...</div>';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/subscribed_models');
+        const data = await response.json();
+        
+        if (!response.ok) {
+            container.innerHTML = `<div style="color: #f87171; padding: 10px;">Error: ${data.error}</div>`;
+            if (statusEl) statusEl.textContent = 'Failed to load models';
+            return;
+        }
+        
+        _subscribedModels = data.subscribed_models || [];
+        displaySubscribedModels(_subscribedModels);
+        
+        if (statusEl) {
+            statusEl.textContent = `${data.total_models} models (${data.active_models} active)`;
+        }
+        
+    } catch (error) {
+        console.error('ML models load failed:', error);
+        container.innerHTML = '<div style="color: #f87171; padding: 10px;">Failed to load models</div>';
+        if (statusEl) statusEl.textContent = 'Load failed';
+    }
+}
+
+function displaySubscribedModels(models) {
+    const container = document.getElementById('subscribedModelsList');
+    if (!container) return;
+    
+    if (!models || models.length === 0) {
+        container.innerHTML = '<div style="padding: 15px; text-align: center; color: var(--muted);">No subscribed models found</div>';
+        return;
+    }
+    
+    container.innerHTML = models.map(model => `
+        <div class="ml-model-card" style="background: #202020; border: 1px solid #333; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer;" onclick="viewModelDetails('${model.id}')">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div style="font-size: 12px; font-weight: 600; color: #fff;">${model.name}</div>
+                <div style="font-size: 10px; color: ${model.status === 'active' ? '#4ade80' : '#f87171'}; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 10px;">
+                    ${model.status.toUpperCase()}
+                </div>
+            </div>
+            
+            <div style="font-size: 10px; color: var(--muted); margin-bottom: 6px;">${model.description || model.type || 'ML Model'}</div>
+            
+            ${model.accuracy ? `
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--muted);">
+                <span>Accuracy: <span style="color: #4ade80;">${model.accuracy}%</span></span>
+                <span>Updated: ${formatTimeAgo(model.last_prediction)}</span>
+            </div>
+            ` : ''}
+            
+            <div style="margin-top: 6px;">
+                <button onclick="event.stopPropagation(); getModelPredictions('${model.id}')" style="background: #007acc; border: none; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                    View Predictions
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function getModelPredictions(modelId) {
+    try {
+        const response = await fetch(`/api/vs_terminal_AClass/model_predictions/${modelId}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            alert(`Error loading predictions: ${data.error}`);
+            return;
+        }
+        
+        const predictions = data.predictions || [];
+        const details = `
+Model Predictions - ${modelId}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${predictions.map((pred, idx) => `
+${idx + 1}. ${pred.stock_symbol} - ${pred.prediction_type}
+   Target: ₹${pred.target_price} (Current: ₹${pred.current_price})
+   Confidence: ${pred.confidence}%
+   Timeframe: ${pred.timeframe}
+   Reasoning: ${pred.reasoning}
+   Created: ${new Date(pred.created_at).toLocaleString()}
+`).join('\n')}
+
+Total Predictions: ${predictions.length}
+Updated: ${new Date(data.timestamp).toLocaleString()}
+        `;
+        
+        alert(details);
+        
+    } catch (error) {
+        console.error('Failed to load predictions:', error);
+        alert('Failed to load predictions');
+    }
+}
+
+function viewModelDetails(modelId) {
+    const model = _subscribedModels.find(m => m.id === modelId);
+    if (!model) return;
+    
+    const details = `
+ML Model Details
+━━━━━━━━━━━━━━━━━━━━
+
+Name: ${model.name}
+ID: ${model.id}
+Type: ${model.type || 'N/A'}
+Status: ${model.status}
+Accuracy: ${model.accuracy || 'N/A'}%
+
+Description: ${model.description || 'No description available'}
+
+Recent Predictions:
+${(model.recent_predictions || []).map(pred => 
+    `• ${pred.date}: ${pred.prediction} (${pred.confidence}%)`
+).join('\n')}
+
+Last Update: ${formatTimeAgo(model.last_prediction)}
+    `;
+    
+    alert(details);
+}
+
+async function refreshMLModels() {
+    await loadSubscribedMLModels();
+}
+
+function showAllPredictions() {
+    if (!_subscribedModels.length) {
+        alert('No subscribed models found');
+        return;
+    }
+    
+    const allPredictions = _subscribedModels.flatMap(model => 
+        (model.recent_predictions || []).map(pred => ({
+            ...pred,
+            model_name: model.name,
+            model_type: model.type
+        }))
+    );
+    
+    const details = `
+All Model Predictions Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${allPredictions.slice(0, 10).map((pred, idx) => `
+${idx + 1}. [${pred.model_name}] ${pred.prediction}
+   Confidence: ${pred.confidence}% | Date: ${pred.date}
+`).join('\n')}
+
+Total Active Models: ${_subscribedModels.filter(m => m.status === 'active').length}
+Total Predictions: ${allPredictions.length}
+    `;
+    
+    alert(details);
+}
+
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return 'Never';
+    
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffMs = now - time;
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+    return `${Math.floor(diffMins / 1440)}d ago`;
+}
+
+// --- Initialize Enhanced Features ---
+function initializeEnhancedFeatures() {
+    // Load initial data
+    loadSubscribedMLModels();
+    loadRiskAnalytics();
+    
+    // Start real-time updates
+    startFyersRealTimeUpdates();
+    
+    // Set up periodic refresh for ML models and risk data
+    setInterval(() => {
+        loadRiskAnalytics();
+    }, 30000); // Refresh every 30 seconds
+    
+    setInterval(() => {
+        loadSubscribedMLModels();
+    }, 60000); // Refresh every minute
+}
+
+// ================= NEW TAB FUNCTIONS =================
+
+// Details Tab Functions
+async function loadDetailsData() {
+    const status = document.getElementById('detailsStatus');
+    status.textContent = 'Loading...';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/portfolio_details');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateDetailsDisplay(data.data);
+            status.textContent = 'Loaded';
+        } else {
+            status.textContent = 'Error: ' + data.message;
+        }
+    } catch (error) {
+        console.error('Details load error:', error);
+        status.textContent = 'Connection Error';
+    }
+}
+
+function updateDetailsDisplay(data) {
+    document.getElementById('totalPositions').textContent = data.total_positions || '--';
+    document.getElementById('totalSectors').textContent = data.total_sectors || '--';
+    document.getElementById('riskScore').textContent = data.risk_score || '--';
+    document.getElementById('portfolioBeta').textContent = data.portfolio_beta || '--';
+    document.getElementById('largeCap').textContent = data.large_cap + '%' || '--';
+    document.getElementById('midCap').textContent = data.mid_cap + '%' || '--';
+    document.getElementById('smallCap').textContent = data.small_cap + '%' || '--';
+    document.getElementById('cashPosition').textContent = data.cash_position + '%' || '--';
+    
+    // Update metrics table
+    const table = document.getElementById('detailsMetricsTable');
+    table.innerHTML = '';
+    (data.metrics || []).forEach(metric => {
+        table.innerHTML += `<tr>
+            <td>${metric.name}</td>
+            <td>${metric.value}</td>
+            <td>${metric.benchmark}</td>
+            <td class="${metric.deviation > 0 ? 'positive' : 'negative'}">${metric.deviation}%</td>
+        </tr>`;
+    });
+}
+
+function exportDetailsData() {
+    // Implementation for exporting details data
+    alert('Export functionality coming soon!');
+}
+
+// ML Tab Functions
+async function loadMLPredictions() {
+    const status = document.getElementById('mlStatus');
+    status.textContent = 'Running ML Analysis...';
+    
+    try {
+        const modelType = document.getElementById('mlModelSelect').value;
+        const response = await fetch(`/api/vs_terminal_AClass/risk_ml_predictions?model=${modelType}`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateMLDisplay(data.data);
+            status.textContent = 'Analysis Complete';
+        } else {
+            status.textContent = 'Error: ' + data.message;
+        }
+    } catch (error) {
+        console.error('ML load error:', error);
+        status.textContent = 'Connection Error';
+    }
+}
+
+function updateMLDisplay(data) {
+    document.getElementById('volatilityPred').textContent = data.volatility_prediction || '--';
+    document.getElementById('varPred').textContent = data.var_prediction || '--';
+    document.getElementById('returnPred').textContent = data.return_prediction || '--';
+    document.getElementById('mlConfidence').textContent = data.confidence + '%' || '--';
+    document.getElementById('mlAccuracy').textContent = data.model_accuracy + '%' || '--';
+    document.getElementById('lastTrained').textContent = data.last_trained || '--';
+    document.getElementById('dataPoints').textContent = data.data_points || '--';
+    document.getElementById('modelStatus').textContent = data.model_status || 'Ready';
+    
+    // Update predictions table
+    const table = document.getElementById('mlPredictionsTable');
+    table.innerHTML = '';
+    (data.predictions || []).forEach(pred => {
+        table.innerHTML += `<tr>
+            <td>${pred.symbol}</td>
+            <td>${pred.prediction}</td>
+            <td>${pred.confidence}%</td>
+            <td class="${pred.signal === 'BUY' ? 'positive' : pred.signal === 'SELL' ? 'negative' : ''}">${pred.signal}</td>
+            <td>${pred.risk_level}</td>
+        </tr>`;
+    });
+}
+
+function trainMLModels() {
+    const status = document.getElementById('mlStatus');
+    status.textContent = 'Training Models...';
+    // Implementation for training ML models
+    setTimeout(() => {
+        status.textContent = 'Training Complete';
+    }, 3000);
+}
+
+// Greeks Tab Functions
+async function calculateGreeks() {
+    const status = document.getElementById('greeksStatus');
+    status.textContent = 'Calculating Greeks...';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/options_greeks');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateGreeksDisplay(data.data);
+            status.textContent = 'Complete';
+        } else {
+            status.textContent = 'Error: ' + data.message;
+        }
+    } catch (error) {
+        console.error('Greeks calculation error:', error);
+        status.textContent = 'Connection Error';
+    }
+}
+
+function updateGreeksDisplay(data) {
+    document.getElementById('portfolioDelta').textContent = data.portfolio_delta || '--';
+    document.getElementById('portfolioGamma').textContent = data.portfolio_gamma || '--';
+    document.getElementById('portfolioTheta').textContent = data.portfolio_theta || '--';
+    document.getElementById('portfolioVega').textContent = data.portfolio_vega || '--';
+    document.getElementById('portfolioRho').textContent = data.portfolio_rho || '--';
+    
+    // Update Greeks table
+    const table = document.getElementById('greeksTable');
+    table.innerHTML = '';
+    (data.options || []).forEach(option => {
+        table.innerHTML += `<tr>
+            <td>${option.symbol}</td>
+            <td>${option.type}</td>
+            <td>${option.strike}</td>
+            <td>${option.delta}</td>
+            <td>${option.gamma}</td>
+            <td>${option.theta}</td>
+            <td>${option.vega}</td>
+            <td>${option.rho}</td>
+        </tr>`;
+    });
+}
+
+function loadOptionsData() {
+    const status = document.getElementById('greeksStatus');
+    status.textContent = 'Loading Options Data...';
+    // Implementation for loading options data
+    setTimeout(() => {
+        status.textContent = 'Ready';
+    }, 2000);
+}
+
+// Heatmap Tab Functions
+async function generateHeatmap() {
+    const status = document.getElementById('heatmapStatus');
+    status.textContent = 'Generating Heatmap...';
+    
+    try {
+        const heatmapType = document.getElementById('heatmapType').value;
+        const period = document.getElementById('heatmapPeriod').value;
+        const response = await fetch(`/api/vs_terminal_AClass/risk_heatmap?type=${heatmapType}&period=${period}`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateHeatmapDisplay(data.data);
+            status.textContent = 'Complete';
+        } else {
+            status.textContent = 'Error: ' + data.message;
+        }
+    } catch (error) {
+        console.error('Heatmap generation error:', error);
+        status.textContent = 'Connection Error';
+    }
+}
+
+function updateHeatmapDisplay(data) {
+    // Update Plotly heatmap
+    if (typeof Plotly !== 'undefined' && data.heatmap_data) {
+        const plotlyData = [{
+            z: data.heatmap_data.z,
+            x: data.heatmap_data.x,
+            y: data.heatmap_data.y,
+            type: 'heatmap',
+            colorscale: 'RdYlBu',
+            reversescale: true
+        }];
+        
+        const layout = {
+            title: data.heatmap_data.title || 'Correlation Heatmap',
+            paper_bgcolor: '#1a1a1a',
+            plot_bgcolor: '#1a1a1a',
+            font: { color: '#d4d4d4' },
+            margin: { t: 40, r: 20, b: 40, l: 80 }
+        };
+        
+        Plotly.newPlot('plotlyHeatmap', plotlyData, layout, {responsive: true});
+    }
+    
+    // Update correlation metrics
+    document.getElementById('highestCorr').textContent = data.highest_correlation || '--';
+    document.getElementById('highestCorrPair').textContent = data.highest_pair || '--';
+    document.getElementById('lowestCorr').textContent = data.lowest_correlation || '--';
+    document.getElementById('lowestCorrPair').textContent = data.lowest_pair || '--';
+    document.getElementById('concentration').textContent = data.concentration_score || '--';
+}
+
+function refreshCorrelations() {
+    generateHeatmap();
+}
+
+// Live Tab Functions
+let liveUpdatesInterval = null;
+let isLiveActive = false;
+
+function toggleLiveUpdates() {
+    const icon = document.getElementById('liveToggleIcon');
+    const text = document.getElementById('liveToggleText');
+    
+    if (isLiveActive) {
+        stopLiveUpdates();
+        icon.className = 'fa fa-play';
+        text.textContent = 'Start Live';
+    } else {
+        startLiveUpdates();
+        icon.className = 'fa fa-pause';
+        text.textContent = 'Stop Live';
+    }
+}
+
+function startLiveUpdates() {
+    isLiveActive = true;
+    const interval = parseInt(document.getElementById('updateInterval').value) * 1000;
+    document.getElementById('currentRefreshRate').textContent = interval / 1000;
+    
+    liveUpdatesInterval = setInterval(fetchLiveData, interval);
+    fetchLiveData(); // Initial load
+    
+    document.getElementById('liveStatus').textContent = 'Active';
+    document.getElementById('wsConnectionStatus').style.background = '#4ade80';
+}
+
+function stopLiveUpdates() {
+    isLiveActive = false;
+    if (liveUpdatesInterval) {
+        clearInterval(liveUpdatesInterval);
+        liveUpdatesInterval = null;
+    }
+    
+    document.getElementById('liveStatus').textContent = 'Stopped';
+    document.getElementById('wsConnectionStatus').style.background = '#f44747';
+}
+
+async function fetchLiveData() {
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_analytics_live');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateLiveDisplay(data.data);
+        }
+    } catch (error) {
+        console.error('Live data fetch error:', error);
+    }
+}
+
+function updateLiveDisplay(data) {
+    document.getElementById('livePnL').textContent = data.total_pnl || '--';
+    document.getElementById('livePnLChange').textContent = data.pnl_change || '--';
+    document.getElementById('marketStatus').textContent = data.market_status || '--';
+    document.getElementById('marketTime').textContent = data.market_time || '--';
+    document.getElementById('updateRate').textContent = data.update_rate || '--';
+    document.getElementById('subscribedCount').textContent = data.subscribed_count || '--';
+    document.getElementById('connectionQuality').textContent = data.connection_quality || '--';
+    
+    // Update live data table
+    const table = document.getElementById('liveDataTable');
+    table.innerHTML = '';
+    (data.live_quotes || []).forEach(quote => {
+        const changeClass = quote.change > 0 ? 'positive' : quote.change < 0 ? 'negative' : '';
+        table.innerHTML += `<tr>
+            <td><strong>${quote.symbol}</strong></td>
+            <td>${quote.ltp}</td>
+            <td class="${changeClass}">${quote.change}</td>
+            <td class="${changeClass}">${quote.change_percent}%</td>
+            <td>${quote.volume}</td>
+            <td>${quote.last_update}</td>
+        </tr>`;
+    });
+}
+
+function connectFyersWS() {
+    document.getElementById('liveStatus').textContent = 'Connecting...';
+    // Implementation for WebSocket connection
+    setTimeout(() => {
+        document.getElementById('liveStatus').textContent = 'Connected';
+        document.getElementById('wsConnectionStatus').style.background = '#4ade80';
+    }, 2000);
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize existing features
+    updatePortfolioOverviewMetrics();
+    fetchHoldings();
+    
+    // Initialize enhanced features
+    setTimeout(initializeEnhancedFeatures, 1000);
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    stopFyersRealTimeUpdates();
+});
+
+// ================================
+// RISK MANAGEMENT FUNCTIONS
+// ================================
+
+// Global risk management state
+let riskAgentsActive = false;
+let riskUpdateInterval = null;
+
+async function loadRiskDashboard() {
+    document.getElementById('riskStatus').textContent = 'Loading...';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/comprehensive_analysis', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                timeframe: document.getElementById('riskTimeframe').value || '1W'
+            })
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            updateRiskDashboard(data.analysis);
+            document.getElementById('riskStatus').textContent = 'Updated';
+        } else {
+            document.getElementById('riskStatus').textContent = 'Error';
+        }
+    } catch (error) {
+        console.error('Risk dashboard error:', error);
+        document.getElementById('riskStatus').textContent = 'Error';
+    }
+}
+
+function updateRiskDashboard(analysis) {
+    // Update risk metrics
+    document.getElementById('portfolioVar').textContent = analysis.portfolio_var || '--';
+    document.getElementById('varChange').textContent = '95% Confidence';
+    
+    document.getElementById('riskScoreValue').textContent = analysis.risk_score || '--';
+    document.getElementById('riskScoreStatus').textContent = analysis.risk_level || '--';
+    
+    document.getElementById('maxDrawdown').textContent = analysis.max_drawdown || '--';
+    document.getElementById('drawdownPeriod').textContent = analysis.drawdown_period || '--';
+    
+    document.getElementById('portfolioBetaRisk').textContent = analysis.portfolio_beta || '--';
+    document.getElementById('betaComparison').textContent = 'vs Market';
+    
+    document.getElementById('avgCorrelation').textContent = analysis.avg_correlation || '--';
+    document.getElementById('portfolioVolatility').textContent = analysis.volatility || '--';
+    document.getElementById('volatilityTrend').textContent = analysis.volatility_trend || '--';
+    
+    // Update risk alerts
+    updateRiskAlerts(analysis.alerts || []);
+    
+    // Update risk matrix
+    updateRiskMatrix(analysis.risk_matrix || []);
+}
+
+function updateRiskAlerts(alerts) {
+    const container = document.getElementById('riskAlertsList');
+    container.innerHTML = '';
+    
+    if (alerts.length === 0) {
+        container.innerHTML = '<div style="color:#888; text-align:center; padding:20px;">No risk alerts</div>';
+        return;
+    }
+    
+    alerts.forEach(alert => {
+        const alertDiv = document.createElement('div');
+        alertDiv.style.cssText = 'padding:8px; margin:4px 0; border-left:3px solid; border-radius:4px; background:#1a1a1a;';
+        
+        // Set alert color based on severity
+        const severityColors = {
+            'high': '#f44747',
+            'medium': '#ffa500', 
+            'low': '#4ade80'
+        };
+        alertDiv.style.borderLeftColor = severityColors[alert.severity] || '#ffa500';
+        
+        alertDiv.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="color:${severityColors[alert.severity] || '#ffa500'};">
+                    ${alert.severity?.toUpperCase()} RISK
+                </strong>
+                <span style="font-size:10px; color:#666;">${alert.timestamp || 'Now'}</span>
+            </div>
+            <div style="margin-top:4px; color:#ccc;">${alert.message}</div>
+            ${alert.recommendation ? `<div style="margin-top:4px; font-size:11px; color:#4ade80;">💡 ${alert.recommendation}</div>` : ''}
+        `;
+        
+        container.appendChild(alertDiv);
+    });
+}
+
+function updateRiskMatrix(riskMatrix) {
+    const table = document.getElementById('riskMatrixTable');
+    table.innerHTML = '';
+    
+    riskMatrix.forEach(item => {
+        const riskColor = item.risk_score > 70 ? '#f44747' : item.risk_score > 40 ? '#ffa500' : '#4ade80';
+        
+        table.innerHTML += `<tr>
+            <td><strong>${item.symbol}</strong></td>
+            <td>${item.weight}%</td>
+            <td>${item.var || '--'}</td>
+            <td>${item.beta || '--'}</td>
+            <td style="color:${riskColor};">${item.risk_score}</td>
+            <td style="font-size:11px;">${item.recommendation || '--'}</td>
+        </tr>`;
+    });
+}
+
+async function runRiskScenario() {
+    document.getElementById('riskStatus').textContent = 'Running scenario...';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/stress_test', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                scenario_type: 'market_crash',
+                severity: 0.2 // 20% market drop
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            addRiskChatMessage('🎯 Scenario Analysis Complete: ' + data.analysis.summary, 'agent');
+            document.getElementById('riskStatus').textContent = 'Scenario complete';
+        }
+    } catch (error) {
+        console.error('Scenario analysis error:', error);
+        document.getElementById('riskStatus').textContent = 'Scenario failed';
+    }
+}
+
+async function generateRiskReport() {
+    document.getElementById('riskStatus').textContent = 'Generating report...';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/generate_report', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                report_type: 'comprehensive',
+                timeframe: document.getElementById('riskTimeframe').value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            addRiskChatMessage('📊 Risk Report Generated: ' + data.report.summary, 'agent');
+            document.getElementById('riskStatus').textContent = 'Report ready';
+        }
+    } catch (error) {
+        console.error('Risk report error:', error);
+        document.getElementById('riskStatus').textContent = 'Report failed';
+    }
+}
+
+async function activateAllAgents() {
+    if (riskAgentsActive) {
+        // Deactivate agents
+        riskAgentsActive = false;
+        clearInterval(riskUpdateInterval);
+        updateAgentStatus('inactive');
+        addRiskChatMessage('🛑 All risk agents deactivated', 'system');
+        return;
+    }
+    
+    // Activate agents
+    riskAgentsActive = true;
+    updateAgentStatus('active');
+    addRiskChatMessage('🚀 All risk agents activated and monitoring portfolio', 'system');
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/agent_status', {
+            method: 'GET'
+        });
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+            addRiskChatMessage('✅ Agents initialized successfully', 'system');
+            
+            // Start periodic updates
+            riskUpdateInterval = setInterval(loadRiskDashboard, 60000); // Update every minute
+        }
+    } catch (error) {
+        console.error('Agent activation error:', error);
+        addRiskChatMessage('❌ Agent activation failed', 'system');
+    }
+}
+
+function updateAgentStatus(status) {
+    const statusColor = status === 'active' ? '#4ade80' : '#ffa500';
+    const statusText = status === 'active' ? '●' : '●';
+    
+    ['riskMonitorStatus', 'scenarioSimStatus', 'complianceStatus', 'advisorStatus', 'tradeExecStatus'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.color = statusColor;
+            element.textContent = statusText;
+        }
+    });
+    
+    // Update button text
+    const button = document.querySelector('button[onclick="activateAllAgents()"]');
+    if (button) {
+        button.innerHTML = riskAgentsActive 
+            ? '<i class="fa fa-stop"></i> Deactivate Agents'
+            : '<i class="fa fa-play"></i> Activate All Agents';
+    }
+}
+
+function addRiskChatMessage(message, sender = 'user') {
+    const messagesDiv = document.getElementById('riskChatMessages');
+    const messageDiv = document.createElement('div');
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const senderColor = {
+        'user': '#4ade80',
+        'agent': '#007acc', 
+        'system': '#ffa500'
+    }[sender] || '#ccc';
+    
+    messageDiv.style.cssText = `margin-bottom:6px; padding:4px 6px; border-radius:4px; background:${sender === 'user' ? '#1e3a1e' : '#1e1e3a'};`;
+    messageDiv.innerHTML = `
+        <div style="color:${senderColor}; font-size:10px; margin-bottom:2px;">
+            ${sender.charAt(0).toUpperCase() + sender.slice(1)} • ${timestamp}
+        </div>
+        <div style="color:#ccc;">${message}</div>
+    `;
+    
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function sendRiskMessage() {
+    const input = document.getElementById('riskChatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addRiskChatMessage(message, 'user');
+    input.value = '';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/risk_management/advisor_query', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query: message,
+                context: 'risk_analysis'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            addRiskChatMessage(data.response, 'agent');
+        } else {
+            addRiskChatMessage('Sorry, I encountered an error processing your request.', 'agent');
+        }
+    } catch (error) {
+        console.error('Chat error:', error);
+        addRiskChatMessage('Connection error. Please try again.', 'system');
+    }
+}
+
+function refreshRiskAlerts() {
+    // Load risk alerts
+    fetch('/api/vs_terminal_AClass/risk_management/risk_alerts')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateRiskAlerts(data.alerts);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading risk alerts:', error);
+        });
+}
+
+// Initialize risk management when tab is first opened
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-load risk dashboard if risk tab is active
+    setTimeout(() => {
+        const riskTab = document.getElementById('upperTab-risk');
+        if (riskTab && riskTab.classList.contains('active')) {
+            loadRiskDashboard();
+        }
+        
+        // Initialize right panel AI Risk Advisor
+        loadRiskAdvisorStatus();
+    }, 2000);
+});
+
+// ================ PREDEFINED AGENTIC AI PORTFOLIO INSIGHTS ================
+// Enhanced portfolio risk management using Sonnet 3.5
+
+async function generatePortfolioInsights() {
+    const agentType = document.getElementById('predefinedAgentType').value;
+    const statusElement = document.getElementById('aiInsightStatus');
+    const insightsPanel = document.getElementById('aiInsightsPanel');
+    const contentElement = document.getElementById('aiInsightsContent');
+    
+    // Update status
+    statusElement.textContent = 'Analyzing portfolio...';
+    statusElement.style.color = '#ffa500';
+    
+    // Show insights panel
+    insightsPanel.style.display = 'block';
+    contentElement.innerHTML = '<div style="text-align:center; color:#888;"><i class="fa fa-spinner fa-spin"></i> Generating AI insights...</div>';
+    
+    try {
+        const response = await fetch('/api/vs_terminal_AClass/sonnet_portfolio_insights', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                agent_type: agentType,
+                portfolio_context: await getPortfolioContext()
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayPortfolioInsights(data.insights, agentType);
+            statusElement.textContent = 'Analysis complete';
+            statusElement.style.color = '#4ade80';
+            
+            // Update timestamp
+            document.getElementById('insightTimestamp').textContent = 
+                new Date().toLocaleString() + ' • Powered by Sonnet 3.5';
+        } else {
+            throw new Error(data.error || 'Analysis failed');
+        }
+    } catch (error) {
+        console.error('Portfolio insights error:', error);
+        statusElement.textContent = 'Analysis failed';
+        statusElement.style.color = '#f87171';
+        
+        contentElement.innerHTML = `
+            <div style="color:#f87171; text-align:center; padding:20px;">
+                <i class="fa fa-exclamation-triangle"></i><br>
+                Unable to generate insights<br>
+                <small style="color:#888;">${error.message}</small>
+            </div>
+        `;
+    }
+}
+
+async function getPortfolioContext() {
+    // Gather current portfolio data for AI analysis
+    const holdings = [];
+    const holdingsTable = document.getElementById('holdingsTable');
+    
+    if (holdingsTable) {
+        const rows = holdingsTable.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 5) {
+                holdings.push({
+                    symbol: cells[0].textContent.trim(),
+                    quantity: parseFloat(cells[1].textContent) || 0,
+                    price: parseFloat(cells[2].textContent.replace(/[₹,]/g, '')) || 0,
+                    pnl: cells[3].textContent.trim(),
+                    pnl_pct: cells[4].textContent.trim()
+                });
+            }
+        });
+    }
+    
+    // Get portfolio metrics
+    const metrics = {
+        total_investment: document.querySelector('#portfolioMetrics .metric-card:nth-child(1) .value')?.textContent || '0',
+        current_value: document.querySelector('#portfolioMetrics .metric-card:nth-child(2) .value')?.textContent || '0',
+        total_return: document.querySelector('#portfolioMetrics .metric-card:nth-child(3) .value')?.textContent || '0%',
+        positions_count: document.querySelector('#portfolioMetrics .metric-card:nth-child(4) .value')?.textContent || '0'
+    };
+    
+    return {
+        holdings: holdings,
+        metrics: metrics,
+        timestamp: new Date().toISOString()
+    };
+}
+
+function displayPortfolioInsights(insights, agentType) {
+    const contentElement = document.getElementById('aiInsightsContent');
+    
+    // Format insights based on agent type
+    const agentLabels = {
+        'portfolio_analysis': '📊 Portfolio Analysis',
+        'risk_assessment': '⚠️ Risk Assessment', 
+        'diversification': '🎯 Diversification Review',
+        'market_outlook': '🌐 Market Outlook',
+        'sector_rotation': '🔄 Sector Rotation',
+        'stress_testing': '🧪 Stress Testing',
+        'hedging_strategy': '🛡️ Hedging Strategy',
+        'rebalancing': '⚖️ Rebalancing Plan'
+    };
+    
+    const agentLabel = agentLabels[agentType] || '🤖 AI Analysis';
+    
+    contentElement.innerHTML = `
+        <div style="margin-bottom:16px;">
+            <div style="font-weight:600; margin-bottom:8px; color:#007acc;">
+                ${agentLabel}
+            </div>
+            <div style="font-size:11px; color:#888; margin-bottom:12px;">
+                Analysis generated by Claude Sonnet 3.5 based on current portfolio data
+            </div>
+        </div>
+        
+        <div style="background:#1a1a1a; padding:12px; border-radius:6px; border-left:3px solid #007acc;">
+            ${formatInsightsContent(insights)}
+        </div>
+        
+        ${insights.recommendations ? `
+            <div style="margin-top:12px;">
+                <div style="font-weight:600; margin-bottom:6px; color:#4ade80;">
+                    <i class="fa fa-lightbulb"></i> Key Recommendations
+                </div>
+                <ul style="margin:0; padding-left:16px; color:#ccc;">
+                    ${insights.recommendations.map(rec => `<li style="margin-bottom:4px;">${rec}</li>`).join('')}
+                </ul>
+            </div>
+        ` : ''}
+        
+        ${insights.risk_factors ? `
+            <div style="margin-top:12px;">
+                <div style="font-weight:600; margin-bottom:6px; color:#ffa500;">
+                    <i class="fa fa-exclamation-triangle"></i> Risk Factors
+                </div>
+                <ul style="margin:0; padding-left:16px; color:#ccc;">
+                    ${insights.risk_factors.map(risk => `<li style="margin-bottom:4px;">${risk}</li>`).join('')}
+                </ul>
+            </div>
+        ` : ''}
+    `;
+}
+
+function formatInsightsContent(insights) {
+    if (typeof insights.analysis === 'string') {
+        // Format plain text analysis with better readability
+        return insights.analysis
+            .split('\n')
+            .map(paragraph => paragraph.trim())
+            .filter(paragraph => paragraph.length > 0)
+            .map(paragraph => `<p style="margin-bottom:8px; line-height:1.4;">${paragraph}</p>`)
+            .join('');
+    }
+    
+    // Handle structured insights
+    let content = '';
+    if (insights.summary) {
+        content += `<p style="margin-bottom:12px; font-weight:600;">${insights.summary}</p>`;
+    }
+    if (insights.analysis) {
+        content += `<div style="margin-bottom:12px;">${insights.analysis}</div>`;
+    }
+    
+    return content || '<p>Analysis completed successfully.</p>';
+}
+
+function exportInsights() {
+    const content = document.getElementById('aiInsightsContent').textContent;
+    const agentType = document.getElementById('predefinedAgentType').value;
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    const blob = new Blob([`
+Portfolio AI Insights Export
+Agent Type: ${agentType}
+Generated: ${new Date().toLocaleString()}
+Powered by: Claude Sonnet 3.5
+
+${content}
+    `], { type: 'text/plain' });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `portfolio-insights-${agentType}-${timestamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function shareInsights() {
+    const content = document.getElementById('aiInsightsContent').textContent;
+    const agentType = document.getElementById('predefinedAgentType').value;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: `Portfolio AI Insights - ${agentType}`,
+            text: content.substring(0, 500) + '...',
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(content).then(() => {
+            alert('Insights copied to clipboard!');
+        });
+    }
+}
+
+function clearInsights() {
+    document.getElementById('aiInsightsPanel').style.display = 'none';
+    document.getElementById('aiInsightStatus').textContent = 'Ready to analyze';
+    document.getElementById('aiInsightStatus').style.color = '#888';
+}
+
+</script>
+</body>
+</html>

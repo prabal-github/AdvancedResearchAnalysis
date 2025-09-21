@@ -1,0 +1,288 @@
+{% extends "layout.html" %}
+
+{% block title %}My Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-folder-open text-primary me-2"></i>My Research Reports
+                </h2>
+                <div>
+                    <a href="{{ url_for('analyst_dashboard') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Dashboard
+                    </a>
+                    <a href="{{ url_for('submit_research_report') }}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>New Report
+                    </a>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-1">{{ reports|length }}</h3>
+                            <small>Total Reports</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-1">{{ reports|selectattr('status', 'equalto', 'approved')|list|length }}</h3>
+                            <small>Approved</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-1">{{ reports|selectattr('status', 'equalto', 'submitted')|list|length }}</h3>
+                            <small>Under Review</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            {% set avg_score = (reports|selectattr('quality_score')|map(attribute='quality_score')|list|sum / (reports|selectattr('quality_score')|list|length or 1))|round(1) %}
+                            <h3 class="mb-1">{{ avg_score }}%</h3>
+                            <small>Avg Quality</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Table -->
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>All Reports
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if reports %}
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="reportsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Ticker</th>
+                                        <th>Submitted</th>
+                                        <th>Status</th>
+                                        <th>Quality Score</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in reports %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ report.title }}</strong>
+                                            <br><small class="text-muted">{{ report.content[:100] }}...</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ report.ticker }}</span>
+                                        </td>
+                                        <td>
+                                            {{ report.submitted_at.strftime('%Y-%m-%d %H:%M') if report.submitted_at else 'N/A' }}
+                                        </td>
+                                        <td>
+                                            {% if report.status == 'approved' %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% elif report.status == 'rejected' %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% elif report.status == 'submitted' %}
+                                                <span class="badge bg-warning">Under Review</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ report.status|title }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if report.quality_score %}
+                                                {% set score_class = 'success' if report.quality_score >= 80 else 'warning' if report.quality_score >= 60 else 'danger' %}
+                                                <span class="badge bg-{{ score_class }}">{{ report.quality_score }}%</span>
+                                            {% else %}
+                                                <span class="text-muted">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" onclick="viewReport({{ report.id }})">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                {% if report.status in ['draft', 'rejected'] %}
+                                                    <button class="btn btn-outline-warning" onclick="editReport({{ report.id }})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                {% endif %}
+                                                <button class="btn btn-outline-info" onclick="downloadReport({{ report.id }})">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Reports Yet</h4>
+                            <p class="text-muted">Start by submitting your first research report</p>
+                            <a href="{{ url_for('submit_research_report') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Submit First Report
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Performance Insights -->
+            {% if reports %}
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Performance Insights
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Report Frequency</h6>
+                            <p class="text-muted">
+                                {% set days_active = (moment() - analyst.created_at).days %}
+                                {% if days_active > 0 %}
+                                    {{ (reports|length / days_active * 7)|round(1) }} reports per week
+                                {% else %}
+                                    New analyst
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Most Analyzed Sector</h6>
+                            <p class="text-muted">
+                                {% set tickers = reports|map(attribute='ticker')|list %}
+                                {% if tickers %}
+                                    Most common: {{ tickers|groupby|sort(attribute=1)|reverse|first|first }}
+                                {% else %}
+                                    No data yet
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Quality Trend</h6>
+                            <p class="text-muted">
+                                {% set recent_scores = reports[:3]|selectattr('quality_score')|map(attribute='quality_score')|list %}
+                                {% if recent_scores|length >= 2 %}
+                                    {% set trend = recent_scores[0] - recent_scores[-1] %}
+                                    {% if trend > 0 %}
+                                        <span class="text-success">↑ Improving</span>
+                                    {% elif trend < 0 %}
+                                        <span class="text-warning">↓ Declining</span>
+                                    {% else %}
+                                        <span class="text-info">→ Stable</span>
+                                    {% endif %}
+                                {% else %}
+                                    Not enough data
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Report View Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="reportContent">
+                <!-- Report content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadBtn">Download PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewReport(reportId) {
+    // Fetch and display report details
+    fetch(`/api/report/${reportId}`)
+        .then(response => response.json())
+        .then(data => {
+            const content = `
+                <div class="border-bottom pb-3 mb-3">
+                    <h4>${data.title}</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Ticker:</strong> ${data.ticker}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-info">${data.status}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Submitted:</strong> ${data.submitted_at}</p>
+                            <p><strong>Quality Score:</strong> ${data.quality_score || 'Pending'}%</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
+                    ${data.content}
+                </div>
+            `;
+            document.getElementById('reportContent').innerHTML = content;
+            $('#reportModal').modal('show');
+        })
+        .catch(error => {
+            alert('Error loading report: ' + error.message);
+        });
+}
+
+function editReport(reportId) {
+    window.location.href = `/edit_report/${reportId}`;
+}
+
+function downloadReport(reportId) {
+    window.open(`/api/report/${reportId}/download`, '_blank');
+}
+
+// Initialize DataTable for better sorting and searching
+$(document).ready(function() {
+    if ($('#reportsTable tbody tr').length > 0) {
+        $('#reportsTable').DataTable({
+            order: [[2, 'desc']], // Sort by submitted date
+            pageLength: 15,
+            responsive: true
+        });
+    }
+});
+</script>
+
+<style>
+.card-body .text-center h3 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+.badge {
+    font-size: 0.75em;
+}
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% block title %}Research Tasks{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-tasks text-primary me-2"></i>Research Task Management
+                </h2>
+                <div>
+                    <a href="{{ url_for('analyst_dashboard_main') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <a href="/analyze_new" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Submit Report
+                    </a>
+                </div>
+            </div>
+
+            <!-- Market Events Overview (no Market Holidays as tasks) -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Market Events Calendar</h5>
+                    <div class="text-white-50 small">Source: Sensibull Current Events</div>
+                </div>
+                <div class="card-body">
+                    {% if events_all and events_all|length > 0 %}
+                        {% set grouped = {} %}
+                        {% for e in events_all %}
+                            {% set _ = grouped.setdefault(e.event_date, []).append(e) %}
+                        {% endfor %}
+
+                        {% for date, items in grouped.items()|sort(reverse=true) %}
+                        <div class="mb-3">
+                            <div class="fw-bold text-primary mb-2">{{ date }}</div>
+                            <div class="list-group">
+                                {% for e in items|sort(attribute='event_time') %}
+                                <div class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-semibold">
+                                            {{ e.title }}
+                                            <span class="badge bg-light text-dark ms-2">{{ e.geography or 'Global' }}</span>
+                                        </div>
+                                        {% if e.description %}
+                                        <div class="text-muted small">{{ e.description }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-nowrap">
+                                        <span class="badge bg-secondary me-2">{{ e.event_time or '00:00:00' }}</span>
+                                        {% if e.impact %}
+                                            <span class="badge bg-warning text-dark">Impact: {{ e.impact }}</span>
+                                        {% endif %}
+                                        {% if e.title and 'holiday' in e.title|lower %}
+                                            <span class="badge bg-light text-muted ms-2">Holiday</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-3 text-muted">No events available.</div>
+                    {% endif %}
+
+                    <!-- Highlighted (non-holiday) suggestions -->
+                    <div class="mt-4">
+                        <div class="row g-3">
+                            {% if event_india %}
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="bi bi-flag me-2"></i>Latest India Market Event
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1">{{ event_india.title }}</h5>
+                                        <div class="text-muted small mb-2">{{ event_india.event_date }} {{ event_india.event_time }} • Impact: {{ event_india.impact }}</div>
+                                        {% if event_india.description %}
+                                        <p class="mb-3" style="max-height: 5.5rem; overflow: hidden;">{{ event_india.description }}</p>
+                                        {% endif %}
+                                        <a href="/analyze_new?prefill_title={{ (event_india.title ~ ' - India')|urlencode }}&prefill_topic=macro_analysis&prefill_description={{ event_india.description|default('', true)|urlencode }}"
+                                           class="btn btn-sm btn-primary">
+                                            Analyze New Research Report
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if event_global %}
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-header bg-dark text-white">
+                                        <i class="bi bi-globe2 me-2"></i>Important Global Market Event
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1">{{ event_global.title }}</h5>
+                                        <div class="text-muted small mb-2">{{ event_global.geography }} • {{ event_global.event_date }} {{ event_global.event_time }} • Impact: {{ event_global.impact }}</div>
+                                        {% if event_global.description %}
+                                        <p class="mb-3" style="max-height: 5.5rem; overflow: hidden;">{{ event_global.description }}</p>
+                                        {% endif %}
+                                        <a href="/analyze_new?prefill_title={{ (event_global.title ~ ' - ' ~ (event_global.geography or 'Global'))|urlencode }}&prefill_topic=macro_analysis&prefill_description={{ event_global.description|default('', true)|urlencode }}"
+                                           class="btn btn-sm btn-dark">
+                                            Analyze New Research Report
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Tasks -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Active Tasks ({{ active_tasks|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if active_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Topic</th>
+                                        <th>Ticker</th>
+                                        <th>Priority</th>
+                                        <th>Assigned Date</th>
+                                        <th>Deadline</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in active_tasks %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ task.topic }}</strong>
+                                            {% if task.description %}
+                                                <br><small class="text-muted">{{ task.description[:100] }}...</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.ticker %}
+                                                <span class="badge bg-info">{{ task.ticker }}</span>
+                                            {% else %}
+                                                <span class="text-muted">General</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% set priority_class = 'danger' if task.priority == 'High' else 'warning' if task.priority == 'Medium' else 'info' %}
+                                            <span class="badge bg-{{ priority_class }}">{{ task.priority or 'Normal' }}</span>
+                                        </td>
+                                        <td>{{ task.assigned_at.strftime('%Y-%m-%d') if task.assigned_at else 'N/A' }}</td>
+                                        <td>
+                                            {% if task.deadline %}
+                                                {% set days_left = (task.deadline.date() - moment().date()).days %}
+                                                {% if days_left < 0 %}
+                                                    <span class="text-danger">Overdue by {{ -days_left }} days</span>
+                                                {% elif days_left == 0 %}
+                                                    <span class="text-warning">Due Today</span>
+                                                {% else %}
+                                                    <span class="text-success">{{ days_left }} days left</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">No deadline</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                                          <a href="/analyze_new?task_id={{ task.id }}" 
+                                                              class="btn btn-sm btn-success">
+                                                <i class="fas fa-file-alt me-1"></i>Submit Report
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No active tasks assigned</h5>
+                            <p class="text-muted">Check the pending tasks below to take on new assignments</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Pending Tasks (Available to Take) -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-paper me-2"></i>Available Tasks ({{ pending_tasks|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if pending_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Topic</th>
+                                        <th>Ticker</th>
+                                        <th>Priority</th>
+                                        <th>Created Date</th>
+                                        <th>Deadline</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in pending_tasks %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ task.topic }}</strong>
+                                            {% if task.description %}
+                                                <br><small class="text-muted">{{ task.description[:100] }}...</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.ticker %}
+                                                <span class="badge bg-info">{{ task.ticker }}</span>
+                                            {% else %}
+                                                <span class="text-muted">General</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% set priority_class = 'danger' if task.priority == 'High' else 'warning' if task.priority == 'Medium' else 'info' %}
+                                            <span class="badge bg-{{ priority_class }}">{{ task.priority or 'Normal' }}</span>
+                                        </td>
+                                        <td>{{ task.created_at.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            {% if task.deadline %}
+                                                {{ task.deadline.strftime('%Y-%m-%d') }}
+                                            {% else %}
+                                                <span class="text-muted">Flexible</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="{{ url_for('take_research_task', task_id=task.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-primary" 
+                                                        onclick="return confirm('Take this research task?')">
+                                                    <i class="fas fa-hand-paper me-1"></i>Take Task
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h5 class="text-muted">No pending tasks available</h5>
+                            <p class="text-muted">All tasks have been assigned. Check back later for new opportunities.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Completed Tasks -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>Recently Completed Tasks ({{ completed_tasks|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if completed_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Topic</th>
+                                        <th>Ticker</th>
+                                        <th>Completed Date</th>
+                                        <th>Quality Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in completed_tasks %}
+                                    <tr>
+                                        <td>{{ task.topic }}</td>
+                                        <td>
+                                            {% if task.ticker %}
+                                                <span class="badge bg-info">{{ task.ticker }}</span>
+                                            {% else %}
+                                                <span class="text-muted">General</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ task.completed_at.strftime('%Y-%m-%d') if task.completed_at else 'N/A' }}</td>
+                                        <td>
+                                            {% if task.quality_score %}
+                                                {% set score_class = 'success' if task.quality_score >= 80 else 'warning' if task.quality_score >= 60 else 'danger' %}
+                                                <span class="badge bg-{{ score_class }}">{{ task.quality_score }}%</span>
+                                            {% else %}
+                                                <span class="text-muted">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No completed tasks yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table td {
+    vertical-align: middle;
+}
+.badge {
+    font-size: 0.75em;
+}
+</style>
+{% endblock %}

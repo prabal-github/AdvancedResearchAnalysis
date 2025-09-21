@@ -1,0 +1,4 @@
+name,email,password
+minimal_user1,minimal1@test.com,minimalpass123
+minimal_user2,minimal2@test.com,minimalpass123
+minimal_user3,minimal3@test.com,minimalpass123

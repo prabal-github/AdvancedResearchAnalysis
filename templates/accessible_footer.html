@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Footer - Research Quality App</title>
+    <meta name="description" content="Accessible footer component with semantic navigation, contact information, and compliance links.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* WCAG 2.1 Level AA Compliant Footer Styles */
+        :root {
+            /* High contrast color scheme for accessibility */
+            --primary-blue: #0056b3;
+            --primary-blue-dark: #004494;
+            --primary-blue-light: #0066cc;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+            --text-light: #ffffff;
+            --background-dark: #343a40;
+            --background-darker: #2c3136;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --border-color: #495057;
+            --border-light: #6c757d;
+            --focus-outline: #0066cc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Base accessibility styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* High contrast focus indicators */
+        *:focus {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 3px solid var(--focus-outline);
+            outline-offset: 2px;
+        }
+        
+        /* Footer container */
+        .site-footer {
+            background: var(--background-dark);
+            color: var(--text-light);
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+            border-top: 3px solid var(--primary-blue);
+        }
+        
+        .footer-main {
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .footer-bottom {
+            padding-top: 1.5rem;
+        }
+        
+        /* Footer sections */
+        .footer-section {
+            margin-bottom: 2rem;
+        }
+        
+        .footer-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-title i {
+            margin-right: 0.75rem;
+            color: var(--primary-blue-light);
+            font-size: 1.1rem;
+        }
+        
+        .footer-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Navigation lists */
+        .footer-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-nav li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            padding: 0.25rem 0;
+        }
+        
+        .footer-nav a:hover,
+        .footer-nav a:focus {
+            color: var(--text-light);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            padding-left: 0.5rem;
+        }
+        
+        .footer-nav a i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            width: 1.2rem;
+            text-align: center;
+        }
+        
+        /* Contact information */
+        .contact-info {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .contact-info li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .contact-info i {
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--primary-blue-light);
+            font-size: 1rem;
+            width: 1.2rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .contact-info a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .contact-info a:hover,
+        .contact-info a:focus {
+            color: var(--text-light);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        
+        /* Social media links */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 1.2rem;
+        }
+        
+        .social-link:hover,
+        .social-link:focus {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            transform: translateY(-2px);
+            border-color: var(--primary-blue-light);
+            text-decoration: none;
+        }
+        
+        .social-link .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        
+        /* Newsletter signup */
+        .newsletter-form {
+            margin-top: 1.5rem;
+        }
+        
+        .newsletter-form .form-label {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .newsletter-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 0.6rem 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--background-white);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--primary-blue-light);
+            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        }
+        
+        .newsletter-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .newsletter-btn {
+            padding: 0.6rem 1.25rem;
+            background: var(--primary-blue);
+            color: var(--text-light);
+            border: 2px solid var(--primary-blue);
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .newsletter-btn:hover,
+        .newsletter-btn:focus {
+            background: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            transform: translateY(-1px);
+        }
+        
+        .newsletter-disclaimer {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+        
+        /* Footer bottom */
+        .footer-bottom-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-bottom-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .footer-bottom-links a:hover,
+        .footer-bottom-links a:focus {
+            color: var(--text-light);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        
+        /* Compliance badges */
+        .compliance-badges {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .compliance-badge {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .compliance-badge i {
+            margin-right: 0.5rem;
+            color: var(--primary-blue-light);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .site-footer {
+                padding: 2rem 0 1rem;
+            }
+            
+            .footer-section {
+                margin-bottom: 1.5rem;
+            }
+            
+            .footer-title {
+                font-size: 1.1rem;
+            }
+            
+            .newsletter-input-group {
+                flex-direction: column;
+            }
+            
+            .newsletter-btn {
+                width: 100%;
+                padding: 0.75rem;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+            
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-bottom-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .footer-bottom-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .compliance-badges {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .site-footer {
+                background: #000000;
+                color: #ffffff;
+                border-top-color: #ffffff;
+            }
+            
+            .footer-nav a,
+            .contact-info a,
+            .footer-bottom-links a {
+                color: #ffffff;
+            }
+            
+            .social-link {
+                background: #ffffff;
+                color: #000000;
+                border-color: #ffffff;
+            }
+            
+            .newsletter-input {
+                border-color: #ffffff;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            .site-footer {
+                background: #ffffff !important;
+                color: #000000 !important;
+                border-top: 2px solid #000000 !important;
+                padding: 1rem 0 !important;
+            }
+            
+            .social-links,
+            .newsletter-form {
+                display: none !important;
+            }
+            
+            .footer-nav a,
+            .contact-info a,
+            .footer-bottom-links a {
+                color: #000000 !important;
+                text-decoration: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Main content placeholder -->
+    <main style="min-height: 60vh; padding: 2rem 0; background: #f8f9fa;">
+        <div class="container">
+            <h1>Research Quality App</h1>
+            <p>This is a placeholder for the main content. The footer is displayed below.</p>
+        </div>
+    </main>
+    
+    <!-- Accessible Footer -->
+    <footer class="site-footer" role="contentinfo" aria-labelledby="footer-heading">
+        
+        <div class="container">
+            
+            <!-- Main footer content -->
+            <div class="footer-main">
+                <div class="row">
+                    
+                    <!-- Company information -->
+                    <div class="col-lg-4 col-md-6 footer-section">
+                        <h2 id="footer-heading" class="footer-title">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            Research Quality App
+                        </h2>
+                        <p class="footer-description">
+                            Professional investment research analysis platform powered by AI. 
+                            Get instant quality assessments, portfolio insights, and data-driven 
+                            investment recommendations to maximize your returns.
+                        </p>
+                        
+                        <!-- Social media links -->
+                        <div class="social-links" role="group" aria-label="Social media links">
+                            <a href="https://twitter.com/researchquality" 
+                               class="social-link"
+                               aria-describedby="twitter-desc"
+                               rel="noopener noreferrer"
+                               target="_blank">
+                                <i class="fab fa-twitter" aria-hidden="true"></i>
+                                <span class="sr-only">Follow us on Twitter</span>
+                            </a>
+                            <div id="twitter-desc" class="sr-only">Opens in a new window</div>
+                            
+                            <a href="https://linkedin.com/company/researchquality" 
+                               class="social-link"
+                               aria-describedby="linkedin-desc"
+                               rel="noopener noreferrer"
+                               target="_blank">
+                                <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                                <span class="sr-only">Connect on LinkedIn</span>
+                            </a>
+                            <div id="linkedin-desc" class="sr-only">Opens in a new window</div>
+                            
+                            <a href="https://github.com/researchquality" 
+                               class="social-link"
+                               aria-describedby="github-desc"
+                               rel="noopener noreferrer"
+                               target="_blank">
+                                <i class="fab fa-github" aria-hidden="true"></i>
+                                <span class="sr-only">View our GitHub</span>
+                            </a>
+                            <div id="github-desc" class="sr-only">Opens in a new window</div>
+                            
+                            <a href="mailto:info@researchquality.com" 
+                               class="social-link"
+                               aria-describedby="email-desc">
+                                <i class="fas fa-envelope" aria-hidden="true"></i>
+                                <span class="sr-only">Send us an email</span>
+                            </a>
+                            <div id="email-desc" class="sr-only">Opens your default email client</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation links -->
+                    <div class="col-lg-2 col-md-6 footer-section">
+                        <h3 class="footer-title">
+                            <i class="fas fa-sitemap" aria-hidden="true"></i>
+                            Platform
+                        </h3>
+                        <nav aria-label="Platform navigation">
+                            <ul class="footer-nav">
+                                <li>
+                                    <a href="{{ url_for('investor_dashboard') }}">
+                                        <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('portfolio') }}">
+                                        <i class="fas fa-briefcase" aria-hidden="true"></i>
+                                        Portfolio
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('research_reports') }}">
+                                        <i class="fas fa-file-alt" aria-hidden="true"></i>
+                                        Research Reports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('risk_analysis') }}">
+                                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                        Risk Analysis
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('market_data') }}">
+                                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                        Market Data
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <!-- Support links -->
+                    <div class="col-lg-2 col-md-6 footer-section">
+                        <h3 class="footer-title">
+                            <i class="fas fa-life-ring" aria-hidden="true"></i>
+                            Support
+                        </h3>
+                        <nav aria-label="Support navigation">
+                            <ul class="footer-nav">
+                                <li>
+                                    <a href="{{ url_for('help_center') }}">
+                                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                        Help Center
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('documentation') }}">
+                                        <i class="fas fa-book" aria-hidden="true"></i>
+                                        Documentation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('api_docs') }}">
+                                        <i class="fas fa-code" aria-hidden="true"></i>
+                                        API Documentation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('contact_support') }}">
+                                        <i class="fas fa-headset" aria-hidden="true"></i>
+                                        Contact Support
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('tutorials') }}">
+                                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                                        Tutorials
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <!-- Contact information and newsletter -->
+                    <div class="col-lg-4 col-md-6 footer-section">
+                        <h3 class="footer-title">
+                            <i class="fas fa-address-card" aria-hidden="true"></i>
+                            Contact & Updates
+                        </h3>
+                        
+                        <!-- Contact information -->
+                        <address>
+                            <ul class="contact-info">
+                                <li>
+                                    <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                                    <span>
+                                        123 Finance Street, Suite 400<br>
+                                        New York, NY 10001
+                                    </span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-phone" aria-hidden="true"></i>
+                                    <a href="tel:+1-555-123-4567" 
+                                       aria-describedby="phone-desc">
+                                        +1 (555) 123-4567
+                                    </a>
+                                    <div id="phone-desc" class="sr-only">Click to call our support line</div>
+                                </li>
+                                <li>
+                                    <i class="fas fa-envelope" aria-hidden="true"></i>
+                                    <a href="mailto:support@researchquality.com"
+                                       aria-describedby="support-email-desc">
+                                        support@researchquality.com
+                                    </a>
+                                    <div id="support-email-desc" class="sr-only">Send us a support email</div>
+                                </li>
+                                <li>
+                                    <i class="fas fa-clock" aria-hidden="true"></i>
+                                    <span>
+                                        24/7 Support Available
+                                    </span>
+                                </li>
+                            </ul>
+                        </address>
+                        
+                        <!-- Newsletter signup -->
+                        <form class="newsletter-form" 
+                              aria-labelledby="newsletter-title"
+                              novalidate>
+                            <label id="newsletter-title" 
+                                   for="newsletter-email" 
+                                   class="form-label">
+                                Stay Updated
+                            </label>
+                            <div class="newsletter-input-group">
+                                <input type="email" 
+                                       id="newsletter-email" 
+                                       class="newsletter-input" 
+                                       placeholder="Enter your email"
+                                       aria-describedby="newsletter-help newsletter-error"
+                                       aria-invalid="false"
+                                       required>
+                                <button type="submit" 
+                                        class="newsletter-btn"
+                                        aria-describedby="newsletter-submit-desc">
+                                    <i class="fas fa-paper-plane me-1" aria-hidden="true"></i>
+                                    Subscribe
+                                </button>
+                                <div id="newsletter-submit-desc" class="sr-only">Subscribe to our newsletter for market insights</div>
+                            </div>
+                            <div id="newsletter-help" class="newsletter-disclaimer">
+                                Get weekly market insights and platform updates. Unsubscribe anytime.
+                            </div>
+                            <div id="newsletter-error" 
+                                 class="text-danger mt-1" 
+                                 role="alert" 
+                                 aria-live="polite"></div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Footer bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    
+                    <!-- Copyright -->
+                    <p class="copyright">
+                        &copy; 2025 Research Quality App. All rights reserved.
+                    </p>
+                    
+                    <!-- Legal links -->
+                    <nav aria-label="Legal navigation">
+                        <ul class="footer-bottom-links">
+                            <li>
+                                <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('terms_of_service') }}">Terms of Service</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('cookie_policy') }}">Cookie Policy</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('accessibility_statement') }}"
+                                   aria-describedby="accessibility-desc">
+                                    Accessibility
+                                </a>
+                                <div id="accessibility-desc" class="sr-only">View our accessibility statement and compliance information</div>
+                            </li>
+                        </ul>
+                    </nav>
+                    
+                </div>
+                
+                <!-- Compliance badges -->
+                <div class="compliance-badges">
+                    <div class="compliance-badge">
+                        <i class="fas fa-shield-check" aria-hidden="true"></i>
+                        <span>WCAG 2.1 AA Compliant</span>
+                    </div>
+                    <div class="compliance-badge">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <span>SSL Secured</span>
+                    </div>
+                    <div class="compliance-badge">
+                        <i class="fas fa-certificate" aria-hidden="true"></i>
+                        <span>SEC Registered</span>
+                    </div>
+                    <div class="compliance-badge">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                        <span>SOC 2 Compliant</span>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // WCAG 2.1 Compliant Footer JavaScript
+        (function() {
+            'use strict';
+            
+            // Newsletter form validation and submission
+            function setupNewsletterForm() {
+                const form = document.querySelector('.newsletter-form');
+                const emailInput = document.getElementById('newsletter-email');
+                const submitBtn = form.querySelector('.newsletter-btn');
+                const errorElement = document.getElementById('newsletter-error');
+                
+                // Email validation function
+                function validateEmail(email) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                }
+                
+                // Show error message
+                function showError(message) {
+                    errorElement.textContent = message;
+                    emailInput.classList.add('is-invalid');
+                    emailInput.setAttribute('aria-invalid', 'true');
+                    emailInput.focus();
+                }
+                
+                // Clear error
+                function clearError() {
+                    errorElement.textContent = '';
+                    emailInput.classList.remove('is-invalid');
+                    emailInput.setAttribute('aria-invalid', 'false');
+                }
+                
+                // Real-time validation
+                emailInput.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid')) {
+                        if (validateEmail(this.value)) {
+                            clearError();
+                        }
+                    }
+                });
+                
+                emailInput.addEventListener('blur', function() {
+                    if (this.value && !validateEmail(this.value)) {
+                        showError('Please enter a valid email address.');
+                    }
+                });
+                
+                // Form submission
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = emailInput.value.trim();
+                    
+                    if (!email) {
+                        showError('Email address is required.');
+                        return;
+                    }
+                    
+                    if (!validateEmail(email)) {
+                        showError('Please enter a valid email address.');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1" aria-hidden="true"></i>Subscribing...';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate subscription
+                    setTimeout(() => {
+                        clearError();
+                        emailInput.value = '';
+                        submitBtn.innerHTML = '<i class="fas fa-check me-1" aria-hidden="true"></i>Subscribed!';
+                        
+                        // Announce success
+                        const successMessage = 'Successfully subscribed to newsletter. Check your email for confirmation.';
+                        announceToScreenReader(successMessage);
+                        
+                        // Reset button after delay
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }, 3000);
+                        
+                    }, 2000);
+                });
+            }
+            
+            // Enhanced link interactions
+            function enhanceLinks() {
+                const links = document.querySelectorAll('.footer-nav a, .footer-bottom-links a');
+                
+                links.forEach(link => {
+                    // Add smooth focus transitions
+                    link.addEventListener('focus', function() {
+                        this.style.transform = 'translateX(4px)';
+                    });
+                    
+                    link.addEventListener('blur', function() {
+                        this.style.transform = '';
+                    });
+                    
+                    // External link handling
+                    if (link.hasAttribute('target') && link.getAttribute('target') === '_blank') {
+                        link.addEventListener('click', function() {
+                            announceToScreenReader('Opening link in new window: ' + this.textContent);
+                        });
+                    }
+                });
+            }
+            
+            // Social media link enhancements
+            function enhanceSocialLinks() {
+                const socialLinks = document.querySelectorAll('.social-link');
+                
+                socialLinks.forEach(link => {
+                    link.addEventListener('focus', function() {
+                        const platform = this.querySelector('.sr-only').textContent;
+                        announceToScreenReader(platform);
+                    });
+                    
+                    link.addEventListener('click', function() {
+                        const platform = this.querySelector('.sr-only').textContent;
+                        announceToScreenReader('Opening ' + platform);
+                    });
+                });
+            }
+            
+            // Keyboard navigation enhancements
+            function setupKeyboardNavigation() {
+                document.addEventListener('keydown', function(e) {
+                    // F for footer navigation (custom shortcut)
+                    if (e.key === 'f' && e.altKey) {
+                        e.preventDefault();
+                        const footer = document.querySelector('.site-footer');
+                        footer.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Focus first interactive element in footer
+                        const firstLink = footer.querySelector('a, button, input');
+                        if (firstLink) {
+                            firstLink.focus();
+                            announceToScreenReader('Navigated to footer');
+                        }
+                    }
+                });
+                
+                // Improve tab navigation within footer sections
+                const footerSections = document.querySelectorAll('.footer-section');
+                footerSections.forEach(section => {
+                    const links = section.querySelectorAll('a, button, input');
+                    
+                    links.forEach((link, index) => {
+                        link.addEventListener('keydown', function(e) {
+                            if (e.key === 'ArrowDown' && index < links.length - 1) {
+                                e.preventDefault();
+                                links[index + 1].focus();
+                            } else if (e.key === 'ArrowUp' && index > 0) {
+                                e.preventDefault();
+                                links[index - 1].focus();
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // Screen reader announcements
+            function announceToScreenReader(message) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 5000);
+            }
+            
+            // Contact information click handling
+            function enhanceContactInfo() {
+                const phoneLink = document.querySelector('a[href^="tel:"]');
+                const emailLink = document.querySelector('a[href^="mailto:"]');
+                
+                if (phoneLink) {
+                    phoneLink.addEventListener('click', function() {
+                        announceToScreenReader('Opening phone dialer');
+                    });
+                }
+                
+                if (emailLink) {
+                    emailLink.addEventListener('click', function() {
+                        announceToScreenReader('Opening email client');
+                    });
+                }
+            }
+            
+            // Footer visibility and interaction tracking
+            function setupFooterTracking() {
+                const footer = document.querySelector('.site-footer');
+                
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                announceToScreenReader('Footer section is now visible');
+                            }
+                        });
+                    },
+                    { threshold: 0.5 }
+                );
+                
+                observer.observe(footer);
+            }
+            
+            // Initialize all accessibility features
+            function initializeAccessibility() {
+                setupNewsletterForm();
+                enhanceLinks();
+                enhanceSocialLinks();
+                setupKeyboardNavigation();
+                enhanceContactInfo();
+                
+                // Don't auto-track footer visibility as it can be annoying
+                // setupFooterTracking();
+                
+                // Initial accessibility announcement
+                setTimeout(() => {
+                    announceToScreenReader('Footer loaded with contact information, navigation links, and newsletter signup');
+                }, 2000);
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeAccessibility);
+            } else {
+                initializeAccessibility();
+            }
+            
+        })();
+    </script>
+</body>
+</html>

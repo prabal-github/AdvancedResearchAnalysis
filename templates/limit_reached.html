@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}{{ title or 'Limit Reached' }}{% endblock %}
+
+{% block content %}
+<div class="container py-4" id="limit-meta" data-seconds-left="{{ seconds_left }}" data-used="{{ used }}" data-limit="{{ limit }}" data-pct="{{ pct }}">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-3">
+              <span class="badge bg-danger text-uppercase">429</span>
+            </div>
+            <h3 class="mb-0">{{ title or 'Daily Limit Reached' }}</h3>
+          </div>
+          <p class="lead mb-3">{{ message }}</p>
+
+          <div class="mb-3">
+            {% if limit is not none %}
+            <div class="small text-muted">Usage today: <strong>{{ used }}</strong> / <strong>{{ limit }}</strong></div>
+            <div class="progress mt-1" style="height: 8px;">
+              <div id="usageProgress" class="progress-bar bg-danger" role="progressbar" aria-valuenow="{{ used }}" aria-valuemin="0" aria-valuemax="{{ limit }}"></div>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <div class="me-2">⏳</div>
+            <div>
+              You can try again when your credits reset.
+              <span>Time remaining:</span>
+              <strong id="countdown">{{ eta_hours }}h {{ eta_minutes }}m</strong>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ url_for('request_upgrade') }}" class="btn btn-primary">
+              Request Upgrade
+            </a>
+            <a href="{{ back_url }}" class="btn btn-outline-secondary">
+              Back
+            </a>
+          </div>
+
+          <hr class="my-4" />
+          <div class="text-muted small">
+            <div>Plan: <strong>{{ plan|capitalize }}</strong></div>
+            <div>Reason: <strong>{{ reason }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const meta = document.getElementById('limit-meta');
+    const totalSeconds = parseInt(meta?.getAttribute('data-seconds-left') || '0', 10);
+    const pct = parseInt(meta?.getAttribute('data-pct') || '100', 10);
+    const progressBar = document.getElementById('usageProgress');
+    if (progressBar && !Number.isNaN(pct)) {
+      progressBar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    }
+    let remaining = totalSeconds;
+    const el = document.getElementById('countdown');
+    function fmt(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = Math.floor(sec % 60);
+      if (h > 0) return `${h}h ${m}m`;
+      if (m > 0) return `${m}m ${s}s`;
+      return `${s}s`;
+    }
+    function tick() {
+      if (!el) return;
+      el.textContent = fmt(remaining);
+      if (remaining > 0) {
+        remaining -= 1;
+        setTimeout(tick, 1000);
+      } else {
+        el.textContent = 'Reset imminent';
+      }
+    }
+    tick();
+  })();
+</script>
+{% endblock %}

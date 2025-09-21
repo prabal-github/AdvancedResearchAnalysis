@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+{% block title %}Analysts Analytics{% endblock %}
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">Analysts Analytics</h1>
+        <p class="text-muted mb-0">Comprehensive view of analyst performance metrics</p>
+    </div>
+    <div>
+        <a href="/analysts" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-grid-3x3-gap me-1"></i> Grid View
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- Leaderboard with Time Range -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Analyst Leaderboard</h5>
+        <form method="get" class="d-flex align-items-center">
+            <label class="me-2 text-muted small">Range:</label>
+            <select name="range" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="weekly" {% if selected_range=='weekly' %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if selected_range=='monthly' %}selected{% endif %}>Monthly</option>
+                <option value="3m" {% if selected_range=='3m' %}selected{% endif %}>3 months</option>
+                <option value="yearly" {% if selected_range=='yearly' %}selected{% endif %}>Yearly</option>
+            </select>
+        </form>
+    </div>
+    <div class="card-body">
+        {% if leaderboard and leaderboard|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Analyst</th>
+                        <th>Composite</th>
+                        <th>Quality</th>
+                        <th>Factual</th>
+                        <th>Predictive</th>
+                        <th>Reports</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in leaderboard %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><a href="/analyst/{{ row.name }}/profile" class="fw-semibold">{{ row.name }}</a></td>
+                        <td>
+                            <span class="badge {% if row.composite_score>=85 %}bg-success{% elif row.composite_score>=70 %}bg-primary{% elif row.composite_score>=50 %}bg-warning text-dark{% else %}bg-danger{% endif %}">{{ row.composite_score }}%</span>
+                        </td>
+                        <td>{{ row.avg_quality_score }}%</td>
+                        <td>{{ row.avg_factual_accuracy }}%</td>
+                        <td>{{ row.avg_predictive_power }}%</td>
+                        <td><span class="badge bg-light text-dark">{{ row.reports_in_window }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="text-muted small mt-2">Since {{ range_since }}</div>
+        {% else %}
+        <div class="text-center text-muted">No activity in this period.</div>
+        {% endif %}
+    </div>
+ </div>
+
+<!-- Analysts Table -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0">
+        <h5 class="card-title mb-0">Analyst Performance Metrics</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0" id="analystsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Analyst Name</th>
+                        <th scope="col">Composite Score</th>
+                        <th scope="col">Quality Score</th>
+                        <th scope="col">Factual Accuracy</th>
+                        <th scope="col">Predictive Power</th>
+                        <th scope="col">Total Reports</th>
+                        <th scope="col">Specialization</th>
+                        <th scope="col">Experience</th>
+                        <th scope="col">Last Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for analyst in analysts %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-40px symbol-circle me-2">
+                                    <span class="symbol-label bg-primary text-white fw-bold">
+                                        {{ analyst.name[0] }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <a href="/analyst/{{ analyst.name }}/profile" class="text-hover-primary fw-bold">{{ analyst.name }}</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    {% if analyst.composite_score >= 85 %}
+                                    <span class="badge bg-success">{{ analyst.composite_score }}%</span>
+                                    {% elif analyst.composite_score >= 70 %}
+                                    <span class="badge bg-primary">{{ analyst.composite_score }}%</span>
+                                    {% elif analyst.composite_score >= 50 %}
+                                    <span class="badge bg-warning">{{ analyst.composite_score }}%</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">{{ analyst.composite_score }}%</span>
+                                    {% endif %}
+                                </div>
+                                <div class="progress w-100" style="height: 6px;">
+                                    <div class="progress-bar 
+                                        {% if analyst.composite_score >= 85 %}bg-success
+                                        {% elif analyst.composite_score >= 70 %}bg-primary
+                                        {% elif analyst.composite_score >= 50 %}bg-warning
+                                        {% else %}bg-danger{% endif %}"
+                                        data-width="{{ analyst.composite_score }}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">{{ analyst.avg_quality_score }}%</div>
+                                <div class="progress w-100" style="height: 6px;">
+                                    <div class="progress-bar bg-success" data-width="{{ analyst.avg_quality_score }}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">{{ analyst.avg_factual_accuracy }}%</div>
+                                <div class="progress w-100" style="height: 6px;">
+                                    <div class="progress-bar bg-info" data-width="{{ analyst.avg_factual_accuracy }}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">{{ analyst.avg_predictive_power }}%</div>
+                                <div class="progress w-100" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" data-width="{{ analyst.avg_predictive_power }}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ analyst.total_reports }}</span>
+                        </td>
+                        <td>{{ analyst.specialization }}</td>
+                        <td>{{ analyst.experience_years }} years</td>
+                        <td>{{ analyst.last_report_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Summary -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="card-title mb-0">Performance Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="card-title mb-0">Analyst Metrics Comparison</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="metricsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script id="analysts-data" type="application/json">{{ analysts|tojson }}</script>
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#analystsTable').DataTable({
+            "order": [[1, "desc"]],  // Sort by composite score by default
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "responsive": true
+        });
+        
+        // Apply widths to progress bars safely
+        document.querySelectorAll('.progress-bar[data-width]').forEach(el => {
+            const val = parseFloat(el.getAttribute('data-width') || '0');
+            el.style.width = (isFinite(val) ? val : 0) + '%';
+        });
+        
+        // Get data for charts from JSON script tag
+        const jsonTag = document.getElementById('analysts-data');
+        const analystsData = jsonTag ? JSON.parse(jsonTag.textContent) : [];
+        
+        // Prepare data for charts
+    const analystNames = analystsData.map(a => a.name);
+    const compositeScores = analystsData.map(a => a.composite_score);
+    const qualityScores = analystsData.map(a => a.avg_quality_score);
+    const factualScores = analystsData.map(a => a.avg_factual_accuracy);
+    const predictiveScores = analystsData.map(a => a.avg_predictive_power);
+        
+        // Performance distribution chart (Top 5 analysts)
+        const top5Analysts = analystNames.slice(0, 5);
+        const top5Composite = compositeScores.slice(0, 5);
+        
+        new Chart(document.getElementById('performanceChart'), {
+            type: 'bar',
+            data: {
+                labels: top5Analysts,
+                datasets: [{
+                    label: 'Composite Score',
+                    data: top5Composite,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top 5 Analysts by Composite Score'
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Metrics comparison chart (radar chart for top 3)
+        new Chart(document.getElementById('metricsChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Composite Score', 'Quality Score', 'Factual Accuracy', 'Predictive Power'],
+                datasets: analystsData.slice(0, 3).map((analyst, index) => {
+                    const colors = [
+                        ['rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)'],
+                        ['rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)'],
+                        ['rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)']
+                    ];
+                    
+                    return {
+                        label: analyst.name,
+                        data: [
+                            analyst.composite_score, 
+                            analyst.avg_quality_score, 
+                            analyst.avg_factual_accuracy, 
+                            analyst.avg_predictive_power
+                        ],
+                        fill: true,
+                        backgroundColor: colors[index][0],
+                        borderColor: colors[index][1],
+                        pointBackgroundColor: colors[index][1],
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: colors[index][1]
+                    };
+                })
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top 3 Analysts Metrics Comparison'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

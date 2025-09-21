@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a1a; color: #fff; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .auth-section { background: #2a2a2a; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #333; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Authentication Test for Published Tab</h1>
+        
+        <div class="auth-section">
+            <h3>Current Session Status</h3>
+            <button onclick="checkSession()">Check Session</button>
+            <div id="sessionStatus"></div>
+        </div>
+        
+        <div class="auth-section">
+            <h3>Demo Login Options</h3>
+            <button onclick="loginAs('investor', 'retail')">Login as Investor (Retail)</button>
+            <button onclick="loginAs('investor', 'pro')">Login as Investor (Pro)</button>
+            <button onclick="loginAs('investor', 'pro_plus')">Login as Investor (Pro+)</button>
+            <button onclick="loginAs('analyst')">Login as Analyst</button>
+            <button onclick="loginAs('admin')">Login as Admin</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="auth-section">
+            <h3>Test Published Tab Access</h3>
+            <button onclick="testPublishedPage()">Test /published Page</button>
+            <button onclick="testPublishedAPI()">Test /api/published_models</button>
+            <div id="testResults"></div>
+        </div>
+        
+        <div class="auth-section">
+            <h3>Plan-Based Feature Tests</h3>
+            <button onclick="testFeature('ai_chart_explain')">Test AI Chart Explain</button>
+            <button onclick="testFeature('events_predictions')">Test Events Predictions</button>
+            <div id="featureResults"></div>
+        </div>
+    </div>
+
+    <script>
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/auth/check_session');
+                const data = await response.json();
+                document.getElementById('sessionStatus').innerHTML = 
+                    `<div class="status ${data.authenticated ? 'success' : 'error'}">
+                        <h4>Session Status: ${data.authenticated ? 'Authenticated' : 'Not Authenticated'}</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('sessionStatus').innerHTML = 
+                    `<div class="status error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loginAs(type, plan = null) {
+            try {
+                const payload = { type };
+                if (plan) payload.plan = plan;
+                
+                const response = await fetch('/api/auth/demo_login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Logged in as ${type}${plan ? ' (' + plan + ')' : ''}`);
+                    checkSession();
+                } else {
+                    alert('Login failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Login error: ' + error.message);
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Logged out successfully');
+                    checkSession();
+                }
+            } catch (error) {
+                alert('Logout error: ' + error.message);
+            }
+        }
+
+        async function testPublishedPage() {
+            try {
+                const response = await fetch('/published');
+                const resultDiv = document.getElementById('testResults');
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = 
+                        `<div class="status success">✅ /published page accessible (${response.status})</div>`;
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = 
+                        `<div class="status error">❌ /published failed (${response.status}): ${text.substring(0, 200)}...</div>`;
+                }
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="status error">❌ /published error: ${error.message}</div>`;
+            }
+        }
+
+        async function testPublishedAPI() {
+            try {
+                const response = await fetch('/api/published_models');
+                const resultDiv = document.getElementById('testResults');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = 
+                        `<div class="status success">✅ API accessible - Found ${data.length || 0} models</div>`;
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = 
+                        `<div class="status error">❌ API failed (${response.status}): ${text.substring(0, 200)}...</div>`;
+                }
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="status error">❌ API error: ${error.message}</div>`;
+            }
+        }
+
+        async function testFeature(feature) {
+            try {
+                let url, method = 'GET', body = null;
+                
+                if (feature === 'ai_chart_explain') {
+                    url = '/api/ai/chart_explain';
+                    method = 'POST';
+                    body = JSON.stringify({ symbol: 'NIFTY', interval: '1D' });
+                } else if (feature === 'events_predictions') {
+                    url = '/api/events/predictions?days=7';
+                }
+                
+                const options = { method };
+                if (body) {
+                    options.headers = { 'Content-Type': 'application/json' };
+                    options.body = body;
+                }
+                
+                const response = await fetch(url, options);
+                const resultDiv = document.getElementById('featureResults');
+                
+                if (response.ok) {
+                    const usage = response.headers.get('X-Feature-Usage') || 'No usage header';
+                    resultDiv.innerHTML = 
+                        `<div class="status success">✅ ${feature} accessible - Usage: ${usage}</div>`;
+                } else {
+                    const data = await response.json();
+                    resultDiv.innerHTML = 
+                        `<div class="status error">❌ ${feature} failed (${response.status}): ${data.error || 'Unknown'}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('featureResults').innerHTML = 
+                    `<div class="status error">❌ ${feature} error: ${error.message}</div>`;
+            }
+        }
+
+        // Check session on page load
+        window.onload = checkSession;
+    </script>
+</body>
+</html>

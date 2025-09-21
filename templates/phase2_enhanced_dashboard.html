@@ -1,0 +1,462 @@
+{% extends "layout.html" %}
+
+{% block title %}Phase 2 Enhanced Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header with AOS Animation -->
+    <div class="row mb-4" data-aos="fade-down">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">Phase 2: Enhanced Dashboard</h1>
+                    <p class="text-muted">Featuring HTMX, ApexCharts, Select2, and AOS animations</p>
+                </div>
+                <button class="btn btn-enhanced" onclick="showSuccessNotification('Phase 2 features loaded!')">
+                    <i class="bi bi-rocket me-2"></i>Test Notifications
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Form with Select2 and HTMX -->
+    <div class="row mb-4">
+        <div class="col-md-6" data-aos="fade-right">
+            <div class="card">
+                <div class="card-header" style="background: var(--primary-gradient); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Enhanced Controls</h5>
+                </div>
+                <div class="card-body">
+                    <form id="enhanced-form" hx-post="/api/enhanced-submit" hx-swap="innerHTML" hx-target="#form-result">
+                        <div class="mb-3">
+                            <label for="stock-select" class="form-label">Select Stocks</label>
+                            <select id="stock-select" name="stocks" class="form-control select-enhanced" multiple>
+                                <option value="AAPL">Apple Inc. (AAPL)</option>
+                                <option value="GOOGL">Alphabet Inc. (GOOGL)</option>
+                                <option value="MSFT">Microsoft Corp. (MSFT)</option>
+                                <option value="AMZN">Amazon.com Inc. (AMZN)</option>
+                                <option value="TSLA">Tesla Inc. (TSLA)</option>
+                                <option value="META">Meta Platforms Inc. (META)</option>
+                                <option value="NVDA">NVIDIA Corp. (NVDA)</option>
+                                <option value="NFLX">Netflix Inc. (NFLX)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="analysis-type" class="form-label">Analysis Type</label>
+                            <select id="analysis-type" name="analysis_type" class="form-control select-enhanced">
+                                <option value="">Choose analysis type...</option>
+                                <option value="fundamental">Fundamental Analysis</option>
+                                <option value="technical">Technical Analysis</option>
+                                <option value="sentiment">Sentiment Analysis</option>
+                                <option value="risk">Risk Assessment</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="time-period" class="form-label">Time Period</label>
+                            <input type="range" class="form-range" id="time-period" name="time_period" min="1" max="12" value="3">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">1 month</small>
+                                <small class="text-muted">12 months</small>
+                            </div>
+                            <div class="text-center mt-1">
+                                <small id="period-display" class="fw-bold">3 months</small>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-enhanced w-100">
+                            <i class="bi bi-play-circle me-2"></i>Run Analysis
+                        </button>
+                    </form>
+                    
+                    <div id="form-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Content with HTMX -->
+        <div class="col-md-6" data-aos="fade-left">
+            <div class="card">
+                <div class="card-header" style="background: var(--success-gradient); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Dynamic Content</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <button class="btn btn-enhanced me-2" 
+                                hx-get="/api/sample-data/performance" 
+                                hx-target="#dynamic-content" 
+                                hx-swap="innerHTML">
+                            <i class="bi bi-graph-up me-1"></i>Load Performance
+                        </button>
+                        <button class="btn btn-enhanced me-2" 
+                                hx-get="/api/sample-data/portfolio" 
+                                hx-target="#dynamic-content" 
+                                hx-swap="innerHTML">
+                            <i class="bi bi-briefcase me-1"></i>Load Portfolio
+                        </button>
+                        <button class="btn btn-enhanced" 
+                                hx-get="/api/sample-data/alerts" 
+                                hx-target="#dynamic-content" 
+                                hx-swap="innerHTML">
+                            <i class="bi bi-bell me-1"></i>Load Alerts
+                        </button>
+                    </div>
+                    
+                    <div id="dynamic-content" class="htmx-indicator">
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-cursor me-2"></i>Click a button to load dynamic content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Charts with ApexCharts -->
+    <div class="row mb-4">
+        <div class="col-lg-8" data-aos="zoom-in">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Portfolio Performance</h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateChart('1M')">1M</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateChart('3M')">3M</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary active" onclick="updateChart('6M')">6M</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="updateChart('1Y')">1Y</button>
+                    </div>
+                </div>
+                <div id="performance-chart" style="height: 350px;"></div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="chart-container">
+                <h5 class="mb-3"><i class="bi bi-pie-chart me-2"></i>Asset Allocation</h5>
+                <div id="allocation-chart" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Metric Cards with Animations -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3" data-aos="flip-left" data-aos-delay="100">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="metric-icon" style="background: var(--success-gradient);">
+                        <i class="bi bi-trend-up"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" hx-get="/api/metric/total-return/details" hx-target="#metric-details">View Details</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportMetric('total-return')">Export Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="metric-value" data-value="24.8">$24,847</div>
+                <h6 class="text-muted mt-2">Total Return</h6>
+                <small class="text-success">
+                    <i class="bi bi-arrow-up"></i> +12.3% this quarter
+                </small>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3" data-aos="flip-left" data-aos-delay="200">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="metric-icon" style="background: var(--info-gradient);">
+                        <i class="bi bi-graph-down"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" hx-get="/api/metric/risk-score/details" hx-target="#metric-details">View Details</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportMetric('risk-score')">Export Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="metric-value" data-value="7.2">7.2</div>
+                <h6 class="text-muted mt-2">Risk Score</h6>
+                <small class="text-warning">
+                    <i class="bi bi-arrow-up"></i> +0.3 this week
+                </small>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3" data-aos="flip-left" data-aos-delay="300">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="metric-icon" style="background: var(--warning-gradient);">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" hx-get="/api/metric/sharpe-ratio/details" hx-target="#metric-details">View Details</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportMetric('sharpe-ratio')">Export Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="metric-value" data-value="1.85">1.85</div>
+                <h6 class="text-muted mt-2">Sharpe Ratio</h6>
+                <small class="text-success">
+                    <i class="bi bi-arrow-up"></i> +0.15 this month
+                </small>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3" data-aos="flip-left" data-aos-delay="400">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="metric-icon" style="background: var(--danger-gradient);">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" hx-get="/api/metric/volatility/details" hx-target="#metric-details">View Details</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportMetric('volatility')">Export Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="metric-value" data-value="18.5">18.5%</div>
+                <h6 class="text-muted mt-2">Volatility</h6>
+                <small class="text-danger">
+                    <i class="bi bi-arrow-down"></i> -2.1% this month
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Details Modal Content -->
+    <div id="metric-details" class="mb-4"></div>
+
+    <!-- Enhanced Data Table with HTMX Pagination -->
+    <div class="row">
+        <div class="col-12" data-aos="fade-up">
+            <div class="card">
+                <div class="card-header" style="background: var(--primary-gradient); color: white;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Portfolio Holdings</h5>
+                        <div class="d-flex align-items-center">
+                            <select class="form-select form-select-sm me-2 select-enhanced" style="width: auto;">
+                                <option value="10">10 per page</option>
+                                <option value="25">25 per page</option>
+                                <option value="50">50 per page</option>
+                            </select>
+                            <button class="btn btn-sm btn-light" hx-get="/api/holdings/refresh" hx-target="#holdings-table">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="holdings-table" 
+                         hx-get="/api/holdings/table" 
+                         hx-trigger="load"
+                         hx-swap="innerHTML">
+                        <div class="text-center p-4">
+                            <div class="loading-spinner mx-auto mb-2"></div>
+                            <p class="text-muted">Loading portfolio holdings...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Phase 2 Enhanced Features JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize ApexCharts
+        initializePerformanceChart();
+        initializeAllocationChart();
+        
+        // Initialize range slider display
+        updatePeriodDisplay();
+        
+        // Initialize counter animations
+        animateCounters();
+    });
+    
+    // Enhanced ApexCharts Implementation
+    function initializePerformanceChart() {
+        const options = {
+            series: [{
+                name: 'Portfolio Value',
+                data: [
+                    {x: new Date('2024-01-01').getTime(), y: 85000},
+                    {x: new Date('2024-02-01').getTime(), y: 87500},
+                    {x: new Date('2024-03-01').getTime(), y: 89200},
+                    {x: new Date('2024-04-01').getTime(), y: 91800},
+                    {x: new Date('2024-05-01').getTime(), y: 88900},
+                    {x: new Date('2024-06-01').getTime(), y: 94100},
+                    {x: new Date('2024-07-01').getTime(), y: 97300},
+                    {x: new Date('2024-08-01').getTime(), y: 101200}
+                ]
+            }, {
+                name: 'Benchmark',
+                data: [
+                    {x: new Date('2024-01-01').getTime(), y: 85000},
+                    {x: new Date('2024-02-01').getTime(), y: 86200},
+                    {x: new Date('2024-03-01').getTime(), y: 87800},
+                    {x: new Date('2024-04-01').getTime(), y: 89100},
+                    {x: new Date('2024-05-01').getTime(), y: 87500},
+                    {x: new Date('2024-06-01').getTime(), y: 90300},
+                    {x: new Date('2024-07-01').getTime(), y: 92100},
+                    {x: new Date('2024-08-01').getTime(), y: 93800}
+                ]
+            }],
+            chart: {
+                type: 'line',
+                height: 350,
+                zoom: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            colors: ['#667eea', '#f093fb'],
+            xaxis: {
+                type: 'datetime'
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (val) {
+                        return '$' + (val / 1000).toFixed(0) + 'K'
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy'
+                },
+                y: {
+                    formatter: function (val) {
+                        return '$' + val.toLocaleString()
+                    }
+                }
+            }
+        };
+        
+        window.performanceChart = createEnhancedApexChart('#performance-chart', options);
+    }
+    
+    function initializeAllocationChart() {
+        const options = {
+            series: [44, 25, 15, 10, 6],
+            chart: {
+                type: 'donut',
+                height: 350
+            },
+            labels: ['Stocks', 'Bonds', 'REITs', 'Commodities', 'Cash'],
+            colors: ['#667eea', '#4facfe', '#fa709a', '#56ab2f', '#f093fb'],
+            legend: {
+                position: 'bottom'
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        };
+        
+        window.allocationChart = createEnhancedApexChart('#allocation-chart', options);
+    }
+    
+    // Range slider display update
+    function updatePeriodDisplay() {
+        const slider = document.getElementById('time-period');
+        const display = document.getElementById('period-display');
+        
+        slider.addEventListener('input', function() {
+            const months = this.value;
+            display.textContent = months + (months == 1 ? ' month' : ' months');
+        });
+    }
+    
+    // Animate counter values
+    function animateCounters() {
+        const counters = document.querySelectorAll('.metric-value[data-value]');
+        
+        counters.forEach(counter => {
+            const target = parseFloat(counter.getAttribute('data-value'));
+            const text = counter.textContent;
+            const prefix = text.match(/[^\d.]/g) ? text.match(/[^\d.]/g).join('') : '';
+            const suffix = text.slice(text.indexOf(target.toString()) + target.toString().length);
+            
+            animateValue(counter, 0, target, 2000, prefix, suffix);
+        });
+    }
+    
+    function animateValue(element, start, end, duration, prefix = '', suffix = '') {
+        let startTimestamp = null;
+        
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const current = progress * (end - start) + start;
+            
+            if (prefix.includes('$')) {
+                element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            } else {
+                element.textContent = prefix + current.toFixed(1) + suffix;
+            }
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        
+        window.requestAnimationFrame(step);
+    }
+    
+    // Chart update function
+    function updateChart(period) {
+        // Update active button
+        document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        showInfoNotification(`Chart updated for ${period} period`);
+        
+        // In a real app, you would fetch new data and update the chart
+        // window.performanceChart.updateSeries([...]);
+    }
+    
+    // Export metric function
+    function exportMetric(metric) {
+        showInfoNotification(`Exporting ${metric} data...`);
+        
+        // Simulate export process
+        setTimeout(() => {
+            showSuccessNotification(`${metric} data exported successfully!`);
+        }, 1500);
+    }
+</script>
+{% endblock %}

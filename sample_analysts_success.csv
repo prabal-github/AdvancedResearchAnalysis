@@ -1,0 +1,11 @@
+name,email,password,full_name,specialization,experience_years,phone,bio
+tech_analyst_1,tech.analyst1@company.com,techpass123,John Smith,Technical Analysis,3,+1-555-0101,Experienced technical analyst specializing in chart patterns and trend analysis with 3 years of market experience
+fund_analyst_2,fund.analyst2@company.com,fundpass123,Sarah Johnson,Fundamental Analysis,5,+1-555-0102,Senior fundamental analyst with expertise in financial statement analysis and valuation modeling
+quant_analyst_3,quant.analyst3@company.com,quantpass123,Michael Chen,Quantitative Analysis,4,+1-555-0103,Quantitative analyst with strong background in statistical modeling and algorithmic trading strategies
+risk_analyst_4,risk.analyst4@company.com,riskpass123,Emily Davis,Risk Assessment,2,+1-555-0104,Risk management specialist focusing on portfolio optimization and downside protection strategies
+sector_analyst_5,sector.analyst5@company.com,sectorpass123,David Wilson,Industry Analysis,6,+1-555-0105,Industry sector analyst with deep knowledge of technology and healthcare sectors
+derivatives_analyst_6,deriv.analyst6@company.com,derivpass123,Lisa Brown,Derivatives Analysis,3,+1-555-0106,Derivatives specialist with expertise in options strategies and complex financial instruments
+macro_analyst_7,macro.analyst7@company.com,macropass123,Robert Taylor,Macro Economics,4,+1-555-0107,Macroeconomic analyst tracking global economic trends and their impact on financial markets
+credit_analyst_8,credit.analyst8@company.com,creditpass123,Jennifer Lee,Credit Analysis,2,+1-555-0108,Credit analyst specializing in corporate bond analysis and credit risk assessment
+commodity_analyst_9,commodity.analyst9@company.com,commodpass123,James Miller,Commodity Analysis,5,+1-555-0109,Commodity markets analyst with expertise in energy and precious metals trading
+forex_analyst_10,forex.analyst10@company.com,forexpass123,Amanda Clark,Foreign Exchange,3,+1-555-0110,Foreign exchange analyst specializing in currency pair analysis and international market dynamics
