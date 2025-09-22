@@ -34,28 +34,70 @@ try:
                     current_columns = {col['name']: col for col in inspector.get_columns('analyst_profile')}
                     print(f"📊 Current columns: {list(current_columns.keys())}")
                     
-                    # Check if phone column exists
-                    if 'phone' not in current_columns:
-                        print("⚠️ Phone column missing - adding it...")
+                    # List of required columns based on current model
+                    required_columns = {
+                        'phone': 'VARCHAR(20)',
+                        'password_hash': 'VARCHAR(255)',
+                        'analyst_id': 'VARCHAR(32)',
+                        'last_login': 'DATETIME',
+                        'login_count': 'INTEGER DEFAULT 0',
+                        'date_of_birth': 'DATE',
+                        'brief_description': 'TEXT',
+                        'plan': 'VARCHAR(20) DEFAULT "small"',
+                        'daily_usage_date': 'DATE',
+                        'daily_usage_count': 'INTEGER DEFAULT 0',
+                        'plan_notes': 'TEXT',
+                        'plan_expires_at': 'DATETIME',
+                        'daily_llm_prompt_count': 'INTEGER DEFAULT 0',
+                        'daily_llm_token_count': 'INTEGER DEFAULT 0',
+                        'daily_run_count': 'INTEGER DEFAULT 0',
+                        'corporate_field': 'VARCHAR(100)',
+                        'field_specialization': 'VARCHAR(100)',
+                        'talent_program_level': 'VARCHAR(50)',
+                        'total_reports': 'INTEGER DEFAULT 0',
+                        'avg_quality_score': 'FLOAT DEFAULT 0.0',
+                        'improvement_trend': 'VARCHAR(50) DEFAULT "New"',
+                        'last_report_date': 'DATETIME'
+                    }
+                    
+                    # Check for missing columns and add them
+                    missing_columns = []
+                    for col_name, col_type in required_columns.items():
+                        if col_name not in current_columns:
+                            missing_columns.append((col_name, col_type))
+                    
+                    if missing_columns:
+                        print(f"⚠️ Found {len(missing_columns)} missing columns: {[col[0] for col in missing_columns]}")
                         
-                        # Add the missing phone column using SQLAlchemy
+                        # Add all missing columns
                         with db.engine.connect() as conn:
-                            conn.execute(text("ALTER TABLE analyst_profile ADD COLUMN phone VARCHAR(20)"))
+                            for col_name, col_type in missing_columns:
+                                print(f"  📝 Adding column: {col_name} ({col_type})")
+                                try:
+                                    conn.execute(text(f"ALTER TABLE analyst_profile ADD COLUMN {col_name} {col_type}"))
+                                except Exception as e:
+                                    print(f"  ⚠️ Warning adding {col_name}: {e}")
                             conn.commit()
                         
-                        print("✅ Phone column added successfully!")
+                        print("✅ All missing columns added successfully!")
                     else:
-                        print("✅ Phone column already exists")
+                        print("✅ All required columns already exist")
                     
-                    # Verify the change
+                    # Verify all required columns exist
                     inspector = inspect(db.engine)  # Refresh inspector
                     updated_columns = {col['name']: col for col in inspector.get_columns('analyst_profile')}
                     
-                    if 'phone' in updated_columns:
-                        print("🎯 Phone column confirmed in database!")
+                    missing_after_migration = []
+                    for col_name in required_columns.keys():
+                        if col_name not in updated_columns:
+                            missing_after_migration.append(col_name)
+                    
+                    if not missing_after_migration:
+                        print("🎯 All required columns confirmed in database!")
+                        print(f"📊 Total columns: {len(updated_columns)}")
                         return True
                     else:
-                        print("❌ Phone column still missing after migration!")
+                        print(f"❌ Still missing columns after migration: {missing_after_migration}")
                         return False
                         
                 else:
