@@ -1,19 +1,24 @@
 # Fix for AnalystProfile Phone Column Error
 
 ## Problem
+
 When trying to register a new analyst, you get this error:
+
 ```
 "Registration failed: (sqlite3.OperationalError) no such column: analyst_profile.phone"
 ```
 
 ## Root Cause
+
 The database schema on your EC2 instance is missing the `phone` column in the `analyst_profile` table. This happens when:
+
 1. The database was created with an older version of the code
 2. Database migrations weren't run properly during deployment
 
 ## Solution
 
 ### Step 1: Update Your Code
+
 First, push the latest code to GitHub and pull it on your EC2:
 
 ```bash
@@ -28,6 +33,7 @@ git pull origin main
 ```
 
 ### Step 2: Run the Database Fix
+
 On your EC2 instance, run the database fix script:
 
 ```bash
@@ -39,6 +45,7 @@ python ec2_database_fix.py
 ```
 
 ### Step 3: Alternative - Manual Database Fix
+
 If the script doesn't work, manually fix the database:
 
 ```bash
@@ -60,6 +67,7 @@ psql -h localhost -U your_username -d your_database
 ```
 
 ### Step 4: Restart Your Application
+
 ```bash
 # If using systemd service:
 sudo systemctl start predictram-research
@@ -70,11 +78,13 @@ gunicorn --config gunicorn.conf.py app:app
 ```
 
 ### Step 5: Test the Fix
+
 Try registering an analyst again. The error should be resolved.
 
 ## Alternative Solutions
 
 ### Option A: Delete and Recreate Database (SQLite only)
+
 ⚠️ **WARNING: This will delete all existing data!**
 
 ```bash
@@ -92,15 +102,18 @@ sudo systemctl start predictram-research
 ```
 
 ### Option B: Use PostgreSQL (Recommended for Production)
+
 Switch to PostgreSQL for better schema management:
 
 1. Install PostgreSQL:
+
 ```bash
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
 
 2. Create a database and user:
+
 ```bash
 sudo -u postgres psql
 CREATE DATABASE predictram_research;
@@ -110,6 +123,7 @@ GRANT ALL PRIVILEGES ON DATABASE predictram_research TO predictram_user;
 ```
 
 3. Update your `.env` file:
+
 ```
 DATABASE_URL=postgresql://predictram_user:your_secure_password@localhost/predictram_research
 ```
@@ -119,6 +133,7 @@ DATABASE_URL=postgresql://predictram_user:your_secure_password@localhost/predict
 ## Code Changes Made
 
 ### 1. Enhanced Error Handling
+
 The `check_email_role_conflict` function now handles database schema issues gracefully:
 
 ```python
@@ -139,10 +154,12 @@ except Exception as db_error:
 ```
 
 ### 2. Database Fix Scripts
+
 - `ec2_database_fix.py`: Quick fix for EC2 deployment
 - `comprehensive_db_fix.py`: Full database schema verification and repair
 
 ## Testing
+
 After applying the fix, test with this curl command:
 
 ```bash
@@ -162,7 +179,9 @@ curl -X POST http://your-ec2-ip:5008/api/register/analyst \
 You should get a success response instead of the phone column error.
 
 ## Prevention
+
 To prevent this issue in the future:
+
 1. Use database migrations for schema changes
 2. Use PostgreSQL instead of SQLite for production
 3. Always run `db.create_all()` after code updates
