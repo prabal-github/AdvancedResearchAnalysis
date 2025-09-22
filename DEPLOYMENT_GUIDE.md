@@ -1,9 +1,11 @@
 # 🚀 Complete AWS Deployment Guide for research.predictram.com
 
 ## 📋 Overview
+
 Deploy your AI-Powered Investment Research Platform to AWS with production-ready configuration at https://research.predictram.com
 
 ## 🛠️ Prerequisites
+
 - AWS Account with admin permissions
 - Domain: predictram.com (or subdomain control)
 - AWS CLI installed and configured
@@ -14,6 +16,7 @@ Deploy your AI-Powered Investment Research Platform to AWS with production-ready
 ## 🏗️ Step 1: AWS Infrastructure Setup
 
 ### 1.1 Create EC2 Instance
+
 ```bash
 # Launch EC2 instance with these specs:
 - AMI: Ubuntu 22.04 LTS (ami-0c7217cdde317cfec)
@@ -23,6 +26,7 @@ Deploy your AI-Powered Investment Research Platform to AWS with production-ready
 ```
 
 ### 1.2 Security Group Configuration
+
 ```bash
 # Create security group: research-sg
 - SSH (22): Your IP address only
@@ -32,6 +36,7 @@ Deploy your AI-Powered Investment Research Platform to AWS with production-ready
 ```
 
 ### 1.3 Elastic IP (Optional but Recommended)
+
 ```bash
 # Allocate Elastic IP for consistent domain mapping
 aws ec2 allocate-address --domain vpc
@@ -43,6 +48,7 @@ aws ec2 allocate-address --domain vpc
 ## 🌐 Step 2: Domain Configuration
 
 ### 2.1 Route 53 Setup
+
 ```bash
 # Create hosted zone for predictram.com (if not exists)
 aws route53 create-hosted-zone --name predictram.com --caller-reference $(date +%s)
@@ -52,12 +58,13 @@ aws route53 create-hosted-zone --name predictram.com --caller-reference $(date +
 ```
 
 ### 2.2 DNS Record Example
+
 ```json
 {
-    "Type": "A",
-    "Name": "research.predictram.com",
-    "Value": "YOUR_EC2_ELASTIC_IP",
-    "TTL": 300
+  "Type": "A",
+  "Name": "research.predictram.com",
+  "Value": "YOUR_EC2_ELASTIC_IP",
+  "TTL": 300
 }
 ```
 
@@ -66,6 +73,7 @@ aws route53 create-hosted-zone --name predictram.com --caller-reference $(date +
 ## 🗄️ Step 3: RDS Database Setup
 
 ### 3.1 Create RDS PostgreSQL Instance
+
 ```bash
 # RDS Configuration:
 - Engine: PostgreSQL 15.x
@@ -77,6 +85,7 @@ aws route53 create-hosted-zone --name predictram.com --caller-reference $(date +
 ```
 
 ### 3.2 Database Setup Commands
+
 ```bash
 # Run on your local machine or EC2:
 aws rds create-db-instance \
@@ -97,11 +106,13 @@ aws rds create-db-instance \
 ## 🚀 Step 4: Application Deployment
 
 ### 4.1 Connect to EC2 Instance
+
 ```bash
 ssh -i your-key.pem ubuntu@research.predictram.com
 ```
 
 ### 4.2 Run Deployment Script
+
 ```bash
 # Copy and run the deployment script
 wget https://raw.githubusercontent.com/your-repo/deployment/deploy.sh
@@ -110,6 +121,7 @@ sudo ./deploy.sh
 ```
 
 ### 4.3 Upload Your Application Files
+
 ```bash
 # Option 1: Using Git (recommended)
 sudo -u research git clone https://github.com/your-repo/research-platform.git /var/www/research/
@@ -119,6 +131,7 @@ sudo -u research git clone https://github.com/your-repo/research-platform.git /v
 ```
 
 ### 4.4 Set File Permissions
+
 ```bash
 sudo chown -R research:research /var/www/research/
 sudo chmod 755 /var/www/research/
@@ -130,6 +143,7 @@ sudo chmod 600 /var/www/research/.env
 ## ⚙️ Step 5: Environment Configuration
 
 ### 5.1 Update Production Environment
+
 ```bash
 # Edit the environment file
 sudo -u research nano /var/www/research/.env
@@ -144,6 +158,7 @@ sudo -u research nano /var/www/research/.env
 ```
 
 ### 5.2 Initialize Database
+
 ```bash
 sudo -u research bash
 cd /var/www/research
@@ -161,6 +176,7 @@ with app.app_context():
 ## 🔒 Step 6: SSL and Security Setup
 
 ### 6.1 Install SSL Certificate
+
 ```bash
 # Run the SSL setup script
 sudo ./deployment/setup_ssl.sh
@@ -170,6 +186,7 @@ sudo ./deployment/setup_ssl.sh
 ```
 
 ### 6.2 Firewall Configuration
+
 ```bash
 # Configure UFW firewall
 sudo ufw enable
@@ -178,6 +195,7 @@ sudo ufw allow 'Nginx Full'
 ```
 
 ### 6.3 Security Hardening
+
 ```bash
 # Disable root login
 sudo nano /etc/ssh/sshd_config
@@ -196,6 +214,7 @@ sudo systemctl enable fail2ban
 ## ▶️ Step 7: Start Services
 
 ### 7.1 Start Application Services
+
 ```bash
 # Start the research application
 sudo systemctl start research
@@ -211,6 +230,7 @@ sudo systemctl status nginx
 ```
 
 ### 7.2 Verify Deployment
+
 ```bash
 # Check if application is running
 curl -I http://localhost:5008/
@@ -227,6 +247,7 @@ sudo journalctl -u research -f
 ## 🧪 Step 8: Testing and Monitoring
 
 ### 8.1 Application Testing
+
 ```bash
 # Test main endpoints:
 curl https://research.predictram.com/
@@ -235,6 +256,7 @@ curl https://research.predictram.com/ai_research_assistant
 ```
 
 ### 8.2 Set Up Monitoring
+
 ```bash
 # Install CloudWatch agent (optional)
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
@@ -242,6 +264,7 @@ sudo dpkg -i amazon-cloudwatch-agent.deb
 ```
 
 ### 8.3 Log Monitoring
+
 ```bash
 # Create log directory
 sudo mkdir -p /var/log/research
@@ -269,6 +292,7 @@ LOGROTATE
 ## 🔧 Step 9: Post-Deployment Configuration
 
 ### 9.1 Performance Optimization
+
 ```bash
 # Optimize PostgreSQL connection pooling
 # Update .env with:
@@ -280,6 +304,7 @@ SQLALCHEMY_ENGINE_OPTIONS={
 ```
 
 ### 9.2 Backup Strategy
+
 ```bash
 # Set up automated RDS backups
 aws rds modify-db-instance \
@@ -295,18 +320,21 @@ aws rds modify-db-instance \
 ### Common Issues:
 
 1. **Application won't start:**
+
    ```bash
    sudo journalctl -u research -n 50
    # Check environment variables and database connection
    ```
 
 2. **SSL certificate issues:**
+
    ```bash
    sudo certbot renew --dry-run
    sudo nginx -t
    ```
 
 3. **Database connection errors:**
+
    ```bash
    # Check RDS security group allows EC2 connection
    # Verify DATABASE_URL in .env file
@@ -323,6 +351,7 @@ aws rds modify-db-instance \
 ## 📊 Step 10: Final Verification
 
 ### 10.1 Complete Feature Test
+
 1. Visit https://research.predictram.com/
 2. Test user registration/login
 3. Upload a research report
@@ -331,6 +360,7 @@ aws rds modify-db-instance \
 6. Check admin dashboard
 
 ### 10.2 Performance Check
+
 ```bash
 # Load testing (install apache2-utils)
 sudo apt install apache2-utils
@@ -345,12 +375,14 @@ Your AI-Powered Investment Research Platform is now live at:
 **https://research.predictram.com**
 
 ### Key URLs:
+
 - Main Dashboard: https://research.predictram.com/
 - AI Research Assistant: https://research.predictram.com/ai_research_assistant
 - Admin Panel: https://research.predictram.com/admin/research_topics
 - API Documentation: https://research.predictram.com/api/
 
 ### Maintenance Commands:
+
 ```bash
 # Restart application
 sudo systemctl restart research
@@ -366,7 +398,9 @@ sudo certbot renew
 ```
 
 ## 📞 Support
+
 For issues or questions:
+
 - Check logs: `sudo journalctl -u research -f`
 - Verify environment: `sudo -u research cat /var/www/research/.env`
 - Test database: Connect to RDS and verify tables exist

@@ -70428,7 +70428,7 @@ def api_register_investor():
         # Create new user
         new_user = User(
             username=data['email'],
-            password=data['password'],  # Consider hashing this in production
+            email=data['email'],
             role='investor'
         )
         db.session.add(new_user)
@@ -70436,19 +70436,13 @@ def api_register_investor():
         
         # Create investor registration record
         investor_registration = InvestorRegistration(
-            user_id=new_user.id,
-            first_name=data['first_name'],
-            last_name=data['last_name'],
+            name=f"{data['first_name']} {data['last_name']}",
             email=data['email'],
             mobile=data['mobile'],
-            pan_number=data.get('pan_number', ''),
-            investment_amount=data.get('investment_amount', 0),
-            investment_goals=data.get('investment_goals', ''),
-            risk_tolerance=data.get('risk_tolerance', 'medium'),
-            investment_experience=data.get('investment_experience', 'beginner'),
-            interested_sectors=data.get('interested_sectors', ''),
-            subscribe_updates=data.get('subscribe_updates', False),
-            registration_date=datetime.now(timezone.utc)
+            pan_number=data.get('pan_number', 'PENDING'),
+            password_hash=generate_password_hash(data['password']),
+            status='approved',  # Auto-approve for now
+            created_at=datetime.now(timezone.utc)
         )
         db.session.add(investor_registration)
         
@@ -71008,15 +71002,17 @@ if __name__ == '__main__':
             print(f"Warning: Could not check or update portfolio_commentary schema: {str(e)}")
         
         # Populate knowledge base from existing reports if needed
+        # DISABLED FOR PRODUCTION STARTUP - can be run manually later
         try:
             kb_count = KnowledgeBase.query.count()
             report_count = Report.query.count()
             
             if kb_count < report_count * 0.5:  # If less than half the reports are in KB
-                print("Populating knowledge base from existing reports...")
-                populate_knowledge_base_from_reports()
+                print("⚠️ Knowledge base population skipped for faster startup")
+                print("💡 Run 'python -c \"from app import populate_knowledge_base_from_reports; populate_knowledge_base_from_reports()\"' to populate manually")
+                # populate_knowledge_base_from_reports()  # Commented out for production
         except Exception as e:
-            print(f"Could not populate knowledge base: {e}")
+            print(f"Could not check knowledge base: {e}")
     
     print("🚀 Starting Enhanced Flask Application with AI Research Assistant...")
     print("📊 Enhanced Features:")
