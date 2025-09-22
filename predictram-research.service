@@ -1,0 +1,24 @@
+[Unit]
+Description=PredictRAM Research Platform
+After=network.target
+
+[Service]
+Type=exec
+User=root
+Group=root
+WorkingDirectory=/var/www/research
+Environment=PATH=/var/www/research/venv/bin
+ExecStart=/var/www/research/venv/bin/gunicorn --config /var/www/research/gunicorn.conf.py app:app
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=predictram-research
+
+# Resource limits
+LimitNOFILE=65536
+TimeoutStartSec=600
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
