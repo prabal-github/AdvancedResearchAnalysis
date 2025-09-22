@@ -72313,7 +72313,7 @@ if __name__ == '__main__':
     # Start the Flask server with production-ready configuration
     app.run(
         host=os.environ.get('HOST', '0.0.0.0'),
-        port=int(os.environ.get('PORT', 5008)),
+        port=int(os.environ.get('PORT', 80)),
         debug=os.environ.get('FLASK_DEBUG', 'False').lower() == 'true',
         threaded=True,
         use_reloader=False  # Disable reloader to prevent conflicts with lazy loading
