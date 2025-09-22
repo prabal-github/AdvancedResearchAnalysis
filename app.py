@@ -70461,6 +70461,7 @@ def api_register_investor():
         # Initialize user credits
         user_credits = UserCredits(
             user_id=new_user.id,
+            user_type='investor',
             total_credits=100,  # Starting credits
             available_credits=100
         )
