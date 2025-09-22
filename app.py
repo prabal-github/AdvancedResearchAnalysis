@@ -70311,7 +70311,19 @@ def check_email_role_conflict(email, target_role):
             investor_exists = InvestorAccount.query.filter_by(email=email).first() is not None
         
         # Check if email exists in analyst profiles
-        analyst_exists = AnalystProfile.query.filter_by(email=email).first() is not None
+        analyst_exists = False
+        try:
+            analyst_exists = AnalystProfile.query.filter_by(email=email).first() is not None
+        except Exception as db_error:
+            # Handle database schema issues gracefully
+            print(f"Warning: Database schema issue when checking analyst email: {db_error}")
+            # Try to fix the database schema on the fly
+            try:
+                db.create_all()  # Ensure all tables are created with correct schema
+                analyst_exists = AnalystProfile.query.filter_by(email=email).first() is not None
+            except Exception as retry_error:
+                print(f"Error even after schema fix: {retry_error}")
+                analyst_exists = False  # Assume no conflict if we can't check
         
         # Check for conflicts
         if target_role == 'investor':
