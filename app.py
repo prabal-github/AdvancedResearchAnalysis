@@ -70469,6 +70469,7 @@ def api_register_investor():
         # Add credit transaction
         credit_transaction = CreditTransaction(
             user_id=new_user.id,
+            user_type='investor',
             amount=100,
             transaction_type='bonus',
             description='Welcome bonus for new investor'
