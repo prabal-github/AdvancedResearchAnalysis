@@ -72311,9 +72311,19 @@ if __name__ == '__main__':
             alert_thread.start()
     
     # Start the Flask server with production-ready configuration
+    # Use port 5008 internally, port 80 will be handled by Nginx proxy
+    port = int(os.environ.get('PORT', 5008))
+    host = os.environ.get('HOST', '0.0.0.0')
+    
+    # If trying to use port 80 directly without root, fall back to 5008
+    if port == 80 and os.geteuid() != 0:
+        print(f"⚠️ Port 80 requires root privileges. Using port 5008 instead.")
+        print("💡 For port 80 access, use the Nginx proxy setup script: sudo ./production_port80_setup.sh")
+        port = 5008
+    
     app.run(
-        host=os.environ.get('HOST', '0.0.0.0'),
-        port=int(os.environ.get('PORT', 80)),
+        host=host,
+        port=port,
         debug=os.environ.get('FLASK_DEBUG', 'False').lower() == 'true',
         threaded=True,
         use_reloader=False  # Disable reloader to prevent conflicts with lazy loading
