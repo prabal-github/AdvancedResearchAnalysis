@@ -21,7 +21,7 @@ def post_chat_message(sid):
         msg = (data.get('message') or '').strip()
         if not msg:
             return jsonify({'ok': False, 'error': 'empty message'}), 400
-        
+
         # Create new session
         new_sid = uuid.uuid4().hex[:32]
         title = _chat_session_title_from_first_user(msg)
@@ -35,6 +35,7 @@ def post_chat_message(sid):
 ```
 
 **Key Changes:**
+
 - ✅ **Automatic Session Creation**: When `sid == 'new'`, creates a new session automatically
 - ✅ **Session ID Return**: Returns `session_id` in response for frontend tracking
 - ✅ **Title Generation**: Uses existing `_chat_session_title_from_first_user` function
@@ -47,32 +48,36 @@ Enhanced the `sendReportChat` function to handle new session creation:
 ```javascript
 function sendReportChat() {
   // ... existing code ...
-  
-  fetch('/api/chat/session/' + (currentChatSession || 'new') + '/message', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: msg })
-  }).then(r => r.json()).then(d => {
-    if (d.ok && d.reply) {
-      // Update current session if a new one was created
-      if (d.session_id && !currentChatSession) {
-        currentChatSession = d.session_id;
-        // Refresh sessions list to show the new session
-        if (typeof refreshChatSessions === 'function') {
-          refreshChatSessions();
+
+  fetch("/api/chat/session/" + (currentChatSession || "new") + "/message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg }),
+  })
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.ok && d.reply) {
+        // Update current session if a new one was created
+        if (d.session_id && !currentChatSession) {
+          currentChatSession = d.session_id;
+          // Refresh sessions list to show the new session
+          if (typeof refreshChatSessions === "function") {
+            refreshChatSessions();
+          }
         }
+        appendAgenticReportChat("ai", d.reply, d.download_url);
+      } else {
+        appendReportChat("ai", "Error: " + (d.error || "Unknown error"));
       }
-      appendAgenticReportChat('ai', d.reply, d.download_url);
-    } else {
-      appendReportChat('ai', 'Error: ' + (d.error || 'Unknown error'));
-    }
-  }).catch(() => {
-    appendReportChat('ai', 'Network error. Please try again.');
-  });
+    })
+    .catch(() => {
+      appendReportChat("ai", "Network error. Please try again.");
+    });
 }
 ```
 
 **Key Changes:**
+
 - ✅ **Session Tracking**: Updates `currentChatSession` when new session is created
 - ✅ **UI Refresh**: Calls `refreshChatSessions()` to update session list
 - ✅ **Seamless Flow**: Subsequent messages use the created session ID
@@ -80,12 +85,14 @@ function sendReportChat() {
 ## 🔧 **Technical Details**
 
 ### **Flow Before Fix:**
+
 1. User opens Report Agent AI tab (no session exists)
 2. Frontend sends: `POST /api/chat/session/new/message`
 3. Backend returns: `404 - not found` (no handler for "new")
 4. Error displayed to user
 
 ### **Flow After Fix:**
+
 1. User opens Report Agent AI tab (no session exists)
 2. Frontend sends: `POST /api/chat/session/new/message`
 3. Backend detects `sid == 'new'` and creates session automatically
@@ -104,11 +111,13 @@ function sendReportChat() {
 ## 🧪 **Testing Scenarios**
 
 ### **Before Fix:**
+
 - ❌ Open Report Agent AI tab → Send message → 404 error
 - ❌ No session created
 - ❌ User sees error message
 
 ### **After Fix:**
+
 - ✅ Open Report Agent AI tab → Send message → Success
 - ✅ New session automatically created
 - ✅ Session appears in sidebar
@@ -119,18 +128,18 @@ function sendReportChat() {
 
 - **✅ Backend Fix**: Implemented in `app.py`
 - **✅ Frontend Fix**: Implemented in `vs_terminal.html`
-- **✅ Flask App**: Restarted and running on port 5008
-- **✅ Testing Ready**: VS Terminal accessible at http://127.0.0.1:5008/vs_terminal
+- **✅ Flask App**: Restarted and running on port 80
+- **✅ Testing Ready**: VS Terminal accessible at http://127.0.0.1:80/vs_terminal
 
 ## 📋 **Verification Steps**
 
 To verify the fix:
 
-1. **Open VS Terminal**: http://127.0.0.1:5008/vs_terminal
+1. **Open VS Terminal**: http://127.0.0.1:80/vs_terminal
 2. **Login as Admin**: Ensure Report Agent AI tab is visible
 3. **Switch to Report Agent AI Tab**: Click the second tab
 4. **Send a Test Message**: e.g., "Generate a test report on Apple"
-5. **Verify Success**: 
+5. **Verify Success**:
    - No 404 error in browser console
    - Message appears in chat
    - AI responds with report generation

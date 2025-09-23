@@ -10,7 +10,7 @@ import requests
 import json
 
 def main():
-    base = "http://127.0.0.1:5008"
+    base = "http://127.0.0.1:80"
     s = requests.Session()
 
     print("Admin ML Models Smoke Test")

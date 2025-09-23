@@ -10,7 +10,7 @@ import json
 def test_api_endpoint():
     """Test the Additional Stock Recommendations API"""
     
-    url = "http://127.0.0.1:5008/api/analyze_additional_stocks"
+    url = "http://127.0.0.1:80/api/analyze_additional_stocks"
     
     # Test scenarios
     test_cases = [
@@ -96,7 +96,7 @@ def test_api_endpoint():
 def test_error_cases():
     """Test error handling"""
     
-    url = "http://127.0.0.1:5008/api/analyze_additional_stocks"
+    url = "http://127.0.0.1:80/api/analyze_additional_stocks"
     
     error_tests = [
         {

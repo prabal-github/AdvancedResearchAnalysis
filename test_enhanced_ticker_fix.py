@@ -106,7 +106,7 @@ def test_api_endpoint():
     try:
         # Test the AI research assistant endpoint
         response = requests.post(
-            'http://127.0.0.1:5008/ai_query_analysis',
+            'http://127.0.0.1:80/ai_query_analysis',
             json={'query': 'Latest on INFY.NS'},
             timeout=30
         )
@@ -139,7 +139,7 @@ def test_knowledge_base_stats():
     print("=" * 50)
     
     try:
-        response = requests.get('http://127.0.0.1:5008/api/enhanced_knowledge_stats', timeout=10)
+        response = requests.get('http://127.0.0.1:80/api/enhanced_knowledge_stats', timeout=10)
         
         if response.status_code == 200:
             data = response.json()

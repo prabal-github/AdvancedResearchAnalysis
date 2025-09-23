@@ -14,7 +14,7 @@ def test_realtime_model_execution():
     print("=" * 50)
     
     # Test URL
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # First, let's get a list of published models
     try:

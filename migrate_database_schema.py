@@ -160,10 +160,10 @@ def main():
         print("   python create_demo_accounts.py")
         print()
         print("2. Test the analyst login:")
-        print("   http://localhost:5008/analyst_login")
+        print("   http://localhost:80/analyst_login")
         print()
         print("3. Test the investor login:")
-        print("   http://localhost:5008/investor_login")
+        print("   http://localhost:80/investor_login")
     else:
         print("❌ Migration failed. Please check the errors above.")
 

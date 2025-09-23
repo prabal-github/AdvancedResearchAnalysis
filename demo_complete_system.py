@@ -11,7 +11,7 @@ from datetime import datetime
 def demo_all_features():
     """Demo all analyst management features"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🎬 COMPREHENSIVE ANALYST MANAGEMENT DEMO")
     print("=" * 60)
@@ -23,7 +23,7 @@ def demo_all_features():
     
     # Feature 1: Public Registration
     print("1️⃣ PUBLIC ANALYST REGISTRATION")
-    print("   📝 URL: http://127.0.0.1:5008/register_analyst")
+    print("   📝 URL: http://127.0.0.1:80/register_analyst")
     try:
         response = requests.get(f"{base_url}/register_analyst")
         status = "✅ WORKING" if response.status_code == 200 else "❌ ERROR"
@@ -36,7 +36,7 @@ def demo_all_features():
     
     # Feature 2: Admin Management
     print("2️⃣ ADMIN ANALYST MANAGEMENT")
-    print("   👨‍💼 URL: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
+    print("   👨‍💼 URL: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
     try:
         response = requests.get(f"{base_url}/admin/manage_analysts?admin_key=admin123")
         status = "✅ WORKING" if response.status_code == 200 else "❌ ERROR"
@@ -49,7 +49,7 @@ def demo_all_features():
     
     # Feature 3: NEW - Bulk Creation
     print("3️⃣ 🆕 BULK ANALYST CREATION (NEW!)")
-    print("   📤 URL: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+    print("   📤 URL: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
     try:
         response = requests.get(f"{base_url}/admin/bulk_create_analysts?admin_key=admin123")
         status = "✅ WORKING" if response.status_code == 200 else "❌ ERROR"
@@ -63,7 +63,7 @@ def demo_all_features():
     
     # Feature 4: Registration Status
     print("4️⃣ REGISTRATION STATUS CHECKING")
-    print("   🔍 URL: http://127.0.0.1:5008/check_registration_status/<analyst_id>")
+    print("   🔍 URL: http://127.0.0.1:80/check_registration_status/<analyst_id>")
     print("   📊 Status: ✅ WORKING")
     print("   🔹 Features: Real-time status updates, API endpoint")
     print("   🔹 Usage: Check approval status, track registration progress")
@@ -71,7 +71,7 @@ def demo_all_features():
     
     # Feature 5: Analyst Login
     print("5️⃣ ANALYST LOGIN SYSTEM")
-    print("   🔐 URL: http://127.0.0.1:5008/analyst_login")
+    print("   🔐 URL: http://127.0.0.1:80/analyst_login")
     try:
         response = requests.get(f"{base_url}/analyst_login")
         status = "✅ WORKING" if response.status_code == 200 else "❌ ERROR"
@@ -165,43 +165,43 @@ def demo_access_points():
     access_points = [
         {
             "name": "🏠 Main Dashboard",
-            "url": "http://127.0.0.1:5008/",
+            "url": "http://127.0.0.1:80/",
             "access": "Public",
             "description": "Main platform entry point"
         },
         {
             "name": "📝 Public Registration",
-            "url": "http://127.0.0.1:5008/register_analyst",
+            "url": "http://127.0.0.1:80/register_analyst",
             "access": "Public",
             "description": "New analyst registration form"
         },
         {
             "name": "🔐 Analyst Login",
-            "url": "http://127.0.0.1:5008/analyst_login",
+            "url": "http://127.0.0.1:80/analyst_login",
             "access": "Registered Users",
             "description": "Analyst authentication portal"
         },
         {
             "name": "👨‍💼 Admin Dashboard",
-            "url": "http://127.0.0.1:5008/admin_dashboard?admin_key=admin123",
+            "url": "http://127.0.0.1:80/admin_dashboard?admin_key=admin123",
             "access": "Admin Only",
             "description": "Administrative control panel"
         },
         {
             "name": "📊 Manage Analysts",
-            "url": "http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123",
+            "url": "http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123",
             "access": "Admin Only",
             "description": "Analyst account management"
         },
         {
             "name": "📤 Bulk Create Analysts",
-            "url": "http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123",
+            "url": "http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123",
             "access": "Admin Only",
             "description": "CSV-based bulk account creation"
         },
         {
             "name": "🔍 Registration Status",
-            "url": "http://127.0.0.1:5008/check_registration_status/<analyst_id>",
+            "url": "http://127.0.0.1:80/check_registration_status/<analyst_id>",
             "access": "Public API",
             "description": "Check registration approval status"
         }
@@ -254,9 +254,9 @@ def main():
     print("💼 READY FOR: Enterprise deployment")
     print()
     print("🔗 QUICK ACCESS:")
-    print("   Public Registration: http://127.0.0.1:5008/register_analyst")
-    print("   Admin Management: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
-    print("   🆕 Bulk Upload: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+    print("   Public Registration: http://127.0.0.1:80/register_analyst")
+    print("   Admin Management: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
+    print("   🆕 Bulk Upload: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,7 @@ import sys
 
 def test_analyst_routes():
     """Test analyst routes to see what's happening"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🔍 Testing Analyst Routes")
     print("=" * 50)

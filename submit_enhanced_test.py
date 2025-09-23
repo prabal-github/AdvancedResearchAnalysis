@@ -68,7 +68,7 @@ def submit_test_report():
         # Submit the report
         print(f"\n📤 Submitting to /analyze endpoint...")
         response = requests.post(
-            "http://127.0.0.1:5008/analyze",
+            "http://127.0.0.1:80/analyze",
             json=test_data,
             timeout=30,
             headers={'Content-Type': 'application/json'}
@@ -88,7 +88,7 @@ def submit_test_report():
                 time.sleep(2)
                 
                 # Check public view
-                public_url = f"http://127.0.0.1:5008/public/report/{report_id}"
+                public_url = f"http://127.0.0.1:80/public/report/{report_id}"
                 print(f"\n🌐 Testing Public View: {public_url}")
                 
                 public_response = requests.get(public_url, timeout=10)
@@ -139,6 +139,6 @@ if __name__ == "__main__":
         print(f"✅ Enhanced fields working correctly")
         print(f"✅ Public report view updated")
         print(f"✅ LinkedIn sharing optimized")
-        print(f"\n🔗 Quick Access: http://127.0.0.1:5008/public/report/{report_id}")
+        print(f"\n🔗 Quick Access: http://127.0.0.1:80/public/report/{report_id}")
     else:
         print(f"\n⚠️  Test incomplete - check error messages above")

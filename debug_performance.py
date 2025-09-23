@@ -28,7 +28,7 @@ def test_performance_route():
         }
         
         # Login
-        login_response = session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+        login_response = session.post('http://127.0.0.1:80/analyst_login', data=login_data)
         print(f"Login status: {login_response.status_code}")
         
         if login_response.status_code == 302:
@@ -39,7 +39,7 @@ def test_performance_route():
             return
         
         # Test performance dashboard
-        performance_response = session.get('http://127.0.0.1:5008/analyst/performance_dashboard')
+        performance_response = session.get('http://127.0.0.1:80/analyst/performance_dashboard')
         print(f"Performance dashboard status: {performance_response.status_code}")
         
         if performance_response.status_code == 500:

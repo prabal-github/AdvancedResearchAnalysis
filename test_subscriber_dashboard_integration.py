@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 INVESTOR_ID = "INV938713"
 
 def test_endpoint(session, url, description):

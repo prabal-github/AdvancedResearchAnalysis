@@ -9,7 +9,7 @@ import json
 def test_ai_query_api():
     """Test the AI query API with a sample query"""
     
-    url = "http://127.0.0.1:5008/api/ai_query"
+    url = "http://127.0.0.1:80/api/ai_query"
     test_data = {
         "query": "What are the growth prospects for Indian renewable energy companies in 2024?",
         "investor_id": "demo_investor"
@@ -68,6 +68,6 @@ if __name__ == "__main__":
         print("⚠️ Check the Flask server logs for errors")
     
     print("\n🔗 Try the dashboards:")
-    print("- AI Research Assistant: http://127.0.0.1:5008/ai_research_assistant")
-    print("- Admin Research Topics: http://127.0.0.1:5008/admin/research_topics")
-    print("- Analyst Assignments: http://127.0.0.1:5008/analyst/research_assignments")
+    print("- AI Research Assistant: http://127.0.0.1:80/ai_research_assistant")
+    print("- Admin Research Topics: http://127.0.0.1:80/admin/research_topics")
+    print("- Analyst Assignments: http://127.0.0.1:80/analyst/research_assignments")

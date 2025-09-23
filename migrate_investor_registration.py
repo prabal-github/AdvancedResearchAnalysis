@@ -52,9 +52,9 @@ if __name__ == "__main__":
     if migrate_database():
         print("\n✅ Migration completed successfully!")
         print("\nTo access the new features:")
-        print("1. Visit http://127.0.0.1:5008/investor_register to test registration")
-        print("2. Admin can manage registrations at http://127.0.0.1:5008/admin/investor_registrations")
-        print("3. Admin access: http://127.0.0.1:5008/admin_dashboard?admin_key=admin123")
+        print("1. Visit http://127.0.0.1:80/investor_register to test registration")
+        print("2. Admin can manage registrations at http://127.0.0.1:80/admin/investor_registrations")
+        print("3. Admin access: http://127.0.0.1:80/admin_dashboard?admin_key=admin123")
     else:
         print("\n❌ Migration failed!")
         sys.exit(1)

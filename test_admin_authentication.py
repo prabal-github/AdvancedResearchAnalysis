@@ -9,7 +9,7 @@ Tests both admin login methods:
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_admin_key_access():
     """Test admin dashboard access with admin_key parameter"""

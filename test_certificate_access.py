@@ -8,7 +8,7 @@ from datetime import datetime
 
 def test_certificate_generation():
     """Test the HTML certificate generation endpoint"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🧪 Testing HTML Certificate Generation System")
     print("=" * 60)

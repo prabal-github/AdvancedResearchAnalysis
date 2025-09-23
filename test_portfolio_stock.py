@@ -9,7 +9,7 @@ from app import app, db, InvestorPortfolioStock
 
 def test_add_portfolio_stock():
     """Test adding a stock to the portfolio"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test data
     test_stock = {

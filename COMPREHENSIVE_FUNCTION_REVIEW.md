@@ -2,10 +2,10 @@
 
 ### ✅ **SYSTEM STATUS: ALL FUNCTIONS OPERATIONAL**
 
-**Flask App Running**: ✅ Port 5008  
+**Flask App Running**: ✅ Port 80  
 **Database**: ✅ Connected and operational  
 **AI Models**: ✅ BERT loaded successfully  
-**Dashboard Access**: ✅ All 3 dashboards accessible  
+**Dashboard Access**: ✅ All 3 dashboards accessible
 
 ---
 
@@ -17,11 +17,13 @@
 @app.route('/api/ai_query', methods=['POST'])
 def process_ai_query():
 ```
+
 **Function**: Handles investor queries through AI processing  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Query validation and processing
-- ✅ Unique query ID generation  
+- ✅ Unique query ID generation
 - ✅ AI analysis integration
 - ✅ Database persistence
 - ✅ Research topic creation for low coverage
@@ -32,9 +34,11 @@ def process_ai_query():
 ```python
 def analyze_investor_query(query_text):
 ```
+
 **Function**: Main AI analysis coordinator  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Query component extraction (tickers, sectors, keywords)
 - ✅ Knowledge base search integration
 - ✅ Coverage analysis and scoring
@@ -46,9 +50,11 @@ def analyze_investor_query(query_text):
 ```python
 def extract_query_components(query_text):
 ```
+
 **Function**: Extracts tickers, keywords, and sectors from queries  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Enhanced ticker recognition (TCS.NS, INFY.BO formats)
 - ✅ Sector classification mapping
 - ✅ Query type identification (valuation, performance, outlook, comparison)
@@ -59,9 +65,11 @@ def extract_query_components(query_text):
 ```python
 def search_knowledge_base(extracted_data):
 ```
+
 **Function**: Searches research reports and knowledge entries  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Multi-source search (Report.original_text, KnowledgeBase)
 - ✅ Ticker-based filtering with variation matching
 - ✅ Keyword relevance scoring
@@ -72,11 +80,13 @@ def search_knowledge_base(extracted_data):
 ```python
 def generate_comprehensive_response(query_text, search_results):
 ```
+
 **Function**: **MAJOR ENHANCEMENT** - Professional investment analysis  
 **Status**: ✅ **FULLY ENHANCED WITH 150+ LINE COMPREHENSIVE SYSTEM**  
 **Features**:
+
 - ✅ **📊 Valuation Insights**: P/E ratios, Market Cap, Financial metrics
-- ✅ **📈 Performance Analysis**: Historical trends, growth analysis  
+- ✅ **📈 Performance Analysis**: Historical trends, growth analysis
 - ✅ **👥 Analyst Consensus**: Buy/Hold/Sell recommendations aggregation
 - ✅ **🔬 Key Research Findings**: Multi-source insights from research reports
 - ✅ **🔮 Future Outlook**: Forward-looking analysis and growth prospects
@@ -87,9 +97,11 @@ def generate_comprehensive_response(query_text, search_results):
 ```python
 def generate_partial_response(query_text, search_results, coverage_analysis):
 ```
+
 **Function**: **ENHANCED** - Professional partial responses with gap identification  
 **Status**: ✅ **FULLY ENHANCED WITH PROFESSIONAL FORMATTING**  
 **Features**:
+
 - ✅ Coverage level indicators (High/Medium/Low)
 - ✅ Professional formatting with emoji categorization
 - ✅ Research gap identification
@@ -106,9 +118,11 @@ def generate_partial_response(query_text, search_results, coverage_analysis):
 @app.route('/ai_research_assistant')
 def ai_research_assistant():
 ```
-**URL**: http://127.0.0.1:5008/ai_research_assistant  
+
+**URL**: http://127.0.0.1:80/ai_research_assistant  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Interactive query interface
 - ✅ Recent query history display
 - ✅ Pending and completed research tracking
@@ -121,9 +135,11 @@ def ai_research_assistant():
 @app.route('/admin/research_topics')
 def admin_research_topics():
 ```
-**URL**: http://127.0.0.1:5008/admin_research_topics  
+
+**URL**: http://127.0.0.1:80/admin_research_topics  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Pending research topics management
 - ✅ Assigned research tracking with analyst names
 - ✅ Completed research history with dates
@@ -136,9 +152,11 @@ def admin_research_topics():
 @app.route('/analyst_research_assignments')
 def analyst_research_assignments():
 ```
-**URL**: http://127.0.0.1:5008/analyst_research_assignments  
+
+**URL**: http://127.0.0.1:80/analyst_research_assignments  
 **Status**: ✅ **FULLY OPERATIONAL**  
 **Features**:
+
 - ✅ Current research assignments display
 - ✅ Deadline tracking with days remaining
 - ✅ Priority indicators (High/Medium/Low)
@@ -150,22 +168,26 @@ def analyst_research_assignments():
 ### 🔧 **SUPPORT FUNCTIONS - ALL VERIFIED**
 
 #### **Research Topic Management** ✅
+
 - ✅ `create_research_topic_from_query()` - Creates research requests from low-coverage queries
 - ✅ `assign_research_topic()` - Assigns research to available analysts
 - ✅ `update_research_status()` - Updates research progress and completion
 
 #### **Knowledge Coverage Analysis** ✅
+
 - ✅ `analyze_knowledge_coverage()` - Calculates coverage scores and identifies gaps
 - ✅ `calculate_coverage_score()` - Advanced scoring algorithm
 - ✅ Coverage-based response routing (Comprehensive/Partial/Limited)
 
 #### **Database Models** ✅
+
 - ✅ `InvestorQuery` - Stores and tracks investor queries
 - ✅ `ResearchTopicRequest` - Manages research assignment workflow
 - ✅ `AIKnowledgeGap` - Tracks identified knowledge deficiencies
 - ✅ `InvestorNotification` - User communication system
 
 #### **Utility Functions** ✅
+
 - ✅ `utc_now()` - Timezone-aware datetime helper (fixes deprecation warnings)
 - ✅ `extract_tickers_from_text()` - Enhanced ticker recognition with Indian formats
 - ✅ Error handling and logging throughout all functions
@@ -175,15 +197,17 @@ def analyst_research_assignments():
 ### 🎉 **SYSTEM CAPABILITIES - FULLY FUNCTIONAL**
 
 #### **✅ Enhanced AI-Powered Investment Analysis**
+
 **Query Processing**: "What is the current valuation and future prospects of TCS.NS?"
 
 **AI Response Structure**:
+
 ```
 🔍 Comprehensive AI Analysis Based on Latest Research:
 
 📊 Valuation Insights:
 • Current P/E Ratio: [Data from research reports]
-• Market Capitalization: [Real-time calculations]  
+• Market Capitalization: [Real-time calculations]
 • Price-to-Book Ratio: [Financial metrics analysis]
 
 📈 Performance Analysis:
@@ -222,11 +246,13 @@ def analyst_research_assignments():
 ```
 
 #### **✅ Intelligent Knowledge Gap Identification**
+
 - **High Coverage (70%+)**: Comprehensive professional responses
 - **Medium Coverage (40-70%)**: Partial responses with gap identification
 - **Low Coverage (<40%)**: Limited responses with research requests
 
 #### **✅ Automated Research Assignment Workflow**
+
 - **Query Analysis** → **Coverage Assessment** → **Research Topic Creation** → **Analyst Assignment** → **Progress Tracking** → **Completion**
 
 ---
@@ -234,14 +260,17 @@ def analyst_research_assignments():
 ### 🚨 **MINOR ONGOING ISSUES (NON-CRITICAL)**
 
 #### **1. Alert System Context Error** ⚠️
+
 ```
 ERROR in app: Error in alert checking: Working outside of application context.
 ```
+
 **Impact**: Low - Background alert checking only  
 **Status**: **Function works fine, just needs context wrapper improvement**  
 **Priority**: Low - doesn't affect AI Research Assistant functionality
 
 #### **2. Remaining datetime.utcnow() Warnings** ⚠️
+
 **Impact**: Very Low - Deprecation warnings only  
 **Status**: **Most critical occurrences fixed with utc_now() helper**  
 **Priority**: Low - doesn't affect functionality
@@ -251,17 +280,20 @@ ERROR in app: Error in alert checking: Working outside of application context.
 ### 🎯 **TESTING VERIFICATION**
 
 #### **✅ All Dashboard URLs Accessible**
-- ✅ http://127.0.0.1:5008/ai_research_assistant
-- ✅ http://127.0.0.1:5008/admin_research_topics  
-- ✅ http://127.0.0.1:5008/analyst_research_assignments
+
+- ✅ http://127.0.0.1:80/ai_research_assistant
+- ✅ http://127.0.0.1:80/admin_research_topics
+- ✅ http://127.0.0.1:80/analyst_research_assignments
 
 #### **✅ Sample Data Successfully Created**
+
 - ✅ 3 Analyst Profiles with specializations
 - ✅ 5 Research Topics (Pending, Assigned, In Progress, Completed)
 - ✅ 2 Knowledge Gaps identified
 - ✅ Multiple Investment Queries with AI responses
 
 #### **✅ API Endpoints Functional**
+
 - ✅ `/api/ai_query` - Query processing with enhanced AI responses
 - ✅ `/api/assign_research_topic` - Research assignment workflow
 - ✅ `/api/update_research_status` - Status tracking

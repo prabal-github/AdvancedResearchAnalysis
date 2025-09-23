@@ -3,7 +3,7 @@
 ## 📋 API Overview
 This document provides detailed information about all available API endpoints for the Research Quality Application. All APIs return JSON responses and support CORS for cross-origin requests.
 
-**Base URL:** `http://127.0.0.1:5008`  
+**Base URL:** `http://127.0.0.1:80`  
 **API Version:** v1.0  
 **Authentication:** Not required for current implementation  
 
@@ -468,7 +468,7 @@ fetch('/api/analyst/John%20Doe/performance?days=60')
 import requests
 import json
 
-base_url = 'http://127.0.0.1:5008'
+base_url = 'http://127.0.0.1:80'
 
 # Get enhanced analysis reports
 response = requests.get(f'{base_url}/api/enhanced_analysis_reports', 
@@ -490,15 +490,15 @@ performance = response.json()
 
 ```bash
 # Get investor dashboard
-curl -X GET "http://127.0.0.1:5008/api/investor_dashboard"
+curl -X GET "http://127.0.0.1:80/api/investor_dashboard"
 
 # Post AI research query
-curl -X POST "http://127.0.0.1:5008/api/ai_research_assistant" \
+curl -X POST "http://127.0.0.1:80/api/ai_research_assistant" \
      -H "Content-Type: application/json" \
      -d '{"query": "Banking sector analysis"}'
 
 # Get specific analyst data
-curl -X GET "http://127.0.0.1:5008/api/analysts/John%20Doe"
+curl -X GET "http://127.0.0.1:80/api/analysts/John%20Doe"
 ```
 
 ---
@@ -529,7 +529,7 @@ All APIs use consistent error response format:
 ### 1. **Frontend Integration**
 ```javascript
 class ApiClient {
-  constructor(baseUrl = 'http://127.0.0.1:5008') {
+  constructor(baseUrl = 'http://127.0.0.1:80') {
     this.baseUrl = baseUrl;
   }
 
@@ -551,7 +551,7 @@ class ApiClient {
 ```swift
 // iOS Swift example
 func fetchDashboardData() {
-    let url = URL(string: "http://127.0.0.1:5008/api/main_dashboard")!
+    let url = URL(string: "http://127.0.0.1:80/api/main_dashboard")!
     URLSession.shared.dataTask(with: url) { data, response, error in
         // Handle response
     }.resume()
@@ -561,7 +561,7 @@ func fetchDashboardData() {
 ### 3. **Third-Party Service Integration**
 ```python
 class ResearchQualityAPI:
-    def __init__(self, base_url="http://127.0.0.1:5008"):
+    def __init__(self, base_url="http://127.0.0.1:80"):
         self.base_url = base_url
     
     def get_reports(self, ticker=None, min_quality=0):
@@ -585,7 +585,7 @@ import requests
 import json
 
 def test_all_apis():
-    base_url = 'http://127.0.0.1:5008'
+    base_url = 'http://127.0.0.1:80'
     
     # Test each API endpoint
     endpoints = [

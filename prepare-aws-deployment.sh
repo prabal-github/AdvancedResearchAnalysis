@@ -17,7 +17,7 @@ SECRET_KEY=your-strong-random-secret-key-here-replace-this
 FLASK_DEBUG=False
 FLASK_ENV=production
 HOST=0.0.0.0
-PORT=5008
+PORT=80
 
 # Database Configuration (RDS PostgreSQL)
 DATABASE_URL=postgresql://username:password@your-rds-endpoint.region.rds.amazonaws.com:5432/database_name
@@ -122,7 +122,7 @@ cat > gunicorn.conf.py << 'EOF'
 # Gunicorn Configuration for AWS EC2 Production
 
 # Server socket
-bind = "0.0.0.0:5008"
+bind = "0.0.0.0:80"
 backlog = 2048
 
 # Worker processes
@@ -213,7 +213,7 @@ cat > nginx-flask-app.conf << 'EOF'
 # Nginx Configuration for Flask Investment App on AWS EC2
 
 upstream flask_app {
-    server 127.0.0.1:5008 fail_timeout=0;
+    server 127.0.0.1:80 fail_timeout=0;
 }
 
 # Redirect HTTP to HTTPS
@@ -502,8 +502,8 @@ Resources:
           ToPort: 443
           SourceSecurityGroupId: !Ref ALBSecurityGroup
         - IpProtocol: tcp
-          FromPort: 5008
-          ToPort: 5008
+          FromPort: 80
+          ToPort: 80
           SourceSecurityGroupId: !Ref ALBSecurityGroup
         - IpProtocol: tcp
           FromPort: 22

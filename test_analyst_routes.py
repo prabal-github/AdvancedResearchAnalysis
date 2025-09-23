@@ -8,7 +8,7 @@ import requests
 import sys
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_analyst_access_to_new_routes():
     """Test analyst access to newly granted routes"""

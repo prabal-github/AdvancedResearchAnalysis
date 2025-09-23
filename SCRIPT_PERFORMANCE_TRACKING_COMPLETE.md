@@ -1,20 +1,23 @@
 # Python Script Performance Tracking Implementation - COMPLETE
 
 ## 🎯 Overview
+
 Successfully implemented comprehensive performance tracking and AI insights for Python script recommendations at `/investor/script_results`.
 
 ## ✅ Features Implemented
 
 ### 1. Database Schema Updates
+
 - **Added columns to `ScriptExecution` model:**
   - `recommendation` (VARCHAR(50)) - stores Buy/Sell/Hold/BTST recommendations
   - `actual_result` (VARCHAR(50)) - stores profit/loss percentages or outcomes
 
 ### 2. Automatic Recommendation Extraction
+
 - **Smart pattern matching** from script outputs using `recommendation_extractor.py`
 - **Recognizes common patterns:**
   - "Recommendation: BUY" → Buy
-  - "Strategy suggests HOLD" → Hold  
+  - "Strategy suggests HOLD" → Hold
   - "Final decision: SELL" → Sell
   - "BTST opportunity" → BTST Buy
 - **Extracts results:**
@@ -23,6 +26,7 @@ Successfully implemented comprehensive performance tracking and AI insights for 
   - Numeric returns
 
 ### 3. Performance Analytics Engine
+
 - **Groups executions by script name** (unique scripts)
 - **Calculates key metrics:**
   - Total runs per script
@@ -36,23 +40,28 @@ Successfully implemented comprehensive performance tracking and AI insights for 
   - Activity level assessment
 
 ### 4. Enhanced Frontend Interface
+
 **Updated `/investor/script_results` page:**
+
 - **Performance table** showing:
   - Script name and program name
-  - Total runs and success rate  
+  - Total runs and success rate
   - Average return (when available)
   - Last execution date
   - AI/Statistical insights
   - Analytics buttons for detailed view
 
 ### 5. Detailed Analytics API
+
 **New endpoint:** `/api/investor/script_analytics/<script_name>`
+
 - **Performance trends:** Recent vs historical success rates
 - **Recommendation distribution:** Breakdown by Buy/Sell/Hold
 - **Trend analysis:** Improving/Declining/Stable performance
 - **AI summary:** Comprehensive performance narrative
 
 ### 6. Interactive Analytics Modal
+
 - **Triggered by "Analytics" button** on each script row
 - **Visual performance cards** with key metrics
 - **Trend indicators** with color coding
@@ -62,15 +71,17 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ## 📊 Sample Data & Testing
 
 ### Created Sample Data
+
 - **50 sample executions** across 4 different scripts:
   - `stock_analyzer_v1.py` - Advanced Stock Analyzer
-  - `btst_analyzer.py` - BTST Strategy Analyzer  
+  - `btst_analyzer.py` - BTST Strategy Analyzer
   - `momentum_trader.py` - Momentum Trading Bot
   - `sector_rotation.py` - Sector Rotation Strategy
 - **Realistic recommendations:** Buy, Sell, Hold, BTST Buy
 - **Varied results:** Profit percentages, Loss indicators, Success/Failure
 
 ### Comprehensive Testing
+
 - **Database migration** successful (added new columns)
 - **Extraction functions** tested and working
 - **Performance calculations** verified
@@ -80,13 +91,15 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ## 🚀 Usage Instructions
 
 ### For Investors:
-1. **Visit:** `http://127.0.0.1:5008/investor/script_results`
+
+1. **Visit:** `http://127.0.0.1:80/investor/script_results`
 2. **Login** as investor to view performance dashboard
 3. **Review** grouped script performance with AI insights
 4. **Click "Analytics"** buttons for detailed script analysis
 5. **Compare** different scripts' success rates and returns
 
 ### For Script Authors:
+
 1. **Include clear recommendations** in script output:
    ```python
    print("Recommendation: BUY RELIANCE")
@@ -96,6 +109,7 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 3. **Include result indicators:** Profit, Loss, percentage returns
 
 ### For Developers:
+
 1. **Auto-extraction** works when uploading new scripts
 2. **Manual updates** possible via database or API
 3. **Extensible pattern matching** in `recommendation_extractor.py`
@@ -103,6 +117,7 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ## 🔧 Technical Implementation
 
 ### Key Files Added/Modified:
+
 - `migrate_script_executions.py` - Database migration script
 - `create_sample_recommendations.py` - Sample data generator
 - `recommendation_extractor.py` - Pattern matching utilities
@@ -111,6 +126,7 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 - `templates/investor_script_results.html` - Enhanced frontend
 
 ### Core Functions:
+
 - `generate_ai_insight()` - AI-powered performance insights
 - `extract_recommendation_from_output()` - Smart pattern matching
 - `extract_result_from_output()` - Result extraction
@@ -119,20 +135,23 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ## 🎉 Results Achieved
 
 ### ✅ Complete Feature Set:
+
 - **Unique script tracking** ✓
-- **Performance metrics calculation** ✓  
+- **Performance metrics calculation** ✓
 - **AI/Statistical insights** ✓
 - **Interactive analytics** ✓
 - **Automatic recommendation extraction** ✓
 - **Historical performance comparison** ✓
 
 ### ✅ User Experience:
+
 - **Clean, organized interface** ✓
 - **Meaningful performance indicators** ✓
 - **Actionable AI insights** ✓
 - **Detailed drill-down capabilities** ✓
 
 ### ✅ Technical Excellence:
+
 - **Robust pattern matching** ✓
 - **Scalable database design** ✓
 - **Comprehensive error handling** ✓
@@ -141,7 +160,7 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ## 🌟 Key Benefits
 
 1. **Investors can easily track** which Python scripts provide the best recommendations
-2. **AI provides insights** comparing past performance across different scripts  
+2. **AI provides insights** comparing past performance across different scripts
 3. **Unique script names** ensure no duplication in tracking
 4. **Automatic extraction** reduces manual data entry
 5. **Interactive analytics** provide deep performance insights
@@ -150,4 +169,4 @@ Successfully implemented comprehensive performance tracking and AI insights for 
 ---
 
 **Status: FULLY IMPLEMENTED AND TESTED** ✅  
-**Ready for production use at:** `http://127.0.0.1:5008/investor/script_results`
+**Ready for production use at:** `http://127.0.0.1:80/investor/script_results`

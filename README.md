@@ -8,7 +8,7 @@ A comprehensive Flask-based web application for investment research analysis, qu
 - [🏗️ Architecture](#️-architecture)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📊 Features](#-features)
-- [🗄️ Database Schema](#️-database-schema)****
+- [🗄️ Database Schema](#️-database-schema)\*\*\*\*
 - [📡 API Endpoints](#-api-endpoints)
 - [🧠 AI & ML Components](#-ai--ml-components)
 - [🚀 Installation & Setup](#-installation--setup)
@@ -39,6 +39,7 @@ This application is a sophisticated **Investment Research Quality Assessment Pla
 - **RESTful APIs**: Comprehensive API layer for all functionalities
 
 ### 🎯 Target Users
+
 - **Investment Analysts**: Research creation and quality assessment
 - **Portfolio Managers**: Investment insights and recommendations
 - **Research Directors**: Team performance monitoring and quality control
@@ -47,30 +48,30 @@ This application is a sophisticated **Investment Research Quality Assessment Pla
 
 ## �️ Architecture
 
-```mermaid
+````mermaid
 graph TB
     A[Web Interface] --> B[Flask Application]
     B --> C[Authentication Layer]
     C --> D[Core Modules]
-    
+
     D --> E[Report Analysis Engine]
     D --> F[AI Research Assistant]
     D --> G[Agentic AI System]
     D --> H[Quality Assessment]
-    
+
     E --> I[NLP Processing]
     E --> J[Plagiarism Detection]
     E --> K[AI Detection]
-    
+
     F --> L[Knowledge Base]
     F --> M[Claude API]
-    
+
     G --> N[Investment Agents]
     G --> O[Recommendation Engine]
-    
+
     H --> P[Quality Scoring]
     H --> Q[Performance Metrics]
-    
+
     R[External APIs] --> S[Yahoo Finance]
 ## 🛠️ Tech Stack
 
@@ -142,18 +143,19 @@ class Report(db.Model):
     analysis_result = db.Column(db.Text)  # JSON
     tickers = db.Column(db.Text)  # Comma-separated
     created_at = db.Column(db.DateTime)
-    
+
     # Quality Assessment
     plagiarism_score = db.Column(db.Float)
     ai_probability = db.Column(db.Float)
     ai_confidence = db.Column(db.Float)
-    
+
     # AI Analysis
     ai_classification = db.Column(db.String(100))
     ai_analysis_result = db.Column(db.Text)  # JSON
-```
+````
 
 #### User Models
+
 ```python
 class InvestorAccount(db.Model):
     id = db.Column(db.String(32), primary_key=True)
@@ -173,6 +175,7 @@ class InvestorQuery(db.Model):
 ```
 
 #### Knowledge Base
+
 ```python
 class KnowledgeBase(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -185,6 +188,7 @@ class KnowledgeBase(db.Model):
 ```
 
 #### Agentic AI Models
+
 ```python
 class InvestmentAgent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -210,6 +214,7 @@ class AgentRecommendation(db.Model):
 ### 🔍 Core APIs
 
 #### Main Dashboard API
+
 ```
 GET /api/main_dashboard
 Returns comprehensive dashboard data including recent reports, analytics, and market overview.
@@ -224,6 +229,7 @@ Response:
 ```
 
 #### Report Analysis API
+
 ```
 GET /api/enhanced_analysis_reports?limit=10&ticker=INFY.NS
 Returns paginated list of enhanced analysis reports with filtering options.
@@ -236,6 +242,7 @@ Parameters:
 ```
 
 #### AI Research Assistant API
+
 ```
 POST /api/ai_research_assistant
 Process investor queries using AI-powered analysis.
@@ -258,6 +265,7 @@ Response:
 ### 📊 Analytics APIs
 
 #### Performance Analytics
+
 ```
 GET /api/admin/performance?days=30
 Get comprehensive performance analytics for specified time period.
@@ -269,6 +277,7 @@ Parameters:
 ```
 
 #### Analyst Performance
+
 ```
 GET /api/analyst/{name}/performance
 Get detailed performance metrics for a specific analyst.
@@ -283,6 +292,7 @@ Response includes:
 ### 🤖 Agentic AI APIs
 
 #### Agent Recommendations
+
 ```
 GET /api/agentic/recommendations
 Get AI agent investment recommendations.
@@ -303,6 +313,7 @@ Response:
 ```
 
 #### Portfolio Analysis
+
 ```
 GET /api/agentic/portfolio_analysis
 Get AI-powered portfolio analysis and insights.
@@ -311,6 +322,7 @@ Get AI-powered portfolio analysis and insights.
 ### 📈 Real-time Data APIs
 
 #### Market Metrics
+
 ```
 GET /api/metrics
 Get real-time market metrics and system statistics.
@@ -345,7 +357,7 @@ def calculate_quality_score(report_text, analysis_result):
         'writing_quality': evaluate_writing_quality(report_text),
         'timeliness': assess_timeliness(report_text)
     }
-    
+
     return weighted_average(scores, weights={
         'content_depth': 0.3,
         'technical_accuracy': 0.25,
@@ -364,7 +376,7 @@ class PlagiarismDetector:
     def __init__(self):
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         self.model = BertModel.from_pretrained('bert-base-uncased')
-    
+
     def detect_similarity(self, text1, text2):
         """
         Calculate semantic similarity between two texts
@@ -372,7 +384,7 @@ class PlagiarismDetector:
         """
         embeddings1 = self.get_embeddings(text1)
         embeddings2 = self.get_embeddings(text2)
-        
+
         similarity = cosine_similarity(embeddings1, embeddings2)
         return self.process_similarity_results(similarity)
 ```
@@ -392,7 +404,7 @@ def detect_ai_content(text):
     """
     features = extract_linguistic_features(text)
     probability = ai_detection_model.predict(features)
-    
+
     return {
         'ai_probability': probability,
         'confidence': calculate_confidence(features),
@@ -518,7 +530,7 @@ python -c "import app; print('✅ All imports successful')"
 python app.py
 ```
 
-Navigate to `http://localhost:5008` to access the application.
+Navigate to `http://localhost:80` to access the application.
 
 ## 🔧 Configuration
 
@@ -531,12 +543,12 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+
     # AI Model Configuration
     ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
     AI_DETECTION_THRESHOLD = float(os.environ.get('AI_DETECTION_THRESHOLD', 0.7))
     PLAGIARISM_THRESHOLD = float(os.environ.get('PLAGIARISM_THRESHOLD', 0.8))
-    
+
     # Performance Settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     SQLALCHEMY_ENGINE_OPTIONS = {
@@ -633,6 +645,7 @@ def analyze_report():
 ```
 
 **Key Functions:**
+
 - `extract_tickers_from_text()`: Intelligent ticker symbol extraction
 - `calculate_quality_score()`: Multi-dimensional quality assessment
 - `detect_ai_content()`: Machine learning-based AI detection
@@ -655,6 +668,7 @@ def ai_research_assistant():
 ```
 
 **Key Components:**
+
 - Query analysis and intent recognition
 - Knowledge base semantic search
 - Multi-source content synthesis
@@ -676,6 +690,7 @@ class InvestmentAgent:
 ```
 
 **Agent Capabilities:**
+
 - Real-time portfolio monitoring
 - Automated rebalancing suggestions
 - Risk-adjusted performance optimization
@@ -713,7 +728,7 @@ Advanced language model integration for enhanced analysis:
 class ClaudeAPIClient:
     def __init__(self, api_key):
         self.client = anthropic.Client(api_key=api_key)
-    
+
     def analyze_research_content(self, content, context=None):
         """
         Leverage Claude's advanced reasoning for:
@@ -771,7 +786,7 @@ class MLModelManager:
         self.bert_model = self.load_bert_model()
         self.ai_detector = self.load_ai_detection_model()
         self.sentiment_analyzer = self.load_sentiment_model()
-    
+
     def process_content(self, content):
         """
         Multi-model analysis pipeline:
@@ -818,7 +833,7 @@ def test_api_main_dashboard():
 
 def test_ai_research_assistant_api():
     """Test AI research assistant API"""
-    response = client.post('/api/ai_research_assistant', 
+    response = client.post('/api/ai_research_assistant',
                           json={'query': 'Latest on INFY stock'})
     assert response.status_code == 200
     assert response.json['success'] is True
@@ -849,10 +864,10 @@ def test_ai_content_detection():
     """Test AI-generated content detection"""
     ai_text = "This appears to be AI-generated content..."
     human_text = "This is clearly human-written analysis..."
-    
+
     ai_score = detect_ai_content(ai_text)
     human_score = detect_ai_content(human_text)
-    
+
     assert ai_score['ai_probability'] > human_score['ai_probability']
 ```
 
@@ -884,7 +899,7 @@ report_data = {
     'tickers': ['INFY.NS']
 }
 
-response = requests.post('http://localhost:5008/analyze', 
+response = requests.post('http://localhost:80/analyze',
                         json=report_data)
 result = response.json()
 
@@ -902,7 +917,7 @@ query_data = {
     'investor_id': 'optional_investor_id'
 }
 
-response = requests.post('http://localhost:5008/api/ai_research_assistant',
+response = requests.post('http://localhost:80/api/ai_research_assistant',
                         json=query_data)
 result = response.json()
 
@@ -914,7 +929,7 @@ print(f"Confidence: {result['confidence_score']}")
 
 ```python
 # Get live market metrics
-response = requests.get('http://localhost:5008/api/metrics')
+response = requests.get('http://localhost:80/api/metrics')
 metrics = response.json()
 
 print(f"Total Reports: {metrics['total_reports']}")
@@ -926,7 +941,7 @@ print(f"Market Status: {metrics['market_status']}")
 
 ```python
 # Get AI agent investment recommendations
-response = requests.get('http://localhost:5008/api/agentic/recommendations')
+response = requests.get('http://localhost:80/api/agentic/recommendations')
 recommendations = response.json()
 
 for rec in recommendations['data']:
@@ -953,13 +968,13 @@ class InvestmentAgent:
     - Risk assessment and management
     - Automated recommendation generation
     """
-    
+
     def __init__(self, investor_profile):
         self.profile = investor_profile
         self.risk_tolerance = investor_profile['risk_tolerance']
         self.investment_goals = investor_profile['goals']
         self.performance_history = []
-    
+
     def analyze_portfolio(self):
         """Comprehensive portfolio analysis"""
         return {
@@ -968,12 +983,12 @@ class InvestmentAgent:
             'performance_attribution': self.analyze_performance(),
             'rebalancing_recommendations': self.generate_rebalancing_advice()
         }
-    
+
     def generate_recommendations(self):
         """AI-powered investment recommendations"""
         market_data = self.get_market_context()
         portfolio_analysis = self.analyze_portfolio()
-        
+
         return self.ml_recommendation_engine.generate_recommendations(
             portfolio_analysis, market_data, self.profile
         )
@@ -982,24 +997,28 @@ class InvestmentAgent:
 ### Agent Capabilities
 
 #### 1. Portfolio Monitoring
+
 - Real-time portfolio value tracking
 - Performance attribution analysis
 - Risk metric calculation
 - Benchmark comparison
 
 #### 2. Market Analysis
+
 - Technical indicator analysis
 - Fundamental data processing
 - Sentiment analysis integration
 - Economic indicator correlation
 
 #### 3. Risk Management
+
 - Value-at-Risk (VaR) calculation
 - Stress testing scenarios
 - Correlation analysis
 - Concentration risk assessment
 
 #### 4. Recommendation Engine
+
 - Machine learning-based stock selection
 - Portfolio optimization algorithms
 - Timing recommendation systems
@@ -1022,7 +1041,7 @@ def check_authentication():
     if request.endpoint in protected_endpoints:
         if not session.get('user_id'):
             return redirect(url_for('login'))
-        
+
         if not check_user_permissions(session['user_id'], request.endpoint):
             abort(403)
 ```
@@ -1047,7 +1066,7 @@ def rate_limit_check(request):
     """
     user_id = get_user_id_from_request(request)
     endpoint = request.endpoint
-    
+
     if exceed_rate_limit(user_id, endpoint):
         abort(429, "Rate limit exceeded")
 ```
@@ -1076,7 +1095,7 @@ class PerformanceMonitor:
             'memory_usage': [],
             'cpu_utilization': []
         }
-    
+
     def log_request_performance(self, endpoint, duration):
         """Track API endpoint performance"""
         self.metrics['response_times'].append({
@@ -1084,7 +1103,7 @@ class PerformanceMonitor:
             'duration': duration,
             'timestamp': datetime.utcnow()
         })
-    
+
     def analyze_performance_trends(self):
         """Generate performance analysis report"""
         return {
@@ -1103,7 +1122,7 @@ from logging.handlers import RotatingFileHandler
 
 # Configure comprehensive logging
 if not app.debug:
-    file_handler = RotatingFileHandler('logs/app.log', 
+    file_handler = RotatingFileHandler('logs/app.log',
                                      maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
@@ -1133,10 +1152,10 @@ def health_check():
         'system_resources': get_system_resource_status(),
         'timestamp': datetime.utcnow().isoformat()
     }
-    
-    overall_status = all(health_status[key]['status'] == 'healthy' 
+
+    overall_status = all(health_status[key]['status'] == 'healthy'
                         for key in health_status if key != 'timestamp')
-    
+
     return jsonify({
         'status': 'healthy' if overall_status else 'degraded',
         'details': health_status
@@ -1172,22 +1191,22 @@ COPY . .
 RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
-EXPOSE 5008
+EXPOSE 80
 
 # Use Gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:5008", "--workers", "4", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "4", "app:app"]
 ```
 
 #### 2. Docker Compose Configuration
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
     build: .
     ports:
-      - "5008:5008"
+      - "80:80"
     environment:
       - FLASK_ENV=production
       - DATABASE_URL=postgresql://user:pass@db:5432/research_db
@@ -1197,7 +1216,7 @@ services:
       - redis
     volumes:
       - ./logs:/app/logs
-  
+
   db:
     image: postgres:13
     environment:
@@ -1206,12 +1225,12 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   redis:
     image: redis:6
     ports:
       - "6379:6379"
-  
+
   nginx:
     image: nginx:alpine
     ports:
@@ -1262,7 +1281,7 @@ SENTRY_DSN=your-sentry-dsn
 
 ```nginx
 upstream research_app {
-    server app:5008;
+    server app:80;
 }
 
 server {
@@ -1316,14 +1335,14 @@ def monitor_system_health():
         'network_io': psutil.net_io_counters()._asdict(),
         'process_count': len(psutil.pids())
     }
-    
+
     # Check application health
     try:
-        response = requests.get('http://localhost:5008/health', timeout=5)
+        response = requests.get('http://localhost:80/health', timeout=5)
         metrics['app_health'] = response.status_code == 200
     except:
         metrics['app_health'] = False
-    
+
     return metrics
 ```
 
@@ -1354,31 +1373,35 @@ echo "Database backup completed: db_backup_$DATE.sql.gz"
 ### Development Workflow
 
 1. **Fork and Clone**
+
    ```bash
    git clone https://github.com/your-username/research-quality-app.git
    cd research-quality-app
    ```
 
 2. **Create Feature Branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 3. **Install Development Dependencies**
+
    ```bash
    pip install -r requirements-dev.txt
    pre-commit install
    ```
 
 4. **Make Changes and Test**
+
    ```bash
    # Run tests
    python -m pytest tests/ -v
-   
+
    # Check code style
    flake8 app.py
    black app.py --check
-   
+
    # Type checking
    mypy app.py
    ```
@@ -1395,6 +1418,7 @@ echo "Database backup completed: db_backup_$DATE.sql.gz"
 ### Issue Reporting
 
 When reporting issues, please include:
+
 - Python version and operating system
 - Complete error traceback
 - Steps to reproduce the issue
@@ -1419,7 +1443,7 @@ For questions, issues, or contributions:
 
 **Built with ❤️ for the investment research community**
 
-*This application represents a comprehensive solution for modern investment research analysis, combining traditional financial analysis with cutting-edge AI technologies to deliver superior insights and decision-making capabilities.*
+_This application represents a comprehensive solution for modern investment research analysis, combining traditional financial analysis with cutting-edge AI technologies to deliver superior insights and decision-making capabilities._
 
 - Machine learning model improvements
 - Additional compliance frameworks
@@ -1442,6 +1466,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Support
 
 For support and questions:
+
 - Create an issue in the repository
 - Contact the development team
 - Check the documentation wiki

@@ -145,7 +145,7 @@ def test_database_functionality():
     print("\n🎉 All database tests passed successfully!")
     return True
 
-def test_flask_integration(base_url="http://127.0.0.1:5008"):
+def test_flask_integration(base_url="http://127.0.0.1:80"):
     """Test Flask API endpoints (requires Flask app to be running)."""
     print(f"\n🌐 Testing Flask Integration at {base_url}...")
     

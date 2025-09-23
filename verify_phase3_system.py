@@ -268,19 +268,19 @@ def generate_status_report():
     print(f"\n🔑 QUICK ACCESS CREDENTIALS")
     print("=" * 60)
     print("🔧 Admin Access:")
-    print("   URL: http://localhost:5008/admin_dashboard?admin_key=admin123")
+    print("   URL: http://localhost:80/admin_dashboard?admin_key=admin123")
     print("   Alt: admin@researchqa.com / admin123")
     print()
     print("👨‍💼 Analyst Access:")
-    print("   URL: http://localhost:5008/analyst_login")
+    print("   URL: http://localhost:80/analyst_login")
     print("   Credentials: analyst@demo.com / analyst123")
     print()
     print("💼 Investor Access:")
-    print("   URL: http://localhost:5008/investor_login")
+    print("   URL: http://localhost:80/investor_login")
     print("   Credentials: investor@demo.com / investor123")
     print()
     print("🚀 Phase 3 Demo:")
-    print("   URL: http://localhost:5008/phase3_advanced_demo")
+    print("   URL: http://localhost:80/phase3_advanced_demo")
     
     return status_report
 

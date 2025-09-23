@@ -121,7 +121,7 @@ With the fixes, you should see:
 3. Database connections established
 4. Knowledge base population skipped
 5. **"Starting Enhanced Flask Application"** message
-6. Server starts listening on port 5008
+6. Server starts listening on port 80
 
 ## Troubleshooting
 
@@ -129,7 +129,7 @@ With the fixes, you should see:
 
 ```bash
 # Try with just 1 worker first
-gunicorn --workers 1 --timeout 300 --bind 0.0.0.0:5008 app:app
+gunicorn --workers 1 --timeout 300 --bind 0.0.0.0:80 app:app
 
 # Check system resources
 htop

@@ -18,7 +18,7 @@ try:
     print(f"Data: {json.dumps(data, indent=2)}")
     
     response = requests.post(
-        "http://127.0.0.1:5008/analyze",
+        "http://127.0.0.1:80/analyze",
         json=data,
         timeout=15
     )
@@ -30,7 +30,7 @@ try:
         result = response.json()
         if 'report_id' in result:
             print(f"✅ Success! Report ID: {result['report_id']}")
-            public_url = f"http://127.0.0.1:5008/public/report/{result['report_id']}"
+            public_url = f"http://127.0.0.1:80/public/report/{result['report_id']}"
             print(f"🔗 Public URL: {public_url}")
         else:
             print("⚠️ No report_id in response")

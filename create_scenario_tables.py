@@ -54,7 +54,7 @@ if __name__ == "__main__":
     success = create_scenario_tables()
     if success:
         print("\n🚀 Ready to test scenario-based analysis!")
-        print("Go to: http://127.0.0.1:5008/report_hub")
+        print("Go to: http://127.0.0.1:80/report_hub")
         print("Select 'Scenario Based Analysis' and fill out the comprehensive form")
     else:
         print("\n💥 Setup failed. Check the error messages above.")

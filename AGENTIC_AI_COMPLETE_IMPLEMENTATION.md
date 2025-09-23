@@ -16,9 +16,11 @@ The Agentic AI system is a comprehensive autonomous AI agent framework designed 
 ### Implemented AI Agents
 
 #### 1. 📊 Portfolio Risk Agent (`PortfolioRiskAgent`)
+
 **Purpose**: Real-time portfolio risk analysis and monitoring
 
 **Key Features**:
+
 - VaR (Value at Risk) calculation at 95% confidence level
 - Expected Shortfall (Conditional VaR) analysis
 - Portfolio volatility and Sharpe ratio calculation
@@ -29,10 +31,12 @@ The Agentic AI system is a comprehensive autonomous AI agent framework designed 
 - Risk breach detection and alerts
 
 **API Endpoints**:
+
 - `/agentic_ai/portfolio_analysis` - Get portfolio risk analysis
 - `/api/vs_terminal_AClass/agentic_ai/portfolio_risk` - VS Terminal API
 
 **Methods**:
+
 ```python
 analyze_portfolio_risk(portfolio_id=None) -> Dict[str, Any]
 generate_risk_recommendations(risk_metrics) -> List[str]
@@ -40,9 +44,11 @@ check_risk_breaches(portfolio_data) -> List[Dict]
 ```
 
 #### 2. 📈 Trading Signals Agent (`TradingSignalsAgent`)
+
 **Purpose**: AI-powered trading signal generation using multiple strategies
 
 **Key Features**:
+
 - Multi-strategy signal generation (Momentum, Mean Reversion, Breakout, Trend Following)
 - Ensemble learning approach combining multiple strategies
 - Confidence scoring for each signal
@@ -52,16 +58,19 @@ check_risk_breaches(portfolio_data) -> List[Dict]
 - Real-time signal updates
 
 **Signal Strategies**:
+
 - **Momentum Strategy**: RSI and moving average crossovers
 - **Mean Reversion Strategy**: Bollinger Bands analysis
 - **Breakout Strategy**: Support/resistance level breakouts with volume confirmation
 - **Trend Following Strategy**: MACD signal analysis
 
 **API Endpoints**:
+
 - `/agentic_ai/trading_signals` - Get AI-generated trading signals
 - `/api/vs_terminal_AClass/agentic_ai/trading_signals` - VS Terminal API
 
 **Methods**:
+
 ```python
 generate_trading_signals(symbols=None) -> List[TradingSignal]
 backtest_signals(signals=None, period_days=90) -> Dict[str, Any]
@@ -69,9 +78,11 @@ calculate_signal_confidence(signals=None) -> Dict[str, Any]
 ```
 
 #### 3. 🌐 Market Intelligence Agent (`MarketIntelligenceAgent`)
+
 **Purpose**: Market sentiment and intelligence gathering
 
 **Key Features**:
+
 - Market regime detection (Bull/Bear/Sideways/Volatile)
 - Volatility analysis and classification
 - Sector rotation identification
@@ -81,16 +92,19 @@ calculate_signal_confidence(signals=None) -> Dict[str, Any]
 - Real-time market data processing
 
 **Market Analysis**:
+
 - **Regime Detection**: Uses moving averages and volatility metrics
 - **Sentiment Sources**: News, social media, institutional flows, options data
 - **Volatility Classification**: Low (<15%), Normal (15-25%), High (>25%)
 - **Sector Analysis**: Performance ranking and rotation patterns
 
 **API Endpoints**:
+
 - `/agentic_ai/market_intelligence` - Get market intelligence analysis
 - `/api/vs_terminal_AClass/agentic_ai/market_intelligence` - VS Terminal API
 
 **Methods**:
+
 ```python
 gather_market_intelligence(focus_areas=None) -> Dict[str, Any]
 analyze_market_sentiment(sources=None) -> Dict[str, Any]
@@ -98,9 +112,11 @@ identify_opportunities() -> List[Dict[str, Any]]
 ```
 
 #### 4. 🔬 Research Automation Agent (`ResearchAutomationAgent`)
+
 **Purpose**: Automated research report generation and analysis
 
 **Key Features**:
+
 - AI-powered research topic identification
 - Automated report generation
 - Market-driven and event-driven topic selection
@@ -110,16 +126,19 @@ identify_opportunities() -> List[Dict[str, Any]]
 - Risk assessment integration
 
 **Research Categories**:
+
 - **Market Analysis**: Volatility studies, market condition reports
 - **Sector Analysis**: Sector rotation, performance comparison
 - **Event Analysis**: Policy impact, earnings preview
 - **Thematic Research**: Technology trends, regulatory changes
 
 **API Endpoints**:
+
 - `/agentic_ai/research_topics` - Get AI-identified research topics
 - `/api/vs_terminal_AClass/agentic_ai/research` - VS Terminal API
 
 **Methods**:
+
 ```python
 identify_research_topics() -> List[Dict[str, Any]]
 generate_research_reports(topics=None) -> List[Dict[str, Any]]
@@ -127,9 +146,11 @@ extract_key_insights(reports=None) -> Dict[str, Any]
 ```
 
 #### 5. 👥 Client Advisory Agent (`ClientAdvisoryAgent`)
+
 **Purpose**: Personalized client recommendations and advisory services
 
 **Key Features**:
+
 - Personalized investment advice generation
 - Client profile creation and management
 - Risk-adjusted recommendations
@@ -139,16 +160,19 @@ extract_key_insights(reports=None) -> Dict[str, Any]
 - Client progress tracking
 
 **Client Management**:
+
 - **Risk Profiling**: Low, Medium, High risk tolerance assessment
 - **Goal Planning**: Wealth creation, retirement, education planning
 - **Tax Optimization**: Section 80C, 80D, NPS suggestions
 - **Progress Tracking**: Goal achievement monitoring
 
 **API Endpoints**:
+
 - `/agentic_ai/client_advisory/<client_id>` - Get personalized client advisory
 - `/api/vs_terminal_AClass/agentic_ai/client_advisory` - VS Terminal API
 
 **Methods**:
+
 ```python
 generate_personalized_advice(client_id, market_data=None) -> Dict[str, Any]
 create_client_profile(client_data) -> ClientProfile
@@ -156,9 +180,11 @@ track_client_progress(client_id) -> Dict[str, Any]
 ```
 
 #### 6. ⚖️ Compliance Monitoring Agent (`ComplianceMonitoringAgent`)
+
 **Purpose**: Real-time compliance and risk monitoring
 
 **Key Features**:
+
 - Real-time compliance violation detection
 - Concentration limit monitoring
 - Position size limit checking
@@ -168,16 +194,19 @@ track_client_progress(client_id) -> Dict[str, Any]
 - Automated reporting
 
 **Compliance Rules**:
+
 - **Concentration Limits**: Single stock (10%), Sector (25%)
 - **Risk Limits**: Portfolio VaR (2%), Liquidity (5%)
 - **Position Limits**: Maximum position sizes
 - **Suitability**: Client risk profile matching
 
 **API Endpoints**:
+
 - `/agentic_ai/compliance_check` - Get compliance monitoring results
 - `/api/vs_terminal_AClass/agentic_ai/compliance` - VS Terminal API
 
 **Methods**:
+
 ```python
 monitor_compliance_violations() -> Dict[str, Any]
 generate_compliance_reports(period='monthly') -> Dict[str, Any]
@@ -185,9 +214,11 @@ track_regulatory_changes() -> Dict[str, Any]
 ```
 
 #### 7. 📊 Performance Attribution Agent (`PerformanceAttributionAgent`)
+
 **Purpose**: Portfolio performance analysis and attribution
 
 **Key Features**:
+
 - Comprehensive performance metrics calculation
 - Multi-factor attribution analysis
 - Benchmark comparison
@@ -196,16 +227,19 @@ track_regulatory_changes() -> Dict[str, Any]
 - Performance trend analysis
 
 **Attribution Analysis**:
+
 - **Factor Attribution**: Asset allocation vs security selection
 - **Sector Attribution**: Sector-wise performance breakdown
 - **Style Attribution**: Value, growth, momentum, quality factors
 - **Risk-Adjusted Metrics**: Sharpe ratio, Information ratio, Alpha, Beta
 
 **API Endpoints**:
+
 - `/agentic_ai/performance_attribution` - Get performance attribution analysis
 - `/api/vs_terminal_AClass/agentic_ai/performance` - VS Terminal API
 
 **Methods**:
+
 ```python
 analyze_portfolio_performance(portfolio_id=None, period='monthly') -> Dict[str, Any]
 generate_attribution_reports(frequency='monthly') -> Dict[str, Any]
@@ -237,6 +271,7 @@ The system provides a dedicated VS Terminal interface:
 **Template**: `vs_terminal_agentic_ai.html`
 
 **Features**:
+
 - Professional VS Code-style interface
 - Real-time agent execution
 - Interactive dashboards
@@ -246,49 +281,55 @@ The system provides a dedicated VS Terminal interface:
 ### API Endpoints
 
 #### Core Agentic AI Endpoints
+
 - `/agentic_ai/status` - System status
 - `/agentic_ai/comprehensive_analysis` - Full workflow execution
 
 #### VS Terminal Specific Endpoints
+
 - `/api/vs_terminal_AClass/agentic_ai/<agent_type>` - Individual agent APIs
 - `/vs_terminal_AClass/agentic_ai` - Dashboard interface
 
 ## Usage Examples
 
 ### 1. Get Portfolio Risk Analysis
+
 ```javascript
-fetch('/api/vs_terminal_AClass/agentic_ai/portfolio_risk')
-  .then(response => response.json())
-  .then(data => {
-    console.log('Risk Metrics:', data.data.risk_metrics);
-    console.log('VaR 95%:', data.data.risk_metrics.var_95);
+fetch("/api/vs_terminal_AClass/agentic_ai/portfolio_risk")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Risk Metrics:", data.data.risk_metrics);
+    console.log("VaR 95%:", data.data.risk_metrics.var_95);
   });
 ```
 
 ### 2. Generate Trading Signals
+
 ```javascript
-fetch('/agentic_ai/trading_signals?symbols=RELIANCE&symbols=TCS')
-  .then(response => response.json())
-  .then(data => {
-    data.data.signals.forEach(signal => {
+fetch("/agentic_ai/trading_signals?symbols=RELIANCE&symbols=TCS")
+  .then((response) => response.json())
+  .then((data) => {
+    data.data.signals.forEach((signal) => {
       console.log(`${signal.symbol}: ${signal.signal} (${signal.confidence}%)`);
     });
   });
 ```
 
 ### 3. Execute Comprehensive Analysis
+
 ```javascript
-fetch('/agentic_ai/comprehensive_analysis?workflow_type=comprehensive')
-  .then(response => response.json())
-  .then(data => {
-    console.log('Overall Score:', data.data.overall_score);
-    console.log('Recommendations:', data.data.key_recommendations);
+fetch("/agentic_ai/comprehensive_analysis?workflow_type=comprehensive")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Overall Score:", data.data.overall_score);
+    console.log("Recommendations:", data.data.key_recommendations);
   });
 ```
 
 ## Data Structures
 
 ### TradingSignal
+
 ```python
 @dataclass
 class TradingSignal:
@@ -305,6 +346,7 @@ class TradingSignal:
 ```
 
 ### ClientProfile
+
 ```python
 @dataclass
 class ClientProfile:
@@ -320,6 +362,7 @@ class ClientProfile:
 ```
 
 ### ComplianceRule
+
 ```python
 @dataclass
 class ComplianceRule:
@@ -335,6 +378,7 @@ class ComplianceRule:
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 # Optional - for enhanced functionality
 FYERS_APP_ID=your_fyers_app_id
@@ -342,6 +386,7 @@ FYERS_ACCESS_TOKEN=your_fyers_token
 ```
 
 ### Dependencies
+
 - pandas
 - numpy
 - yfinance
@@ -352,12 +397,14 @@ FYERS_ACCESS_TOKEN=your_fyers_token
 ## Deployment
 
 ### Local Development
+
 1. Ensure all dependencies are installed
 2. Run the Flask application: `python app.py`
-3. Access VS Terminal: `http://127.0.0.1:5008/vs_terminal_AClass`
-4. Access Agentic AI: `http://127.0.0.1:5008/vs_terminal_AClass/agentic_ai`
+3. Access VS Terminal: `http://127.0.0.1:80/vs_terminal_AClass`
+4. Access Agentic AI: `http://127.0.0.1:80/vs_terminal_AClass/agentic_ai`
 
 ### Production Deployment
+
 - All agents run in background threads
 - Automatic health monitoring
 - Error handling and fallbacks
@@ -366,16 +413,19 @@ FYERS_ACCESS_TOKEN=your_fyers_token
 ## Monitoring and Maintenance
 
 ### Agent Health Monitoring
+
 - Background monitoring thread checks agent status every 5 minutes
 - Automatic error recovery
 - Performance metrics tracking
 
 ### Logging
+
 - Comprehensive logging for all agent activities
 - Error tracking and debugging
 - Performance monitoring
 
 ### Data Sources
+
 - YFinance for market data
 - Fyers API for real-time data (optional)
 - Internal portfolio database
@@ -403,17 +453,19 @@ FYERS_ACCESS_TOKEN=your_fyers_token
 ## Quick Start Guide
 
 1. **Start the Application**:
+
    ```bash
    python app.py
    ```
 
 2. **Access VS Terminal**:
-   Navigate to `http://127.0.0.1:5008/vs_terminal_AClass`
+   Navigate to `http://127.0.0.1:80/vs_terminal_AClass`
 
 3. **Open Agentic AI Dashboard**:
    Click on "Agentic AI" or navigate to `/vs_terminal_AClass/agentic_ai`
 
 4. **Interact with AI Agents**:
+
    - Select any agent from the sidebar
    - View real-time analysis and recommendations
    - Export results and insights

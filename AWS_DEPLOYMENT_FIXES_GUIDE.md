@@ -11,20 +11,23 @@ This guide addresses all critical database connection errors and function errors
 ### 1. **Database Configuration Issues**
 
 #### Problem 1: Dual Database Configuration Conflict
+
 **Location**: `config.py` line 23, `ml_database_config.py` line 13
 **Issue**: App tries to use both SQLite and PostgreSQL simultaneously
 
 **Current Code**:
+
 ```python
 # config.py
 _default_db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "investment_research.db")
 SQLALCHEMY_DATABASE_URI = f"sqlite:///{_default_db_path}"
 
-# ml_database_config.py  
+# ml_database_config.py
 ML_DATABASE_URL = os.getenv('ML_DATABASE_URL', 'postgresql://localhost:5432/research')
 ```
 
 **Fix Required**:
+
 ```python
 # In config.py - Replace lines 23-41 with:
 import os
@@ -32,7 +35,7 @@ import os
 class Config:
     # Detect AWS environment
     is_aws = bool(os.getenv('AWS_REGION') or os.path.exists('/opt/aws') or os.getenv('AWS_EXECUTION_ENV'))
-    
+
     if is_aws:
         # Production: Force PostgreSQL for both main and ML databases
         if not os.getenv('DATABASE_URL'):
@@ -44,19 +47,21 @@ class Config:
         _default_db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "investment_research.db")
         _raw_db_url = f"sqlite:///{_default_db_path}"
         ML_DATABASE_URL = _raw_db_url
-    
+
     # Fix Heroku-style postgres:// to postgresql://
     if _raw_db_url.startswith("postgres://"):
         _raw_db_url = _raw_db_url.replace("postgres://", "postgresql://", 1)
-    
+
     SQLALCHEMY_DATABASE_URI = _raw_db_url
 ```
 
 #### Problem 2: ML Database Connection Fallback Issues
+
 **Location**: `ml_database_config.py` lines 13-30
 **Issue**: Hardcoded localhost fallback causes runtime errors
 
 **Fix Required**:
+
 ```python
 # Replace ml_database_config.py content with:
 import os
@@ -87,14 +92,14 @@ try:
     )
     MLSession = scoped_session(sessionmaker(bind=ml_engine))
     MLBase = declarative_base()
-    
+
     def test_ml_connection():
         try:
             ml_engine.execute("SELECT 1")
             return True
         except:
             return False
-            
+
 except Exception as e:
     print(f"❌ ML Database configuration failed: {e}")
     ml_engine = None
@@ -105,10 +110,12 @@ except Exception as e:
 ### 2. **Environment Variable Configuration**
 
 #### Problem: Hardcoded Localhost References
+
 **Location**: Multiple locations in `app.py`
 **Issue**: Hardcoded localhost URLs will break on EC2
 
 **Fix Required - Add to app.py after line 933**:
+
 ```python
 # Add environment-aware URL configuration
 def get_base_url():
@@ -122,12 +129,12 @@ def get_base_url():
             import requests
             response = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4', timeout=2)
             if response.status_code == 200:
-                return f"http://{response.text}:5008"
+                return f"http://{response.text}:80"
         except:
             pass
-        return "http://localhost:5008"  # Fallback
+        return "http://localhost:80"  # Fallback
     else:
-        return "http://localhost:5008"  # Development
+        return "http://localhost:80"  # Development
 
 # Set global base URL
 BASE_URL = get_base_url()
@@ -135,15 +142,17 @@ app.config['BASE_URL'] = BASE_URL
 ```
 
 #### Fix Fyers Redirect URI - Replace line 416:
+
 ```python
 # OLD:
-# redirect_uri = os.getenv('FYERS_REDIRECT_URI', 'http://127.0.0.1:5008/fyers/callback')
+# redirect_uri = os.getenv('FYERS_REDIRECT_URI', 'http://127.0.0.1:80/fyers/callback')
 
 # NEW:
 redirect_uri = os.getenv('FYERS_REDIRECT_URI', f"{BASE_URL}/fyers/callback")
 ```
 
 #### Fix Ollama API URL - Replace line 27862:
+
 ```python
 # OLD:
 # req = urllib.request.Request('http://localhost:11434/api/generate', data=body, headers={'Content-Type':'application/json'})
@@ -156,6 +165,7 @@ req = urllib.request.Request(f'{ollama_base}/api/generate', data=body, headers={
 ### 3. **Database Migration and Initialization**
 
 Create a new file `aws_database_setup.py`:
+
 ```python
 #!/usr/bin/env python3
 """
@@ -174,40 +184,40 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 def setup_database():
     """Initialize database for AWS deployment"""
     print("🚀 Setting up database for AWS deployment...")
-    
+
     # Create Flask app
     app = Flask(__name__)
     app.config.from_object(Config)
-    
+
     # Import database and models
     from extensions import db
-    
+
     # Import all models to ensure they're registered
     try:
         from investor_terminal_export.models import (
-            InvestorAccount, InvestorPortfolioStock, 
+            InvestorAccount, InvestorPortfolioStock,
             PortfolioAnalysisLimit, ChatHistory
         )
         print("✅ Investor models imported")
     except ImportError as e:
         print(f"⚠️ Some investor models not available: {e}")
-    
+
     # Initialize database
     db.init_app(app)
-    
+
     with app.app_context():
         try:
             # Test database connection
             db.session.execute(db.text('SELECT 1'))
             print("✅ Database connection verified")
-            
+
             # Create all tables
             db.create_all()
             print("✅ Database tables created successfully")
-            
+
             # Create default admin user if needed
             from werkzeug.security import generate_password_hash
-            
+
             # Check if admin exists
             if hasattr(db.Model, 'query') and InvestorAccount:
                 admin_exists = InvestorAccount.query.filter_by(username='admin').first()
@@ -224,10 +234,10 @@ def setup_database():
                     print("✅ Default admin user created (username: admin, password: change_me_admin_2025)")
                 else:
                     print("ℹ️ Admin user already exists")
-            
+
             print("🎉 Database setup completed successfully!")
             return True
-            
+
         except Exception as e:
             print(f"❌ Database setup failed: {e}")
             print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
@@ -241,6 +251,7 @@ if __name__ == "__main__":
 ### 4. **Production-Ready Error Handling**
 
 Add health check endpoint in `app.py` after line 72250:
+
 ```python
 @app.route('/health')
 def health_check():
@@ -248,7 +259,7 @@ def health_check():
     try:
         # Test main database
         db.session.execute(db.text('SELECT 1'))
-        
+
         # Test ML database if available
         ml_status = "not_configured"
         if ML_DATABASE_AVAILABLE:
@@ -257,7 +268,7 @@ def health_check():
                 ml_status = "connected" if test_ml_connection() else "failed"
             except:
                 ml_status = "error"
-        
+
         return {
             "status": "healthy",
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -265,7 +276,7 @@ def health_check():
             "ml_database": ml_status,
             "environment": "aws" if os.getenv('AWS_REGION') else "local"
         }, 200
-        
+
     except Exception as e:
         return {
             "status": "unhealthy",
@@ -283,9 +294,9 @@ def config_check():
         "aws_environment": bool(os.getenv('AWS_REGION')),
         "ssl_configured": os.getenv('USE_SSL', 'true').lower() == 'true'
     }
-    
+
     all_good = all(checks.values())
-    
+
     return {
         "status": "ready" if all_good else "needs_configuration",
         "checks": checks,
@@ -300,6 +311,7 @@ def config_check():
 ### Pre-Deployment Setup
 
 1. **Create RDS PostgreSQL Instance**:
+
 ```bash
 # AWS CLI command example
 aws rds create-db-instance \
@@ -314,13 +326,14 @@ aws rds create-db-instance \
 ```
 
 2. **Create Environment File**:
-Create `/opt/flask-app/.env`:
+   Create `/opt/flask-app/.env`:
+
 ```bash
 # Database Configuration
 DATABASE_URL=postgresql://appuser:YourSecurePassword123!@your-rds-endpoint.region.rds.amazonaws.com:5432/postgres
 ML_DATABASE_URL=postgresql://appuser:YourSecurePassword123!@your-rds-endpoint.region.rds.amazonaws.com:5432/postgres
 
-# Application Configuration  
+# Application Configuration
 SECRET_KEY=your-super-secure-random-256-bit-key-here
 FLASK_DEBUG=false
 PRODUCTION=true
@@ -341,6 +354,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 ```
 
 3. **Install Dependencies**:
+
 ```bash
 # On EC2 instance
 cd /opt/flask-app
@@ -348,21 +362,24 @@ python3 -m pip install -r requirements.txt
 ```
 
 4. **Initialize Database**:
+
 ```bash
 # Run database setup
 python3 aws_database_setup.py
 ```
 
 5. **Test Configuration**:
+
 ```bash
 # Check if configuration is correct
-curl http://localhost:5008/config-check
+curl http://localhost:80/config-check
 ```
 
 ### Security Group Configuration
 
 Allow these ports in your EC2 security group:
-- **Port 5008**: Application port
+
+- **Port 80**: Application port
 - **Port 443**: HTTPS (if using SSL)
 - **Port 80**: HTTP redirect to HTTPS
 - **Port 5432**: PostgreSQL (only from app security group)
@@ -370,13 +387,14 @@ Allow these ports in your EC2 security group:
 ### Nginx Configuration (Recommended)
 
 Create `/etc/nginx/sites-available/flask-app`:
+
 ```nginx
 server {
     listen 80;
     server_name your-domain.com;
-    
+
     location / {
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -388,6 +406,7 @@ server {
 ### Systemd Service Setup
 
 Create `/etc/systemd/system/flask-app.service`:
+
 ```ini
 [Unit]
 Description=Flask Investment App
@@ -411,6 +430,7 @@ WantedBy=multi-user.target
 ## 🔍 **Testing and Validation**
 
 ### 1. Database Connection Test
+
 ```bash
 # Test database connectivity
 python3 -c "
@@ -423,16 +443,18 @@ print('✅ Database connection successful')
 ```
 
 ### 2. Application Health Check
+
 ```bash
 # After starting the app
-curl http://localhost:5008/health
-curl http://localhost:5008/config-check
+curl http://localhost:80/health
+curl http://localhost:80/config-check
 ```
 
 ### 3. Full Application Test
+
 ```bash
 # Test main dashboard
-curl -I http://localhost:5008/
+curl -I http://localhost:80/
 # Should return HTTP 200
 ```
 
@@ -441,22 +463,29 @@ curl -I http://localhost:5008/
 ## 🚨 **Common Deployment Errors and Solutions**
 
 ### Error 1: "No module named 'extensions'"
+
 **Solution**: Ensure all Python files are in the correct directory and PYTHONPATH is set.
 
 ### Error 2: "SQLALCHEMY_DATABASE_URI not configured"
+
 **Solution**: Check that `.env` file exists and DATABASE_URL is set correctly.
 
 ### Error 3: "Connection refused" to database
-**Solution**: 
+
+**Solution**:
+
 - Check RDS security group allows connections from EC2
 - Verify database endpoint and credentials
 - Test with: `psql -h your-endpoint -U username -d dbname`
 
 ### Error 4: "ImportError: No module named 'psycopg2'"
+
 **Solution**: Install PostgreSQL adapter: `pip install psycopg2-binary`
 
 ### Error 5: "Permission denied" errors
-**Solution**: 
+
+**Solution**:
+
 ```bash
 # Set proper ownership
 sudo chown -R flask-app:flask-app /opt/flask-app
@@ -477,16 +506,16 @@ sudo chmod +x /opt/flask-app/app.py
 
 ## 🔧 **Environment Variables Reference**
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes | None | PostgreSQL connection string |
-| `ML_DATABASE_URL` | No | DATABASE_URL | ML models database connection |
-| `SECRET_KEY` | Yes | None | Flask secret key for sessions |
-| `DOMAIN_NAME` | Recommended | None | Your domain name |
-| `USE_SSL` | No | true | Enable HTTPS redirects |
-| `FYERS_CLIENT_ID` | For trading | None | Fyers API client ID |
-| `FYERS_SECRET_KEY` | For trading | None | Fyers API secret |
-| `ANTHROPIC_API_KEY` | For AI features | None | Anthropic API key |
-| `AWS_REGION` | Auto-detected | None | AWS region for services |
+| Variable            | Required        | Default      | Description                   |
+| ------------------- | --------------- | ------------ | ----------------------------- |
+| `DATABASE_URL`      | Yes             | None         | PostgreSQL connection string  |
+| `ML_DATABASE_URL`   | No              | DATABASE_URL | ML models database connection |
+| `SECRET_KEY`        | Yes             | None         | Flask secret key for sessions |
+| `DOMAIN_NAME`       | Recommended     | None         | Your domain name              |
+| `USE_SSL`           | No              | true         | Enable HTTPS redirects        |
+| `FYERS_CLIENT_ID`   | For trading     | None         | Fyers API client ID           |
+| `FYERS_SECRET_KEY`  | For trading     | None         | Fyers API secret              |
+| `ANTHROPIC_API_KEY` | For AI features | None         | Anthropic API key             |
+| `AWS_REGION`        | Auto-detected   | None         | AWS region for services       |
 
 This guide should resolve all critical deployment issues. Test thoroughly in a staging environment before production deployment.

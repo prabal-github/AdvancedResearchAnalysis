@@ -8,7 +8,7 @@ def main():
     print("🚀 SUBSCRIBED ML MODELS DASHBOARD - COMPLETE TEST")
     print("=" * 60)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     session = requests.Session()
     
     # Step 1: Login

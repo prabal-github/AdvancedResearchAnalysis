@@ -16,7 +16,7 @@ def final_analyst_test():
     login_data = {'email': 'Saiyam Jangada', 'password': 'password'}  # Assuming default password
     
     # Login
-    login_response = session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+    login_response = session.post('http://127.0.0.1:80/analyst_login', data=login_data)
     print(f"   Login status: {login_response.status_code}")
     
     if login_response.status_code == 302:
@@ -42,7 +42,7 @@ def final_analyst_test():
     
     for route, name in routes_to_test:
         try:
-            response = session.get(f'http://127.0.0.1:5008{route}', timeout=10)
+            response = session.get(f'http://127.0.0.1:80{route}', timeout=10)
             if response.status_code == 200:
                 print(f"   ✅ {name}: ACCESSIBLE")
                 accessible_routes += 1
@@ -64,7 +64,7 @@ def final_analyst_test():
     
     for route in admin_routes:
         try:
-            response = session.get(f'http://127.0.0.1:5008{route}', timeout=5)
+            response = session.get(f'http://127.0.0.1:80{route}', timeout=5)
             if response.status_code == 200:
                 print(f"   ⚠️  WARNING: Analyst can access {route}")
             else:

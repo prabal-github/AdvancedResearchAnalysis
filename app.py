@@ -413,7 +413,7 @@ def get_fyers_client(investor_id=None):
             
         client_id = os.getenv('FYERS_CLIENT_ID')
         secret_key = os.getenv('FYERS_SECRET_KEY')
-        redirect_uri = os.getenv('FYERS_REDIRECT_URI', 'http://127.0.0.1:5008/fyers/callback')
+        redirect_uri = os.getenv('FYERS_REDIRECT_URI', 'http://127.0.0.1:80/fyers/callback')
         
         if not client_id or not secret_key:
             print("⚠️ Fyers API credentials not found in environment variables")
@@ -61938,7 +61938,7 @@ def enhanced_events_feed_api():
     # Try local service at original path (HTML route may return JSON if module provides it)
     try:
         import urllib.request as _url
-        local_url = 'http://127.0.0.1:5008/enhanced_events_analytics'
+        local_url = 'http://127.0.0.1:80/enhanced_events_analytics'
         with _url.urlopen(local_url, timeout=4) as r:
             raw = r.read().decode('utf-8','ignore')
         # Heuristic: if looks like JSON object with 'events' or 'predictions'
@@ -61951,7 +61951,7 @@ def enhanced_events_feed_api():
     return jsonify({'events': sample, 'upstream':'none'})
 
 # Unified internal API version of enhanced events analytics (JSON) so frontend
-# doesn't rely on separate localhost:5008 service. Exposes analyzer dashboard
+# doesn't rely on separate localhost:80 service. Exposes analyzer dashboard
 # data (events, predictions, market_context, counts, etc.). Falls back to the
 # simpler sample events builder if analyzer modules unavailable.
 @app.route('/api/enhanced_events_analytics', methods=['GET'])
@@ -67810,7 +67810,7 @@ def run_published_model_async(mid):
             import requests
             
             # Get the current server port dynamically
-            server_port = request.environ.get('SERVER_PORT', '5008')
+            server_port = request.environ.get('SERVER_PORT', '80')
             sync_url = f"http://127.0.0.1:{server_port}/api/published_models/{mid}/run"
             headers = {'Content-Type': 'application/json'}
             
@@ -70950,7 +70950,7 @@ if __name__ == '__main__':
             with _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM) as s:
                 s.settimeout(0.3)
                 return s.connect_ex(('127.0.0.1', port)) == 0
-        base_port = int(_os.getenv('APP_PORT','5008'))
+        base_port = int(_os.getenv('APP_PORT','80'))
         chosen_port = base_port
         for _i in range(10):  # Increased range to find free port
             if not _is_port_in_use_tmp(chosen_port):
@@ -71037,16 +71037,16 @@ if __name__ == '__main__':
     print("  ✅ ML Model Performance Tracking with Stock Recommendations")
     # print("  🎯 hAi-Edge ML Portfolio - Hybrid AI/ML Hedge Fund System")  # Temporarily disabled
     print("\n🌐 Access Points:")
-    print("  - Main Dashboard: http://127.0.0.1:5008/")
-    print("  - AI Research Assistant: http://127.0.0.1:5008/ai_research_assistant")  
-    print("  - Admin Research Topics: http://127.0.0.1:5008/admin/research_topics")
-    print("  - Analyst Assignments: http://127.0.0.1:5008/analyst/research_assignments")
-    print("  - 🤖 Agentic AI Assistant: http://127.0.0.1:5008/agentic_ai")
-    print("  - 📊 VS Terminal AClass: http://127.0.0.1:5008/vs_terminal_AClass")
-    print("  - 🧠 VS Terminal ML Class: http://127.0.0.1:5008/vs_terminal_MLClass")
-    # print("  - 🎯 hAi-Edge ML Portfolio: http://127.0.0.1:5008/hai-edge")  # Temporarily disabled
-    print("  - 📁 GitHub Integration: http://127.0.0.1:5008/github/setup")
-    print("  - 📈 Published Models: http://127.0.0.1:5008/published")
+    print("  - Main Dashboard: http://127.0.0.1:80/")
+    print("  - AI Research Assistant: http://127.0.0.1:80/ai_research_assistant")  
+    print("  - Admin Research Topics: http://127.0.0.1:80/admin/research_topics")
+    print("  - Analyst Assignments: http://127.0.0.1:80/analyst/research_assignments")
+    print("  - 🤖 Agentic AI Assistant: http://127.0.0.1:80/agentic_ai")
+    print("  - 📊 VS Terminal AClass: http://127.0.0.1:80/vs_terminal_AClass")
+    print("  - 🧠 VS Terminal ML Class: http://127.0.0.1:80/vs_terminal_MLClass")
+    # print("  - 🎯 hAi-Edge ML Portfolio: http://127.0.0.1:80/hai-edge")  # Temporarily disabled
+    print("  - 📁 GitHub Integration: http://127.0.0.1:80/github/setup")
+    print("  - 📈 Published Models: http://127.0.0.1:80/published")
     
     # Run without auto-reloader to avoid double-binding on Windows (eventlet)
     # Handle 'Only one usage of each socket address' (WinError 10048) by trying fallback ports.
@@ -71057,7 +71057,7 @@ if __name__ == '__main__':
             return s.connect_ex(('127.0.0.1', port)) == 0
 
     import os
-    base_port = int(os.getenv('APP_PORT', '5008'))
+    base_port = int(os.getenv('APP_PORT', '80'))
     chosen_port = base_port
     max_attempts = 10  # Increased attempts to find free port
     attempt = 0
@@ -72278,8 +72278,8 @@ def broadcast_risk_updates():
 # ================= FLASK APPLICATION STARTUP =================
 if __name__ == '__main__':
     print("🌟 Starting optimized Flask application with lazy loading...")
-    print("📈 Access your dashboard at: http://127.0.0.1:5008/")
-    print("🔧 Performance monitoring: http://127.0.0.1:5008/api/performance/status")
+    print("📈 Access your dashboard at: http://127.0.0.1:80/")
+    print("🔧 Performance monitoring: http://127.0.0.1:80/api/performance/status")
     print("⚠️  CSRF PROTECTION TEMPORARILY DISABLED FOR DEBUGGING - RE-ENABLE FOR PRODUCTION")
     print("🧪 Debug endpoints: /api/debug/csrf_check and /api/debug/session_info")
     

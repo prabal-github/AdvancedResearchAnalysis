@@ -20,6 +20,7 @@
 This documentation provides step-by-step instructions for developers to integrate Anthropic Claude API into the PredictRAM ML platform for AI-powered run history analysis.
 
 ### **Features Provided:**
+
 - **AI-Powered Analysis**: Claude Sonnet 3.5/3.7 integration for intelligent insights
 - **Admin Configuration**: Web-based API key management
 - **Multiple Analysis Types**: Comprehensive, Performance, and Trends analysis
@@ -27,6 +28,7 @@ This documentation provides step-by-step instructions for developers to integrat
 - **Fallback Support**: Graceful degradation when AI is unavailable
 
 ### **System Requirements:**
+
 - Python 3.8+
 - Flask web framework
 - PostgreSQL database
@@ -38,12 +40,14 @@ This documentation provides step-by-step instructions for developers to integrat
 ## 🔧 **Prerequisites**
 
 ### **1. Anthropic API Account**
+
 ```bash
 # Get your API key from: https://console.anthropic.com/
 # Account setup required with billing information
 ```
 
 ### **2. Python Dependencies**
+
 ```bash
 pip install anthropic>=0.18.0
 pip install flask
@@ -52,6 +56,7 @@ pip install psycopg2-binary  # for PostgreSQL
 ```
 
 ### **3. Environment Setup**
+
 ```bash
 # Optional: Set environment variable (alternative to UI configuration)
 export ANTHROPIC_API_KEY="your_api_key_here"
@@ -64,6 +69,7 @@ export CLAUDE_API_KEY="your_api_key_here"
 ## 🚀 **Installation & Setup**
 
 ### **Step 1: Install Anthropic Package**
+
 ```bash
 # Install the official Anthropic Python SDK
 pip install anthropic
@@ -73,6 +79,7 @@ python -c "import anthropic; print('Anthropic SDK installed successfully')"
 ```
 
 ### **Step 2: Database Schema Update**
+
 The system uses the existing `AdminAPIKey` table for secure storage:
 
 ```sql
@@ -93,6 +100,7 @@ SELECT * FROM admin_api_keys WHERE service_name = 'anthropic';
 ```
 
 ### **Step 3: Code Integration**
+
 The following components are already implemented in `app.py`:
 
 1. **Claude Client Class** (Lines ~4980-5080)
@@ -107,12 +115,14 @@ The following components are already implemented in `app.py`:
 ### **Method 1: Web UI Configuration (Recommended)**
 
 1. **Access Admin Panel:**
+
    ```
-   URL: http://127.0.0.1:5008/published
+   URL: http://127.0.0.1:80/published
    Requirement: Admin authentication required
    ```
 
 2. **Configure API Key:**
+
    - Admin banner will appear at the top
    - Enter your Anthropic API key
    - Select preferred model (Sonnet 3.5 recommended)
@@ -124,6 +134,7 @@ The following components are already implemented in `app.py`:
    - Test result will display API validation status
 
 ### **Method 2: Environment Variable**
+
 ```bash
 # Set environment variable before starting the application
 export ANTHROPIC_API_KEY="sk-ant-api03-xxx"
@@ -133,6 +144,7 @@ python app.py
 ```
 
 ### **Method 3: Direct Database Insert**
+
 ```python
 from app import app, db, AdminAPIKey
 from datetime import datetime
@@ -147,7 +159,7 @@ with app.app_context():
         created_by='admin_user_id',
         created_at=datetime.utcnow()
     )
-    
+
     db.session.add(api_key)
     db.session.commit()
     print("Anthropic API key configured successfully")
@@ -160,24 +172,25 @@ with app.app_context():
 ### **Backend Implementation**
 
 #### **1. Analysis Endpoint**
+
 ```python
 @app.route('/api/published_models/<mid>/run_history_analysis', methods=['POST'])
 def generate_run_history_analysis(mid):
     """Generate AI-powered run history analysis using Anthropic Claude"""
-    
+
     # Authentication check
     if not (session.get('investor_id') or session.get('admin_id') or session.get('analyst_id')):
         return jsonify({'ok': False, 'error': 'Authentication required'}), 401
-    
+
     # Get request parameters
     data = request.get_json() or {}
     model_preference = data.get('model', 'sonnet-3.5')
     analysis_type = data.get('analysis_type', 'comprehensive')
     limit = int(data.get('limit', 30))
-    
+
     # Fetch run history data
     # ... (implemented in the code)
-    
+
     # Generate AI analysis
     if anthropic_api_key and ANTHROPIC_AVAILABLE:
         client = anthropic.Anthropic(api_key=anthropic_api_key)
@@ -187,7 +200,7 @@ def generate_run_history_analysis(mid):
             messages=[{"role": "user", "content": prompt}]
         )
         analysis_result = message.content[0].text
-    
+
     return jsonify({
         'ok': True,
         'analysis': analysis_result,
@@ -198,12 +211,13 @@ def generate_run_history_analysis(mid):
 ```
 
 #### **2. Admin Configuration Endpoint**
+
 ```python
 @app.route('/api/admin/anthropic/config', methods=['GET', 'POST'])
 @admin_required
 def anthropic_admin_config():
     """Manage Anthropic AI configuration"""
-    
+
     if request.method == 'GET':
         # Return current configuration
         anthropic_key = AdminAPIKey.query.filter_by(service_name='anthropic').first()
@@ -218,80 +232,87 @@ def anthropic_admin_config():
                 }
             }
         })
-    
+
     elif request.method == 'POST':
         # Configure API key
         data = request.get_json()
         action = data.get('action', 'configure')
-        
+
         if action == 'configure':
             api_key = data.get('api_key')
             # Test and save API key
             # ... (implemented in the code)
-        
+
         return jsonify({'success': True, 'message': 'Configuration updated'})
 ```
 
 ### **Frontend Implementation**
 
 #### **1. Analysis Dialog Enhancement**
+
 ```html
 <!-- Enhanced UI controls in published_catalog.html -->
-<div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;">
-    <div style="flex:1; min-width:160px;">
-        <label for="analysisProvider">Provider</label>
-        <select id="analysisProvider">
-            <option value="ollama">Ollama (local)</option>
-            <option value="anthropic">Anthropic Claude (AWS)</option>
-        </select>
-    </div>
-    
-    <div style="flex:1; min-width:180px;">
-        <label for="analysisModel">Model</label>
-        <select id="analysisModel">
-            <option value="sonnet-3.5">Sonnet 3.5 (Recommended)</option>
-            <option value="sonnet-4">Sonnet 4 (Future)</option>
-            <option value="sonnet-legacy">Sonnet 3 (Legacy)</option>
-        </select>
-    </div>
-    
-    <div style="flex:1; min-width:160px;">
-        <label for="analysisType">Analysis Type</label>
-        <select id="analysisType">
-            <option value="comprehensive">Comprehensive Report</option>
-            <option value="performance">Performance Analysis</option>
-            <option value="trends">Trends & Patterns</option>
-        </select>
-    </div>
+<div
+  style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;"
+>
+  <div style="flex:1; min-width:160px;">
+    <label for="analysisProvider">Provider</label>
+    <select id="analysisProvider">
+      <option value="ollama">Ollama (local)</option>
+      <option value="anthropic">Anthropic Claude (AWS)</option>
+    </select>
+  </div>
+
+  <div style="flex:1; min-width:180px;">
+    <label for="analysisModel">Model</label>
+    <select id="analysisModel">
+      <option value="sonnet-3.5">Sonnet 3.5 (Recommended)</option>
+      <option value="sonnet-4">Sonnet 4 (Future)</option>
+      <option value="sonnet-legacy">Sonnet 3 (Legacy)</option>
+    </select>
+  </div>
+
+  <div style="flex:1; min-width:160px;">
+    <label for="analysisType">Analysis Type</label>
+    <select id="analysisType">
+      <option value="comprehensive">Comprehensive Report</option>
+      <option value="performance">Performance Analysis</option>
+      <option value="trends">Trends & Patterns</option>
+    </select>
+  </div>
 </div>
 ```
 
 #### **2. JavaScript Integration**
+
 ```javascript
 const runAnalysis = async () => {
-    const providerSel = document.getElementById('analysisProvider').value;
-    const modelSel = document.getElementById('analysisModel').value.trim();
-    const analysisType = document.getElementById('analysisType').value;
-    
-    if (providerSel === 'anthropic') {
-        // Use new Anthropic-powered analysis endpoint
-        const payload = {
-            model: modelSel || 'sonnet-3.5',
-            analysis_type: analysisType,
-            limit: 30
-        };
-        
-        const response = await fetch(`/api/published_models/${id}/run_history_analysis`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        
-        const result = await response.json();
-        if (result.ok) {
-            displayAnalysis(result.analysis);
-        }
+  const providerSel = document.getElementById("analysisProvider").value;
+  const modelSel = document.getElementById("analysisModel").value.trim();
+  const analysisType = document.getElementById("analysisType").value;
+
+  if (providerSel === "anthropic") {
+    // Use new Anthropic-powered analysis endpoint
+    const payload = {
+      model: modelSel || "sonnet-3.5",
+      analysis_type: analysisType,
+      limit: 30,
+    };
+
+    const response = await fetch(
+      `/api/published_models/${id}/run_history_analysis`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const result = await response.json();
+    if (result.ok) {
+      displayAnalysis(result.analysis);
     }
+  }
 };
 ```
 
@@ -300,8 +321,9 @@ const runAnalysis = async () => {
 ## 📖 **Usage Examples**
 
 ### **Example 1: Generate Comprehensive Analysis**
+
 ```bash
-curl -X POST http://127.0.0.1:5008/api/published_models/MODEL_ID/run_history_analysis \
+curl -X POST http://127.0.0.1:80/api/published_models/MODEL_ID/run_history_analysis \
   -H "Content-Type: application/json" \
   -d '{
     "model": "sonnet-3.5",
@@ -311,6 +333,7 @@ curl -X POST http://127.0.0.1:5008/api/published_models/MODEL_ID/run_history_ana
 ```
 
 **Response:**
+
 ```json
 {
   "ok": true,
@@ -334,41 +357,46 @@ curl -X POST http://127.0.0.1:5008/api/published_models/MODEL_ID/run_history_ana
 ```
 
 ### **Example 2: Performance Analysis Only**
+
 ```javascript
 // Frontend JavaScript example
 const analyzePerformance = async (modelId) => {
-    const response = await fetch(`/api/published_models/${modelId}/run_history_analysis`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            model: 'sonnet-3.5',
-            analysis_type: 'performance',
-            limit: 20
-        })
-    });
-    
-    const result = await response.json();
-    console.log('Performance Analysis:', result.analysis.content);
+  const response = await fetch(
+    `/api/published_models/${modelId}/run_history_analysis`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonnet-3.5",
+        analysis_type: "performance",
+        limit: 20,
+      }),
+    }
+  );
+
+  const result = await response.json();
+  console.log("Performance Analysis:", result.analysis.content);
 };
 ```
 
 ### **Example 3: Admin Configuration**
+
 ```javascript
 // Configure Anthropic API key
 const configureAnthropic = async (apiKey) => {
-    const response = await fetch('/api/admin/anthropic/config', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            action: 'configure',
-            api_key: apiKey
-        })
-    });
-    
-    const result = await response.json();
-    if (result.success) {
-        console.log('API key configured successfully');
-    }
+  const response = await fetch("/api/admin/anthropic/config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "configure",
+      api_key: apiKey,
+    }),
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    console.log("API key configured successfully");
+  }
 };
 ```
 
@@ -377,6 +405,7 @@ const configureAnthropic = async (apiKey) => {
 ## 🌐 **Deployment**
 
 ### **Local Development**
+
 ```bash
 # 1. Set environment variable (optional)
 export ANTHROPIC_API_KEY="your_api_key"
@@ -385,10 +414,11 @@ export ANTHROPIC_API_KEY="your_api_key"
 python app.py
 
 # 3. Access the interface
-# URL: http://127.0.0.1:5008/published
+# URL: http://127.0.0.1:80/published
 ```
 
 ### **AWS EC2 Production**
+
 ```bash
 # 1. Deploy your application to EC2
 # 2. Set environment variables in production
@@ -403,6 +433,7 @@ curl -X GET https://research.predictram.com/api/admin/anthropic/config
 ```
 
 ### **Environment Variables for Production**
+
 ```bash
 # Required for production deployment
 export ANTHROPIC_API_KEY="sk-ant-api03-xxx"
@@ -418,6 +449,7 @@ export FLASK_ENV="production"
 ### **Common Issues & Solutions**
 
 #### **1. "Anthropic package not available"**
+
 ```bash
 # Solution: Install the package
 pip install anthropic>=0.18.0
@@ -427,6 +459,7 @@ python -c "import anthropic; print('OK')"
 ```
 
 #### **2. "API key validation failed"**
+
 ```bash
 # Check API key format
 # Should start with: sk-ant-api03-
@@ -445,12 +478,14 @@ print('API key is valid')
 ```
 
 #### **3. "Authentication required"**
+
 ```bash
 # Ensure you're logged in as admin/analyst/investor
 # Check session data in browser developer tools
 ```
 
 #### **4. "Analysis request failed"**
+
 ```bash
 # Check server logs for detailed error
 tail -f app.log
@@ -461,6 +496,7 @@ tail -f app.log
 ```
 
 ### **Debug Mode**
+
 ```python
 # Enable debug logging for troubleshooting
 import logging
@@ -480,6 +516,7 @@ print(f"Available models: {client.model_options}")
 ## 🔒 **Security Considerations**
 
 ### **1. API Key Storage**
+
 ```python
 # ✅ Secure storage in database
 api_key = AdminAPIKey(
@@ -494,6 +531,7 @@ api_key = AdminAPIKey(
 ```
 
 ### **2. Access Control**
+
 ```python
 # Only admin users can configure API keys
 @app.route('/api/admin/anthropic/config')
@@ -507,6 +545,7 @@ if not (investor_id or admin_id or analyst_id):
 ```
 
 ### **3. Input Validation**
+
 ```python
 # Validate model selection
 valid_models = ['sonnet-3.5', 'sonnet-4', 'sonnet-legacy']
@@ -523,6 +562,7 @@ limit = min(int(data.get('limit', 30)), 100)  # Max 100 runs
 ```
 
 ### **4. Rate Limiting**
+
 ```python
 # Consider implementing rate limiting for API calls
 # Example with Flask-Limiter:
@@ -545,6 +585,7 @@ def generate_run_history_analysis(mid):
 ## ✅ **Testing & Validation**
 
 ### **1. Automated Testing**
+
 ```python
 # Run the validation script
 python validate_anthropic_implementation.py
@@ -560,8 +601,9 @@ python validate_anthropic_implementation.py
 ### **2. Manual Testing**
 
 #### **Step 1: Configuration Test**
+
 ```bash
-# 1. Open http://127.0.0.1:5008/published
+# 1. Open http://127.0.0.1:80/published
 # 2. Login as admin
 # 3. Configure API key in admin banner
 # 4. Click "Test" button
@@ -569,6 +611,7 @@ python validate_anthropic_implementation.py
 ```
 
 #### **Step 2: Analysis Test**
+
 ```bash
 # 1. Navigate to published models page
 # 2. Click any model's "Analysis" button
@@ -580,9 +623,10 @@ python validate_anthropic_implementation.py
 ```
 
 #### **Step 3: API Endpoint Test**
+
 ```bash
 # Test the endpoint directly
-curl -X POST http://127.0.0.1:5008/api/published_models/1/run_history_analysis \
+curl -X POST http://127.0.0.1:80/api/published_models/1/run_history_analysis \
   -H "Content-Type: application/json" \
   -H "Cookie: session=your_session_cookie" \
   -d '{
@@ -593,6 +637,7 @@ curl -X POST http://127.0.0.1:5008/api/published_models/1/run_history_analysis \
 ```
 
 ### **3. Performance Testing**
+
 ```python
 # Test response times
 import time
@@ -600,7 +645,7 @@ import requests
 
 start_time = time.time()
 response = requests.post(
-    'http://127.0.0.1:5008/api/published_models/1/run_history_analysis',
+    'http://127.0.0.1:80/api/published_models/1/run_history_analysis',
     json={'model': 'sonnet-3.5', 'analysis_type': 'comprehensive'},
     headers={'Content-Type': 'application/json'}
 )
@@ -615,11 +660,13 @@ print(f"Status code: {response.status_code}")
 ## 📚 **Additional Resources**
 
 ### **Anthropic Documentation**
+
 - [Anthropic API Documentation](https://docs.anthropic.com/)
 - [Claude Model Information](https://docs.anthropic.com/claude/docs/models-overview)
 - [Python SDK Reference](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
 
 ### **Model Specifications**
+
 ```python
 # Available models and their capabilities
 ANTHROPIC_MODELS = {
@@ -648,6 +695,7 @@ ANTHROPIC_MODELS = {
 ```
 
 ### **File Structure**
+
 ```
 ├── app.py                                    # Main application file
 ├── templates/

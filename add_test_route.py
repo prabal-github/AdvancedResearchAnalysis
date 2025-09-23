@@ -47,11 +47,11 @@ print("=" * 60)
 print("\n📋 Instructions:")
 print("1. Add the above code to app.py after the existing routes")
 print("2. Restart the Flask application")
-print("3. Access: http://127.0.0.1:5008/test_certificate/YourName")
+print("3. Access: http://127.0.0.1:80/test_certificate/YourName")
 print("4. This will generate and display an HTML certificate")
 
 print("\n🎯 Alternative - Use existing dashboard:")
-print("1. Go to: http://127.0.0.1:5008/")
+print("1. Go to: http://127.0.0.1:80/")
 print("2. Navigate to Analyst Certificate section")
 print("3. Follow the certificate request workflow")
 

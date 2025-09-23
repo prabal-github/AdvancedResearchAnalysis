@@ -3,6 +3,7 @@
 ## Quick Start Guide for Developers
 
 ### 🚀 **STEP 1: Apply Critical Fixes**
+
 ```bash
 # Run the automated fix script
 python apply_aws_fixes.py
@@ -11,17 +12,20 @@ python apply_aws_fixes.py
 ### 🔧 **STEP 2: Pre-Deployment Setup**
 
 #### A. **Set Up RDS Database**
+
 - [ ] Create PostgreSQL RDS instance
 - [ ] Configure security groups (allow port 5432 from EC2)
 - [ ] Note down database endpoint and credentials
 
 #### B. **Prepare EC2 Instance**
+
 - [ ] Launch EC2 instance (t3.medium or larger recommended)
 - [ ] Install Python 3.9+, pip, git
 - [ ] Create application directory: `/opt/flask-app`
 - [ ] Clone your repository to EC2
 
 #### C. **Configure Environment**
+
 - [ ] Copy `.env.production` to `.env` on EC2
 - [ ] Fill in actual values in `.env`:
   ```bash
@@ -32,6 +36,7 @@ python apply_aws_fixes.py
   ```
 
 ### 🗄️ **STEP 3: Database Initialization**
+
 ```bash
 # On EC2 instance
 cd /opt/flask-app
@@ -40,6 +45,7 @@ python3 aws_database_setup.py
 ```
 
 ### ✅ **STEP 4: Start Application**
+
 ```bash
 # Test run
 python3 app.py
@@ -50,10 +56,11 @@ sudo systemctl enable flask-app
 ```
 
 ### 🔍 **STEP 5: Validation**
+
 ```bash
 # Test endpoints
-curl http://your-ec2-ip:5008/health
-curl http://your-ec2-ip:5008/config-check
+curl http://your-ec2-ip:80/health
+curl http://your-ec2-ip:80/config-check
 
 # Should return status: "healthy" and "ready"
 ```
@@ -67,7 +74,7 @@ curl http://your-ec2-ip:5008/config-check
 ✅ **Hardcoded URLs**: Dynamic URL generation based on environment  
 ✅ **Connection Pooling**: Production-ready database settings  
 ✅ **Health Checks**: Monitoring endpoints for load balancers  
-✅ **Error Handling**: Graceful fallbacks for missing dependencies  
+✅ **Error Handling**: Graceful fallbacks for missing dependencies
 
 ---
 
@@ -84,6 +91,7 @@ curl http://your-ec2-ip:5008/config-check
 ## 📞 **Need Help?**
 
 **Database Connection Issues:**
+
 ```bash
 # Test database connectivity
 python3 -c "
@@ -96,11 +104,13 @@ print('✅ Database OK')
 ```
 
 **Application Won't Start:**
+
 1. Check logs: `journalctl -u flask-app -f`
 2. Verify environment: `python3 -c "import os; print(os.getenv('DATABASE_URL'))"`
 3. Test imports: `python3 -c "from app import app; print('✅ App loads OK')"`
 
 **Performance Issues:**
+
 - Monitor: `curl http://your-domain/health`
 - Check DB pool: Set `DB_POOL_SIZE=20` in environment
 - Enable monitoring: AWS CloudWatch or custom solution

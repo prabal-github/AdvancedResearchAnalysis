@@ -7,7 +7,7 @@ import requests
 import json
 
 # Test the advisor_query endpoint directly
-url = "http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/advisor_query"
+url = "http://127.0.0.1:80/api/vs_terminal_AClass/risk_management/advisor_query"
 data = {
     "query": "What is my portfolio risk level?",
     "context": "risk_analysis"

@@ -3,6 +3,7 @@
 ## 🐛 Issues Resolved
 
 ### ❌ Original Problems:
+
 1. **UndefinedError**: `'analyst' is undefined` in `analyst_dashboard.html`
 2. **Certificate generation not visible** in analyst performance dashboard
 3. **Certificate status not visible** for analysts
@@ -26,10 +27,10 @@ def analyst_dashboard(analyst_name):
     if not analyst:
         flash('Analyst not found', 'error')
         return redirect(url_for('index'))
-    
+
     # ... existing code ...
-    
-    return render_template('analyst_dashboard.html', 
+
+    return render_template('analyst_dashboard.html',
                          analyst=analyst,  # NEW: Pass full analyst object
                          analyst_name=analyst_name,
                          # ... other variables ...
@@ -47,47 +48,57 @@ def analyst_dashboard(analyst_name):
 **Solution**: Added comprehensive certificate section to `analyst_dashboard.html`:
 
 ### 🔹 Certificate Status Display:
+
 - **Eligibility indicator** (5 completed topics required)
 - **Progress bar** showing completion percentage
 - **Generate Certificate button** (when eligible)
 - **Existing certificates gallery** with download links
 
 ### 🔹 Certificate Generation Interface:
+
 ```html
 <!-- Certificate Status Section -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-certificate me-2 text-warning"></i>Certificate Status</h5>
-        {% if certificate_eligible %}
-        <button class="btn btn-success btn-sm" onclick="generateCertificate('{{ analyst.analyst_id }}')">
-            <i class="fas fa-plus me-1"></i>Generate Certificate
-        </button>
-        {% endif %}
-    </div>
-    <!-- Certificate display logic -->
+  <div
+    class="card-header bg-white d-flex justify-content-between align-items-center"
+  >
+    <h5 class="mb-0">
+      <i class="fas fa-certificate me-2 text-warning"></i>Certificate Status
+    </h5>
+    {% if certificate_eligible %}
+    <button
+      class="btn btn-success btn-sm"
+      onclick="generateCertificate('{{ analyst.analyst_id }}')"
+    >
+      <i class="fas fa-plus me-1"></i>Generate Certificate
+    </button>
+    {% endif %}
+  </div>
+  <!-- Certificate display logic -->
 </div>
 ```
 
 ### 🔹 JavaScript Integration:
+
 ```javascript
 function generateCertificate(analystId) {
-    fetch('/admin/certificates/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            analyst_id: analystId,
-            certificate_name: 'Research Analyst Certification',
-            skills_gained: 'Financial Analysis, Report Writing, Market Research'
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Certificate generated successfully!');
-            location.reload();
-        } else {
-            alert('Error: ' + data.error);
-        }
+  fetch("/admin/certificates/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      analyst_id: analystId,
+      certificate_name: "Research Analyst Certification",
+      skills_gained: "Financial Analysis, Report Writing, Market Research",
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Certificate generated successfully!");
+        location.reload();
+      } else {
+        alert("Error: " + data.error);
+      }
     });
 }
 ```
@@ -107,22 +118,22 @@ def generate_certificate_direct():
     try:
         data = request.get_json()
         analyst_id = data.get('analyst_id')
-        
+
         # Validate analyst
         analyst = AnalystProfile.query.filter_by(analyst_id=analyst_id).first()
         if not analyst:
             return jsonify({'success': False, 'error': 'Analyst not found'})
-        
+
         # Check for existing certificate
         existing_cert = CertificateRequest.query.filter_by(
             analyst_name=analyst.name,
             status='approved',
             certificate_generated=True
         ).first()
-        
+
         if existing_cert:
             return jsonify({'success': False, 'error': 'Certificate already exists'})
-        
+
         # Create certificate request
         cert_request = CertificateRequest(
             analyst_name=analyst.name,
@@ -131,17 +142,17 @@ def generate_certificate_direct():
             status='approved',
             certificate_unique_id=f'CERT-{analyst_id}-{datetime.utcnow().strftime("%Y%m%d")}'
         )
-        
+
         # Generate PDF and save
         pdf_path = generate_certificate_pdf(cert_request)
         cert_request.certificate_generated = True
         cert_request.certificate_file_path = pdf_path
-        
+
         db.session.add(cert_request)
         db.session.commit()
-        
+
         return jsonify({'success': True, 'certificate_id': cert_request.certificate_unique_id})
-        
+
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 ```
@@ -176,12 +187,12 @@ try:
     certificates = []
     cert_query = text("""
         SELECT certificate_id, certificate_name, issue_date, status, skills_gained
-        FROM certificates 
+        FROM certificates
         WHERE analyst_id = :analyst_id
         ORDER BY issue_date DESC
     """)
     cert_results = db.session.execute(cert_query, {'analyst_id': analyst.analyst_id}).fetchall()
-    
+
     for cert in cert_results:
         certificates.append({
             'certificate_id': cert[0],
@@ -190,16 +201,16 @@ try:
             'status': cert[3],
             'skills_gained': cert[4] if cert[4] else ''
         })
-        
+
     # Generate certificate eligibility status
     reports_count = len(completed_topics) if completed_topics else 0
     certificate_eligible = reports_count >= 5
-    
+
 except Exception as e:
     certificates = []
     certificate_eligible = False
 
-return render_template('analyst_dashboard.html', 
+return render_template('analyst_dashboard.html',
                      # ... existing variables ...
                      certificates=certificates,
                      certificate_eligible=certificate_eligible)
@@ -222,7 +233,7 @@ def download_certificate(cert_id):
         if not cert_request or not cert_request.certificate_generated:
             flash('Certificate not found', 'error')
             return redirect(url_for('index'))
-        
+
         return send_file(cert_request.certificate_file_path,
                         as_attachment=True,
                         download_name=f'certificate_{cert_id}.pdf',
@@ -237,6 +248,7 @@ def download_certificate(cert_id):
 ## ✅ Final Status
 
 ### 🎯 All Issues Resolved:
+
 - ✅ **UndefinedError fixed**: `analyst` object now properly passed to template
 - ✅ **Certificate generation visible**: Button appears when analyst is eligible (5+ completed topics)
 - ✅ **Certificate status visible**: Progress bar, eligibility status, and existing certificates display
@@ -245,12 +257,14 @@ def download_certificate(cert_id):
 - ✅ **Database integration**: Certificates properly stored and retrieved
 
 ### 🔗 Working URLs:
-- **Analyst Dashboard**: `http://localhost:5008/analyst/demo_analyst`
-- **Analyst Performance**: `http://localhost:5008/analyst/performance`
-- **Certificate Status**: `http://localhost:5008/analyst/certificate_status`
-- **Admin Certificates**: `http://localhost:5008/admin/certificates`
+
+- **Analyst Dashboard**: `http://localhost:80/analyst/demo_analyst`
+- **Analyst Performance**: `http://localhost:80/analyst/performance`
+- **Certificate Status**: `http://localhost:80/analyst/certificate_status`
+- **Admin Certificates**: `http://localhost:80/admin/certificates`
 
 ### 🔑 Demo Credentials:
+
 - **Analyst**: analyst@demo.com / analyst123
 - **Admin**: admin@researchqa.com / admin123
 
@@ -259,6 +273,7 @@ def download_certificate(cert_id):
 ## 🚀 Feature Overview
 
 ### Certificate System Features:
+
 1. **Automatic Eligibility**: Based on completed research topics (5 required)
 2. **Progress Tracking**: Visual progress bar showing completion percentage
 3. **One-Click Generation**: Generate certificate directly from dashboard
@@ -267,6 +282,7 @@ def download_certificate(cert_id):
 6. **Admin Management**: Admin can view and manage all certificates
 
 ### Enhanced Dashboard Features:
+
 1. **Certificate Section**: Dedicated section showing certificate status
 2. **Visual Indicators**: Badges showing eligibility and progress
 3. **Quick Actions**: Generate and download buttons

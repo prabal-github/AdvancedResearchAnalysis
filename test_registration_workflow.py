@@ -11,7 +11,7 @@ from datetime import datetime
 def test_registration_workflow():
     """Test the complete registration workflow"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🧪 Testing Complete Registration Workflow")
     print("=" * 60)
@@ -103,7 +103,7 @@ def test_error_scenarios():
     print("\n🚨 Testing Error Scenarios")
     print("-" * 40)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test duplicate username
     print("🔄 Test: Duplicate Username Handling")
@@ -162,9 +162,9 @@ def main():
         print("   ✅ Account activation workflow")
         
         print("\n🔗 Production URLs:")
-        print(f"   📝 Register: http://127.0.0.1:5008/register_analyst")
-        print(f"   👨‍💼 Admin: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
-        print(f"   🔐 Login: http://127.0.0.1:5008/analyst_login")
+        print(f"   📝 Register: http://127.0.0.1:80/register_analyst")
+        print(f"   👨‍💼 Admin: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
+        print(f"   🔐 Login: http://127.0.0.1:80/analyst_login")
         
     else:
         print("❌ Some tests failed!")

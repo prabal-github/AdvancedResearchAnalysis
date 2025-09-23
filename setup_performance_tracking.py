@@ -194,7 +194,7 @@ if __name__ == "__main__":
     print("2. Run some ML models to generate recommendations")
     print("3. Test the system: python manual_performance_update.py")
     print("4. Set up daily updates: Schedule daily_performance_update.py to run daily")
-    print("5. View performance data at: http://127.0.0.1:5008/published")
+    print("5. View performance data at: http://127.0.0.1:80/published")
     
     print("\nFeatures added:")
     print("• Automatic stock recommendation extraction from ML model outputs")

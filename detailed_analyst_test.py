@@ -6,7 +6,7 @@ def detailed_analyst_login_test():
     print("🔍 Detailed Analyst Login Test (Browser-like)")
     print("=" * 60)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Step 1: Clear session and test fresh login page access
     print("1. Testing fresh analyst login page access...")
@@ -103,7 +103,7 @@ def test_wrong_credentials():
     print("\n4. Testing with wrong credentials...")
     
     session = requests.Session()
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     wrong_data = {
         'email': 'analyst@demo.com',
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     
     print("\n" + "="*60)
     print("🔗 Manual Test Instructions:")
-    print("1. Open browser and go to: http://127.0.0.1:5008/analyst_login")
+    print("1. Open browser and go to: http://127.0.0.1:80/analyst_login")
     print("2. Enter email: analyst@demo.com")
     print("3. Enter password: analyst123")
     print("4. Click Login")

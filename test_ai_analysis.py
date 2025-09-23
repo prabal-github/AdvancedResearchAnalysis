@@ -3,7 +3,7 @@ import json
 
 def test_ai_analysis():
     try:
-        response = requests.get('http://127.0.0.1:5008/api/investor/scripts/BTSTjson.py/ai_analysis')
+        response = requests.get('http://127.0.0.1:80/api/investor/scripts/BTSTjson.py/ai_analysis')
         if response.status_code == 200:
             data = response.json()
             print('API Response Status:', response.status_code)

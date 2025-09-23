@@ -1,16 +1,19 @@
 # VS Terminal Finance Libraries Integration - COMPLETE ✅
 
 ## Problem Fixed
-**Issue**: `ModuleNotFoundError: No module named 'matplotlib'` in VS Terminal analyst section at `http://127.0.0.1:5008/vs_terminal`
+
+**Issue**: `ModuleNotFoundError: No module named 'matplotlib'` in VS Terminal analyst section at `http://127.0.0.1:80/vs_terminal`
 
 **Root Cause**: The VS Terminal's async code execution environment was missing critical finance and data science libraries needed for financial analysis.
 
 ## Solution Implemented
 
 ### 1. Finance Libraries Installation ✅
+
 Successfully installed comprehensive suite of finance and data science libraries:
 
 #### Core Data Science Libraries
+
 - ✅ **matplotlib** (3.10.3) - Plotting and visualization
 - ✅ **pandas** (2.3.1) - Data manipulation and analysis
 - ✅ **numpy** (2.1.3) - Numerical computing
@@ -18,6 +21,7 @@ Successfully installed comprehensive suite of finance and data science libraries
 - ✅ **scikit-learn** (1.7.0) - Machine learning
 
 #### Financial Data & Analysis
+
 - ✅ **yfinance** (0.2.65) - Yahoo Finance data access
 - ✅ **ta** (0.11.0) - Technical analysis indicators
 - ✅ **pandas-datareader** (0.10.0) - Financial data reader
@@ -25,15 +29,18 @@ Successfully installed comprehensive suite of finance and data science libraries
 - ✅ **statsmodels** (0.14.5) - Statistical modeling
 
 #### Visualization Libraries
+
 - ✅ **seaborn** (0.13.2) - Statistical visualization
 - ✅ **plotly** (6.2.0) - Interactive visualizations
 
 #### Supporting Libraries
+
 - ✅ **requests** (2.31.0) - HTTP requests
 - ✅ **beautifulsoup4** (4.13.4) - Web scraping
 - ✅ **openpyxl** (3.1.5) - Excel file processing
 
 ### 2. VS Terminal Auto-Import System ✅
+
 Enhanced the VS Terminal with automatic finance library imports:
 
 ```python
@@ -98,6 +105,7 @@ print("Available functions: get_stock_data(), calculate_returns(), calculate_vol
 ```
 
 ### 3. Error Handling Enhancement ✅
+
 Improved matplotlib error handling in the VS Terminal:
 
 ```python
@@ -110,9 +118,11 @@ plt.ioff()  # Turn off interactive mode
 ```
 
 ### 4. Additional Dependencies ✅
+
 Installed supporting packages for full functionality:
+
 - ✅ **eventlet** - WebSocket support
-- ✅ **anthropic** - AI integration  
+- ✅ **anthropic** - AI integration
 - ✅ **boto3** - AWS services
 - ✅ **cryptography** - Security functions
 - ✅ **schedule** - Task scheduling
@@ -122,6 +132,7 @@ Installed supporting packages for full functionality:
 ## Features Now Available in VS Terminal
 
 ### 1. Stock Data Analysis
+
 ```python
 # Get stock data
 aapl = get_stock_data('AAPL', '1y')
@@ -135,6 +146,7 @@ plt.show()
 ```
 
 ### 2. Financial Calculations
+
 ```python
 # Calculate returns and risk metrics
 returns = calculate_returns(aapl['Close'])
@@ -146,6 +158,7 @@ print(f"Sharpe Ratio: {sharpe:.2f}")
 ```
 
 ### 3. Technical Analysis
+
 ```python
 # Technical indicators
 aapl['RSI'] = ta.momentum.RSIIndicator(aapl['Close']).rsi()
@@ -167,6 +180,7 @@ plt.show()
 ```
 
 ### 4. Portfolio Analysis
+
 ```python
 # Multi-asset analysis
 symbols = ['AAPL', 'GOOGL', 'MSFT']
@@ -186,17 +200,19 @@ plt.show()
 ## Testing Results ✅
 
 ### Application Status
-- ✅ Flask application running on http://127.0.0.1:5008/
-- ✅ VS Terminal accessible at http://127.0.0.1:5008/vs_terminal  
+
+- ✅ Flask application running on http://127.0.0.1:80/
+- ✅ VS Terminal accessible at http://127.0.0.1:80/vs_terminal
 - ✅ All finance libraries properly installed
 - ✅ Auto-import system working
 - ✅ Finance helper functions available
 
 ### Library Verification
+
 ```python
 # Test imports (all successful)
 ✅ import matplotlib.pyplot as plt
-✅ import pandas as pd  
+✅ import pandas as pd
 ✅ import numpy as np
 ✅ import yfinance as yf
 ✅ import ta
@@ -209,11 +225,13 @@ plt.show()
 ## Usage Guide for Analysts
 
 ### 1. Access VS Terminal
-- Navigate to: `http://127.0.0.1:5008/vs_terminal`
+
+- Navigate to: `http://127.0.0.1:80/vs_terminal`
 - All finance libraries are automatically imported
 - Helper functions are pre-loaded
 
 ### 2. Quick Start Examples
+
 ```python
 # Example 1: Basic stock analysis
 symbol = 'AAPL'
@@ -222,7 +240,7 @@ returns = calculate_returns(data['Close'])
 vol = calculate_volatility(returns)
 print(f"{symbol} 6-month volatility: {vol:.2%}")
 
-# Example 2: Comparison analysis  
+# Example 2: Comparison analysis
 aapl = get_stock_data('AAPL', '1y')['Close']
 spy = get_stock_data('SPY', '1y')['Close']
 beta = beta_calculation(calculate_returns(aapl), calculate_returns(spy))
@@ -240,13 +258,15 @@ plt.show()
 ```
 
 ### 3. Advanced Analytics
+
 - Machine learning models with scikit-learn
-- Statistical analysis with scipy and statsmodels  
+- Statistical analysis with scipy and statsmodels
 - Interactive visualizations with plotly
 - Portfolio optimization capabilities
 - Risk management calculations
 
 ## Environment Details
+
 - **Python Version**: 3.12.0
 - **Environment Type**: venv
 - **Total Packages**: 200+ installed
@@ -256,14 +276,16 @@ plt.show()
 ## Next Steps for Enhancement
 
 ### Potential Additions
+
 1. **Real-time Data**: Add WebSocket connections for live market data
-2. **Advanced Models**: LSTM, ARIMA, GARCH for time series forecasting  
+2. **Advanced Models**: LSTM, ARIMA, GARCH for time series forecasting
 3. **Portfolio Optimization**: Modern Portfolio Theory implementations
 4. **Risk Management**: VaR, CVaR, stress testing tools
 5. **Alternative Data**: News sentiment, social media analytics
 6. **Backtesting**: Strategy backtesting framework
 
 ### Integration Opportunities
+
 1. **Database Integration**: Store analysis results in PostgreSQL
 2. **Report Generation**: Automated PDF report creation
 3. **Email Notifications**: Alert system for analysis completion
@@ -271,9 +293,10 @@ plt.show()
 5. **Dashboard Integration**: Link VS Terminal results to main dashboard
 
 ## Success Metrics ✅
+
 - ✅ **Error Resolution**: ModuleNotFoundError eliminated
 - ✅ **Library Coverage**: 100% of requested finance libraries installed
-- ✅ **Auto-Import**: Seamless library loading for users  
+- ✅ **Auto-Import**: Seamless library loading for users
 - ✅ **Helper Functions**: Pre-built finance calculation functions
 - ✅ **Error Handling**: Robust error management for missing dependencies
 - ✅ **Documentation**: Comprehensive usage guide created

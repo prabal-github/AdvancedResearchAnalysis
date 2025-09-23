@@ -16,10 +16,10 @@ def test_fixes():
     try:
         # Login first (using existing analyst from database)
         login_data = {'email': 'Saiyam Jangada', 'password': 'password'}
-        login_response = session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+        login_response = session.post('http://127.0.0.1:80/analyst_login', data=login_data)
         
         # Access analyze_new page
-        analyze_response = session.get('http://127.0.0.1:5008/analyze_new')
+        analyze_response = session.get('http://127.0.0.1:80/analyze_new')
         if analyze_response.status_code == 200:
             if 'value="' in analyze_response.text:
                 print("   ✅ Analyze new page loads with analyst name field")
@@ -33,7 +33,7 @@ def test_fixes():
     # Test 2: Test analyst profile page (template fix)
     print("\n2. Testing analyst profile page (template syntax fix)...")
     try:
-        profile_response = session.get('http://127.0.0.1:5008/analyst/Saiyam%20Jangada')
+        profile_response = session.get('http://127.0.0.1:80/analyst/Saiyam%20Jangada')
         if profile_response.status_code == 200:
             print("   ✅ Analyst profile page loads without template errors")
         else:
@@ -44,7 +44,7 @@ def test_fixes():
     # Test 3: Test performance dashboard
     print("\n3. Testing performance dashboard...")
     try:
-        perf_response = session.get('http://127.0.0.1:5008/analyst/performance_dashboard')
+        perf_response = session.get('http://127.0.0.1:80/analyst/performance_dashboard')
         if perf_response.status_code == 200:
             print("   ✅ Performance dashboard loads successfully")
         elif perf_response.status_code == 500:
@@ -61,7 +61,7 @@ def test_fixes():
     print("\n4. Testing navigation link change...")
     try:
         # Check if the main page now shows "Your Profile" for analysts
-        dashboard_response = session.get('http://127.0.0.1:5008/analyst_dashboard')
+        dashboard_response = session.get('http://127.0.0.1:80/analyst_dashboard')
         if dashboard_response.status_code == 200:
             if "Your Profile" in dashboard_response.text:
                 print("   ✅ Navigation shows 'Your Profile' for analysts")

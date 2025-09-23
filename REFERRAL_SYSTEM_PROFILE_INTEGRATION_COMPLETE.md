@@ -1,14 +1,17 @@
 # Referral System Profile Integration - COMPLETE ✅
 
 ## Overview
+
 Successfully integrated referral links and functionality into both investor and analyst profile pages, completing the comprehensive referral system implementation.
 
 ## ✅ Profile Integration Summary
 
 ### 1. Analyst Profile Page Integration
+
 **File Modified**: `templates/analyst_profile.html`
 
 **Features Added**:
+
 - **Sidebar Navigation**: Added "Refer & Earn" link to the navigation menu
 - **Referral Section**: Dedicated card in sidebar with:
   - Visual call-to-action with gift icon
@@ -21,9 +24,11 @@ Successfully integrated referral links and functionality into both investor and 
 **Access**: Available to all analysts viewing their profile
 
 ### 2. Investor Dashboard Integration
+
 **File Modified**: `templates/investor_dashboard.html`
 
 **Features Added**:
+
 - **Quick Actions**: Added "Refer & Earn Credits" button in main action panel
 - **Dedicated Referral Card**: Prominent card section with:
   - Attractive gradient background
@@ -40,21 +45,23 @@ Successfully integrated referral links and functionality into both investor and 
 ### JavaScript Functions Added
 
 #### Analyst Profile Function
+
 ```javascript
 async function copyReferralLink(userType) {
-    // Fetches referral code from /api/referral/code
-    // Generates complete referral URL
-    // Copies to clipboard with visual feedback
-    // Handles both modern and legacy browsers
+  // Fetches referral code from /api/referral/code
+  // Generates complete referral URL
+  // Copies to clipboard with visual feedback
+  // Handles both modern and legacy browsers
 }
 ```
 
 #### Investor Dashboard Function
+
 ```javascript
 async function copyInvestorReferralLink() {
-    // Similar functionality optimized for investor workflow
-    // Provides success feedback with button state changes
-    // 2-second visual confirmation of successful copy
+  // Similar functionality optimized for investor workflow
+  // Provides success feedback with button state changes
+  // 2-second visual confirmation of successful copy
 }
 ```
 
@@ -69,6 +76,7 @@ async function copyInvestorReferralLink() {
 ## 🎯 User Journey
 
 ### For Analysts:
+
 1. Navigate to analyst profile page
 2. See "Refer & Earn" in sidebar navigation
 3. Click "Copy Referral Link" for instant sharing
@@ -76,6 +84,7 @@ async function copyInvestorReferralLink() {
 5. Can refer both analysts and investors (higher privileges)
 
 ### For Investors:
+
 1. Access investor dashboard
 2. See prominent referral card and quick action button
 3. Click "Share Your Link" for instant copy
@@ -85,11 +94,13 @@ async function copyInvestorReferralLink() {
 ## 🔗 Integration Points
 
 ### Existing API Endpoints Used:
+
 - `/api/referral/code` - Gets user's unique referral code
 - `/referral/dashboard` - Comprehensive referral management interface
 - Role-based validation automatically handled by backend
 
 ### Database Integration:
+
 - Uses existing referral models (ReferralCode, Referral, UserCredits)
 - Email-based unique code system
 - Automatic credit tracking and bonus allocation
@@ -97,6 +108,7 @@ async function copyInvestorReferralLink() {
 ## 🚀 Testing & Validation
 
 ### Functionality Tested:
+
 ✅ Analyst profile page loads with referral section
 ✅ Investor dashboard displays referral card and button
 ✅ JavaScript functions work without errors
@@ -106,9 +118,10 @@ async function copyInvestorReferralLink() {
 ✅ Cross-browser compatibility maintained
 
 ### Access URLs:
-- **Investor Dashboard**: `http://127.0.0.1:5008/investor_dashboard`
-- **Analyst Profile**: `http://127.0.0.1:5008/analyst/<analyst_name>/profile`
-- **Referral Dashboard**: `http://127.0.0.1:5008/referral/dashboard`
+
+- **Investor Dashboard**: `http://127.0.0.1:80/investor_dashboard`
+- **Analyst Profile**: `http://127.0.0.1:80/analyst/<analyst_name>/profile`
+- **Referral Dashboard**: `http://127.0.0.1:80/referral/dashboard`
 
 ## 📊 Benefits Achieved
 
@@ -123,18 +136,23 @@ async function copyInvestorReferralLink() {
 With this integration, the full referral system now includes:
 
 1. **Database Models** ✅
+
    - ReferralCode, Referral, UserCredits, CreditTransaction, FeatureUsage
 
 2. **API Endpoints** ✅
+
    - Registration, validation, dashboard, admin management
 
 3. **User Interfaces** ✅
+
    - Registration forms, referral dashboard, admin panel
 
 4. **Profile Integration** ✅
+
    - Analyst profile sidebar, investor dashboard card
 
 5. **Email-Based System** ✅
+
    - Unique codes per email, role-based validation
 
 6. **Credit Management** ✅

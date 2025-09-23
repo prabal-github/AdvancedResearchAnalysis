@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 ADMIN_CREDENTIALS = {
     'admin_key': 'admin123'
 }
@@ -159,7 +159,7 @@ def main():
         print(f"✅ Flask application is running (Status: {response.status_code})")
     except requests.exceptions.RequestException as e:
         print(f"❌ Flask application is not accessible: {e}")
-        print("   Please ensure the Flask app is running on port 5008")
+        print("   Please ensure the Flask app is running on port 80")
         return False
     
     # Run tests

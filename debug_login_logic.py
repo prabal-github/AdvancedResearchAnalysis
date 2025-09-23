@@ -58,7 +58,7 @@ def test_login_with_debug():
         'password': 'wrongpassword'
     }
     
-    response = session.post('http://127.0.0.1:5008/analyst_login', 
+    response = session.post('http://127.0.0.1:80/analyst_login', 
                            data=wrong_data, 
                            allow_redirects=False)
     

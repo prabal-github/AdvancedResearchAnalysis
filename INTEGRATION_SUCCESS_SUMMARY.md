@@ -7,11 +7,13 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ## 🚀 **WHAT WAS ADDED**
 
 ### 🗄️ **Database Components**
+
 - ✅ **ScriptExecution** table - Complete execution log with outputs, errors, and metadata
 - ✅ **SavedScript** table - Storage for reusable scripts (future enhancement)
 - ✅ **Migration script** - `migrate_python_terminal.py` (successfully executed)
 
 ### 🔧 **Backend Functionality**
+
 - ✅ **Secure file upload** with size limits (10MB) and type restrictions (.py only)
 - ✅ **Script execution engine** with 5-minute timeout protection
 - ✅ **Error handling and logging** for all execution scenarios
@@ -19,6 +21,7 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 - ✅ **Role-based access control** (Admin execution, Investor viewing)
 
 ### 🌐 **New Routes Added**
+
 ```
 📋 ADMIN ROUTES:
 /admin/python_terminal                    - Main admin interface
@@ -33,6 +36,7 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ```
 
 ### 🎨 **User Interface**
+
 - ✅ **Admin Dashboard** - Professional script upload and monitoring interface
 - ✅ **Investor Dashboard** - Clean results viewing with filtering and export
 - ✅ **Navigation Integration** - Added buttons to existing dashboards
@@ -42,18 +46,21 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ## 🛡️ **Security Features**
 
 ### 🔒 **File Security**
+
 - ✅ Only Python (.py) files accepted
 - ✅ Maximum file size limit (10MB)
 - ✅ Secure filename sanitization
 - ✅ Restricted execution directory
 
 ### ⏱️ **Execution Security**
+
 - ✅ 5-minute timeout protection
 - ✅ Sandboxed execution environment
 - ✅ Error containment and logging
 - ✅ Memory and resource monitoring
 
 ### 🔐 **Access Control**
+
 - ✅ Admin-only script upload and execution
 - ✅ Investor access limited to successful results only
 - ✅ No sensitive error information exposed to investors
@@ -62,10 +69,11 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ## 📊 **Sample Scripts Provided**
 
 ### 1. **sample_market_analysis.py** (Ready to use)
+
 ```python
 # Features:
 ✅ Stock market data analysis
-✅ Portfolio performance calculations  
+✅ Portfolio performance calculations
 ✅ Technical indicators and signals
 ✅ Risk assessment metrics
 ✅ JSON output for structured data
@@ -73,6 +81,7 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ```
 
 ### 2. **sample_financial_calculations.py** (Ready to use)
+
 ```python
 # Features:
 ✅ Advanced financial mathematics
@@ -86,14 +95,16 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ## 🎯 **Testing Results**
 
 ### ✅ **Database Migration**: SUCCESSFUL
+
 ```
 ✅ script_executions table created
-✅ saved_scripts table created  
+✅ saved_scripts table created
 ✅ python_scripts directory created
 ✅ 47 total tables in database
 ```
 
 ### ✅ **Sample Script Execution**: SUCCESSFUL
+
 ```
 🚀 Starting Python Script Terminal Demo
 📊 Market Analysis Demo completed
@@ -105,8 +116,9 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ```
 
 ### ✅ **Flask Application**: RUNNING
+
 ```
-🌐 Server running on: http://127.0.0.1:5008/
+🌐 Server running on: http://127.0.0.1:80/
 🔧 Python Terminal accessible at: /admin/python_terminal
 👥 Results viewable at: /investor/script_results
 ```
@@ -116,11 +128,13 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ### 👨‍💼 **For Admins:**
 
 1. **Access the Terminal**
+
    ```
    Dashboard → Python Terminal (Black button with terminal icon)
    ```
 
 2. **Upload & Execute Scripts**
+
    - Select a .py file (max 10MB)
    - Enter a descriptive program name
    - Add an optional description
@@ -135,11 +149,13 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ### 👨‍💼 **For Investors:**
 
 1. **View Results**
+
    ```
    Dashboard → Script Results (Dark button with chart icon)
    ```
 
 2. **Browse Analysis Results**
+
    - See all successful script executions
    - View execution times and dates
    - Click "View Results" for complete output
@@ -152,6 +168,7 @@ I have successfully integrated the **PYscriptTerminal-app3.1 project** into your
 ## 🔧 **Configuration**
 
 ### **Current Settings** (in app.py):
+
 ```python
 PYTHON_SCRIPTS_FOLDER = 'python_scripts'   # Upload directory
 SCRIPT_EXECUTION_TIMEOUT = 300             # 5 minutes
@@ -160,6 +177,7 @@ ALLOWED_EXTENSIONS = {'py'}                # Python only
 ```
 
 ### **Customizable Options**:
+
 - Execution timeout (currently 5 minutes)
 - File size limits (currently 10MB)
 - Allowed file types (currently .py only)
@@ -168,12 +186,14 @@ ALLOWED_EXTENSIONS = {'py'}                # Python only
 ## 🚀 **Next Steps & Enhancements**
 
 ### **Immediate Usage:**
+
 1. ✅ Test with provided sample scripts
 2. ✅ Upload your own Python analysis scripts
 3. ✅ Share results with investors
 4. ✅ Monitor execution performance
 
 ### **Future Enhancements:**
+
 - 📊 **Chart Generation**: Add support for matplotlib/plotly outputs
 - 📅 **Scheduled Execution**: Cron-like script scheduling
 - 📚 **Script Library**: Save and reuse common scripts
@@ -195,12 +215,14 @@ Your Python Script Terminal integration provides:
 ## 📞 **Support & Troubleshooting**
 
 ### **Common Issues:**
+
 1. **Permission Errors**: Ensure write access to `python_scripts/` directory
 2. **Module Imports**: Install required packages with `pip install package_name`
 3. **Timeout Issues**: Adjust `SCRIPT_EXECUTION_TIMEOUT` for long-running scripts
 4. **Memory Usage**: Monitor server resources for data-intensive scripts
 
 ### **Logs & Monitoring:**
+
 - All executions are logged in the database
 - Error messages are captured and stored
 - Execution times are tracked for performance monitoring

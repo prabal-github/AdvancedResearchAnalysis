@@ -102,7 +102,7 @@ if __name__ == "__main__":
     if success:
         print("=" * 70)
         print("✅ Sample data created successfully!")
-        print("You can now visit http://127.0.0.1:5008/investor/script_results to see the performance tracking in action.")
+        print("You can now visit http://127.0.0.1:80/investor/script_results to see the performance tracking in action.")
     else:
         print("=" * 70)
         print("❌ Failed to create sample data!")

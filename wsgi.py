@@ -10,4 +10,4 @@ application = app
 
 if __name__ == "__main__":
     # Dev fallback run (not for production scaling)
-    socketio.run(app, host="0.0.0.0", port=int(os.getenv('APP_PORT','5008')), debug=True)
+    socketio.run(app, host="0.0.0.0", port=int(os.getenv('APP_PORT','80')), debug=True)

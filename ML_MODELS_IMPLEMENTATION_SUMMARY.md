@@ -5,6 +5,7 @@
 ### 🎯 Core Features
 
 1. **Advanced Stock Recommender Model**
+
    - ✅ Complete Python implementation with multi-model technical analysis
    - ✅ Technical indicators: RSI, MACD, Bollinger Bands, ATR, TSI, Support/Resistance
    - ✅ Candlestick pattern detection
@@ -22,9 +23,10 @@
 ### 🗄️ Database Integration
 
 1. **New Database Models**
+
    - ✅ `MLModelResult` - Store ML model execution results
    - ✅ `StockRecommenderResult` - Individual stock recommendations
-   - ✅ `BTSTAnalysisResult` - BTST analysis results  
+   - ✅ `BTSTAnalysisResult` - BTST analysis results
    - ✅ `StockCategory` - Stock categories from stocklist.xlsx
 
 2. **Stock Categories System**
@@ -36,6 +38,7 @@
 ### 🌐 Web Interface
 
 1. **Admin ML Models Dashboard** (`/admin/ml_models`)
+
    - ✅ Modern responsive design with Bootstrap 5
    - ✅ Two model cards with clear descriptions
    - ✅ Performance metrics display
@@ -43,6 +46,7 @@
    - ✅ Real-time execution status
 
 2. **Interactive Forms**
+
    - ✅ Stock category dropdown (dynamically loaded)
    - ✅ Confidence percentage slider (50-90%)
    - ✅ BTST minimum score slider (50-100)
@@ -57,6 +61,7 @@
 ### 🔌 API Endpoints
 
 1. **Admin APIs** (Require authentication)
+
    - ✅ `GET /admin/ml_models` - ML Models dashboard
    - ✅ `GET /api/admin/stock_categories` - Get stock categories
    - ✅ `POST /api/admin/ml_models/run_stock_recommender` - Run stock analysis
@@ -71,6 +76,7 @@
 ### 🔧 Utility Functions
 
 1. **Data Management**
+
    - ✅ `load_stock_categories()` - Load from Excel or defaults
    - ✅ `get_stock_symbols_by_category()` - Category-based stock retrieval
    - ✅ `save_ml_model_result()` - Comprehensive result storage
@@ -83,16 +89,17 @@
 ### 📊 Result Formats
 
 1. **Advanced Stock Recommender Results**
+
    ```
-   Symbol | Current Price | Change (%) | Open | High | Low | Volume | 
-   RSI (14) | SMA (20) | SMA (50) | MACD | Bollinger Band | 
-   Recommendation | Confidence (%) | Stop Loss | Target | 
+   Symbol | Current Price | Change (%) | Open | High | Low | Volume |
+   RSI (14) | SMA (20) | SMA (50) | MACD | Bollinger Band |
+   Recommendation | Confidence (%) | Stop Loss | Target |
    Condition | Trend (S/M) | Data Freshness | Last Updated
    ```
 
 2. **BTST Analyzer Results**
    ```
-   Symbol | Current Price | Change (%) | BTST Score | RSI (14) | 
+   Symbol | Current Price | Change (%) | BTST Score | RSI (14) |
    Volume Spike | Recommendation | Confidence (%) | Risk-Reward Ratio |
    Stop Loss | Target | Primary Condition | Models Used
    ```
@@ -100,6 +107,7 @@
 ### 🛠️ Setup Scripts
 
 1. **Database Setup**
+
    - ✅ `setup_ml_models.py` - Create tables and load categories
    - ✅ Automatic migration support
    - ✅ Default data population
@@ -121,17 +129,20 @@
 ## 🎨 User Experience Features
 
 ### 🎯 Admin Dashboard Integration
+
 - ✅ New "ML Models" button in admin dashboard
 - ✅ Seamless navigation between features
 - ✅ Consistent design language
 
 ### ⚡ Real-time Features
+
 - ✅ Live stock data fetching via yfinance
 - ✅ Real-time analysis execution
 - ✅ Progressive loading indicators
 - ✅ Instant results display
 
 ### 📱 Responsive Design
+
 - ✅ Mobile-friendly interface
 - ✅ Bootstrap 5 components
 - ✅ Modern icons and styling
@@ -140,12 +151,14 @@
 ## 🔒 Security Features
 
 ### 🛡️ Authentication & Authorization
+
 - ✅ Admin-only access to ML models
 - ✅ Session-based authentication
 - ✅ Protected API endpoints
 - ✅ Input validation and sanitization
 
 ### 🚨 Error Handling
+
 - ✅ Graceful error messages
 - ✅ Timeout handling for data fetching
 - ✅ Resource usage monitoring
@@ -154,12 +167,14 @@
 ## 📈 Performance Features
 
 ### ⚡ Optimization
+
 - ✅ Efficient stock data fetching
 - ✅ Cached results storage
 - ✅ Execution time tracking
 - ✅ Resource usage monitoring
 
 ### 📊 Analytics
+
 - ✅ Model performance metrics
 - ✅ Execution time tracking
 - ✅ Success rate monitoring
@@ -168,6 +183,7 @@
 ## 🧪 Testing Status
 
 ### ✅ All Tests Passing
+
 ```
 Testing ML Models Integration
 ========================================
@@ -194,6 +210,7 @@ Test Results: 3/3 tests passed
 ## 🚀 Ready for Use
 
 ### 🎯 How to Access
+
 1. Start Flask app: `python app.py`
 2. Login as admin
 3. Navigate to Admin Dashboard
@@ -201,11 +218,13 @@ Test Results: 3/3 tests passed
 5. Select category and run analysis!
 
 ### 🔗 Access URLs
-- **Admin Dashboard**: http://127.0.0.1:5008/admin_dashboard
-- **ML Models Page**: http://127.0.0.1:5008/admin/ml_models
-- **API Base**: http://127.0.0.1:5008/api/admin/ml_models/
+
+- **Admin Dashboard**: http://127.0.0.1:80/admin_dashboard
+- **ML Models Page**: http://127.0.0.1:80/admin/ml_models
+- **API Base**: http://127.0.0.1:80/api/admin/ml_models/
 
 ### 📋 Sample Usage
+
 1. **Select Category**: Choose from NSE_LARGE_CAP, BANKING, IT_SECTOR, etc.
 2. **Set Parameters**: Adjust confidence (70%) and BTST score (75%)
 3. **Run Analysis**: Get real-time stock analysis
@@ -218,8 +237,9 @@ Test Results: 3/3 tests passed
 The ML Models feature is fully implemented and ready for production use. It provides a comprehensive stock analysis platform with two sophisticated ML models, complete database integration, modern web interface, robust API endpoints, and extensive documentation.
 
 ### 🏆 Key Achievements
+
 - ✅ **Real Stock Analysis**: Working with live market data
-- ✅ **Professional UI**: Modern, responsive admin interface  
+- ✅ **Professional UI**: Modern, responsive admin interface
 - ✅ **Complete API**: Full CRUD operations with authentication
 - ✅ **Robust Testing**: Comprehensive test coverage
 - ✅ **Production Ready**: Error handling, validation, security

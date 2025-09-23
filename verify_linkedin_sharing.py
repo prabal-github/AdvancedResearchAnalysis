@@ -23,7 +23,7 @@ try:
         print("\n🔗 Public URLs for testing:")
         
         for report in reports:
-            public_url = f"http://127.0.0.1:5008/public/report/{report.id}"
+            public_url = f"http://127.0.0.1:80/public/report/{report.id}"
             linkedin_url = f"https://www.linkedin.com/sharing/share-offsite/?url={public_url}"
             
             print(f"\n📄 Report by {report.analyst}")

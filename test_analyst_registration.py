@@ -12,7 +12,7 @@ def test_analyst_registration():
     # Test 1: Page accessibility
     print("\n1. Testing page accessibility...")
     try:
-        response = requests.get('http://127.0.0.1:5008/register/analyst', timeout=10)
+        response = requests.get('http://127.0.0.1:80/register/analyst', timeout=10)
         print(f"   Status Code: {response.status_code}")
         if response.status_code == 200:
             print("   ✅ Page accessible - No redirect detected!")
@@ -39,7 +39,7 @@ def test_analyst_registration():
         }
         
         response = requests.post(
-            'http://127.0.0.1:5008/api/register/analyst', 
+            'http://127.0.0.1:80/api/register/analyst', 
             json=test_data, 
             timeout=10
         )
@@ -58,8 +58,8 @@ def test_analyst_registration():
     
     print("\n" + "=" * 50)
     print("🎯 Test Summary:")
-    print("   - Page: http://127.0.0.1:5008/register/analyst")
-    print("   - API:  http://127.0.0.1:5008/api/register/analyst")
+    print("   - Page: http://127.0.0.1:80/register/analyst")
+    print("   - API:  http://127.0.0.1:80/api/register/analyst")
     print("=" * 50)
 
 if __name__ == "__main__":

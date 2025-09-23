@@ -9,12 +9,12 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    VS Terminal AClass Dashboard                  │
-│                   http://127.0.0.1:5008/vs_terminal_AClass      │
+│                   http://127.0.0.1:80/vs_terminal_AClass      │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────────┐
 │                Risk Management Dashboard                         │
-│      http://127.0.0.1:5008/vs_terminal_AClass/risk_management   │
+│      http://127.0.0.1:80/vs_terminal_AClass/risk_management   │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────────┐
@@ -36,6 +36,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 ## 🤖 AI Agents
 
 ### 1. **Risk Monitoring & Insights Agent**
+
 - **Purpose**: Continuous portfolio risk monitoring
 - **Capabilities**:
   - Concentration risk detection
@@ -46,6 +47,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 - **Output**: Risk alerts with actionable recommendations
 
 ### 2. **Scenario Simulation Agent**
+
 - **Purpose**: Stress testing and scenario analysis
 - **Capabilities**:
   - Market crash scenarios (-30%)
@@ -56,6 +58,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 - **Output**: Comprehensive stress test reports
 
 ### 3. **Automated Compliance & Reporting Agent**
+
 - **Purpose**: Regulatory compliance monitoring
 - **Capabilities**:
   - Position size limit checks
@@ -66,6 +69,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 - **Output**: Compliance reports and violation alerts
 
 ### 4. **Advisor Copilot Agent**
+
 - **Purpose**: AI-powered investment guidance
 - **Capabilities**:
   - Natural language query processing
@@ -76,6 +80,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 - **Output**: Contextual investment advice
 
 ### 5. **Trade Execution & Rebalancing Agent**
+
 - **Purpose**: Portfolio optimization suggestions
 - **Capabilities**:
   - Current allocation analysis
@@ -103,6 +108,7 @@ This is a comprehensive **AWS Bedrock-powered agentic AI risk management system*
 ## 🚀 Quick Start
 
 ### 1. **Setup & Installation**
+
 ```bash
 # Run the setup script
 python setup_risk_management.py
@@ -112,6 +118,7 @@ pip install boto3 yfinance numpy pandas scikit-learn
 ```
 
 ### 2. **Configure AWS Bedrock**
+
 ```bash
 # Option 1: AWS CLI (Recommended)
 aws configure
@@ -123,40 +130,44 @@ export AWS_DEFAULT_REGION=us-east-1
 ```
 
 ### 3. **Test the System**
+
 ```bash
 python test_risk_management.py
 ```
 
 ### 4. **Start the Application**
+
 ```bash
 python app.py
 ```
 
 ### 5. **Access the Dashboard**
-- Main Terminal: http://127.0.0.1:5008/vs_terminal_AClass
-- Risk Management: http://127.0.0.1:5008/vs_terminal_AClass/risk_management
+
+- Main Terminal: http://127.0.0.1:80/vs_terminal_AClass
+- Risk Management: http://127.0.0.1:80/vs_terminal_AClass/risk_management
 
 ## 🔧 API Endpoints
 
 ### Core Risk Management APIs
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/vs_terminal_AClass/risk_management/comprehensive_analysis` | POST | Run full portfolio risk analysis |
-| `/api/vs_terminal_AClass/risk_management/risk_alerts` | GET | Get current risk alerts |
-| `/api/vs_terminal_AClass/risk_management/stress_test` | POST | Run stress test scenarios |
-| `/api/vs_terminal_AClass/risk_management/compliance_check` | POST | Check compliance status |
-| `/api/vs_terminal_AClass/risk_management/advisor_query` | POST | Query AI advisor |
-| `/api/vs_terminal_AClass/risk_management/rebalancing_suggestions` | POST | Get rebalancing recommendations |
-| `/api/vs_terminal_AClass/risk_management/portfolio_risk_score` | GET | Get current risk score |
-| `/api/vs_terminal_AClass/risk_management/risk_heatmap` | GET | Get risk heatmap data |
-| `/api/vs_terminal_AClass/risk_management/agent_status` | GET | Get AI agent status |
+| Endpoint                                                          | Method | Description                      |
+| ----------------------------------------------------------------- | ------ | -------------------------------- |
+| `/api/vs_terminal_AClass/risk_management/comprehensive_analysis`  | POST   | Run full portfolio risk analysis |
+| `/api/vs_terminal_AClass/risk_management/risk_alerts`             | GET    | Get current risk alerts          |
+| `/api/vs_terminal_AClass/risk_management/stress_test`             | POST   | Run stress test scenarios        |
+| `/api/vs_terminal_AClass/risk_management/compliance_check`        | POST   | Check compliance status          |
+| `/api/vs_terminal_AClass/risk_management/advisor_query`           | POST   | Query AI advisor                 |
+| `/api/vs_terminal_AClass/risk_management/rebalancing_suggestions` | POST   | Get rebalancing recommendations  |
+| `/api/vs_terminal_AClass/risk_management/portfolio_risk_score`    | GET    | Get current risk score           |
+| `/api/vs_terminal_AClass/risk_management/risk_heatmap`            | GET    | Get risk heatmap data            |
+| `/api/vs_terminal_AClass/risk_management/agent_status`            | GET    | Get AI agent status              |
 
 ### Sample API Usage
 
 #### Comprehensive Risk Analysis
+
 ```bash
-curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/comprehensive_analysis \
+curl -X POST http://127.0.0.1:80/api/vs_terminal_AClass/risk_management/comprehensive_analysis \
   -H "Content-Type: application/json" \
   -d '{
     "investor_id": "demo_investor",
@@ -166,8 +177,9 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/compre
 ```
 
 #### Query AI Advisor
+
 ```bash
-curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/advisor_query \
+curl -X POST http://127.0.0.1:80/api/vs_terminal_AClass/risk_management/advisor_query \
   -H "Content-Type: application/json" \
   -d '{
     "query": "Should I increase my IT sector exposure?",
@@ -179,18 +191,21 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 ## 🎨 Dashboard Features
 
 ### Real-time Risk Monitoring
+
 - **Overall Risk Score**: 0-10 scale with visual risk meter
 - **Live Agent Status**: Real-time monitoring of all AI agents
 - **Active Alerts**: Priority-based risk alert system
 - **Compliance Score**: Regulatory compliance percentage
 
 ### Interactive Analytics
+
 - **Risk Heatmap**: Visual representation of sector and stock risks
 - **Portfolio Allocation**: Interactive pie chart of current allocation
 - **Stress Test Results**: Comprehensive scenario analysis results
 - **Performance Metrics**: Historical agent performance tracking
 
 ### AI Advisor Chat
+
 - **Natural Language Interface**: Ask questions in plain English
 - **Contextual Responses**: Answers based on your specific portfolio
 - **Implementation Guidance**: Step-by-step action plans
@@ -199,20 +214,22 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 ## ⚙️ Configuration
 
 ### Risk Thresholds (risk_management_config.json)
+
 ```json
 {
   "risk_management": {
     "risk_thresholds": {
-      "concentration_limit": 0.15,      // Max 15% in single position
-      "sector_limit": 0.4,              // Max 40% in single sector
-      "volatility_threshold": 25.0,     // VIX threshold for alerts
-      "drawdown_threshold": -15.0       // Max acceptable drawdown
+      "concentration_limit": 0.15, // Max 15% in single position
+      "sector_limit": 0.4, // Max 40% in single sector
+      "volatility_threshold": 25.0, // VIX threshold for alerts
+      "drawdown_threshold": -15.0 // Max acceptable drawdown
     }
   }
 }
 ```
 
 ### Agent Settings
+
 ```json
 {
   "agent_settings": {
@@ -231,6 +248,7 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 ## 🔄 Development vs Production
 
 ### Testing Environment (Current)
+
 - **Database**: SQLite with demo data
 - **Market Data**: YFinance API
 - **AI Models**: AWS Bedrock with fallback responses
@@ -238,6 +256,7 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 - **Data**: Mock portfolio and market data
 
 ### Production Environment (Ready)
+
 - **Database**: AWS RDS with live investor data
 - **Market Data**: Fyers API with real-time feeds
 - **AI Models**: Full AWS Bedrock integration
@@ -245,6 +264,7 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 - **Data**: Live market data and real portfolios
 
 ### Migration Path
+
 1. Set up AWS RDS database
 2. Configure Fyers API credentials
 3. Update database connection strings
@@ -254,12 +274,14 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 ## 🛡️ Security & Compliance
 
 ### Data Security
+
 - **AWS IAM**: Role-based access control for Bedrock
 - **Encryption**: All data encrypted in transit and at rest
 - **Session Management**: Secure session handling
 - **API Rate Limiting**: Protection against abuse
 
 ### Compliance Features
+
 - **SEBI Compliance**: Built-in Indian regulatory checks
 - **Position Limits**: Automated position size monitoring
 - **Risk Tolerance**: Alignment with investor risk profiles
@@ -268,6 +290,7 @@ curl -X POST http://127.0.0.1:5008/api/vs_terminal_AClass/risk_management/adviso
 ## 🔍 Monitoring & Debugging
 
 ### System Health Monitoring
+
 ```python
 # Check agent status
 GET /api/vs_terminal_AClass/risk_management/agent_status
@@ -280,6 +303,7 @@ GET /api/vs_terminal_AClass/risk_management/agent_status
 ```
 
 ### Debugging Tools
+
 - **Comprehensive test suite**: `test_risk_management.py`
 - **Detailed logging**: All agent actions logged
 - **Fallback responses**: System works even when external services fail
@@ -288,6 +312,7 @@ GET /api/vs_terminal_AClass/risk_management/agent_status
 ## 📈 Sample Use Cases
 
 ### 1. Daily Risk Monitoring
+
 ```python
 # Automated daily risk check
 analysis = await orchestrator.run_comprehensive_risk_analysis(investor_profile)
@@ -296,12 +321,13 @@ if analysis['overall_risk_score'] > 8.0:
 ```
 
 ### 2. Investment Decision Support
+
 ```
 User Query: "Should I buy more banking stocks given the recent RBI policy?"
 
-AI Response: "Based on current market conditions and your portfolio 
-composition, I recommend cautious exposure to banking stocks. Your current 
-banking allocation is 35%, which is already near the optimal range for 
+AI Response: "Based on current market conditions and your portfolio
+composition, I recommend cautious exposure to banking stocks. Your current
+banking allocation is 35%, which is already near the optimal range for
 your moderate risk profile. Consider the following factors:
 
 1. Interest Rate Environment: Recent RBI policy suggests...
@@ -310,6 +336,7 @@ your moderate risk profile. Consider the following factors:
 ```
 
 ### 3. Stress Testing Before Major Events
+
 ```python
 # Run stress test before earnings season
 stress_results = await scenario_agent.run_stress_tests(investor_profile)
@@ -320,18 +347,21 @@ if stress_results['market_crash']['projected_loss'] > threshold:
 ## 🎯 Advanced Features
 
 ### Machine Learning Integration
+
 - **Pattern Recognition**: Identify recurring risk patterns
 - **Predictive Analytics**: Forecast potential risk events
 - **Adaptive Learning**: Agents improve based on outcomes
 - **Personalization**: Customized recommendations per investor
 
 ### Real-time Features
+
 - **Live Risk Scoring**: Continuous risk assessment
 - **Market Event Detection**: Real-time market anomaly detection
 - **Instant Alerts**: Immediate notification of high-risk situations
 - **Dynamic Rebalancing**: Automated portfolio optimization suggestions
 
 ### Integration Capabilities
+
 - **Fyers API**: Live Indian market data
 - **Multiple Exchanges**: NSE, BSE, MCX support
 - **External Data**: Economic indicators, news sentiment
@@ -342,6 +372,7 @@ if stress_results['market_crash']['projected_loss'] > threshold:
 ### Common Issues
 
 #### 1. AWS Bedrock Connection Failed
+
 ```
 Solution:
 1. Check AWS credentials: aws sts get-caller-identity
@@ -351,6 +382,7 @@ Solution:
 ```
 
 #### 2. Market Data Not Loading
+
 ```
 Solution:
 1. Check YFinance availability
@@ -360,6 +392,7 @@ Solution:
 ```
 
 #### 3. Database Errors
+
 ```
 Solution:
 1. Check database file permissions
@@ -369,6 +402,7 @@ Solution:
 ```
 
 ### Performance Optimization
+
 - **Caching**: Market data and AI responses cached
 - **Async Processing**: Non-blocking AI agent operations
 - **Connection Pooling**: Efficient database connections
@@ -377,12 +411,14 @@ Solution:
 ## 📚 Documentation & Support
 
 ### Additional Resources
+
 - **API Documentation**: Complete endpoint documentation
 - **Agent Behavior Guide**: Detailed agent decision logic
 - **Configuration Reference**: All settings explained
 - **Best Practices**: Recommended usage patterns
 
 ### Getting Help
+
 1. **Check Logs**: Review Flask application logs
 2. **Run Tests**: Use `test_risk_management.py` for diagnostics
 3. **Review Config**: Verify all configuration settings
@@ -391,6 +427,7 @@ Solution:
 ## 🔮 Future Enhancements
 
 ### Planned Features
+
 - **Multi-language Support**: Support for regional languages
 - **Mobile App**: Native mobile applications
 - **Advanced Visualizations**: 3D risk modeling
@@ -398,6 +435,7 @@ Solution:
 - **Options Strategies**: Advanced derivatives analysis
 
 ### Scalability Improvements
+
 - **Microservices**: Split agents into separate services
 - **Kubernetes**: Container orchestration
 - **Event-driven Architecture**: Real-time event processing
@@ -406,12 +444,14 @@ Solution:
 ## 🏆 Success Metrics
 
 ### Key Performance Indicators
+
 - **Risk Prediction Accuracy**: >85% accuracy in risk alerts
 - **Response Time**: <2 seconds for API responses
 - **System Uptime**: >99.9% availability
 - **User Engagement**: Active usage of AI recommendations
 
 ### Value Delivered
+
 - **Risk Reduction**: Measurable decrease in portfolio risk
 - **Compliance Improvement**: Automated regulatory adherence
 - **Decision Quality**: Data-driven investment decisions
@@ -435,4 +475,4 @@ Solution:
 
 ---
 
-*For technical support or feature requests, please check the system logs and run the test suite for diagnostics.*
+_For technical support or feature requests, please check the system logs and run the test suite for diagnostics._

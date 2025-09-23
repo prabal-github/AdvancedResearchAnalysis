@@ -14,7 +14,7 @@ def simple_test():
     # Login first
     print("1. Attempting login...")
     login_data = {'email': 'demo@analyst.com', 'password': 'password'}
-    login_response = session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+    login_response = session.post('http://127.0.0.1:80/analyst_login', data=login_data)
     
     print(f"   Login status: {login_response.status_code}")
     print(f"   Login response text preview: {login_response.text[:200]}...")
@@ -22,7 +22,7 @@ def simple_test():
     # Try to access the performance dashboard with cookies from login
     print("\n2. Attempting to access performance dashboard...")
     try:
-        dashboard_response = session.get('http://127.0.0.1:5008/analyst/performance_dashboard', timeout=10)
+        dashboard_response = session.get('http://127.0.0.1:80/analyst/performance_dashboard', timeout=10)
         print(f"   Dashboard status: {dashboard_response.status_code}")
         
         if dashboard_response.status_code == 500:

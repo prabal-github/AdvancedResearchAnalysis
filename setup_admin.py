@@ -63,7 +63,7 @@ if __name__ == '__main__':
     if success:
         print("=" * 50)
         print("✅ Setup completed successfully!")
-        print("🌐 You can now login at: http://127.0.0.1:5008/admin_login")
+        print("🌐 You can now login at: http://127.0.0.1:80/admin_login")
     else:
         print("=" * 50)
         print("❌ Setup failed!")

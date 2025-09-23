@@ -75,7 +75,7 @@ def quick_start_check():
     print("\n🎉 All checks passed! Options Analyzer is ready to use.")
     print("\n📋 Quick Start Guide:")
     print("   1. Start the Flask app: python app.py")
-    print("   2. Open: http://127.0.0.1:5008/options_analyzer")
+    print("   2. Open: http://127.0.0.1:80/options_analyzer")
     print("   3. Or use the sidebar link: 'Options Analyzer'")
     print("\n🔧 Features available:")
     print("   • Real-time options chain analysis")
@@ -95,12 +95,12 @@ def launch_demo():
         choice = input().lower().strip()
         if choice in ['y', 'yes']:
             print("\n🌐 Starting Flask application...")
-            print("   Navigate to: http://127.0.0.1:5008/options_analyzer")
+            print("   Navigate to: http://127.0.0.1:80/options_analyzer")
             print("   Press Ctrl+C to stop the server")
             
             # Import and run the Flask app
             from app import app, socketio
-            socketio.run(app, host='0.0.0.0', port=5008, debug=True, use_reloader=False)
+            socketio.run(app, host='0.0.0.0', port=80, debug=True, use_reloader=False)
             
     except KeyboardInterrupt:
         print("\n\n👋 Demo stopped. Thanks for trying Options Analyzer!")

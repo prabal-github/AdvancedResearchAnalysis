@@ -9,7 +9,7 @@ from datetime import datetime
 
 def test_updated_certificate_system():
     """Test the updated HTML certificate system with all new features"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🧪 Testing Updated HTML Certificate System")
     print("=" * 70)

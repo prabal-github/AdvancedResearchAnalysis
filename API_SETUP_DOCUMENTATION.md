@@ -1,6 +1,7 @@
 # 🚀 API Setup Documentation - Enhanced VS Terminal AClass
 
 ## 📋 Table of Contents
+
 1. [Overview](#overview)
 2. [Fyers API Setup](#fyers-api-setup)
 3. [Environment Configuration](#environment-configuration)
@@ -17,6 +18,7 @@
 The Enhanced VS Terminal AClass integrates multiple APIs to provide real-time financial data, risk analytics, and ML model predictions. This documentation covers the complete setup process for all required APIs and configurations.
 
 ### Key Features Requiring API Setup:
+
 - **Fyers API**: Real-time stock market data
 - **PostgreSQL/RDS**: Database connectivity for user data and ML models
 - **YFinance**: Fallback for testing and development
@@ -28,37 +30,41 @@ The Enhanced VS Terminal AClass integrates multiple APIs to provide real-time fi
 ## 🏛️ Fyers API Setup
 
 ### Step 1: Create Fyers Account
+
 1. Visit [Fyers.in](https://fyers.in)
 2. Create a trading account
 3. Complete KYC verification
 4. Access the API section in your account
 
 ### Step 2: Generate API Credentials
+
 1. Login to Fyers Web Platform
 2. Navigate to **API** section
 3. Create a new App:
    - **App Name**: VS Terminal AClass
    - **App Type**: Web App
-   - **Redirect URL**: `http://localhost:5008/fyers/callback`
+   - **Redirect URL**: `http://localhost:80/fyers/callback`
 4. Note down your credentials:
    - **Client ID** (App ID)
    - **Secret Key**
    - **Redirect URI**
 
 ### Step 3: Configure Environment Variables
+
 Create or update your `.env` file:
 
 ```env
 # Fyers API Configuration
 FYERS_CLIENT_ID=your_client_id_here
 FYERS_SECRET_KEY=your_secret_key_here
-FYERS_REDIRECT_URI=http://localhost:5008/fyers/callback
+FYERS_REDIRECT_URI=http://localhost:80/fyers/callback
 
 # For production deployment
 FYERS_REDIRECT_URI_PROD=https://yourdomain.com/fyers/callback
 ```
 
 ### Step 4: Install Fyers Python SDK
+
 ```bash
 pip install fyers-apiv3
 ```
@@ -77,7 +83,7 @@ Create a `.env` file in your project root:
 # ===========================================
 FYERS_CLIENT_ID=your_fyers_client_id
 FYERS_SECRET_KEY=your_fyers_secret_key
-FYERS_REDIRECT_URI=http://localhost:5008/fyers/callback
+FYERS_REDIRECT_URI=http://localhost:80/fyers/callback
 
 # ===========================================
 # DATABASE CONFIGURATION
@@ -146,6 +152,7 @@ DB_HOST = os.getenv('DB_HOST')
 ### PostgreSQL Setup
 
 #### Local PostgreSQL Installation:
+
 ```bash
 # Windows (using chocolatey)
 choco install postgresql
@@ -154,6 +161,7 @@ choco install postgresql
 ```
 
 #### Database Creation:
+
 ```sql
 -- Connect to PostgreSQL as superuser
 CREATE DATABASE vs_terminal_db;
@@ -197,6 +205,7 @@ CREATE TABLE IF NOT EXISTS portfolio_data (
 ### AWS RDS Setup
 
 #### Create RDS Instance:
+
 1. Login to AWS Console
 2. Navigate to RDS service
 3. Create new PostgreSQL instance:
@@ -208,6 +217,7 @@ CREATE TABLE IF NOT EXISTS portfolio_data (
    - **Security Group**: Allow port 5432
 
 #### Configure Security Group:
+
 - **Inbound Rules**: Allow PostgreSQL (port 5432) from your IP
 - **Outbound Rules**: All traffic allowed
 
@@ -216,6 +226,7 @@ CREATE TABLE IF NOT EXISTS portfolio_data (
 ## 🔄 Testing vs Production Modes
 
 ### Development Mode (Testing)
+
 ```env
 FLASK_ENV=development
 FLASK_DEBUG=True
@@ -224,12 +235,14 @@ PRODUCTION=False
 ```
 
 **Features in Development:**
+
 - YFinance API for stock data (free)
 - Local PostgreSQL database
 - Debug mode enabled
 - Detailed error messages
 
 ### Production Mode
+
 ```env
 FLASK_ENV=production
 FLASK_DEBUG=False
@@ -238,6 +251,7 @@ PRODUCTION=True
 ```
 
 **Features in Production:**
+
 - Fyers API for real-time stock data
 - AWS RDS for database
 - Error logging to files
@@ -274,26 +288,32 @@ def get_stock_price(symbol):
 ### Enhanced VS Terminal Endpoints
 
 #### 1. Main Terminal Page
+
 ```
 GET /vs_terminal_AClass
 ```
+
 **Description**: Main terminal interface with all enhanced features
 **Authentication**: Required (investor role)
 
 #### 2. Fyers Stock Quotes
+
 ```
 GET /api/vs_aclass/fyers_quotes?symbols=SBIN,RELIANCE,TCS
 ```
+
 **Parameters**:
+
 - `symbols`: Comma-separated stock symbols
 
 **Response**:
+
 ```json
 {
   "status": "success",
   "data": {
     "SBIN": {
-      "price": 542.30,
+      "price": 542.3,
       "change": 2.45,
       "change_percent": 0.45,
       "volume": 1250000,
@@ -306,16 +326,19 @@ GET /api/vs_aclass/fyers_quotes?symbols=SBIN,RELIANCE,TCS
 ```
 
 #### 3. Risk Analytics
+
 ```
 GET /api/vs_aclass/risk_analytics
 ```
+
 **Response**:
+
 ```json
 {
   "status": "success",
   "data": {
-    "portfolio_value": 150000.00,
-    "var_95": -5200.30,
+    "portfolio_value": 150000.0,
+    "var_95": -5200.3,
     "expected_shortfall": -7800.45,
     "sharpe_ratio": 1.25,
     "max_drawdown": -8.5,
@@ -326,10 +349,13 @@ GET /api/vs_aclass/risk_analytics
 ```
 
 #### 4. Subscribed ML Models
+
 ```
 GET /api/vs_aclass/subscribed_models
 ```
+
 **Response**:
+
 ```json
 {
   "status": "success",
@@ -347,10 +373,13 @@ GET /api/vs_aclass/subscribed_models
 ```
 
 #### 5. Model Predictions
+
 ```
 GET /api/vs_aclass/model_predictions?model_id=1
 ```
+
 **Response**:
+
 ```json
 {
   "status": "success",
@@ -361,7 +390,7 @@ GET /api/vs_aclass/model_predictions?model_id=1
         "symbol": "SBIN",
         "prediction": "BUY",
         "confidence": 0.85,
-        "target_price": 580.00,
+        "target_price": 580.0,
         "predicted_return": 6.95
       }
     ]
@@ -376,8 +405,10 @@ GET /api/vs_aclass/model_predictions?model_id=1
 ### Common Issues and Solutions
 
 #### 1. Fyers API Connection Issues
+
 **Problem**: "Fyers API not responding"
 **Solution**:
+
 ```python
 # Check API credentials
 print(f"Client ID: {os.getenv('FYERS_CLIENT_ID')}")
@@ -396,8 +427,10 @@ except Exception as e:
 ```
 
 #### 2. Database Connection Issues
+
 **Problem**: "Database connection failed"
 **Solutions**:
+
 ```python
 # Test database connection
 import psycopg2
@@ -416,8 +449,10 @@ except Exception as e:
 ```
 
 #### 3. Environment Variables Not Loading
+
 **Problem**: Environment variables are None
 **Solutions**:
+
 ```python
 # Verify .env file location
 import os
@@ -433,13 +468,16 @@ load_dotenv(verbose=True)
 ```
 
 #### 4. YFinance Fallback Issues
+
 **Problem**: YFinance data not loading
 **Solution**:
+
 ```bash
 pip install yfinance --upgrade
 ```
 
 ### Debug Mode Activation
+
 ```python
 # Enable detailed logging
 import logging
@@ -462,6 +500,7 @@ def debug_env():
 ## 🔒 Security Best Practices
 
 ### 1. Environment Variables Security
+
 ```bash
 # Never commit .env files
 echo ".env" >> .gitignore
@@ -474,6 +513,7 @@ echo "*.env" >> .gitignore
 ```
 
 ### 2. API Key Rotation
+
 ```python
 # Implement API key rotation
 def rotate_fyers_credentials():
@@ -488,6 +528,7 @@ scheduler.add_job(rotate_fyers_credentials, 'interval', days=30)
 ```
 
 ### 3. Database Security
+
 ```sql
 -- Create read-only user for reporting
 CREATE USER vs_terminal_readonly WITH PASSWORD 'readonly_password';
@@ -498,6 +539,7 @@ ALTER USER vs_terminal_user WITH PASSWORD 'new_secure_password';
 ```
 
 ### 4. Production Security Headers
+
 ```python
 # Add security headers in production
 @app.after_request
@@ -515,14 +557,16 @@ def add_security_headers(response):
 ## 🚀 Quick Start Checklist
 
 ### Development Setup
+
 - [ ] Install PostgreSQL locally
 - [ ] Create `.env` file with database credentials
 - [ ] Install required packages: `pip install -r requirements.txt`
 - [ ] Run database migrations
 - [ ] Start Flask app: `python app.py`
-- [ ] Access VS Terminal: `http://localhost:5008/vs_terminal_AClass`
+- [ ] Access VS Terminal: `http://localhost:80/vs_terminal_AClass`
 
 ### Production Setup
+
 - [ ] Create AWS RDS instance
 - [ ] Obtain Fyers API credentials
 - [ ] Configure production `.env` file
@@ -532,6 +576,7 @@ def add_security_headers(response):
 - [ ] Test all API endpoints
 
 ### Testing Checklist
+
 - [ ] Test Fyers API connection
 - [ ] Verify database connectivity
 - [ ] Check real-time data updates
@@ -544,15 +589,17 @@ def add_security_headers(response):
 ## 📞 Support and Resources
 
 ### Documentation Links
+
 - [Fyers API Documentation](https://myapi.fyers.in/docs/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [YFinance Documentation](https://pypi.org/project/yfinance/)
 
 ### Useful Commands
+
 ```bash
 # Check Flask app status
-curl http://localhost:5008/api/debug/status
+curl http://localhost:80/api/debug/status
 
 # Test database connection
 python -c "from app import test_db_connection; test_db_connection()"
@@ -563,8 +610,8 @@ python -c "import os; print(f'Fyers: {bool(os.getenv(\"FYERS_CLIENT_ID\"))}')"
 
 ---
 
-*Last Updated: September 9, 2025*
-*Version: 1.0*
+_Last Updated: September 9, 2025_
+_Version: 1.0_
 
 ---
 

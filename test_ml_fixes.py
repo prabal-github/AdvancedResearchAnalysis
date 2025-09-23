@@ -11,7 +11,7 @@ def test_ml_model_fixes():
     print("🔧 Testing ML Model Fixes")
     print("=" * 40)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test 1: Test ML models import by checking availability
     print("1. Testing ML models availability...")

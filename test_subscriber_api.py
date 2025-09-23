@@ -40,7 +40,7 @@ def test_api_endpoint(url, endpoint_name):
 
 def main():
     """Test all subscriber API endpoints"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # List of subscriber API endpoints to test
     endpoints = [

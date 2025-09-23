@@ -9,7 +9,7 @@ import json
 import time
 
 # Test configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 VS_TERMINAL_URL = f"{BASE_URL}/vs_terminal_AClass"
 RISK_MANAGEMENT_API_BASE = f"{BASE_URL}/api/vs_terminal_AClass/risk_management"
 

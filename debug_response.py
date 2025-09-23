@@ -1,7 +1,7 @@
 import requests
 
 try:
-    response = requests.get('http://127.0.0.1:5008/investor/scripts/BTSTjson.py')
+    response = requests.get('http://127.0.0.1:80/investor/scripts/BTSTjson.py')
     html_content = response.text
     
     print("📄 Response Status Code:", response.status_code)

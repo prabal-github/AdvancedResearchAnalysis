@@ -59,13 +59,13 @@ def create_demo_accounts():
             print("📋 DEMO CREDENTIALS:")
             print("="*60)
             print(f"🏛️  Admin Access:")
-            print(f"   - URL: http://127.0.0.1:5008/admin_dashboard?admin_key=admin123")
+            print(f"   - URL: http://127.0.0.1:80/admin_dashboard?admin_key=admin123")
             print()
             print(f"💰 Investor Login:")
-            print(f"   - URL: http://127.0.0.1:5008/investor_login")
+            print(f"   - URL: http://127.0.0.1:80/investor_login")
             print(f"   - Credentials: {demo_investor_email} / {demo_investor_password}")
             print()
-            print(f"🌐 Main Dashboard: http://127.0.0.1:5008/")
+            print(f"🌐 Main Dashboard: http://127.0.0.1:80/")
             print("="*60)
             
         except Exception as e:

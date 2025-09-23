@@ -11,12 +11,12 @@ def debug_json_api():
     
     # Login first
     print("1. Logging in...")
-    login_response = session.get("http://127.0.0.1:5008/demo_investor_login")
+    login_response = session.get("http://127.0.0.1:80/demo_investor_login")
     print(f"   Login status: {login_response.status_code}")
     
     # Test JSON API
     print("\n2. Testing JSON API...")
-    json_response = session.get("http://127.0.0.1:5008/subscribed_ml_models?format=json")
+    json_response = session.get("http://127.0.0.1:80/subscribed_ml_models?format=json")
     print(f"   Response status: {json_response.status_code}")
     print(f"   Content-Type: {json_response.headers.get('content-type', 'Not set')}")
     print(f"   Response length: {len(json_response.text)} characters")

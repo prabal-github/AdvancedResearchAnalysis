@@ -2,7 +2,7 @@ import requests
 import json
 
 # Test the new auth endpoint
-base_url = "http://127.0.0.1:5008"
+base_url = "http://127.0.0.1:80"
 session = requests.Session()
 
 # Establish admin session

@@ -219,10 +219,10 @@ def main():
         print("✅ All routes functional")
         
         print(f"\n🔗 TEST LINKS:")
-        print(f"   📊 Analyst Dashboard: http://localhost:5008/analyst/demo_analyst")
-        print(f"   📈 Analyst Performance: http://localhost:5008/analyst/performance")
-        print(f"   📜 Certificate Status: http://localhost:5008/analyst/certificate_status")
-        print(f"   🎓 Admin Certificates: http://localhost:5008/admin/certificates")
+        print(f"   📊 Analyst Dashboard: http://localhost:80/analyst/demo_analyst")
+        print(f"   📈 Analyst Performance: http://localhost:80/analyst/performance")
+        print(f"   📜 Certificate Status: http://localhost:80/analyst/certificate_status")
+        print(f"   🎓 Admin Certificates: http://localhost:80/admin/certificates")
     
     return all_passed
 

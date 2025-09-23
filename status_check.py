@@ -10,7 +10,7 @@ def check_status():
     # Check 1: Flask app running
     try:
         import requests
-        response = requests.get("http://127.0.0.1:5008", timeout=3)
+        response = requests.get("http://127.0.0.1:80", timeout=3)
         print(f"✅ Flask app running - Status: {response.status_code}")
     except Exception as e:
         print(f"❌ Flask app not accessible: {e}")
@@ -18,7 +18,7 @@ def check_status():
     
     # Check 2: analyze_new page
     try:
-        response = requests.get("http://127.0.0.1:5008/analyze_new", timeout=3)
+        response = requests.get("http://127.0.0.1:80/analyze_new", timeout=3)
         content = response.text
         
         # Check for new fields
@@ -83,7 +83,7 @@ def check_status():
         
         print(f"\n📡 API endpoint test:")
         response = requests.post(
-            "http://127.0.0.1:5008/analyze",
+            "http://127.0.0.1:80/analyze",
             json=test_data,
             timeout=10
         )
@@ -95,12 +95,12 @@ def check_status():
                 print(f"   ✅ API working - Report ID: {report_id}")
                 
                 # Check public view
-                public_response = requests.get(f"http://127.0.0.1:5008/public/report/{report_id}", timeout=5)
+                public_response = requests.get(f"http://127.0.0.1:80/public/report/{report_id}", timeout=5)
                 if public_response.status_code == 200:
                     public_content = public_response.text
                     if test_data['topic'] in public_content and test_data['sub_heading'] in public_content:
                         print(f"   ✅ Public view shows topic and sub-heading")
-                        print(f"   🔗 Test report: http://127.0.0.1:5008/public/report/{report_id}")
+                        print(f"   🔗 Test report: http://127.0.0.1:80/public/report/{report_id}")
                     else:
                         print(f"   ❌ Topic/sub-heading not in public view")
                 else:

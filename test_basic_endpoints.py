@@ -6,7 +6,7 @@ Simple test to verify VS Terminal ML integration endpoints exist and work
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_endpoints_basic():
     """Test basic endpoint availability"""

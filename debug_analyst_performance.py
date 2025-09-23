@@ -209,8 +209,8 @@ def main():
     
     if all_passed:
         print(f"\n🎉 ALL TESTS PASSED!")
-        print(f"🔗 Try the performance dashboard: http://localhost:5008/analyst/performance_dashboard")
-        print(f"🔐 Login first: http://localhost:5008/analyst_login")
+        print(f"🔗 Try the performance dashboard: http://localhost:80/analyst/performance_dashboard")
+        print(f"🔐 Login first: http://localhost:80/analyst_login")
         print(f"   📧 Email: analyst@demo.com")
         print(f"   🔐 Password: analyst123")
     else:

@@ -12,7 +12,7 @@ def test_vs_terminal_endpoint():
     
     try:
         # Test the endpoint
-        response = requests.get('http://127.0.0.1:5008/vs_terminal_AClass')
+        response = requests.get('http://127.0.0.1:80/vs_terminal_AClass')
         print(f"✅ Status Code: {response.status_code}")
         print(f"📏 Content Length: {len(response.text)} characters")
         
@@ -74,7 +74,7 @@ def test_vs_terminal_endpoint():
         return response.status_code == 200
         
     except requests.exceptions.ConnectionError:
-        print("❌ CONNECTION ERROR: Flask app is not running on port 5008")
+        print("❌ CONNECTION ERROR: Flask app is not running on port 80")
         print("   → Start the app with: python app.py")
         return False
         

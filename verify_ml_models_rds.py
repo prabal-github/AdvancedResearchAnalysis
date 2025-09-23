@@ -255,7 +255,7 @@ def main():
     print()
     print("🎉 VERIFICATION COMPLETE!")
     print("📈 All ML models are now available in the RDS database")
-    print("🌐 Access them at: http://127.0.0.1:5008/published")
+    print("🌐 Access them at: http://127.0.0.1:80/published")
     
     return True
 

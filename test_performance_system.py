@@ -97,7 +97,7 @@ if __name__ == "__main__":
         print("=" * 50)
         print("✅ All tests passed!")
         print("\n🎯 System is ready! You can now:")
-        print("1. Visit http://127.0.0.1:5008/investor/script_results")
+        print("1. Visit http://127.0.0.1:80/investor/script_results")
         print("2. See grouped script performance with AI insights")
         print("3. Click 'Analytics' buttons for detailed analysis")
         print("4. Upload new scripts that will auto-extract recommendations")

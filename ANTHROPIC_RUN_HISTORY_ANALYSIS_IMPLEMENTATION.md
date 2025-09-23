@@ -2,29 +2,33 @@
 
 ## 🚀 **Feature Overview**
 
-Enhanced the ML model Run History Analysis in the published models page (`http://127.0.0.1:5008/published`) with **Anthropic Claude Sonnet 3.5 and 3.7** integration for AI-powered insights when deployed on AWS EC2.
+Enhanced the ML model Run History Analysis in the published models page (`http://127.0.0.1:80/published`) with **Anthropic Claude Sonnet 3.5 and 3.7** integration for AI-powered insights when deployed on AWS EC2.
 
 ## ✨ **New Features Added**
 
 ### 1. **Anthropic-Powered Analysis Endpoint**
+
 - **Route**: `POST /api/published_models/<mid>/run_history_analysis`
-- **Models Supported**: 
+- **Models Supported**:
   - Sonnet 3.5 (Claude 3.5 Sonnet 20241022) - **Recommended**
   - Sonnet 4 (Future version placeholder)
   - Sonnet 3 Legacy (claude-3-sonnet-20240229)
 
 ### 2. **Analysis Types**
+
 - **Comprehensive**: Full research report with executive summary, performance analysis, recommendations
-- **Performance**: Focused on efficiency metrics, success rates, and optimization suggestions  
+- **Performance**: Focused on efficiency metrics, success rates, and optimization suggestions
 - **Trends**: Usage patterns, growth trajectory, and behavioral insights
 
 ### 3. **Admin Configuration System**
+
 - **Route**: `GET/POST /api/admin/anthropic/config`
 - Admin can configure API keys directly in the UI
 - Real-time API key testing and validation
 - Secure storage in `AdminAPIKey` table
 
 ### 4. **Enhanced UI Components**
+
 - **Analysis Dialog**: Updated with Anthropic model selection
 - **Admin Banner**: Dedicated Anthropic configuration section
 - **Real-time Status**: Shows API key status and last test results
@@ -34,26 +38,31 @@ Enhanced the ML model Run History Analysis in the published models page (`http:/
 ### **Backend Components**
 
 #### 1. **Run History Analysis Route**
+
 ```python
 @app.route('/api/published_models/<mid>/run_history_analysis', methods=['POST'])
 def generate_run_history_analysis(mid):
 ```
+
 - Supports Sonnet 3.5, 3.7, and legacy models
 - Analyzes up to 30 recent runs for comprehensive insights
 - Generates detailed performance metrics and usage statistics
 - Fallback to basic analysis when AI is unavailable
 
 #### 2. **Admin Configuration Route**
+
 ```python
 @app.route('/api/admin/anthropic/config', methods=['GET', 'POST'])
 @admin_required
 def anthropic_admin_config():
 ```
+
 - **GET**: Returns current configuration and available models
 - **POST**: Configure/test/deactivate Anthropic integration
 - Validates API keys before saving
 
 #### 3. **Enhanced Claude Client**
+
 - Updated model mapping for latest Anthropic models
 - Support for Sonnet 3.5 (claude-3-5-sonnet-20241022)
 - Placeholder for Sonnet 4 when available
@@ -61,6 +70,7 @@ def anthropic_admin_config():
 ### **Frontend Components**
 
 #### 1. **Enhanced Analysis Dialog**
+
 ```html
 <!-- New UI controls -->
 <select id="analysisProvider">
@@ -75,11 +85,13 @@ def anthropic_admin_config():
 ```
 
 #### 2. **Admin Configuration Banner**
+
 - Real-time status display
 - Direct API key configuration
 - Model selection and testing
 
 #### 3. **JavaScript Integration**
+
 - Smart endpoint selection (Anthropic vs legacy)
 - Rich analysis display with metadata
 - Error handling and fallback support
@@ -87,6 +99,7 @@ def anthropic_admin_config():
 ## 📊 **Analysis Output Format**
 
 ### **Comprehensive Analysis Example**
+
 ```
 ## Comprehensive Analysis - Stock Recommender Model
 
@@ -121,13 +134,15 @@ Model showing strong performance with 87.3% success rate across 45 runs.
 ## 🔑 **Configuration Setup**
 
 ### **1. Admin Configuration (UI)**
-1. Navigate to `http://127.0.0.1:5008/published`
+
+1. Navigate to `http://127.0.0.1:80/published`
 2. Admin banner will appear at top (admin login required)
 3. Enter Anthropic API key in the configuration field
 4. Select preferred model (Sonnet 3.5 recommended)
 5. Click "Save" to configure and test
 
 ### **2. Environment Variables (Alternative)**
+
 ```bash
 export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
 # or
@@ -135,7 +150,9 @@ export CLAUDE_API_KEY="your_anthropic_api_key_here"
 ```
 
 ### **3. Database Storage**
+
 API keys are securely stored in the `AdminAPIKey` table:
+
 ```sql
 service_name: 'anthropic'
 api_key: 'encrypted_key'
@@ -147,10 +164,12 @@ last_tested: '2025-01-09 14:30:45'
 ## 🌐 **AWS EC2 Deployment Compatibility**
 
 ### **Local Development**
-- URL: `http://127.0.0.1:5008/published`
+
+- URL: `http://127.0.0.1:80/published`
 - All endpoints use relative URLs for compatibility
 
 ### **AWS Production**
+
 - URL: `https://research.predictram.com/published`
 - Automatic API integration during deployment
 - Environment-based configuration support
@@ -158,6 +177,7 @@ last_tested: '2025-01-09 14:30:45'
 ## 🔄 **Usage Workflow**
 
 ### **For Investors/Analysts**
+
 1. Open published models page
 2. Click any model's "Analysis" button
 3. Select "Anthropic Claude (AWS)" as provider
@@ -165,6 +185,7 @@ last_tested: '2025-01-09 14:30:45'
 5. Click "Analyze AI" for intelligent insights
 
 ### **For Admins**
+
 1. Configure Anthropic API key via admin banner
 2. Test API connectivity
 3. Monitor usage and performance
@@ -173,16 +194,19 @@ last_tested: '2025-01-09 14:30:45'
 ## 🛡️ **Security & Error Handling**
 
 ### **Authentication**
+
 - Admin-only API key configuration
 - Session-based access control
 - Secure API key storage with encryption
 
 ### **Error Handling**
+
 - Graceful fallback to basic analysis
 - Detailed error messages for debugging
 - API rate limiting awareness
 
 ### **Validation**
+
 - Real-time API key testing
 - Model availability verification
 - Input sanitization and validation

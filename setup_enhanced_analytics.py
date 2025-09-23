@@ -130,7 +130,7 @@ if __name__ == "__main__":
             print("\n✅ Setup completed successfully!")
             print("\nNext steps:")
             print("1. Start your Flask app: python app.py")
-            print("2. Go to http://127.0.0.1:5008/subscribed_ml_models")
+            print("2. Go to http://127.0.0.1:80/subscribed_ml_models")
             print("3. Subscribe to ML models from /published")
             print("4. Use 'View Details' for advanced analytics")
             print("5. Use 'Generate Signal' for AI trading alerts")

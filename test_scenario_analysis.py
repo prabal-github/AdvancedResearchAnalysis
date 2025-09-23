@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 def test_scenario_analysis():
     """Test the scenario-based analysis feature with sample data"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Sample scenario data for testing
     scenario_data = {
@@ -159,7 +159,7 @@ def show_usage_guide():
     print("=" * 45)
     
     steps = [
-        "1. 🌐 Go to http://127.0.0.1:5008/report_hub",
+        "1. 🌐 Go to http://127.0.0.1:80/report_hub",
         "2. 📝 Click 'Analyze New Report' button",
         "3. 📋 Select 'Scenario Based Analysis' from Report Type dropdown",
         "4. 📝 Fill out the comprehensive scenario form with all 10 sections",
@@ -201,9 +201,9 @@ if __name__ == "__main__":
     if report_id:
         print(f"\n🎉 SUCCESS! Test completed successfully.")
         print(f"📊 You can now view the results at:")
-        print(f"   🔗 Report Hub: http://127.0.0.1:5008/report_hub")
-        print(f"   📈 Scenario Report: http://127.0.0.1:5008/scenario_report/{report_id}")
-        print(f"   📊 Backtest Results: http://127.0.0.1:5008/scenario_backtest/{report_id}")
+        print(f"   🔗 Report Hub: http://127.0.0.1:80/report_hub")
+        print(f"   📈 Scenario Report: http://127.0.0.1:80/scenario_report/{report_id}")
+        print(f"   📊 Backtest Results: http://127.0.0.1:80/scenario_backtest/{report_id}")
     else:
         print(f"\n❌ Test failed. Please check the Flask application is running.")
     

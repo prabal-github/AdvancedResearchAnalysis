@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Base URL for the Flask application
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_vs_terminal_subscribed_models():
     """Test the enhanced VS Terminal subscribed models endpoint"""

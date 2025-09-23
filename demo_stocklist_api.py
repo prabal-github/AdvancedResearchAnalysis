@@ -6,7 +6,7 @@ Demo API Test for ML Models with Stocklist Sheets
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_api():
     print("🧪 Testing ML Models API with Stocklist Sheets")
@@ -53,8 +53,8 @@ def test_api():
     
     print("\n🎯 API Structure Test Complete!")
     print("\n📋 Next Steps:")
-    print("   1. Login as admin at http://127.0.0.1:5008/admin_login")
-    print("   2. Navigate to http://127.0.0.1:5008/admin/ml_models")
+    print("   1. Login as admin at http://127.0.0.1:80/admin_login")
+    print("   2. Navigate to http://127.0.0.1:80/admin/ml_models")
     print("   3. Select a stocklist sheet (e.g., NIFTY50)")
     print("   4. Run ML analysis with real data")
 

@@ -95,7 +95,7 @@ import multiprocessing
 import os
 
 # Server socket
-bind = "0.0.0.0:5008"
+bind = "0.0.0.0:80"
 backlog = 2048
 
 # Worker processes
@@ -183,7 +183,7 @@ SECRET_KEY=your-super-secure-production-secret-key-here
 FLASK_DEBUG=False
 FLASK_ENV=production
 HOST=0.0.0.0
-PORT=5008
+PORT=80
 
 # SQLite Database Configuration
 DATABASE_URL=sqlite:///data/investment_research.db
@@ -248,7 +248,7 @@ sudo systemctl daemon-reload
 log_info "Step 9: Creating Nginx configuration..."
 cat > /tmp/flask-investment-app.nginx << EOF
 upstream flask_app {
-    server 127.0.0.1:5008 fail_timeout=0;
+    server 127.0.0.1:80 fail_timeout=0;
 }
 
 server {
@@ -381,7 +381,7 @@ sudo systemctl enable nginx
 # Step 14: Create Health Check Script
 cat > $APP_DIR/scripts/health_check.sh << 'EOF'
 #!/bin/bash
-curl -f http://localhost:5008/health > /dev/null 2>&1
+curl -f http://localhost:80/health > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "✅ Application is healthy"
     exit 0

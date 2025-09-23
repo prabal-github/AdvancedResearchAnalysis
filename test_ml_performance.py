@@ -10,7 +10,7 @@ import sys
 
 def test_performance_system():
     """Test the ML model performance tracking system"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🔍 Testing ML Model Performance System...")
     print("=" * 60)
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     if success:
         print("\n✅ Performance system test completed!")
         print("🔗 Access the published models catalog at:")
-        print("   http://127.0.0.1:5008/published")
+        print("   http://127.0.0.1:80/published")
         print("\n📊 To view performance metrics:")
         print("   1. Navigate to a published model")
         print("   2. Check the performance section")

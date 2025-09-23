@@ -8,13 +8,14 @@
 ## 📍 Affected Routes
 
 1. **Certificate Request Page**
-   - URL: `http://127.0.0.1:5008/analyst/certificate_request`
+
+   - URL: `http://127.0.0.1:80/analyst/certificate_request`
    - Methods: GET, POST
    - Previous Access: Analyst only
    - **Current Access**: Admin OR Analyst only (Investors explicitly blocked)
 
 2. **Certificate Status Page**
-   - URL: `http://127.0.0.1:5008/analyst/certificate_status`
+   - URL: `http://127.0.0.1:80/analyst/certificate_status`
    - Methods: GET
    - Previous Access: Analyst only
    - **Current Access**: Admin OR Analyst only (Investors explicitly blocked)
@@ -31,7 +32,7 @@ def admin_or_analyst_required(f):
         if 'investor_id' in session and 'analyst_id' not in session and session.get('user_role') != 'admin':
             flash('Certificate management is not available for investor accounts.', 'error')
             return redirect(url_for('index'))
-        
+
         # Check if user is admin
         if session.get('user_role') == 'admin':
             session['is_admin'] = True
@@ -47,37 +48,41 @@ def admin_or_analyst_required(f):
 
 ## 🎯 Access Control Matrix
 
-| User Type | Certificate Request | Certificate Status | Admin Certificates |
-|-----------|--------------------|--------------------|-------------------|
-| **Admin** | ✅ ALLOWED | ✅ ALLOWED | ✅ ALLOWED |
-| **Analyst** | ✅ ALLOWED | ✅ ALLOWED | 🚫 BLOCKED |
-| **Investor** | 🚫 **BLOCKED** | 🚫 **BLOCKED** | 🚫 BLOCKED |
-| **Unauthenticated** | 🚫 BLOCKED | 🚫 BLOCKED | 🚫 BLOCKED |
+| User Type           | Certificate Request | Certificate Status | Admin Certificates |
+| ------------------- | ------------------- | ------------------ | ------------------ |
+| **Admin**           | ✅ ALLOWED          | ✅ ALLOWED         | ✅ ALLOWED         |
+| **Analyst**         | ✅ ALLOWED          | ✅ ALLOWED         | 🚫 BLOCKED         |
+| **Investor**        | 🚫 **BLOCKED**      | 🚫 **BLOCKED**     | 🚫 BLOCKED         |
+| **Unauthenticated** | 🚫 BLOCKED          | 🚫 BLOCKED         | 🚫 BLOCKED         |
 
 ## 🛡️ Security Features
 
 ### 1. **Explicit Investor Detection**
+
 - Checks for `'investor_id'` in session
 - Ensures user is not also an analyst or admin
 - Immediate blocking with clear error message
 
 ### 2. **Role-Based Access Control**
+
 - **Admin Access**: `session.get('user_role') == 'admin'`
 - **Analyst Access**: `'analyst_id' in session`
 - **Investor Blocking**: `'investor_id' in session` without admin/analyst roles
 
 ### 3. **User-Friendly Error Messages**
+
 - **Investors**: "Certificate management is not available for investor accounts."
 - **Others**: "Admin or Analyst access required for certificate management."
 
 ### 4. **Secure Redirects**
+
 - All unauthorized access redirected to home page (`url_for('index')`)
 - Flash messages provide clear feedback
 
 ## ✅ Verification Results
 
 - **Syntax Check**: ✅ No compilation errors
-- **Flask App**: ✅ Running successfully 
+- **Flask App**: ✅ Running successfully
 - **Access Control Test**: ✅ All tests passed
 - **Investor Blocking**: ✅ Explicitly blocked with appropriate messages
 - **Admin/Analyst Access**: ✅ Preserved and working
@@ -85,6 +90,7 @@ def admin_or_analyst_required(f):
 ## 📋 Testing Summary
 
 **Test Results**:
+
 - ✅ Explicit investor exclusion logic implemented
 - ✅ Specific error message for investors
 - ✅ Both certificate routes properly protected
@@ -94,6 +100,7 @@ def admin_or_analyst_required(f):
 ## 🔐 Security Conclusion
 
 Certificate management pages at:
+
 - `/analyst/certificate_request`
 - `/analyst/certificate_status`
 

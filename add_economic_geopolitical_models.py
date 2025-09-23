@@ -412,4 +412,4 @@ if __name__ == "__main__":
     count = add_economic_models()
     
     print(f"\nProcess completed! Added {count} new models to the published catalog.")
-    print("These models can now be viewed at: http://127.0.0.1:5008/published")
+    print("These models can now be viewed at: http://127.0.0.1:80/published")

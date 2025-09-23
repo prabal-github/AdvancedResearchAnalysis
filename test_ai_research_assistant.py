@@ -21,7 +21,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Test configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 TEST_RESULTS = []
 
 def test_feature(feature_name, test_function):

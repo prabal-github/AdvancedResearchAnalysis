@@ -32,7 +32,7 @@ def show_implementation_status():
     print("🚀 VS TERMINAL MLCLASS - AGENTIC AI IMPLEMENTATION STATUS")
     print("=" * 70)
     print(f"📅 Implementation Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"🎯 Request: 'Now implement the same feature in http://127.0.0.1:5008/vs_terminal_MLClass'")
+    print(f"🎯 Request: 'Now implement the same feature in http://127.0.0.1:80/vs_terminal_MLClass'")
     print()
     
     # Core Implementation Status
@@ -122,7 +122,7 @@ def show_usage_instructions():
     print("🔧 USAGE INSTRUCTIONS:")
     print("-" * 40)
     print("1. Start Flask App: python app.py")
-    print("2. Navigate to: http://127.0.0.1:5008/vs_terminal_MLClass")
+    print("2. Navigate to: http://127.0.0.1:80/vs_terminal_MLClass")
     print("3. Go to Risk Analytics tab")
     print("4. Use SONNET 3.5 PORTFOLIO AI panel:")
     print("   • Select one of 8 specialized agents")
@@ -191,7 +191,7 @@ def main():
     print("🚀 STATUS: IMPLEMENTATION COMPLETED SUCCESSFULLY!")
     print("📋 NEXT STEP: Test the enhanced system in VS Terminal MLClass interface")
     print()
-    print("🌐 Access URL: http://127.0.0.1:5008/vs_terminal_MLClass")
+    print("🌐 Access URL: http://127.0.0.1:80/vs_terminal_MLClass")
     print("📍 Feature Location: Risk Analytics → SONNET 3.5 PORTFOLIO AI")
 
 if __name__ == "__main__":

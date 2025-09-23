@@ -2,7 +2,7 @@ import requests
 import json
 
 # Test the chat endpoint with proper session management
-base_url = "http://127.0.0.1:5008"
+base_url = "http://127.0.0.1:80"
 
 # Create a session and establish admin login properly
 session = requests.Session()

@@ -17,7 +17,7 @@ def test_with_admin_auth():
     
     # First, visit the main page with admin key to establish session
     print("📝 Establishing admin session...")
-    main_response = session.get("http://127.0.0.1:5008/vs_terminal_MLClass?admin_key=admin123")
+    main_response = session.get("http://127.0.0.1:80/vs_terminal_MLClass?admin_key=admin123")
     
     if main_response.status_code == 200:
         print("✅ Admin session established")
@@ -26,7 +26,7 @@ def test_with_admin_auth():
         print("\n💬 Testing basic chat endpoint...")
         chat_data = {"message": "analyze my portfolio"}
         chat_response = session.post(
-            "http://127.0.0.1:5008/api/vs_terminal_MLClass/chat",
+            "http://127.0.0.1:80/api/vs_terminal_MLClass/chat",
             json=chat_data,
             timeout=10
         )
@@ -51,7 +51,7 @@ def test_with_admin_auth():
         
         # Test chat with insights
         insights_response = session.post(
-            "http://127.0.0.1:5008/api/vs_terminal_MLClass/chat_with_insights",
+            "http://127.0.0.1:80/api/vs_terminal_MLClass/chat_with_insights",
             json={"message": "give me detailed insights"},
             timeout=15
         )
@@ -66,7 +66,7 @@ def test_with_admin_auth():
         
         # Test Claude chat
         claude_response = session.post(
-            "http://127.0.0.1:5008/api/vs_terminal_MLClass/chat_with_claude",
+            "http://127.0.0.1:80/api/vs_terminal_MLClass/chat_with_claude",
             json={"message": "analyze my portfolio with claude"},
             timeout=20
         )
@@ -96,7 +96,7 @@ def test_available_routes():
     
     for route in base_routes:
         try:
-            response = requests.get(f"http://127.0.0.1:5008{route}", timeout=5)
+            response = requests.get(f"http://127.0.0.1:80{route}", timeout=5)
             print(f"✅ {route}: Status {response.status_code}")
         except requests.exceptions.Timeout:
             print(f"⏰ {route}: Timeout")

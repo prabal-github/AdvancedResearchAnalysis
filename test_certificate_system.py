@@ -181,9 +181,9 @@ if __name__ == "__main__":
                 
                 print(f"\n🎉 Certificate system test completed successfully!")
                 print(f"\n🔗 Test the system at:")
-                print(f"   📝 http://127.0.0.1:5008/analyst/certificate_request")
-                print(f"   📋 http://127.0.0.1:5008/analyst/certificate_status")
-                print(f"   ⚙️  http://127.0.0.1:5008/admin/certificates")
+                print(f"   📝 http://127.0.0.1:80/analyst/certificate_request")
+                print(f"   📋 http://127.0.0.1:80/analyst/certificate_status")
+                print(f"   ⚙️  http://127.0.0.1:80/admin/certificates")
             else:
                 print(f"\n❌ Certificate generation test failed")
         else:

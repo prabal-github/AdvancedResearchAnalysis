@@ -90,7 +90,7 @@
 ### 5. Authentication Flow 🔐
 
 #### Demo Access:
-1. Visit: `http://127.0.0.1:5008/demo_investor_login`
+1. Visit: `http://127.0.0.1:80/demo_investor_login`
 2. Automatic login as demo investor
 3. Redirect to dashboard with full access
 
@@ -133,14 +133,14 @@ import requests
 
 # Login
 session = requests.Session()
-session.get('http://localhost:5008/demo_investor_login')
+session.get('http://localhost:80/demo_investor_login')
 
 # Get data
-response = session.get('http://localhost:5008/subscribed_ml_models?format=json')
+response = session.get('http://localhost:80/subscribed_ml_models?format=json')
 data = response.json()
 
 # Save new results
-session.post('http://localhost:5008/api/save_ml_result', json={
+session.post('http://localhost:80/api/save_ml_result', json={
     "model_name": "My ML Model",
     "summary": "Analysis summary",
     "results": ["TCS: BUY", "RELIANCE: HOLD"],

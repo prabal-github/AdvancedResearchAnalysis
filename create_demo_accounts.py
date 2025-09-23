@@ -23,7 +23,7 @@ def create_demo_accounts():
         
         # 1. Admin Authentication (Session-based)
         print("ℹ️  Admin authentication is session-based (admin_key=admin123)")
-        print("    Access via: http://localhost:5008/admin_dashboard?admin_key=admin123")
+        print("    Access via: http://localhost:80/admin_dashboard?admin_key=admin123")
         
         # 2. Create Analyst Account
         try:
@@ -94,22 +94,22 @@ def create_demo_accounts():
         print("\n🔑 Demo Account Credentials:")
         print("=" * 50)
         print("Admin Login:")
-        print("  URL: http://localhost:5008/admin_dashboard?admin_key=admin123")
+        print("  URL: http://localhost:80/admin_dashboard?admin_key=admin123")
         print("  OR")
         print("  Email: admin@researchqa.com")
         print("  Password: admin123")
         print()
         print("Analyst Login:")
-        print("  URL: http://localhost:5008/analyst_login")
+        print("  URL: http://localhost:80/analyst_login")
         print("  Email: analyst@demo.com")
         print("  Password: analyst123")
         print()
         print("Investor Login:")
-        print("  URL: http://localhost:5008/investor_login")
+        print("  URL: http://localhost:80/investor_login")
         print("  Email: investor@demo.com")
         print("  Password: investor123")
         print()
-        print("🌐 Main Dashboard: http://localhost:5008/")
+        print("🌐 Main Dashboard: http://localhost:80/")
         
         return True
 
@@ -164,18 +164,18 @@ def main():
         print("\n🎯 Quick Test Commands:")
         print("=" * 50)
         print("1. Test Analyst Login:")
-        print("   curl -X POST http://localhost:5008/analyst_login \\")
+        print("   curl -X POST http://localhost:80/analyst_login \\")
         print("        -d 'username=demo_analyst&password=analyst123' \\")
         print("        -H 'Content-Type: application/x-www-form-urlencoded'")
         print()
         print("2. Test Investor Login:")
-        print("   curl -X POST http://localhost:5008/investor_login \\")
+        print("   curl -X POST http://localhost:80/investor_login \\")
         print("        -d 'email=investor@demo.com&password=investor123' \\")
         print("        -H 'Content-Type: application/x-www-form-urlencoded'")
         print()
         print("3. Open Browser:")
-        print("   http://localhost:5008/analyst_login")
-        print("   http://localhost:5008/investor_login")
+        print("   http://localhost:80/analyst_login")
+        print("   http://localhost:80/investor_login")
     else:
         print("❌ Demo account setup failed")
 

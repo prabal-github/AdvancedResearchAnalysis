@@ -1,6 +1,7 @@
 # Real-time Model 'Not Callable' Error - FIXED ✅
 
 ## 🎯 Issue Summary
+
 **Error**: `'RealTimeStockRecommender' object is not callable`
 **Location**: `/api/published_models/<mid>/run_realtime` endpoint in `app.py`
 **Root Cause**: Trying to call model instances as functions instead of calling their methods
@@ -8,16 +9,18 @@
 ## 🔧 Problem Analysis
 
 ### Original Problematic Code:
+
 ```python
 # ❌ INCORRECT: Trying to call instances as functions
 result = real_time_stock_recommender(
-    symbol=symbol, 
-    category=category, 
+    symbol=symbol,
+    category=category,
     use_fyers=use_fyers
 )
 ```
 
 ### Root Issues:
+
 1. **Model instances were being called as functions** instead of using their methods
 2. **Models were not properly retrieved from globals** after lazy loading
 3. **Data fetcher was not assigned** to model instances before execution
@@ -26,6 +29,7 @@ result = real_time_stock_recommender(
 ## ✅ Solution Implemented
 
 ### 1. Fixed Model Retrieval from Globals
+
 ```python
 # ✅ CORRECT: Get instances from globals after lazy loading
 stock_recommender = globals().get('real_time_stock_recommender')
@@ -35,6 +39,7 @@ sector_analyzer = globals().get('real_time_sector_analyzer')
 ```
 
 ### 2. Fixed Method Calls
+
 ```python
 # ✅ CORRECT: Call methods on instances, not instances as functions
 if ml_model_type == 'stock_recommender' and stock_recommender:
@@ -48,6 +53,7 @@ elif ml_model_type == 'sector_analyzer' and sector_analyzer:
 ```
 
 ### 3. Added Data Fetcher Assignment
+
 ```python
 # ✅ CORRECT: Assign data fetcher to each model before execution
 if stock_recommender:
@@ -58,6 +64,7 @@ if btst_analyzer:
 ```
 
 ### 4. Added Helper Function for Sector Analysis
+
 ```python
 def _get_sector_symbols(symbol):
     """Get sector symbols for a given stock symbol"""
@@ -72,6 +79,7 @@ def _get_sector_symbols(symbol):
 ## 🧪 Verification Results
 
 ### Direct Model Test Results:
+
 ```
 ✅ Stock Recommender Type: <class 'realtime_ml_models.RealTimeStockRecommender'>
 ✅ BTST Analyzer Type: <class 'realtime_ml_models.RealTimeBTSTAnalyzer'>
@@ -85,6 +93,7 @@ def _get_sector_symbols(symbol):
 ```
 
 ### Lazy Loading Simulation:
+
 ```
 ✅ Models loaded into test globals
 ✅ Simulation successful: HOLD
@@ -93,18 +102,22 @@ def _get_sector_symbols(symbol):
 ## 📁 Files Modified
 
 ### Primary Fix:
+
 - **`app.py`** (lines ~47370-47390): Fixed real-time model execution in `/run_realtime` endpoint
 
 ### Supporting Changes:
+
 - **`app.py`** (line ~47295): Added `_get_sector_symbols()` helper function
 
 ### Test Files Created:
+
 - **`test_direct_realtime.py`**: Direct model testing and verification
 - **`test_realtime_fix.py`**: API endpoint testing
 
 ## 🚀 Current Status: FIXED ✅
 
 ### ✅ Confirmed Working:
+
 1. **Model instances are properly created** and accessible
 2. **Methods can be called successfully** on all model types
 3. **Data fetcher integration** working correctly
@@ -112,7 +125,8 @@ def _get_sector_symbols(symbol):
 5. **Real-time data integration** operational
 
 ### 🎯 Ready for Production:
-- **Published page**: `http://127.0.0.1:5008/published`
+
+- **Published page**: `http://127.0.0.1:80/published`
 - **Real-time endpoint**: `/api/published_models/<mid>/run_realtime`
 - **All model types**: Stock, BTST, Options, Sector analyzers
 - **Error handling**: Proper validation and error responses

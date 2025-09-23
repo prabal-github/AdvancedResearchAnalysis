@@ -10,7 +10,7 @@ def test_dashboard_simple():
     
     # Test direct browser access
     print("\n1️⃣ Testing browser access...")
-    url = "http://127.0.0.1:5008/subscribed_ml_models"
+    url = "http://127.0.0.1:80/subscribed_ml_models"
     
     try:
         resp = requests.get(url, timeout=10)
@@ -29,7 +29,7 @@ def test_dashboard_simple():
     
     # Test JSON API
     print("\n2️⃣ Testing JSON API...")
-    json_url = "http://127.0.0.1:5008/subscribed_ml_models?format=json"
+    json_url = "http://127.0.0.1:80/subscribed_ml_models?format=json"
     
     try:
         resp = requests.get(json_url, timeout=10)
@@ -51,9 +51,9 @@ def test_dashboard_simple():
     print("   If you see login redirects, the authentication middleware is working.")
     print("   The dashboard template and logic have been successfully implemented.")
     print("   To access the full dashboard:")
-    print("   1. Navigate to: http://127.0.0.1:5008/demo_investor_login")
-    print("   2. Then visit: http://127.0.0.1:5008/subscribed_ml_models")
-    print("   3. Or JSON API: http://127.0.0.1:5008/subscribed_ml_models?format=json")
+    print("   1. Navigate to: http://127.0.0.1:80/demo_investor_login")
+    print("   2. Then visit: http://127.0.0.1:80/subscribed_ml_models")
+    print("   3. Or JSON API: http://127.0.0.1:80/subscribed_ml_models?format=json")
 
 if __name__ == "__main__":
     test_dashboard_simple()

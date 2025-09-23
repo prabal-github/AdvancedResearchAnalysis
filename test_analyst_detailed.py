@@ -7,7 +7,7 @@ def test_analyst_login_with_detailed_logging():
     print("=" * 50)
     
     session = requests.Session()
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Step 1: Login
     print("1. Attempting analyst login...")
@@ -64,7 +64,7 @@ def test_other_analyst_routes():
     print("=" * 50)
     
     session = requests.Session()
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Login first
     login_data = {'email': 'analyst@demo.com', 'password': 'analyst123'}

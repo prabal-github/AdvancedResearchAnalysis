@@ -11,7 +11,7 @@ from datetime import datetime
 def test_csv_file_upload(file_path, test_name, expected_result):
     """Test uploading a specific CSV file"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print(f"\n🧪 Test: {test_name}")
     print(f"📁 File: {os.path.basename(file_path)}")
@@ -189,8 +189,8 @@ def main():
     print("4. Confirm successful accounts are active and complete")
     print()
     print("🔗 VERIFICATION URLS:")
-    print("📊 Admin Management: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
-    print("📤 Bulk Upload: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+    print("📊 Admin Management: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
+    print("📤 Bulk Upload: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
     
     if successful_tests == total_tests:
         print("\n🎉 ALL TESTS PASSED! Bulk upload system is working correctly!")

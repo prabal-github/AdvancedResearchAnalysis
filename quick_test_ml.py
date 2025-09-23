@@ -3,7 +3,7 @@ import json
 
 # Test ML models endpoint
 try:
-    response = requests.get("http://127.0.0.1:5008/api/rimsi/ml/models")
+    response = requests.get("http://127.0.0.1:80/api/rimsi/ml/models")
     print(f"Status: {response.status_code}")
     print(f"Content-Type: {response.headers.get('Content-Type', 'Unknown')}")
     if response.status_code == 200:

@@ -183,7 +183,7 @@ SECRET_KEY=CHANGE-THIS-TO-A-SECURE-SECRET-KEY-IN-PRODUCTION
 FLASK_DEBUG=False
 FLASK_ENV=production
 HOST=0.0.0.0
-PORT=5008
+PORT=80
 
 # SQLite Database Configuration
 DATABASE_URL=sqlite:///data/investment_research.db
@@ -240,7 +240,7 @@ import multiprocessing
 import os
 
 # Server socket
-bind = "0.0.0.0:5008"
+bind = "0.0.0.0:80"
 backlog = 2048
 
 # Worker processes

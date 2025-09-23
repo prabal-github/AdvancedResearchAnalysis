@@ -97,7 +97,7 @@ def main():
         print("✅ ALL TESTS PASSED - Real-time integration is ready!")
         print("\n🎯 Next Steps:")
         print("   1. Start the Flask server: python app.py")
-        print("   2. Visit: http://127.0.0.1:5008/published")
+        print("   2. Visit: http://127.0.0.1:80/published")
         print("   3. Test real-time data integration with top 100 stocks")
         print("   4. ML models will now process only the specified 100 stocks")
         print("\n📊 Features Available:")

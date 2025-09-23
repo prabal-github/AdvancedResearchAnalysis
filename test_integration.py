@@ -9,7 +9,7 @@ from datetime import datetime
 
 def test_endpoints():
     """Test the newly implemented endpoints"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("=== Testing Fyers API + Anthropic AI Integration ===")
     print(f"Testing Flask app at: {base_url}")

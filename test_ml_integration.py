@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 TEST_SYMBOLS = ["RELIANCE", "TCS", "INFY", "HDFC", "WIPRO"]
 
 def test_ml_models_list():

@@ -35,7 +35,7 @@ def create_demo_investor():
             print("👤 Username: demo_investor")
             print("🔑 Password: demo123")
             print("📧 Email: demo@investor.com")
-            print("\n🔗 Login at: http://127.0.0.1:5008/login/investor")
+            print("\n🔗 Login at: http://127.0.0.1:80/login/investor")
         except Exception as e:
             db.session.rollback()
             print(f"❌ Error creating demo investor: {e}")

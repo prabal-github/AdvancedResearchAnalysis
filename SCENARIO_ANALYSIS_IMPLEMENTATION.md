@@ -1,17 +1,21 @@
 # 🎯 SCENARIO-BASED ANALYSIS FEATURE - IMPLEMENTATION COMPLETE
 
 ## 📋 Overview
-The scenario-based analysis feature has been successfully implemented for the analyst dashboard at `http://127.0.0.1:5008/report_hub`. This feature provides comprehensive scenario analysis with automated backtesting and detailed performance metrics.
+
+The scenario-based analysis feature has been successfully implemented for the analyst dashboard at `http://127.0.0.1:80/report_hub`. This feature provides comprehensive scenario analysis with automated backtesting and detailed performance metrics.
 
 ## ✅ Implemented Features
 
 ### 🏗️ Frontend Components
+
 1. **Enhanced Report Form** - Modified `templates/report_hub.html`
+
    - Dynamic form toggling for scenario-based analysis
    - Comprehensive 10-section scenario input form
    - Real-time form validation and user guidance
 
 2. **Scenario Report View** - New `templates/scenario_report.html`
+
    - Detailed scenario overview with macroeconomic impact
    - Stock recommendations table with action indicators
    - Performance summary with key metrics
@@ -24,12 +28,15 @@ The scenario-based analysis feature has been successfully implemented for the an
    - Interactive results visualization
 
 ### 🗄️ Backend Components
+
 1. **Database Models** - New `ScenarioReport` table
+
    - Complete scenario data storage
    - Backtest results persistence
    - Additional stock recommendations storage
 
 2. **API Endpoints**
+
    - `POST /analyze_scenario` - Main scenario analysis endpoint
    - `GET /scenario_report/<report_id>` - Scenario report view
    - `GET /scenario_backtest/<report_id>` - Backtest results view
@@ -43,54 +50,65 @@ The scenario-based analysis feature has been successfully implemented for the an
 ## 📊 Scenario Form Sections
 
 ### 1. Scenario Title
+
 - Examples: "2008 Financial Crisis", "COVID-19 Crash", "Interest Rate Hike of 500bps"
 
 ### 2. Scenario Type
+
 - **Historical**: Past market events for analysis
 - **Hypothetical**: Simulated market conditions
 - **Forecasted**: Predicted future scenarios
 
 ### 3. Date Range
+
 - Start Date and End Date for backtesting period
 - Flexible date selection with validation
 
 ### 4. Scenario Description
+
 - Comprehensive overview of the scenario
 - Causes, triggers, and market impact analysis
 - Global and domestic factor consideration
 
 ### 5. Macroeconomic Impact
+
 - **Interest Rate Change**: RBI/Fed policy rate movement (bps)
 - **Inflation Rate**: Year-on-Year inflation percentage
 - **USD/INR Change**: Currency impact analysis
 - **Crude Oil Price**: Energy sector impact ($ per barrel)
 
 ### 6. Sectoral Sentiment
+
 - Sector-wise impact analysis
 - IT, Banking, Pharma, Auto, FMCG sentiment
 - Detailed rationale for each sector
 
 ### 7. Stock Recommendations
+
 - Maximum 5 stocks for backtesting
 - Format: `SYMBOL.NS, Action (Buy/Sell/Hold), Expected Return (%), Rationale`
 - Automatic ticker validation and extraction
 
 ### 8. Predictive Model Used
+
 - LSTM Price Predictor, Sector Rotation Model, GARCH, etc.
 - Model sophistication affects scenario scoring
 
 ### 9. Analyst Notes / Disclaimers
+
 - Assumptions made in the analysis
 - Model limitations and external sources
 - Risk factors and disclaimers
 
 ### 10. Portfolio Impact Simulation
+
 - Auto-generated based on stock recommendations
 - Portfolio-level metrics and risk assessment
 
 ## 🔬 Backtesting Features
 
 ### Stock-Level Analysis
+
 ```
 Stock | Action | Expected Return (%) | Actual Return (%) | Precision Score
 INFY.NS | sell | -12 | -9.3 | 97.3
@@ -98,12 +116,14 @@ SBIN.NS | buy | 8 | 10.2 | 97.8
 ```
 
 ### Performance Metrics
+
 - **Model Accuracy**: Overall direction prediction accuracy (0-100%)
 - **Sharpe Ratio**: Risk-adjusted returns during analysis period
 - **Alpha vs Benchmark**: Outperformance vs NIFTY 50 (-X.X%)
 - **Scenario Prediction Score**: Comprehensive scoring (0-100)
 
 ### Precision Scoring Algorithm
+
 - **Direction Accuracy**: 70% weight (buy/sell/hold direction correctness)
 - **Magnitude Accuracy**: 30% weight (return prediction accuracy within 50% tolerance)
 - **Overall Score**: Weighted average × 100
@@ -111,16 +131,18 @@ SBIN.NS | buy | 8 | 10.2 | 97.8
 ## ⭐ Additional Stock Recommendations
 
 After backtesting the first 5 stocks, the system provides up to 3 additional stock recommendations based on:
+
 - Sector correlation analysis
 - Scenario impact assessment
 - Portfolio diversification needs
 - Risk-adjusted opportunity identification
 
 Example output:
+
 ```json
 {
   "ticker": "HDFCBANK.NS",
-  "sector": "banking", 
+  "sector": "banking",
   "action": "buy",
   "expected_return": 8.5,
   "rationale": "Buy recommendation based on banking sector analysis for scenario"
@@ -130,6 +152,7 @@ Example output:
 ## 🎯 Scenario Scoring Algorithm
 
 The scenario score (0-100) is calculated based on:
+
 - **Backtesting Accuracy** (40% weight): Prediction direction accuracy
 - **Scenario Complexity** (25% weight): Number of macroeconomic factors considered
 - **Model Sophistication** (20% weight): Advanced models (LSTM, AI, ML) get higher scores
@@ -143,7 +166,7 @@ import requests
 
 scenario_data = {
     "analyst": "Test Analyst",
-    "report_type": "scenario_based", 
+    "report_type": "scenario_based",
     "topic": "Interest Rate Hike Impact Analysis",
     "scenario_data": {
         "scenario_title": "Interest Rate Hike of 500bps",
@@ -158,7 +181,7 @@ scenario_data = {
 }
 
 response = requests.post(
-    "http://127.0.0.1:5008/analyze_scenario",
+    "http://127.0.0.1:80/analyze_scenario",
     json=scenario_data
 )
 
@@ -170,10 +193,12 @@ print(f"Backtest Accuracy: {result['backtest_accuracy']}%")
 ## 🚀 Testing & Verification
 
 ### Automated Test
+
 Run `python test_scenario_analysis.py` to execute the comprehensive test suite.
 
 ### Manual Testing Steps
-1. Navigate to `http://127.0.0.1:5008/report_hub`
+
+1. Navigate to `http://127.0.0.1:80/report_hub`
 2. Click "Analyze New Report"
 3. Select "Scenario Based Analysis" from dropdown
 4. Fill out all 10 form sections
@@ -181,6 +206,7 @@ Run `python test_scenario_analysis.py` to execute the comprehensive test suite.
 6. View detailed results in scenario report and backtest dashboard
 
 ### Sample Test Results
+
 - **Report ID**: scen_1010924355_647003
 - **Backtest Accuracy**: 60.0%
 - **Scenario Score**: 33.2/100
@@ -190,6 +216,7 @@ Run `python test_scenario_analysis.py` to execute the comprehensive test suite.
 ## 📊 Database Schema
 
 ### ScenarioReport Table
+
 ```sql
 CREATE TABLE scenario_reports (
     id VARCHAR(32) PRIMARY KEY,
@@ -222,6 +249,7 @@ CREATE TABLE scenario_reports (
 ## 🎉 Success Metrics
 
 ### Feature Completeness
+
 - ✅ All 10 scenario form sections implemented
 - ✅ Real-time backtesting for first 5 stocks
 - ✅ Comprehensive precision scoring
@@ -231,6 +259,7 @@ CREATE TABLE scenario_reports (
 - ✅ API endpoints functional
 
 ### Performance Metrics
+
 - ✅ Backtesting completes in 30-60 seconds
 - ✅ Handles up to 5 stocks simultaneously
 - ✅ Accurate precision scoring algorithm
@@ -238,6 +267,7 @@ CREATE TABLE scenario_reports (
 - ✅ Error handling and validation
 
 ### User Experience
+
 - ✅ Intuitive form design with clear sections
 - ✅ Real-time form toggling and validation
 - ✅ Comprehensive results visualization
@@ -247,6 +277,7 @@ CREATE TABLE scenario_reports (
 ## 🔮 Next Steps & Enhancements
 
 ### Potential Improvements
+
 1. **Enhanced Authentication**: Re-enable analyst authentication with proper session management
 2. **Real-time Updates**: WebSocket integration for live backtesting progress
 3. **Advanced Visualizations**: Charts and graphs for performance metrics
@@ -256,6 +287,7 @@ CREATE TABLE scenario_reports (
 7. **Historical Scenario Library**: Pre-built scenario templates for common events
 
 ### Monitoring & Maintenance
+
 1. **Performance Monitoring**: Track backtesting execution times
 2. **Data Quality**: Monitor stock data fetch success rates
 3. **User Analytics**: Track scenario analysis usage patterns

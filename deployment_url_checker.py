@@ -169,7 +169,7 @@ def check_deployment_compatibility():
     
     print("\n" + "=" * 50)
     print("🎯 Summary: Your app should work correctly on both:")
-    print("   🏠 Local: http://127.0.0.1:5008/subscribed_ml_models")
+    print("   🏠 Local: http://127.0.0.1:80/subscribed_ml_models")
     print("   🌐 Production: https://research.predictram.com/subscribed_ml_models")
     print("\nFixed hardcoded localhost URLs in email templates! ✅")
 

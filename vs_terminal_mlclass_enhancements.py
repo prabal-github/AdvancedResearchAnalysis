@@ -384,7 +384,7 @@ class MLClassEnhancements:
                     'symbols': symbols,
                     'status': 'CONNECTED',
                     'message': 'Real-time feed started successfully',
-                    'websocket_url': f'ws://localhost:5008/ws/vs_terminal_MLClass/{session_id}',
+                    'websocket_url': f'ws://localhost:80/ws/vs_terminal_MLClass/{session_id}',
                     'update_frequency': '500ms'
                 })
                 

@@ -13,7 +13,7 @@ def test_analyze_new_page():
     # Test 1: Access the page without login
     print("1. Testing page access without login...")
     try:
-        response = requests.get("http://127.0.0.1:5008/analyze_new", timeout=5)
+        response = requests.get("http://127.0.0.1:80/analyze_new", timeout=5)
         if response.status_code == 302:
             print("   ✅ Correctly redirects to login when not authenticated")
         elif response.status_code == 200:
@@ -35,10 +35,10 @@ def test_analyze_new_page():
     
     try:
         # Try to login (this might need to be adjusted based on your login system)
-        login_response = session.post("http://127.0.0.1:5008/analyst_login", data=login_data, timeout=5)
+        login_response = session.post("http://127.0.0.1:80/analyst_login", data=login_data, timeout=5)
         
         # Now test the analyze_new page
-        analyze_response = session.get("http://127.0.0.1:5008/analyze_new", timeout=5)
+        analyze_response = session.get("http://127.0.0.1:80/analyze_new", timeout=5)
         
         if analyze_response.status_code == 200:
             print("   ✅ Page accessible after analyst login")
@@ -91,7 +91,7 @@ def test_analyze_new_page():
     
     try:
         submit_response = requests.post(
-            "http://127.0.0.1:5008/analyze",
+            "http://127.0.0.1:80/analyze",
             json=test_data,
             timeout=30
         )
@@ -105,7 +105,7 @@ def test_analyze_new_page():
                 print(f"   📄 Report ID: {report_id}")
                 
                 # Test public view
-                public_url = f"http://127.0.0.1:5008/public/report/{report_id}"
+                public_url = f"http://127.0.0.1:80/public/report/{report_id}"
                 public_response = requests.get(public_url, timeout=5)
                 
                 if public_response.status_code == 200:

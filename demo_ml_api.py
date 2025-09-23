@@ -8,7 +8,7 @@ import json
 import time
 
 # Base URL for the Flask app
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_stock_categories_api():
     """Test the stock categories API"""
@@ -92,7 +92,7 @@ def main():
     print("🎉 Demo completed!")
     print("\n📖 Next Steps:")
     print("1. 🔐 Login as admin in the web interface")
-    print("2. 🏠 Navigate to http://127.0.0.1:5008/admin_dashboard")
+    print("2. 🏠 Navigate to http://127.0.0.1:80/admin_dashboard")
     print("3. 🧠 Click the 'ML Models' button")
     print("4. 🔬 Run your first analysis!")
     print("\n🔧 Admin Interface Features:")

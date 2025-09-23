@@ -10,7 +10,7 @@ import json
 def test_investor_functionality():
     """Test investor login and creation"""
     
-    base_url = "http://localhost:5008"
+    base_url = "http://localhost:80"
     
     print("🧪 Testing Investor Functionality")
     print("=" * 50)

@@ -54,7 +54,7 @@ def test_upstox_api():
 def test_flask_api():
     """Test Flask API endpoint"""
     print("\nTesting Flask API...")
-    ports_to_try = [5008, 5009, 5010, 5011, 5012]
+    ports_to_try = [80, 5009, 5010, 5011, 5012]
     
     for port in ports_to_try:
         try:

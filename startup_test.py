@@ -45,11 +45,11 @@ def test_gunicorn_startup():
                 import socket
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(1)
-                result = sock.connect_ex(('127.0.0.1', 5008))
+                result = sock.connect_ex(('127.0.0.1', 80))
                 sock.close()
                 
                 if result == 0:
-                    print("✅ Application started successfully and is listening on port 5008!")
+                    print("✅ Application started successfully and is listening on port 80!")
                     # Terminate the process
                     process.terminate()
                     process.wait(timeout=10)

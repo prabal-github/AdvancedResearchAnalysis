@@ -1,16 +1,18 @@
-# 🎉 PROFILE EDIT & ADMIN LOGIN IMPLEMENTATION - COMPLETE! 
+# 🎉 PROFILE EDIT & ADMIN LOGIN IMPLEMENTATION - COMPLETE!
 
 ## ✅ COMPLETED TASKS
 
 ### 1. Profile Edit Links Fixed
+
 - **Issue**: Profile edit links were not visible in analyst dashboard
 - **Solution**: Fixed template variable in `analyst_dashboard.html` from `session.get('analyst_name')` to `analyst.name`
 - **Status**: ✅ **WORKING**
 
 ### 2. Admin Login System Created
+
 - **Email**: `admin@demo.com`
 - **Password**: `admin123`
-- **Features**: 
+- **Features**:
   - Full authentication system with session management
   - Secure password hashing
   - Login/logout functionality
@@ -19,15 +21,16 @@
 
 ## 🌐 ACCESS POINTS
 
-| User Type | Login URL | Credentials |
-|-----------|-----------|-------------|
-| **Analyst** | http://127.0.0.1:5008/analyst_login | Existing analyst accounts |
-| **Admin** | http://127.0.0.1:5008/admin_login | admin@demo.com / admin123 |
-| **Main Site** | http://127.0.0.1:5008/ | Public access |
+| User Type     | Login URL                         | Credentials               |
+| ------------- | --------------------------------- | ------------------------- |
+| **Analyst**   | http://127.0.0.1:80/analyst_login | Existing analyst accounts |
+| **Admin**     | http://127.0.0.1:80/admin_login   | admin@demo.com / admin123 |
+| **Main Site** | http://127.0.0.1:80/              | Public access             |
 
 ## 📊 PROFILE EDITING FEATURES
 
 ### Enhanced Analyst Profile Editor
+
 - **Image Upload**: Professional profile pictures with preview
 - **Personal Information**:
   - Date of Birth (with automatic age calculation)
@@ -37,6 +40,7 @@
 - **File Management**: Secure image storage in `static/uploads/profiles/`
 
 ### Profile Fields Available
+
 - ✅ Full Name
 - ✅ Email Address
 - ✅ Phone Number
@@ -48,6 +52,7 @@
 ## 🔐 ADMIN SYSTEM DETAILS
 
 ### Database Model
+
 ```python
 class AdminAccount(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,6 +67,7 @@ class AdminAccount(db.Model):
 ```
 
 ### Authentication Routes
+
 - `/admin_login` - Admin login page (GET/POST)
 - `/admin_logout` - Admin logout
 - Session management with proper security
@@ -69,21 +75,26 @@ class AdminAccount(db.Model):
 ## 🛠️ TECHNICAL IMPLEMENTATION
 
 ### Files Modified/Created
+
 1. **app.py**:
+
    - Added `AdminAccount` model
    - Added admin login/logout routes
    - Fixed analyst dashboard template variables
 
 2. **templates/admin_login.html**:
+
    - Professional admin login interface
    - Red/security themed styling
    - Form validation and error handling
 
 3. **templates/analyst_dashboard.html**:
+
    - Fixed Edit Profile button link
    - Template variable corrected
 
 4. **setup_admin.py**:
+
    - Admin account creation script
    - Database initialization
 
@@ -92,6 +103,7 @@ class AdminAccount(db.Model):
    - Validates all functionality
 
 ### Database Changes
+
 - ✅ `AdminAccount` table created
 - ✅ Admin account (admin@demo.com) created
 - ✅ Profile edit fields validated
@@ -125,12 +137,14 @@ class AdminAccount(db.Model):
 ## 🚀 NEXT STEPS
 
 1. **Test Profile Editing**:
-   - Login as analyst: http://127.0.0.1:5008/analyst_login
+
+   - Login as analyst: http://127.0.0.1:80/analyst_login
    - Click "Edit Profile" button in dashboard
    - Upload image and update information
 
 2. **Test Admin Access**:
-   - Login as admin: http://127.0.0.1:5008/admin_login
+
+   - Login as admin: http://127.0.0.1:80/admin_login
    - Use credentials: admin@demo.com / admin123
    - Access admin dashboard features
 
@@ -140,7 +154,7 @@ class AdminAccount(db.Model):
 
 ## 🔄 APPLICATION STATUS
 
-- **Flask App**: ✅ Running on http://127.0.0.1:5008
+- **Flask App**: ✅ Running on http://127.0.0.1:80
 - **Database**: ✅ All tables created and populated
 - **Authentication**: ✅ All login systems working
 - **Profile Editing**: ✅ Full functionality available

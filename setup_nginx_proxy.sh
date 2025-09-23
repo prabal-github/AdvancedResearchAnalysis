@@ -82,7 +82,7 @@ server {
     
     # Main proxy to Flask app
     location / {
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -124,7 +124,7 @@ server {
     # Rate limiting for security
     location /api/ {
         limit_req zone=api burst=20 nodelay;
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -154,12 +154,12 @@ else
     exit 1
 fi
 
-# Check if Flask app is running on port 5008
-print_status "Checking if Flask app is running on port 5008..."
-if ss -tuln | grep -q ":5008"; then
-    print_success "Flask app is running on port 5008"
+# Check if Flask app is running on port 80
+print_status "Checking if Flask app is running on port 80..."
+if ss -tuln | grep -q ":80"; then
+    print_success "Flask app is running on port 80"
 else
-    print_warning "Flask app is not running on port 5008. Starting it..."
+    print_warning "Flask app is not running on port 80. Starting it..."
     systemctl start predictram-research.service || {
         print_error "Failed to start Flask app. Please check the service status."
         exit 1
@@ -181,7 +181,7 @@ fi
 
 # Show status
 print_status "Service Status:"
-echo "🔧 Flask App (port 5008): $(systemctl is-active predictram-research.service 2>/dev/null || echo 'inactive')"
+echo "🔧 Flask App (port 80): $(systemctl is-active predictram-research.service 2>/dev/null || echo 'inactive')"
 echo "🌐 Nginx (port 80): $(systemctl is-active nginx)"
 
 # Final instructions

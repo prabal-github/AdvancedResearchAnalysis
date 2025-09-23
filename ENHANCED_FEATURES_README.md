@@ -3,27 +3,32 @@
 ## 🚀 New Features Added
 
 ### 1. **Investor Authentication System**
+
 - Secure login system for investors
 - Unique investor ID generation (format: INV123456)
 - Session-based authentication
 - Protected investor dashboard access
 
 **Access Details:**
+
 - **URL:** `/investor_dashboard`
 - **Demo Account:** `demo@investor.com` / `demo123`
 - **Features:** Secure login, session management, logout
 
 ### 2. **Admin Panel for Investor Management**
+
 - Admin dashboard for creating and managing investor accounts
 - View all investor accounts with status and login statistics
 - Create new investor accounts with auto-generated unique IDs
 - Comprehensive investor management interface
 
 **Access Details:**
+
 - **URL:** `/admin_dashboard?admin_key=admin123`
 - **Features:** Create investors, view statistics, manage accounts
 
 ### 3. **Detailed Fundamental Analysis for Indian Stocks**
+
 - Comprehensive fundamental analysis for Indian stocks (.NS tickers)
 - Financial ratios: PE, PB, ROE, Debt-to-Equity, Current Ratio
 - Growth metrics: Revenue Growth, Earnings Growth, Profit Margins
@@ -33,12 +38,14 @@
 - Sector comparison metrics
 
 **Features:**
+
 - Real-time data fetching from Yahoo Finance
 - Automated analysis generation
 - Historical analysis tracking
 - API endpoints for fundamental data
 
 ### 4. **Backtesting Results Tracking**
+
 - Track performance of analyst recommendations over time
 - Real-time portfolio tracking for analyst suggestions
 - Performance metrics: Win rate, Average return, Sharpe ratio
@@ -47,6 +54,7 @@
 - Alpha generation tracking vs benchmarks
 
 **Metrics Tracked:**
+
 - Total trades, Win/Loss ratios
 - Average returns and holding periods
 - Risk-adjusted returns (Sharpe ratio)
@@ -54,6 +62,7 @@
 - Sector-wise performance
 
 ### 5. **Enhanced Analyst Profiles**
+
 - Comprehensive analyst performance dashboards
 - Integration with fundamental analysis coverage
 - Backtesting results display
@@ -62,6 +71,7 @@
 - Improvement metrics and recommendations
 
 **New Profile Sections:**
+
 - Fundamental Analysis Coverage
 - Backtesting Performance Metrics
 - Historical Performance Tracking
@@ -72,14 +82,17 @@
 ### New Tables Added:
 
 1. **InvestorAccount**
+
    - Unique investor IDs, secure authentication
    - Login tracking and account management
 
-2. **FundamentalAnalysis** 
+2. **FundamentalAnalysis**
+
    - Comprehensive fundamental data storage
    - Financial ratios, growth metrics, recommendations
 
 3. **BacktestingResult**
+
    - Trade tracking and performance measurement
    - Entry/exit prices, returns, holding periods
 
@@ -90,58 +103,68 @@
 ## 🔧 Setup Instructions
 
 ### 1. Run Database Migration
+
 ```bash
 python migrate_database.py
 ```
 
 ### 2. Start the Application
+
 ```bash
 python app.py
 ```
 
 ### 3. Access Points
-- **Main Dashboard:** http://localhost:5008/
-- **Investor Login:** http://localhost:5008/investor_dashboard
-- **Admin Panel:** http://localhost:5008/admin_dashboard?admin_key=admin123
+
+- **Main Dashboard:** http://localhost:80/
+- **Investor Login:** http://localhost:80/investor_dashboard
+- **Admin Panel:** http://localhost:80/admin_dashboard?admin_key=admin123
 
 ## 🔐 Authentication & Access
 
 ### Investor Access
+
 - **Login Required:** Yes
 - **Demo Credentials:** demo@investor.com / demo123
 - **Features:** Secure dashboard, portfolio analysis, report viewing
 
-### Admin Access  
+### Admin Access
+
 - **Login Required:** Admin key verification
 - **Access Key:** admin123 (change in production)
 - **Features:** Investor management, account creation, system overview
 
 ### Analyst Profiles
+
 - **Public Access:** Yes
 - **Enhanced Features:** Fundamental analysis, backtesting results
-- **Example:** http://localhost:5008/analyst/SampleAnalyst/profile
+- **Example:** http://localhost:80/analyst/SampleAnalyst/profile
 
 ## 🎯 Key Improvements
 
 ### 1. **Security Enhancements**
+
 - Password hashing with werkzeug.security
 - Session-based authentication
 - Protected routes with decorators
 - Role-based access control
 
 ### 2. **Performance Tracking**
+
 - Real-time backtesting of recommendations
 - Automated performance calculation
 - Historical trend analysis
 - Risk-adjusted return metrics
 
 ### 3. **Data Intelligence**
+
 - Automated fundamental analysis generation
 - Indian stock market focus (.NS tickers)
 - Sector comparison and risk assessment
 - Quality score trending
 
 ### 4. **User Experience**
+
 - Responsive dashboard designs
 - Interactive data tables
 - Modal-based forms
@@ -164,27 +187,31 @@ GET  /api/ai_detection/<report_id>      # AI detection results
 ## 🔍 Features Demo
 
 ### 1. **Create Investor Account**
+
 - Go to Admin Panel → Create New Investor
 - Fill in name, email, password
 - System generates unique investor ID
 - Account ready for login
 
-### 2. **Investor Dashboard Access**  
+### 2. **Investor Dashboard Access**
+
 - Navigate to investor dashboard
 - System redirects to login if not authenticated
 - Login with valid credentials
 - Access personalized dashboard
 
 ### 3. **Fundamental Analysis**
+
 - View analyst profile
 - See comprehensive fundamental analysis for covered stocks
 - Generate analysis for new stocks
 - Track analysis history
 
 ### 4. **Backtesting Results**
+
 - View analyst performance metrics
 - See win/loss ratios and returns
-- Track active and closed positions  
+- Track active and closed positions
 - Analyze risk-adjusted performance
 
 ## 🚀 Future Enhancements

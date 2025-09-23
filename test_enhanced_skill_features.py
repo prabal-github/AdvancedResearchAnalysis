@@ -7,7 +7,7 @@ import requests
 
 def test_enhanced_features():
     """Test the enhanced features on an existing report"""
-    base_url = "http://localhost:5008"
+    base_url = "http://localhost:80"
     report_id = "rep_30226255_220717"  # From previous test
     
     print("🎓 TESTING ENHANCED SKILL LEARNING FEATURES")

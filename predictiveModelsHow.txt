@@ -727,7 +727,7 @@ I’ll verify package visibility by searching for naming conflicts and then inst
 ## actions taken
 - Added `flask-cors` to requirements.txt.
 - Installed Flask-Cors into the interpreter used by your Run Flask App task.
-- Started the app successfully; no `ModuleNotFoundError` now. Server is up at http://127.0.0.1:5008.
+- Started the app successfully; no `ModuleNotFoundError` now. Server is up at http://127.0.0.1:80.
 
 ## note
 Your “Run Flask App” task uses the system Python (not the project venv). If you want it to use the venv instead, change the task’s command to:
@@ -807,7 +807,7 @@ Checkpoint
 
 ## how to use
 - Log in to your app.
-- Open http://127.0.0.1:5008/wealth_data_lake
+- Open http://127.0.0.1:80/wealth_data_lake
 - Click “Refresh” to load KPIs and charts. Charts only render for available data; otherwise a placeholder is shown.
 
 ## notes
@@ -887,7 +887,7 @@ Notes
 - Your server banner now includes the Wealth Data Lake URL.
 
 ## try it
-- Log in and open: http://127.0.0.1:5008/wealth_data_lake
+- Log in and open: http://127.0.0.1:80/wealth_data_lake
 - Use the top-right controls:
   - Set Start/End dates, Model, Analyst. Click Apply.
   - Toggle Auto-refresh and choose an interval.
@@ -978,7 +978,7 @@ I’ve added a “Common Stocks” insight that finds tickers present across Rep
   - Respects date filters at the top and has a “Refresh Common” button
 
 ## try it
-- Open `http://127.0.0.1:5008/wealth_data_lake`, set date filters if needed, and scroll to “Common Stocks” to see symbols, their average then vs now, and % change.
+- Open `http://127.0.0.1:80/wealth_data_lake`, set date filters if needed, and scroll to “Common Stocks” to see symbols, their average then vs now, and % change.
 
 Notes
 - Symbols are normalized (A–Z, 0–9, dot, hyphen).
@@ -1004,7 +1004,7 @@ Task received. I’ll stop the crash by making flask_migrate optional and verify
 
 If you want database migrations enabled, I can repair your venv’s pip and install Flask-Migrate there, or continue using the system interpreter where your other packages are installed.
 
-sbrsingh20: As per application wnat other analytical tools i can add http://127.0.0.1:5008/wealth_data_lake
+sbrsingh20: As per application wnat other analytical tools i can add http://127.0.0.1:80/wealth_data_lake
 
 GitHub Copilot: Got it—here’s a focused menu of high‑value analytics you can add to Wealth Data Lake next, aligned to your current data models.
 
@@ -1049,7 +1049,7 @@ Quick wins I can wire now
 
 Say which 2–3 you want first and I’ll add them to wealth_data_lake with APIs and charts.
 
-sbrsingh20: Only admin can access http://127.0.0.1:5008/wealth_data_lake and add. Top Performers table (stocks/models/analysts) with filters and CSV export.
+sbrsingh20: Only admin can access http://127.0.0.1:80/wealth_data_lake and add. Top Performers table (stocks/models/analysts) with filters and CSV export.
 Correlation heatmap + cluster map.
 Sector/Industry performance treemap.
 Alert rules UI (price % change, IV rank, win‑rate dips).
@@ -1167,7 +1167,7 @@ I’ll lock Wealth Data Lake to admins and add the requested analytics, export, 
 
 ## how to use
 
-- Access: Only admin can open http://127.0.0.1:5008/wealth_data_lake and all /api/wealth/* endpoints.
+- Access: Only admin can open http://127.0.0.1:80/wealth_data_lake and all /api/wealth/* endpoints.
 - Filters: Top Performers respects date/model/analyst filters.
 - CSV: Click “Download CSV” in the Top Performers card to export with current filters.
 - Correlation: Heatmap auto-loads for top frequent tickers (limit=20, 60d). Adjust easily server-side with query params if needed.
@@ -1209,7 +1209,7 @@ ModuleNotFoundError: No module named 'yfinance' fix it
 GitHub Copilot: Summarized conversation historyI’ll resolve the yfinance import error by ensuring the app runs with a Python interpreter that has yfinance installed and verify it live.
 
 ## Actions taken
-- Started the Flask app successfully at http://127.0.0.1:5008/.
+- Started the Flask app successfully at http://127.0.0.1:80/.
 - Verified yfinance is importable in the active interpreter:
   - yfinance 0.2.65 on Python 3.12.0
   - Interpreter: python.exe

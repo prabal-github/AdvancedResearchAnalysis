@@ -9,6 +9,7 @@ chmod +x complete_aws_deployment.sh
 ```
 
 This script will:
+
 1. ✅ Check prerequisites (AWS CLI, credentials)
 2. 🔧 Get your deployment preferences
 3. 📦 Package your application
@@ -21,6 +22,7 @@ This script will:
 ## 📋 Prerequisites
 
 ### 1. AWS Setup
+
 ```bash
 # Install AWS CLI (if not installed)
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -32,6 +34,7 @@ aws configure
 ```
 
 ### 2. Create EC2 Key Pair
+
 ```bash
 # Create a new key pair
 aws ec2 create-key-pair --key-name flask-app-key --query 'KeyMaterial' --output text > flask-app-key.pem
@@ -39,6 +42,7 @@ chmod 400 flask-app-key.pem
 ```
 
 ### 3. Domain Setup (Optional)
+
 - Purchase domain from Route 53 or external provider
 - Update nameservers to point to AWS Route 53 (if using external domain)
 
@@ -47,6 +51,7 @@ chmod 400 flask-app-key.pem
 If you prefer manual control:
 
 ### Step 1: Deploy Infrastructure
+
 ```bash
 aws cloudformation deploy \
   --template-file aws-infrastructure.yaml \
@@ -60,6 +65,7 @@ aws cloudformation deploy \
 ```
 
 ### Step 2: Get Instance Information
+
 ```bash
 # Get public IP
 PUBLIC_IP=$(aws cloudformation describe-stacks \
@@ -71,6 +77,7 @@ echo "Public IP: $PUBLIC_IP"
 ```
 
 ### Step 3: Deploy Application
+
 ```bash
 # Upload files to server
 scp -i flask-app-key.pem app.py ubuntu@$PUBLIC_IP:/tmp/
@@ -86,6 +93,7 @@ sudo /tmp/deploy_to_ec2.sh
 ## ⚙️ Configuration
 
 ### Environment Variables (.env.production)
+
 ```bash
 # SSH to server and edit
 ssh -i flask-app-key.pem ubuntu@$PUBLIC_IP
@@ -93,6 +101,7 @@ sudo nano /opt/flask-app/.env.production
 ```
 
 Required updates:
+
 ```env
 SECRET_KEY=your-super-secure-production-secret-key-here
 ANTHROPIC_API_KEY=your-anthropic-api-key
@@ -101,6 +110,7 @@ SES_SENDER_EMAIL=support@yourdomain.com
 ```
 
 ### SSL Certificate Setup
+
 ```bash
 # For custom domain
 sudo certbot --nginx -d your-domain.com -d www.your-domain.com
@@ -112,6 +122,7 @@ sudo certbot renew --dry-run
 ## 🔧 Management Commands
 
 ### Service Management
+
 ```bash
 # Start/Stop/Restart application
 sudo systemctl start flask-investment-app
@@ -126,6 +137,7 @@ sudo systemctl enable flask-investment-app
 ```
 
 ### Log Monitoring
+
 ```bash
 # Application logs
 sudo tail -f /var/log/flask-app/error.log
@@ -136,6 +148,7 @@ sudo journalctl -u flask-investment-app -f
 ```
 
 ### Database Management
+
 ```bash
 # Backup databases
 sudo -u flask-app /opt/flask-app/scripts/backup.sh
@@ -148,6 +161,7 @@ ls -la /opt/flask-app/backups/
 ```
 
 ### Performance Monitoring
+
 ```bash
 # System resources
 htop
@@ -155,7 +169,7 @@ df -h
 free -h
 
 # Application health check
-curl http://localhost:5008/health
+curl http://localhost:80/health
 
 # Nginx status
 sudo systemctl status nginx
@@ -165,6 +179,7 @@ sudo nginx -t  # Test configuration
 ## 🚨 Troubleshooting
 
 ### Application Not Starting
+
 ```bash
 # Check service status
 sudo systemctl status flask-investment-app
@@ -180,6 +195,7 @@ sudo -u flask-app /opt/flask-app/venv/bin/python /opt/flask-app/wsgi.py
 ```
 
 ### SSL Certificate Issues
+
 ```bash
 # Check certificate status
 sudo certbot certificates
@@ -193,6 +209,7 @@ sudo systemctl reload nginx
 ```
 
 ### Database Issues
+
 ```bash
 # Check database permissions
 ls -la /opt/flask-app/data/
@@ -211,14 +228,15 @@ conn.close()
 ```
 
 ### Network Issues
+
 ```bash
 # Check port availability
-sudo netstat -tlnp | grep :5008
+sudo netstat -tlnp | grep :80
 sudo netstat -tlnp | grep :80
 sudo netstat -tlnp | grep :443
 
 # Test internal connectivity
-curl -I http://localhost:5008/health
+curl -I http://localhost:80/health
 
 # Check firewall (if enabled)
 sudo ufw status
@@ -227,6 +245,7 @@ sudo ufw status
 ## 📊 Monitoring & Maintenance
 
 ### Health Checks
+
 ```bash
 # Automated health check
 sudo -u flask-app /opt/flask-app/scripts/health_check.sh
@@ -237,6 +256,7 @@ sudo crontab -e
 ```
 
 ### Regular Maintenance
+
 ```bash
 # Weekly backup (add to cron)
 0 2 * * 0 /opt/flask-app/scripts/backup.sh
@@ -252,12 +272,14 @@ df -h | awk '$5 > "80%" {print $0}' | mail -s "Disk Space Alert" admin@yourdomai
 ## 🔐 Security Best Practices
 
 ### 1. Update System Regularly
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo reboot  # If kernel updates
 ```
 
 ### 2. Configure Firewall
+
 ```bash
 sudo ufw enable
 sudo ufw allow ssh
@@ -266,6 +288,7 @@ sudo ufw status
 ```
 
 ### 3. Monitor Access Logs
+
 ```bash
 # Check for suspicious activity
 sudo tail -f /var/log/nginx/access.log | grep -E "(404|500|suspicious)"
@@ -276,6 +299,7 @@ sudo systemctl enable fail2ban
 ```
 
 ### 4. Backup Strategy
+
 ```bash
 # Automated S3 backup script
 aws s3 sync /opt/flask-app/backups/ s3://your-backup-bucket/flask-app-backups/
@@ -284,6 +308,7 @@ aws s3 sync /opt/flask-app/backups/ s3://your-backup-bucket/flask-app-backups/
 ## 📱 Mobile & API Access
 
 Your application will be accessible at:
+
 - **Web Interface**: `https://your-domain.com`
 - **API Endpoints**: `https://your-domain.com/api/`
 - **Health Check**: `https://your-domain.com/health`
@@ -291,17 +316,20 @@ Your application will be accessible at:
 ## 🆘 Support & Resources
 
 ### Log Locations
+
 - Application Logs: `/var/log/flask-app/`
 - Nginx Logs: `/var/log/nginx/`
 - System Logs: `journalctl -u flask-investment-app`
 
 ### Configuration Files
+
 - App Config: `/opt/flask-app/.env.production`
 - Gunicorn: `/opt/flask-app/gunicorn.conf.py`
 - Nginx: `/etc/nginx/sites-available/flask-investment-app`
 - Systemd: `/etc/systemd/system/flask-investment-app.service`
 
 ### Performance Optimization
+
 - **Database**: Regular VACUUM and ANALYZE
 - **Memory**: Monitor with `free -h`
 - **CPU**: Monitor with `htop`
@@ -310,6 +338,7 @@ Your application will be accessible at:
 ## 🎉 Success Verification
 
 After deployment, verify these endpoints:
+
 1. **Main App**: `https://your-domain.com/` - Should show investment dashboard
 2. **VS Terminal MLClass**: `https://your-domain.com/vs_terminal_MLClass` - Agentic AI system
 3. **Health Check**: `https://your-domain.com/health` - Should return "OK"

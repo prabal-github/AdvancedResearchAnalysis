@@ -182,11 +182,11 @@ start_service() {
         sudo systemctl status $SERVICE_NAME --no-pager -l
         
         # Check if port is listening
-        echo_info "Checking if port 5008 is listening..."
-        if netstat -tuln | grep :5008; then
-            echo_info "✅ Application is listening on port 5008"
+        echo_info "Checking if port 80 is listening..."
+        if netstat -tuln | grep :80; then
+            echo_info "✅ Application is listening on port 80"
         else
-            echo_warn "Port 5008 is not listening yet, checking logs..."
+            echo_warn "Port 80 is not listening yet, checking logs..."
             sudo journalctl -u $SERVICE_NAME -n 20 --no-pager
         fi
     else
@@ -232,7 +232,7 @@ main() {
     start_service
     
     echo_info "🎉 Deployment completed successfully!"
-    echo_info "🌐 Your application should be available at: http://$(curl -s ifconfig.me):5008"
+    echo_info "🌐 Your application should be available at: http://$(curl -s ifconfig.me):80"
     echo_info "📊 Monitor logs with: sudo journalctl -u $SERVICE_NAME -f"
     echo_info "🔧 Control service with: sudo systemctl [start|stop|restart|status] $SERVICE_NAME"
 }

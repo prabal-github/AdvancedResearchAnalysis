@@ -10,7 +10,7 @@ import time
 
 def test_published_route():
     """Test the /published route for errors"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🧪 Testing /published route fixes...")
     print("=" * 50)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         print("\n✅ Tests completed successfully!")
         print("💡 The /published route should now work without the previous errors.")
         print("\nNext steps:")
-        print("   1. Access http://127.0.0.1:5008/published in your browser")
+        print("   1. Access http://127.0.0.1:80/published in your browser")
         print("   2. Check server logs for any remaining warnings")
         print("   3. Monitor for improved stability")
     else:

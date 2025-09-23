@@ -12,7 +12,7 @@ def debug_chat():
     session = requests.Session()
     
     # Establish session
-    main_response = session.get("http://127.0.0.1:5008/vs_terminal_MLClass?admin_key=admin123")
+    main_response = session.get("http://127.0.0.1:80/vs_terminal_MLClass?admin_key=admin123")
     print(f"Session establishment: {main_response.status_code}")
     
     # Try with a simple message first
@@ -27,7 +27,7 @@ def debug_chat():
         
         try:
             response = session.post(
-                "http://127.0.0.1:5008/api/vs_terminal_MLClass/chat",
+                "http://127.0.0.1:80/api/vs_terminal_MLClass/chat",
                 json={"message": message},
                 timeout=10
             )

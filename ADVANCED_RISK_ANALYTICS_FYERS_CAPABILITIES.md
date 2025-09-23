@@ -2,9 +2,10 @@
 
 ## Current Implementation Status ✅
 
-Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a comprehensive risk analytics system with:
+Your VS Terminal at `http://127.0.0.1:80/vs_terminal_AClass` already has a comprehensive risk analytics system with:
 
 ### **Core Features Implemented:**
+
 1. **Value at Risk (VaR)** - 95% and 99% confidence levels
 2. **Portfolio Beta Analysis** - Market, up-market, and down-market betas
 3. **Concentration Risk** - Herfindahl Index calculations
@@ -21,6 +22,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ### **Phase 1: Real-Time Risk Enhancements**
 
 #### 1. **Intraday Risk Monitoring**
+
 - **Real-time VaR updates** every 15 minutes
 - **Dynamic beta calculations** based on live market movements
 - **Intraday drawdown tracking** with alerts
@@ -28,11 +30,12 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 - **Real-time sector rotation detection**
 
 #### 2. **Advanced Options Risk (Greeks)**
+
 ```javascript
 // Greeks calculations for option positions
 {
     "delta": 0.65,          // Price sensitivity
-    "gamma": 0.045,         // Delta sensitivity  
+    "gamma": 0.045,         // Delta sensitivity
     "theta": -0.25,         // Time decay
     "vega": 12.5,           // Volatility sensitivity
     "rho": 8.2              // Interest rate sensitivity
@@ -40,12 +43,14 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ```
 
 #### 3. **Multi-Timeframe Risk Analysis**
+
 - **1-minute VaR** for scalping strategies
 - **Hourly risk metrics** for intraday trading
 - **Daily/Weekly/Monthly** comprehensive analysis
 - **Rolling window analysis** (30/60/90 days)
 
 #### 4. **Market Microstructure Risk**
+
 - **Bid-Ask Spread Analysis** - Liquidity cost estimation
 - **Order Book Depth** - Market impact calculations
 - **Volume Profile Risk** - Unusual volume detection
@@ -54,6 +59,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ### **Phase 2: Institutional-Grade Risk Analytics**
 
 #### 5. **Advanced Volatility Models**
+
 ```python
 # GARCH(1,1) Volatility Forecasting
 {
@@ -66,27 +72,31 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ```
 
 #### 6. **Factor Risk Decomposition**
+
 - **Fama-French 3-Factor Model** exposure
-- **Momentum Factor** sensitivity  
+- **Momentum Factor** sensitivity
 - **Size Factor** (Small vs Large cap) exposure
 - **Value Factor** (Growth vs Value) tilt
 - **Quality Factor** assessment
 
 #### 7. **Credit Risk Integration**
+
 - **CDS Spread Monitoring** for corporate bonds
 - **Credit Rating Changes** impact analysis
 - **Default Probability Models** for holdings
 - **Counterparty Risk Assessment**
 
 #### 8. **ESG Risk Analytics**
+
 - **ESG Score Impact** on portfolio
-- **Climate Risk Assessment** 
+- **Climate Risk Assessment**
 - **Governance Risk Metrics**
 - **Social Impact Analysis**
 
 ### **Phase 3: AI-Powered Risk Intelligence**
 
 #### 9. **Machine Learning Risk Models**
+
 ```python
 # ML-based risk predictions
 {
@@ -103,12 +113,14 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ```
 
 #### 10. **Sentiment-Based Risk**
+
 - **News Sentiment Impact** on risk metrics
 - **Social Media Sentiment** analysis
 - **Analyst Sentiment** tracking
 - **Options Flow Sentiment** (Put/Call ratios)
 
 #### 11. **Alternative Data Risk Signals**
+
 - **Satellite Data** for commodity exposure
 - **Web Scraping Signals** for retail sentiment
 - **Economic Indicators** real-time impact
@@ -117,6 +129,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ### **Phase 4: Professional Trading Features**
 
 #### 12. **Risk Budgeting & Allocation**
+
 ```javascript
 // Advanced risk budgeting
 {
@@ -128,6 +141,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ```
 
 #### 13. **Tail Risk Analytics**
+
 - **Expected Shortfall (CVaR)** calculations
 - **Extreme Value Theory** modeling
 - **Fat Tail Analysis** with kurtosis
@@ -135,6 +149,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 - **Tail Dependency** between assets
 
 #### 14. **Cross-Asset Risk Analytics**
+
 - **Currency Risk** for international exposure
 - **Interest Rate Risk** sensitivity
 - **Commodity Risk** exposure
@@ -142,6 +157,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 - **Crypto Asset Risk** (if applicable)
 
 #### 15. **Regulatory Risk Compliance**
+
 - **SEBI Risk Guidelines** compliance
 - **Basel III** equivalent calculations
 - **Risk Weighted Assets** calculations
@@ -150,6 +166,7 @@ Your VS Terminal at `http://127.0.0.1:5008/vs_terminal_AClass` already has a com
 ## Technical Implementation with Fyers API 🔧
 
 ### **Real-Time Data Streams**
+
 ```python
 # Fyers WebSocket integration for live risk
 fyers_ws = {
@@ -161,6 +178,7 @@ fyers_ws = {
 ```
 
 ### **Enhanced API Endpoints**
+
 1. `/api/vs_terminal_AClass/risk_analytics_live` - Real-time updates
 2. `/api/vs_terminal_AClass/risk_stress_test` - Advanced stress testing
 3. `/api/vs_terminal_AClass/risk_factor_analysis` - Factor decomposition
@@ -168,32 +186,36 @@ fyers_ws = {
 5. `/api/vs_terminal_AClass/risk_compliance` - Regulatory compliance
 
 ### **Risk Dashboard Enhancements**
+
 ```javascript
 // Enhanced risk visualization
 const riskDashboard = {
-    "heat_maps": "Real-time correlation heat maps",
-    "risk_gauges": "Dynamic risk level gauges", 
-    "scenario_charts": "Interactive stress test charts",
-    "factor_attribution": "Risk factor pie charts",
-    "time_series": "Historical risk metrics trends"
+  heat_maps: "Real-time correlation heat maps",
+  risk_gauges: "Dynamic risk level gauges",
+  scenario_charts: "Interactive stress test charts",
+  factor_attribution: "Risk factor pie charts",
+  time_series: "Historical risk metrics trends",
 };
 ```
 
 ## Production-Ready Features 🏭
 
 ### **Performance Optimizations**
+
 - **Parallel Processing** for complex calculations
 - **Caching Strategies** for frequently accessed data
 - **Database Indexing** for historical risk data
 - **API Rate Limiting** for Fyers integration
 
 ### **Risk Management Controls**
+
 - **Position Size Limits** based on risk metrics
 - **Stop Loss Automation** triggered by VaR breaches
 - **Portfolio Rebalancing** alerts
 - **Risk Budget Alerts** when limits approached
 
 ### **Reporting & Analytics**
+
 - **Daily Risk Reports** automated generation
 - **Risk Attribution** analysis
 - **Performance vs Risk** analysis
@@ -202,18 +224,21 @@ const riskDashboard = {
 ## Quick Implementation Priority 🎯
 
 ### **Immediate (1-2 days):**
+
 1. Enhanced real-time VaR updates
 2. Improved risk alert system
 3. Live correlation matrix
 4. Intraday drawdown tracking
 
 ### **Short-term (1 week):**
+
 1. Options Greeks integration
 2. Factor risk analysis
 3. ML-based risk predictions
 4. Advanced stress testing
 
 ### **Medium-term (2-4 weeks):**
+
 1. Alternative data integration
 2. ESG risk analytics
 3. Cross-asset risk analysis
@@ -225,7 +250,7 @@ Your VS Terminal AClass already implements **10 major risk analytics categories*
 
 **Ready to enhance**: Choose any of the Phase 1-4 features above for immediate implementation. The infrastructure is already in place for rapid deployment.
 
-**Live URL**: http://127.0.0.1:5008/vs_terminal_AClass
+**Live URL**: http://127.0.0.1:80/vs_terminal_AClass
 **Risk Analytics Section**: Already visible in the left sidebar
 **API Endpoint**: `/api/vs_terminal_AClass/risk_analytics` (fully functional)
 

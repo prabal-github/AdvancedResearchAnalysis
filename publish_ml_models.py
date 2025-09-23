@@ -317,7 +317,7 @@ def main():
         print(f"New Models Published: {published_count}")
     
     print("\n✅ ML Models publishing complete!")
-    print("🌐 Visit http://127.0.0.1:5008/published to view the catalog")
+    print("🌐 Visit http://127.0.0.1:80/published to view the catalog")
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ import sys
 from urllib.parse import urljoin
 
 class EndpointTester:
-    def __init__(self, base_url="http://127.0.0.1:5008"):
+    def __init__(self, base_url="http://127.0.0.1:80"):
         self.base_url = base_url
         self.session = requests.Session()
         self.session.timeout = 10

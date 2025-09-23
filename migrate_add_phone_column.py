@@ -118,8 +118,8 @@ def main():
         print("   3. Verify admin management works")
         
         print("\n🔗 Test URLs:")
-        print("   - Register: http://127.0.0.1:5008/register_analyst")
-        print("   - Admin: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
+        print("   - Register: http://127.0.0.1:80/register_analyst")
+        print("   - Admin: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
     else:
         print("\n❌ Migration failed!")
         print("   Please check the error messages above and try again.")

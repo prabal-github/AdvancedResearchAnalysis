@@ -9,7 +9,7 @@ from datetime import datetime
 
 def test_skill_learning_feature():
     """Test the skill learning analysis feature end-to-end"""
-    base_url = "http://localhost:5008"
+    base_url = "http://localhost:80"
     
     print("🎓 TESTING SKILL LEARNING ANALYSIS FEATURE")
     print("=" * 60)

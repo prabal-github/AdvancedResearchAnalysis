@@ -55,13 +55,14 @@ def is_aws_ec2_environment():
 def is_production_environment():
     """Determine if in production environment"""
     return (
-        is_aws_ec2_environment() or 
+        is_aws_ec2_environment() or
         os.getenv('ENVIRONMENT') == 'production' or
         os.getenv('FLASK_ENV') == 'production'
     )
 ```
 
 **Detection Methods**:
+
 - AWS EC2 metadata service availability
 - Environment variables (`ENVIRONMENT`, `FLASK_ENV`)
 - System characteristics and network topology
@@ -75,7 +76,7 @@ class FyersDataService:
     def __init__(self):
         self.config = FyersAPIConfig()
         self.is_production = self.config.is_production_environment()
-        
+
     def get_live_quotes(self, symbols):
         if self.is_production and self.config.is_configured():
             return self._get_fyers_quotes(symbols)
@@ -84,6 +85,7 @@ class FyersDataService:
 ```
 
 **Fallback Strategy**:
+
 - Production + Configured: Use Fyers API
 - Production + Not Configured: Fallback to YFinance with warnings
 - Development: Always use YFinance
@@ -92,6 +94,7 @@ class FyersDataService:
 ### 3. Database Schema
 
 **FyersAPIConfiguration Table**:
+
 ```sql
 CREATE TABLE fyers_api_configuration (
     id INTEGER PRIMARY KEY,
@@ -106,6 +109,7 @@ CREATE TABLE fyers_api_configuration (
 ```
 
 **FyersAPIUsageLog Table**:
+
 ```sql
 CREATE TABLE fyers_api_usage_log (
     id INTEGER PRIMARY KEY,
@@ -149,14 +153,17 @@ All VS Terminal ML Class endpoints now include intelligent data source selection
 **Key Updated Functions**:
 
 1. **Stock Data Fetching** (`/api/stock_data/<symbol>`)
+
    - Production: Fyers API real-time data
    - Development: YFinance historical data
 
 2. **Live Quotes** (`/api/live_quotes`)
+
    - Production: Fyers live market data
    - Development: YFinance delayed quotes
 
 3. **Historical Analysis** (`/api/historical_data/<symbol>`)
+
    - Production: Fyers historical API
    - Development: YFinance historical data
 
@@ -170,18 +177,18 @@ All VS Terminal ML Class endpoints now include intelligent data source selection
 
 ```javascript
 function checkDataSourceStatus() {
-    fetch('/api/data_source_status')
-        .then(response => response.json())
-        .then(data => {
-            const indicator = document.getElementById('data-source-indicator');
-            if (data.environment === 'production') {
-                indicator.innerHTML = `🏭 Production: ${data.source}`;
-                indicator.className = 'badge badge-success';
-            } else {
-                indicator.innerHTML = `🧪 Development: ${data.source}`;
-                indicator.className = 'badge badge-warning';
-            }
-        });
+  fetch("/api/data_source_status")
+    .then((response) => response.json())
+    .then((data) => {
+      const indicator = document.getElementById("data-source-indicator");
+      if (data.environment === "production") {
+        indicator.innerHTML = `🏭 Production: ${data.source}`;
+        indicator.className = "badge badge-success";
+      } else {
+        indicator.innerHTML = `🧪 Development: ${data.source}`;
+        indicator.className = "badge badge-warning";
+      }
+    });
 }
 ```
 
@@ -190,16 +197,19 @@ function checkDataSourceStatus() {
 ### Features
 
 1. **API Credential Management**
+
    - Secure storage of App ID and App Secret
    - Token management (Access/Refresh tokens)
    - Configuration validation
 
 2. **Real-time Testing**
+
    - API connectivity testing
    - Sample data retrieval
    - Error diagnosis and reporting
 
 3. **Usage Monitoring**
+
    - API call statistics
    - Response time tracking
    - Error rate monitoring
@@ -212,28 +222,19 @@ function checkDataSourceStatus() {
 ### Admin Interface Layout
 
 ```html
-┌─────────────────────────────────────────────────────────┐
-│                  Fyers API Configuration                │
-├─────────────────────────────────────────────────────────┤
-│ Environment Status: 🧪 Development / 🏭 Production      │
-│ Data Source: YFinance / Fyers API                      │
-├─────────────────────────────────────────────────────────┤
-│ Configuration Form:                                     │
-│ ├─ App ID: [________________]                          │
-│ ├─ App Secret: [________________]                      │
-│ ├─ Access Token: [________________]                    │
-│ └─ [Save Configuration] [Test API]                     │
-├─────────────────────────────────────────────────────────┤
-│ API Testing Results:                                    │
-│ ├─ Connection Status: ✅ Connected / ❌ Failed         │
-│ ├─ Response Time: 245ms                                │
-│ └─ Last Test: 2025-09-18 02:58:45                     │
-├─────────────────────────────────────────────────────────┤
-│ Usage Statistics:                                       │
-│ ├─ Total API Calls: 1,234                             │
-│ ├─ Success Rate: 98.5%                                 │
-│ ├─ Average Response Time: 186ms                        │
-│ └─ Last 24 Hours: 45 calls                            │
+┌─────────────────────────────────────────────────────────┐ │ Fyers API
+Configuration │ ├─────────────────────────────────────────────────────────┤ │
+Environment Status: 🧪 Development / 🏭 Production │ │ Data Source: YFinance /
+Fyers API │ ├─────────────────────────────────────────────────────────┤ │
+Configuration Form: │ │ ├─ App ID: [________________] │ │ ├─ App Secret:
+[________________] │ │ ├─ Access Token: [________________] │ │ └─ [Save
+Configuration] [Test API] │
+├─────────────────────────────────────────────────────────┤ │ API Testing
+Results: │ │ ├─ Connection Status: ✅ Connected / ❌ Failed │ │ ├─ Response
+Time: 245ms │ │ └─ Last Test: 2025-09-18 02:58:45 │
+├─────────────────────────────────────────────────────────┤ │ Usage Statistics:
+│ │ ├─ Total API Calls: 1,234 │ │ ├─ Success Rate: 98.5% │ │ ├─ Average Response
+Time: 186ms │ │ └─ Last 24 Hours: 45 calls │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -242,6 +243,7 @@ function checkDataSourceStatus() {
 ### Local Development Setup
 
 1. **Environment Setup**:
+
    ```bash
    # System automatically detects local environment
    # No additional configuration needed
@@ -249,23 +251,25 @@ function checkDataSourceStatus() {
    ```
 
 2. **Access Points**:
-   - Main Application: `http://127.0.0.1:5008/`
-   - VS Terminal ML Class: `http://127.0.0.1:5008/vs_terminal_MLClass`
-   - Admin Panel: `http://127.0.0.1:5008/admin/fyers_api`
+   - Main Application: `http://127.0.0.1:80/`
+   - VS Terminal ML Class: `http://127.0.0.1:80/vs_terminal_MLClass`
+   - Admin Panel: `http://127.0.0.1:80/admin/fyers_api`
 
 ### AWS EC2 Production Deployment
 
 1. **Pre-deployment**:
+
    ```bash
    # Set environment variables
    export ENVIRONMENT=production
    export FLASK_ENV=production
-   
+
    # Install dependencies
    pip install -r requirements.txt
    ```
 
 2. **Deployment Steps**:
+
    ```bash
    # 1. Deploy application to EC2
    # 2. System automatically detects AWS EC2 environment
@@ -275,7 +279,7 @@ function checkDataSourceStatus() {
    ```
 
 3. **Post-deployment Configuration**:
-   - Access admin panel: `http://your-ec2-ip:5008/admin/fyers_api`
+   - Access admin panel: `http://your-ec2-ip:80/admin/fyers_api`
    - Configure Fyers API credentials
    - Test API connectivity
    - Monitor usage statistics
@@ -283,6 +287,7 @@ function checkDataSourceStatus() {
 ### Environment Variables
 
 **Required for Production**:
+
 ```bash
 # Optional: Force production environment
 ENVIRONMENT=production
@@ -296,6 +301,7 @@ SECRET_KEY=your_secret_key
 ```
 
 **Optional Configuration**:
+
 ```bash
 # Fyers API (can be configured via admin panel)
 FYERS_APP_ID=your_app_id
@@ -445,6 +451,7 @@ def fyers_api_health():
 
 **Problem**: System not detecting AWS EC2 environment
 **Solution**:
+
 ```python
 # Manual environment override
 export ENVIRONMENT=production
@@ -456,6 +463,7 @@ curl http://169.254.169.254/latest/meta-data/instance-id
 
 **Problem**: Fyers API authentication failures
 **Solutions**:
+
 - Verify App ID and App Secret in admin panel
 - Check token expiration and refresh
 - Validate API endpoint accessibility
@@ -465,6 +473,7 @@ curl http://169.254.169.254/latest/meta-data/instance-id
 
 **Problem**: Not switching to correct data source
 **Solutions**:
+
 - Check environment detection logs
 - Verify API configuration status
 - Test data source endpoint manually
@@ -474,6 +483,7 @@ curl http://169.254.169.254/latest/meta-data/instance-id
 
 **Problem**: ML Class not showing production data
 **Solutions**:
+
 - Verify Fyers API configuration
 - Check data source status indicator
 - Test individual API endpoints
@@ -523,6 +533,7 @@ def debug_data_source():
 ### Response Formats
 
 #### Data Source Status Response
+
 ```json
 {
     "environment": "production|development",
@@ -534,6 +545,7 @@ def debug_data_source():
 ```
 
 #### API Configuration Status
+
 ```json
 {
     "configured": true|false,
@@ -557,12 +569,14 @@ def debug_data_source():
 
 ### Update Procedures
 
-1. **Code Updates**: 
+1. **Code Updates**:
+
    - Test in development environment first
    - Verify environment detection still works
    - Test data source switching functionality
 
 2. **Configuration Updates**:
+
    - Use admin panel for API credential updates
    - Test connectivity after configuration changes
    - Monitor for any degradation in service

@@ -215,8 +215,8 @@ def show_usage_instructions():
 
 📍 ACCESSING THE SYSTEM:
 1. Start your Flask application: python app.py
-2. Navigate to: http://127.0.0.1:5008/vs_terminal_AClass
-3. Click on "Risk Management" or visit: http://127.0.0.1:5008/vs_terminal_AClass/risk_management
+2. Navigate to: http://127.0.0.1:80/vs_terminal_AClass
+3. Click on "Risk Management" or visit: http://127.0.0.1:80/vs_terminal_AClass/risk_management
 
 🔧 API ENDPOINTS:
 - Comprehensive Analysis: POST /api/vs_terminal_AClass/risk_management/comprehensive_analysis

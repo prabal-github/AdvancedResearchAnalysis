@@ -5,9 +5,10 @@ The Options Analyzer has been successfully integrated into your Flask dashboard 
 ## ✅ What's Been Implemented
 
 ### 1. Template Files
+
 - **✅ `templates/options_analyzer.html`** - Complete interactive UI with:
   - Options chain data table
-  - Volatility smile charts 
+  - Volatility smile charts
   - Strategy profit/loss visualization
   - AI insights and recommendations
   - Price alerts management
@@ -15,12 +16,14 @@ The Options Analyzer has been successfully integrated into your Flask dashboard 
   - Real-time metrics dashboard
 
 ### 2. Database Models
+
 - **✅ `OptionChainSnapshot`** - Stores options chain snapshots
   - Links to InvestorAccount for user-specific data
   - JSON storage for flexible metrics
   - Date indexing for historical analysis
 
 ### 3. API Endpoints (All Functional)
+
 - **✅ `GET /options_analyzer`** - Main page
 - **✅ `GET /api/options/strategy_chain`** - Fetch options data
 - **✅ `POST /api/options/insights`** - AI market insights
@@ -34,14 +37,16 @@ The Options Analyzer has been successfully integrated into your Flask dashboard 
 - **✅ `GET|POST /api/options/preferences`** - User settings
 
 ### 4. Navigation Integration
+
 - **✅ Added to sidebar navigation** in both admin and investor sections
 - **✅ Uses Bootstrap icon** `bi-graph-up-arrow`
 - **✅ Proper role-based access control** with `@admin_or_investor_required`
 
 ### 5. Features Available
+
 - **📊 Real-time Options Chain Analysis**
 - **📈 Interactive Charts** (Plotly-based)
-- **🤖 AI-Powered Insights** 
+- **🤖 AI-Powered Insights**
 - **📋 Strategy Recommendations**
 - **🔔 Price Alerts System**
 - **📸 Snapshot Management**
@@ -51,27 +56,31 @@ The Options Analyzer has been successfully integrated into your Flask dashboard 
 ## 🚀 How to Access
 
 1. **Start your Flask application**:
+
    ```bash
    python app.py
    ```
 
-2. **Navigate to**: http://127.0.0.1:5008/options_analyzer
+2. **Navigate to**: http://127.0.0.1:80/options_analyzer
 
 3. **Or use the sidebar link**: "Options Analyzer" under Investment Tools
 
 ## 🔧 Current Implementation Notes
 
 ### Mock Data
+
 - Currently uses **mock data** for demonstration
 - Replace with real options data provider (e.g., Alpha Vantage, IEX Cloud, etc.)
 - Mock data includes realistic options chains with bid/ask/volume/IV
 
 ### Storage
+
 - **Snapshots**: Stored in SQLite database
 - **Alerts**: In-memory (replace with database for production)
 - **Preferences**: Session-based (extend for multi-device persistence)
 
 ### Authentication
+
 - **Admin users**: Full access
 - **Investor users**: Full access (filtered by investor_id)
 - **Analysts**: No access (can be extended if needed)
@@ -88,7 +97,7 @@ The Options Analyzer has been successfully integrated into your Flask dashboard 
 
 ```
 ✅ templates/options_analyzer.html       - Main UI template
-✅ templates/layout.html                 - Added navigation links  
+✅ templates/layout.html                 - Added navigation links
 ✅ app.py                                - Added all routes and models
 ✅ init_options_analyzer.py              - Database initialization script
 ✅ OPTIONS_ANALYZER_INTEGRATION.md       - This documentation

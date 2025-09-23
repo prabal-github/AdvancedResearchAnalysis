@@ -1,10 +1,13 @@
 # 🔧 Certificate System Template Fix
 
 ## Issue Fixed
+
 **Error**: `jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'break'`
 
 ## Problem
+
 The `analyst_certificate_status.html` template contained an invalid Jinja2 statement:
+
 ```jinja2
 {% break %}
 ```
@@ -12,9 +15,11 @@ The `analyst_certificate_status.html` template contained an invalid Jinja2 state
 Jinja2 doesn't support the `break` statement like Python does.
 
 ## Solution
+
 Replaced the problematic code with proper JavaScript logic:
 
 ### Before (Incorrect):
+
 ```jinja2
 {% if certificate_requests %}
 {% for req in certificate_requests %}
@@ -29,6 +34,7 @@ setTimeout(function() {
 ```
 
 ### After (Fixed):
+
 ```jinja2
 {% if certificate_requests %}
 var hasPendingRequests = false;
@@ -47,15 +53,18 @@ if (hasPendingRequests) {
 ```
 
 ## Result
+
 ✅ **Certificate System Now Working**
+
 - Template syntax error resolved
 - Auto-refresh functionality preserved
 - All certificate management pages accessible
 - No breaking of existing functionality
 
 ## Access URLs (Now Working):
-- 📝 **Request Certificate**: http://127.0.0.1:5008/analyst/certificate_request
-- 📋 **Certificate Status**: http://127.0.0.1:5008/analyst/certificate_status
-- ⚙️ **Admin Management**: http://127.0.0.1:5008/admin/certificates
+
+- 📝 **Request Certificate**: http://127.0.0.1:80/analyst/certificate_request
+- 📋 **Certificate Status**: http://127.0.0.1:80/analyst/certificate_status
+- ⚙️ **Admin Management**: http://127.0.0.1:80/admin/certificates
 
 🎉 **Certificate Management System is now fully operational!**

@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 def test_dashboard_error():
     """Get detailed error from dashboard"""
     try:
-        url = "http://127.0.0.1:5008/ai_research_assistant"
+        url = "http://127.0.0.1:80/ai_research_assistant"
         response = requests.get(url, timeout=10)
         
         print(f"Status Code: {response.status_code}")

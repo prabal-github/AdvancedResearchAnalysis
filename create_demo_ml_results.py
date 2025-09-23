@@ -119,4 +119,4 @@ if __name__ == '__main__':
     print("🚀 Creating sample ML model results...")
     create_demo_ml_results()
     print("✅ Demo data creation completed!")
-    print("\n📊 View results at: http://127.0.0.1:5008/subscribed_ml_models?demo=true")
+    print("\n📊 View results at: http://127.0.0.1:80/subscribed_ml_models?demo=true")

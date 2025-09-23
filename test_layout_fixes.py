@@ -6,7 +6,7 @@ Test script for the layout fixes and past month return functionality
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_past_month_return():
     """Test the new past month return endpoint"""

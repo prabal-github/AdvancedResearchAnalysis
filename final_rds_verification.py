@@ -9,7 +9,7 @@ from datetime import datetime
 
 def test_flask_app_with_rds():
     """Test Flask application with RDS PostgreSQL"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("=== Final RDS PostgreSQL Integration Test ===")
     print(f"Testing Flask app at: {base_url}")

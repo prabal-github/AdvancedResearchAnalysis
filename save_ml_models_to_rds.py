@@ -634,7 +634,7 @@ def main():
     
     if success_count > 0:
         print(f"\n🎉 Migration completed successfully!")
-        print(f"📈 Access your models at: http://127.0.0.1:5008/published")
+        print(f"📈 Access your models at: http://127.0.0.1:80/published")
         print(f"🗃️  Database: {RDS_HOST}:{RDS_PORT}/{RDS_DB}")
     
     return success_count > 0

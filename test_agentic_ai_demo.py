@@ -14,7 +14,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 MLCLASS_API = f"{BASE_URL}/api/vs_terminal_MLClass"
 
 # Test portfolio with major Indian stocks from Fyers mapping

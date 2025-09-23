@@ -17,7 +17,7 @@ def test_enhanced_ai_query():
     print("🔍 Testing Enhanced AI Query Processing System")
     print("=" * 60)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test queries to demonstrate enhanced functionality
     test_queries = [
@@ -163,7 +163,7 @@ def main():
     """Main test function"""
     print("🎯 Enhanced AI Research Assistant Testing Suite")
     print(f"🕒 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("🌐 Target URL: http://127.0.0.1:5008")
+    print("🌐 Target URL: http://127.0.0.1:80")
     
     # Wait for server to start
     print("\n⏳ Waiting for server to start...")

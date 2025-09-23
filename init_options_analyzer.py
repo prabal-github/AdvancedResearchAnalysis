@@ -56,7 +56,7 @@ try:
         success = init_options_analyzer_db()
         if success:
             print("\n🚀 Ready to use Options Analyzer!")
-            print("   Navigate to: http://127.0.0.1:5008/options_analyzer")
+            print("   Navigate to: http://127.0.0.1:80/options_analyzer")
         else:
             print("\n💥 Database initialization failed!")
             sys.exit(1)

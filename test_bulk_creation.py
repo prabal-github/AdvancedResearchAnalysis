@@ -11,7 +11,7 @@ from datetime import datetime
 def test_bulk_creation_workflow():
     """Test the complete bulk analyst creation workflow"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🧪 Testing Bulk Analyst Creation Feature")
     print("=" * 60)
@@ -126,7 +126,7 @@ def test_bulk_creation_features():
     print("\n🔧 Testing Bulk Creation Features")
     print("-" * 40)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test duplicate handling
     print("🔄 Test: Duplicate User Handling")
@@ -218,7 +218,7 @@ def main():
         print("   ✅ Error handling and duplicate detection")
         
         print("\n🔗 Access URL:")
-        print(f"   📤 Bulk Upload: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+        print(f"   📤 Bulk Upload: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
         
     else:
         print("❌ Some bulk creation tests failed!")

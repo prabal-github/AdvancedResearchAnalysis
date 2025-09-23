@@ -5,7 +5,7 @@ import requests
 import sys
 
 def test_enhanced_analytics_redirect():
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("Testing Enhanced Events Analytics Redirect Functionality")
     print("=" * 60)
@@ -29,7 +29,7 @@ def test_enhanced_analytics_redirect():
             print(f"   ❌ Unexpected status code: {response.status_code}")
             
     except requests.exceptions.ConnectionError:
-        print("   ❌ Could not connect to server. Make sure Flask app is running on port 5008")
+        print("   ❌ Could not connect to server. Make sure Flask app is running on port 80")
         return False
     except Exception as e:
         print(f"   ❌ Error: {e}")

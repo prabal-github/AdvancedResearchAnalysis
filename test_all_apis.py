@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 class APITester:
-    def __init__(self, base_url="http://127.0.0.1:5008"):
+    def __init__(self, base_url="http://127.0.0.1:80"):
         self.base_url = base_url
         self.test_results = []
         

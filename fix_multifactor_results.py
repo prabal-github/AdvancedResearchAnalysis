@@ -115,4 +115,4 @@ def create_ml_results_for_recent_runs():
 if __name__ == '__main__':
     print("🔧 Creating ML results for recent Multi-Factor model runs...")
     create_ml_results_for_recent_runs()
-    print("✅ Done! Check the dashboard at: http://127.0.0.1:5008/subscribed_ml_models")
+    print("✅ Done! Check the dashboard at: http://127.0.0.1:80/subscribed_ml_models")

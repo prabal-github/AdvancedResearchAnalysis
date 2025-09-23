@@ -10,7 +10,7 @@ import json
 def test_additional_stock_search():
     """Test the additional stock search API"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test data for additional stock search
     test_data = {
@@ -76,7 +76,7 @@ def test_additional_stock_search():
 def test_edge_cases():
     """Test edge cases for the search functionality"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("\n🧪 Testing Edge Cases")
     print("=" * 25)
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     if success:
         print(f"\n🎉 SUCCESS! Additional stock search functionality is working!")
         print(f"🌐 You can test it manually at:")
-        print(f"   📊 Scenario Report: http://127.0.0.1:5008/scenario_report/scen_1010924355_647003")
+        print(f"   📊 Scenario Report: http://127.0.0.1:80/scenario_report/scen_1010924355_647003")
         print(f"   🔍 Look for the 'Search for Additional Stocks' section")
         print(f"   📝 Try searching: RELIANCE.NS, TATASTEEL.NS, BAJAJFINSV.NS")
     else:

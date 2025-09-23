@@ -63,7 +63,7 @@ def show_quick_start_guide():
     print()
     
     print("📋 STEP 1: Access Bulk Upload Page")
-    print("   🔗 URL: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+    print("   🔗 URL: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
     print("   🔑 Login: Use admin_key=admin123 for direct access")
     print()
     
@@ -82,7 +82,7 @@ def show_quick_start_guide():
     print()
     
     print("🔍 STEP 4: Verify Created Accounts")
-    print("   🔗 URL: http://127.0.0.1:5008/admin/manage_analysts?admin_key=admin123")
+    print("   🔗 URL: http://127.0.0.1:80/admin/manage_analysts?admin_key=admin123")
     print("   • Look for newly created analyst accounts")
     print("   • Verify all fields are populated correctly")
     print("   • Confirm accounts are active by default")
@@ -223,7 +223,7 @@ def main():
     print("📞 Need Help?")
     print("   📖 Read: BULK_UPLOAD_SAMPLE_FILES_GUIDE.md")
     print("   🧪 Run: python test_bulk_upload_samples.py")
-    print("   🔗 Access: http://127.0.0.1:5008/admin/bulk_create_analysts?admin_key=admin123")
+    print("   🔗 Access: http://127.0.0.1:80/admin/bulk_create_analysts?admin_key=admin123")
     print()
     print("🎉 Happy bulk uploading!")
 

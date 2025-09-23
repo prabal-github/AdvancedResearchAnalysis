@@ -10,7 +10,7 @@ Create a `.env` file in your project root with these configurations:
 # ===========================================
 FYERS_CLIENT_ID=your_fyers_client_id_here
 FYERS_SECRET_KEY=your_fyers_secret_key_here
-FYERS_REDIRECT_URI=http://localhost:5008/fyers/callback
+FYERS_REDIRECT_URI=http://localhost:80/fyers/callback
 
 # ===========================================
 # 🗄️ DATABASE CONFIGURATION
@@ -47,35 +47,40 @@ CLAUDE_API_KEY=your_claude_key_if_available
 ## 🚀 Quick Start Commands
 
 ### 1. Install Dependencies
+
 ```bash
 pip install flask flask-sqlalchemy psycopg2-binary yfinance python-dotenv
 ```
 
 ### 2. For Fyers API (Production)
+
 ```bash
 pip install fyers-apiv3
 ```
 
 ### 3. Start Application
+
 ```bash
 python app.py
 ```
 
 ### 4. Access Enhanced VS Terminal
-Open browser: `http://localhost:5008/vs_terminal_AClass`
+
+Open browser: `http://localhost:80/vs_terminal_AClass`
 
 ## 🔄 Mode Detection
 
 The application automatically detects the environment:
 
-| Environment | Detection Criteria | Stock Data Source |
-|-------------|-------------------|-------------------|
-| **Development** | `PRODUCTION=false` or no Fyers API key | YFinance (Free) |
-| **Production** | `PRODUCTION=true` or Fyers API key present | Fyers API (Real-time) |
+| Environment     | Detection Criteria                         | Stock Data Source     |
+| --------------- | ------------------------------------------ | --------------------- |
+| **Development** | `PRODUCTION=false` or no Fyers API key     | YFinance (Free)       |
+| **Production**  | `PRODUCTION=true` or Fyers API key present | Fyers API (Real-time) |
 
 ## ✅ Testing Your Setup
 
 ### Check Environment Variables
+
 ```python
 # Run this in Python terminal
 import os
@@ -90,6 +95,7 @@ print(f"✅ Secret Key: {'✓' if os.getenv('SECRET_KEY') else '✗'}")
 ```
 
 ### Test Database Connection
+
 ```python
 # Run this to test DB connection
 import psycopg2
@@ -112,22 +118,29 @@ except Exception as e:
 ## 🆘 Common Issues & Quick Fixes
 
 ### Issue: "Environment variables not found"
+
 **Fix**: Make sure `.env` file is in the same directory as `app.py`
 
 ### Issue: "Database connection failed"
-**Fix**: 
+
+**Fix**:
+
 1. Check if PostgreSQL is running
 2. Verify credentials in `.env`
 3. Ensure database exists
 
 ### Issue: "Fyers API not working"
-**Fix**: 
+
+**Fix**:
+
 1. Verify API credentials
 2. Check if account is active
 3. Application will fallback to YFinance automatically
 
-### Issue: "Port 5008 already in use"
+### Issue: "Port 80 already in use"
+
 **Fix**: Change port in `app.py`:
+
 ```python
 app.run(host='0.0.0.0', port=5009, debug=True)
 ```

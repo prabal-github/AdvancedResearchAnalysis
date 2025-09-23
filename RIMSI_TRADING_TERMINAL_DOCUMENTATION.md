@@ -15,6 +15,7 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 5. **Frontend Templates**: Professional trading interfaces with real-time updates
 
 ### System Architecture
+
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Flask App      │    │   Database      │
@@ -31,7 +32,8 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ## Main Endpoints
 
 ### 1. Trading Terminal Home
-**URL**: `http://127.0.0.1:5008/rimsi_trading_terminal`
+
+**URL**: `http://127.0.0.1:80/rimsi_trading_terminal`
 **Method**: GET
 **Description**: Main trading terminal interface with AI agents
 
@@ -39,19 +41,22 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 **Location**: Lines 17095-17140 in app.py
 
 **Features**:
+
 - Creates demo investor session automatically
 - Initializes AI trading environment
 - Renders professional trading interface
 - Session management and authentication
 
 **Template**: `trading_terminal.html`
+
 - Grid-based layout with sidebar, main content, and right panel
 - Real-time status indicators
 - AI agent control panel
 - Command interface for natural language queries
 
 ### 2. Portfolio Management
-**URL**: `http://127.0.0.1:5008/rimsi_trading_terminal_portfolio`
+
+**URL**: `http://127.0.0.1:80/rimsi_trading_terminal_portfolio`
 **Method**: GET
 **Description**: Portfolio analysis and management interface
 
@@ -59,12 +64,14 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 **Location**: Lines 61750-61770 in app.py
 
 **Features**:
+
 - Portfolio creation and management
 - Real-time performance tracking
 - Risk analytics and recommendations
 - Asset allocation visualization
 
 **Template**: `rimsi_trading_terminal_portfolio.html`
+
 - Professional portfolio dashboard
 - Interactive charts and metrics
 - Portfolio creation forms
@@ -73,11 +80,13 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ## API Endpoints
 
 ### 1. Agent Status API
+
 **URL**: `/api/trading_terminal/agent_status`
 **Method**: GET
 **Description**: Get status of all active trading agents
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -95,12 +104,14 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 2. AI Insights API
+
 **URL**: `/api/trading_terminal/insights`
 **Method**: GET
 **Parameters**: `limit` (optional, default: 10)
 **Description**: Get recent insights from trading agents
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -118,11 +129,13 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 3. AI Query Processing API
+
 **URL**: `/api/trading_terminal/query`
 **Method**: POST
 **Description**: Process natural language queries from users
 
 **Request Format**:
+
 ```json
 {
   "query": "What are the best stocks to buy today?"
@@ -130,6 +143,7 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -141,11 +155,13 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 4. Portfolio Analysis API
+
 **URL**: `/api/trading_terminal/portfolio_analysis`
 **Method**: POST
 **Description**: Get comprehensive portfolio analysis with real-time data
 
 **Features**:
+
 - Real-time portfolio valuation
 - P&L calculations with live prices
 - Risk metrics and analytics
@@ -153,6 +169,7 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 - AI-powered recommendations
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -201,17 +218,20 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 5. Market Scan API
+
 **URL**: `/api/trading_terminal/market_scan`
 **Method**: GET
 **Parameters**: `type` (momentum, value, breakout)
 **Description**: AI-powered market scanning for trading opportunities
 
 **Scan Types**:
+
 - **Momentum**: High-moving stocks with volume surge
 - **Value**: Undervalued stocks with good fundamentals
 - **Breakout**: Stocks breaking technical resistance levels
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -219,7 +239,7 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
   "results": [
     {
       "symbol": "TATAMOTORS",
-      "price": 965.50,
+      "price": 965.5,
       "change": 5.8,
       "volume_ratio": 3.2,
       "rsi": 78,
@@ -233,17 +253,20 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 6. Real-time Data API
+
 **URL**: `/api/trading_terminal/real_time_data`
 **Method**: GET
 **Description**: Get real-time market data for terminal display
 
 **Features**:
+
 - Market indices (NIFTY, BANK NIFTY, VIX)
 - FII/DII flows
 - Watchlist stocks with live prices
 - Market status and timing
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -275,26 +298,29 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 ```
 
 ### 7. Stock Recommendations API
+
 **URL**: `/api/trading_terminal/stock_recommendations`
 **Method**: GET
 **Description**: Get AI-powered stock recommendations from multiple agents
 
 **AI Agents**:
+
 - **Alpha Trader**: Focus on momentum and fundamentals
 - **Beta Optimizer**: Focus on risk-adjusted returns
 - **Gamma Scanner**: Focus on technical patterns and breakouts
 
 **Response Format**:
+
 ```json
 {
   "success": true,
   "recommendations": [
     {
       "symbol": "RELIANCE",
-      "currentPrice": 2645.50,
-      "recommendedPrice": 2620.00,
-      "targetPrice": 2850.00,
-      "stopLoss": 2480.00,
+      "currentPrice": 2645.5,
+      "recommendedPrice": 2620.0,
+      "targetPrice": 2850.0,
+      "stopLoss": 2480.0,
       "recommendation": "BUY",
       "agent": "Alpha Trader",
       "confidence": 0.85,
@@ -318,11 +344,13 @@ The RIMSI Trading Terminal is a professional AI-powered trading platform that co
 The system implements multiple specialized AI agents:
 
 1. **Alpha Trader Agent**
+
    - Focus: Momentum and fundamental analysis
    - Specialties: Growth stocks, sector rotation
    - Risk Profile: Moderate to aggressive
 
 2. **Beta Optimizer Agent**
+
    - Focus: Risk-adjusted returns
    - Specialties: Portfolio optimization, risk management
    - Risk Profile: Conservative to moderate
@@ -336,6 +364,7 @@ The system implements multiple specialized AI agents:
 
 **Function**: `AgenticAIMasterController`
 **Features**:
+
 - Orchestrates multiple AI agents
 - Consensus-based decision making
 - Real-time performance monitoring
@@ -346,6 +375,7 @@ The system implements multiple specialized AI agents:
 ### Real-time Data Sources
 
 1. **Fyers API** (Production)
+
    - Live market data
    - Historical charts
    - Order management
@@ -360,6 +390,7 @@ The system implements multiple specialized AI agents:
 
 **Module**: `real_time_data_service.py`
 **Functions**:
+
 - `get_real_time_service()`: Initialize data service
 - `get_stock_quote()`: Get live stock prices
 - `get_multiple_quotes()`: Bulk quote retrieval
@@ -369,11 +400,13 @@ The system implements multiple specialized AI agents:
 ## Security & Authentication
 
 ### Session Management
+
 - Demo investor sessions for testing
 - Automatic session creation
 - Session-based portfolio tracking
 
 ### API Security
+
 - Error handling and fallback systems
 - Rate limiting considerations
 - Data validation and sanitization
@@ -384,6 +417,7 @@ The system implements multiple specialized AI agents:
 
 **File**: `trading_terminal.html`
 **Features**:
+
 - Professional dark theme
 - Real-time status indicators
 - AI agent control panel
@@ -397,6 +431,7 @@ The system implements multiple specialized AI agents:
 
 **File**: `rimsi_trading_terminal_portfolio.html`
 **Features**:
+
 - Portfolio creation and management
 - Real-time performance metrics
 - Interactive charts and graphs
@@ -405,6 +440,7 @@ The system implements multiple specialized AI agents:
 ## Installation & Setup
 
 ### Prerequisites
+
 ```bash
 # Python packages
 pip install flask sqlalchemy psycopg2-binary requests yfinance
@@ -414,6 +450,7 @@ PostgreSQL with connection: postgresql://admin:admin%402001@3.85.19.80:5432/rese
 ```
 
 ### Environment Setup
+
 ```python
 # Environment variables
 FLASK_ENV=development
@@ -422,56 +459,64 @@ FYERS_API_KEY=your_fyers_key  # For production
 ```
 
 ### Running the Application
+
 ```bash
 # Start Flask application
 python app.py
 
 # Access trading terminal
-http://127.0.0.1:5008/rimsi_trading_terminal
+http://127.0.0.1:80/rimsi_trading_terminal
 
 # Access portfolio manager
-http://127.0.0.1:5008/rimsi_trading_terminal_portfolio
+http://127.0.0.1:80/rimsi_trading_terminal_portfolio
 ```
 
 ## API Usage Examples
 
 ### Get Agent Status
+
 ```bash
-curl -X GET http://127.0.0.1:5008/api/trading_terminal/agent_status
+curl -X GET http://127.0.0.1:80/api/trading_terminal/agent_status
 ```
 
 ### Process AI Query
+
 ```bash
-curl -X POST http://127.0.0.1:5008/api/trading_terminal/query \
+curl -X POST http://127.0.0.1:80/api/trading_terminal/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Show me top momentum stocks"}'
 ```
 
 ### Get Portfolio Analysis
+
 ```bash
-curl -X POST http://127.0.0.1:5008/api/trading_terminal/portfolio_analysis \
+curl -X POST http://127.0.0.1:80/api/trading_terminal/portfolio_analysis \
   -H "Content-Type: application/json"
 ```
 
 ### Market Scan
+
 ```bash
-curl -X GET "http://127.0.0.1:5008/api/trading_terminal/market_scan?type=momentum"
+curl -X GET "http://127.0.0.1:80/api/trading_terminal/market_scan?type=momentum"
 ```
 
 ## Performance Features
 
 ### Real-time Updates
+
 - Live price feeds
 - Real-time P&L calculations
 - Dynamic portfolio valuation
 - Market status monitoring
 
 ### Fallback Systems
+
 - Graceful degradation when APIs fail
 - Simulated data for development
 - Error handling and recovery
 
 ### Optimization
+
 - Async data processing
 - Efficient database queries
 - Caching for improved performance
@@ -479,17 +524,20 @@ curl -X GET "http://127.0.0.1:5008/api/trading_terminal/market_scan?type=momentu
 ## Development Guidelines
 
 ### Adding New Features
+
 1. Define API endpoints in `app.py`
 2. Create corresponding templates in `templates/`
 3. Implement data services in respective modules
 4. Add error handling and fallback systems
 
 ### Testing
+
 - Use localhost environment for development
 - Demo investor sessions for testing
 - Fallback data for offline development
 
 ### Deployment
+
 - Configure Fyers API for production
 - Set up proper database connections
 - Enable production optimizations
@@ -497,17 +545,20 @@ curl -X GET "http://127.0.0.1:5008/api/trading_terminal/market_scan?type=momentu
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Database Connection**: Check PostgreSQL connection string
 2. **API Failures**: Ensure Fyers API credentials are correct
 3. **Session Issues**: Clear browser cookies for fresh sessions
 4. **Real-time Data**: Check network connectivity and API limits
 
 ### Debug Mode
+
 - Enable Flask debug mode for development
 - Check browser console for JavaScript errors
 - Monitor Flask logs for backend issues
 
 ### Support
+
 - Check application logs for error details
 - Verify database connectivity
 - Test API endpoints individually

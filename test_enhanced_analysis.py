@@ -11,7 +11,7 @@ import time
 def test_enhanced_scenario_report():
     """Test the enhanced scenario report with all new features"""
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     report_id = "scen_1010924355_647003"
     
     print("🚀 ENHANCED SCENARIO ANALYSIS TESTING SUITE")
@@ -239,9 +239,9 @@ def display_implementation_summary():
         print(f"   {feature}: {description}")
     
     print(f"\n🌐 Live Testing URLs:")
-    print(f"   📊 Enhanced Report: http://127.0.0.1:5008/scenario_report/scen_1010924355_647003")
-    print(f"   🔙 Report Hub: http://127.0.0.1:5008/report_hub") 
-    print(f"   📈 Backtest Results: http://127.0.0.1:5008/scenario_backtest/scen_1010924355_647003")
+    print(f"   📊 Enhanced Report: http://127.0.0.1:80/scenario_report/scen_1010924355_647003")
+    print(f"   🔙 Report Hub: http://127.0.0.1:80/report_hub") 
+    print(f"   📈 Backtest Results: http://127.0.0.1:80/scenario_backtest/scen_1010924355_647003")
     
     print(f"\n🎉 SUCCESS: All enhanced features implemented and tested!")
     print(f"🚀 The system now includes:")

@@ -17,7 +17,7 @@ from datetime import datetime
 # Add the app directory to the path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def print_section(title):
     """Print formatted section header"""

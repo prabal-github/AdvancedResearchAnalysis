@@ -8,7 +8,7 @@ def debug_session():
     print("=" * 50)
     
     session = requests.Session()
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test 1: Check session before login
     print("\n1️⃣ Testing session before login...")

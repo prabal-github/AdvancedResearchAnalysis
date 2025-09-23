@@ -156,8 +156,8 @@ def main():
             print("\n" + "=" * 60)
             print("Initialization Complete!")
             print("=" * 60)
-            print(f"Access the hAi-Edge dashboard at: http://localhost:5008/hai_edge_event_portfolios")
-            print(f"Enhanced Events Analytics at: http://localhost:5008/enhanced_events_analytics")
+            print(f"Access the hAi-Edge dashboard at: http://localhost:80/hai_edge_event_portfolios")
+            print(f"Enhanced Events Analytics at: http://localhost:80/enhanced_events_analytics")
             print("=" * 60)
             
             return True

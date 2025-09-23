@@ -198,7 +198,7 @@ def main():
     if all_passed:
         print("\n🎉 Integration is ready! You can now:")
         print("   1. Start the Flask app: python app.py")
-        print("   2. Go to Admin ML Models: http://localhost:5008/admin/ml_models")
+        print("   2. Go to Admin ML Models: http://localhost:80/admin/ml_models")
         print("   3. Run the new Options ML Analyzer and Sector ML Analyzer")
         print("   4. View results in Investor ML Models dashboard")
     

@@ -1,67 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ML Models Individual Backtesting Demo</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
-        .model-card { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            border-radius: 8px; 
-            padding: 16px; 
-            margin: 16px 0; 
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .model-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
             max-width: 400px;
         }
-        .model-title { 
-            color: #60a5fa; 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-bottom: 8px; 
+
+        .model-title {
+            color: #60a5fa;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
-        .backtest-section { 
-            background: #0f172a; 
-            border: 1px solid #334155; 
-            border-radius: 6px; 
-            padding: 12px; 
-            margin-top: 8px; 
+
+        .backtest-section {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
         }
-        .backtest-controls { 
-            display: flex; 
-            gap: 8px; 
-            align-items: center; 
-            margin-bottom: 8px; 
+
+        .backtest-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
         }
-        select, button { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            color: #e2e8f0; 
-            padding: 4px 8px; 
-            font-size: 11px; 
-            border-radius: 4px; 
+
+        select,
+        button {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
         }
-        button { 
-            background: #2563eb; 
-            color: #fff; 
-            cursor: pointer; 
+
+        button {
+            background: #2563eb;
+            color: #fff;
+            cursor: pointer;
             font-weight: bold;
         }
-        button:hover { background: #1d4ed8; }
-        .select-stock { flex: 1; }
-        .results { 
-            margin-top: 8px; 
-            font-size: 12px; 
-            color: #94a3b8; 
+
+        button:hover {
+            background: #1d4ed8;
         }
-        .highlight { background: #fbbf24; color: #000; padding: 2px 4px; border-radius: 3px; }
+
+        .select-stock {
+            flex: 1;
+        }
+
+        .results {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .highlight {
+            background: #fbbf24;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
     </style>
 </head>
+
 <body>
     <h1>🎯 Individual ML Model Backtesting Implementation</h1>
-    
-    <p>Each ML model now has its own <span class="highlight">individual Backtest button</span> with the following features:</p>
-    
+
+    <p>Each ML model now has its own <span class="highlight">individual Backtest button</span> with the following
+        features:</p>
+
     <div class="model-card">
         <div class="model-title">🧠 Intraday Price Drift Model</div>
         <div>Short horizon drift estimation using momentum signals</div>
@@ -195,12 +223,14 @@
 
     <h2>🎯 How It Works</h2>
     <ol>
-        <li><strong>Navigate to:</strong> <code>http://127.0.0.1:5008/integrated_ml_models_and_agentic_ai</code></li>
+        <li><strong>Navigate to:</strong> <code>http://127.0.0.1:80/integrated_ml_models_and_agentic_ai</code></li>
         <li><strong>Click:</strong> "ML Models" tab</li>
         <li><strong>For each model:</strong> Select stock → Select period → Click "Backtest"</li>
         <li><strong>View Results:</strong> Individual performance metrics for that specific model</li>
     </ol>
 
-    <p><strong>🚀 Status:</strong> <span style="color: #10b981; font-weight: bold;">COMPLETE</span> - Each ML model has individual Backtest functionality!</p>
+    <p><strong>🚀 Status:</strong> <span style="color: #10b981; font-weight: bold;">COMPLETE</span> - Each ML model has
+        individual Backtest functionality!</p>
 </body>
+
 </html>

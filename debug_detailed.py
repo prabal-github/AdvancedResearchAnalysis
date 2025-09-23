@@ -51,7 +51,7 @@ def test_api_with_debug():
     
     try:
         response = requests.post(
-            'http://127.0.0.1:5008/ai_query_analysis',
+            'http://127.0.0.1:80/ai_query_analysis',
             json={'query': 'Latest on INFY.NS'},
             timeout=30
         )

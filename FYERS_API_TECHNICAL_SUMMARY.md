@@ -23,19 +23,19 @@ This document provides a technical summary of the Fyers API integration system f
 ```python
 class FyersAPIConfig:
     """Main configuration and environment detection class"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        
+
     def is_aws_ec2_environment(self) -> bool:
         """Detect AWS EC2 deployment environment"""
-        
+
     def is_production_environment(self) -> bool:
         """Determine if running in production"""
-        
+
     def get_current_environment(self) -> str:
         """Get current environment name"""
-        
+
     def get_current_data_source(self) -> str:
         """Get current data source name"""
 ```
@@ -45,16 +45,16 @@ class FyersAPIConfig:
 ```python
 class FyersDataService:
     """Data fetching service with intelligent source selection"""
-    
+
     def get_live_quotes(self, symbols: List[str]) -> Dict:
         """Get live market quotes with fallback logic"""
-        
+
     def get_historical_data(self, symbol: str, period: str) -> Dict:
         """Get historical data with source selection"""
-        
+
     def _get_fyers_quotes(self, symbols: List[str]) -> Dict:
         """Fetch data from Fyers API"""
-        
+
     def _get_yfinance_quotes(self, symbols: List[str]) -> Dict:
         """Fetch data from YFinance (fallback)"""
 ```
@@ -65,7 +65,7 @@ class FyersDataService:
 class FyersAPIConfiguration(db.Model):
     """Store Fyers API credentials and configuration"""
     __tablename__ = 'fyers_api_configuration'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     app_id = db.Column(db.String(100), nullable=False)
     app_secret = db.Column(db.String(200), nullable=False)
@@ -78,7 +78,7 @@ class FyersAPIConfiguration(db.Model):
 class FyersAPIUsageLog(db.Model):
     """Track API usage and performance metrics"""
     __tablename__ = 'fyers_api_usage_log'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     endpoint = db.Column(db.String(100), nullable=False)
     symbols = db.Column(db.Text)
@@ -197,19 +197,19 @@ import unittest
 from fyers_api_config import FyersAPIConfig, FyersDataService
 
 class TestFyersAPIIntegration(unittest.TestCase):
-    
+
     def test_environment_detection(self):
         """Test environment detection logic"""
         config = FyersAPIConfig()
         env = config.get_current_environment()
         self.assertIn(env, ['development', 'production'])
-    
+
     def test_data_source_selection(self):
         """Test data source selection logic"""
         service = FyersDataService()
         source = service.get_current_data_source()
         self.assertIn(source, ['fyers_api', 'yfinance'])
-    
+
     def test_fallback_mechanism(self):
         """Test fallback to YFinance when Fyers API fails"""
         # Mock Fyers API failure
@@ -224,7 +224,7 @@ def test_admin_interface():
     """Test admin configuration interface"""
     response = client.get('/admin/fyers_api')
     assert response.status_code == 200
-    
+
 def test_api_configuration():
     """Test API configuration saving"""
     data = {
@@ -291,10 +291,10 @@ def cached_historical_data(symbol: str, period: str) -> Dict:
     """Cache historical data to reduce API calls"""
     cache_key = f"historical:{symbol}:{period}"
     cached_data = redis_client.get(cache_key)
-    
+
     if cached_data:
         return json.loads(cached_data)
-    
+
     # Fetch fresh data and cache it
     data = fetch_historical_data(symbol, period)
     redis_client.setex(cache_key, 300, json.dumps(data))  # 5-minute cache
@@ -310,17 +310,17 @@ from urllib3.util.retry import Retry
 
 class FyersAPIClient:
     """Optimized Fyers API client with connection pooling"""
-    
+
     def __init__(self):
         self.session = requests.Session()
-        
+
         # Configure retry strategy
         retry_strategy = Retry(
             total=3,
             backoff_factor=1,
             status_forcelist=[429, 500, 502, 503, 504]
         )
-        
+
         # Configure HTTP adapter with retry
         adapter = HTTPAdapter(max_retries=retry_strategy, pool_maxsize=20)
         self.session.mount("https://", adapter)
@@ -343,7 +343,7 @@ def log_performance(func):
         try:
             result = func(*args, **kwargs)
             response_time = int((time.time() - start_time) * 1000)
-            
+
             # Log successful API call
             log_api_usage(
                 endpoint=func.__name__,
@@ -353,7 +353,7 @@ def log_performance(func):
             return result
         except Exception as e:
             response_time = int((time.time() - start_time) * 1000)
-            
+
             # Log failed API call
             log_api_usage(
                 endpoint=func.__name__,
@@ -387,17 +387,17 @@ def fyers_api_health():
         'error_rate_24h': calculate_error_rate_24h(),
         'average_response_time': calculate_average_response_time()
     }
-    
+
     # Determine overall health status
     is_healthy = all([
         health_status['database_connection'],
         health_status['error_rate_24h'] < 0.05,  # Less than 5% error rate
         health_status['average_response_time'] < 1000  # Less than 1 second
     ])
-    
+
     status_code = 200 if is_healthy else 503
     health_status['status'] = 'healthy' if is_healthy else 'unhealthy'
-    
+
     return jsonify(health_status), status_code
 ```
 
@@ -419,7 +419,7 @@ COPY . .
 ENV ENVIRONMENT=production
 ENV FLASK_ENV=production
 
-EXPOSE 5008
+EXPOSE 80
 
 CMD ["python", "app.py"]
 ```
@@ -428,19 +428,19 @@ CMD ["python", "app.py"]
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 services:
   fyers-api-app:
     build: .
     ports:
-      - "5008:5008"
+      - "80:80"
     environment:
       - ENVIRONMENT=production
       - DATABASE_URL=postgresql://user:pass@db:5432/fyers_api
     depends_on:
       - db
       - redis
-  
+
   db:
     image: postgres:13
     environment:
@@ -449,10 +449,10 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   redis:
     image: redis:6-alpine
-    
+
 volumes:
   postgres_data:
 ```
@@ -484,7 +484,7 @@ export FLASK_ENV=production
 nohup python3 app.py > app.log 2>&1 &
 
 echo "Fyers API integration deployed successfully!"
-echo "Access your application at: http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):5008"
+echo "Access your application at: http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):80"
 ```
 
 ## 🔍 Debugging and Troubleshooting
@@ -528,32 +528,32 @@ from logging.handlers import RotatingFileHandler
 
 def setup_logging():
     """Configure comprehensive logging for debugging"""
-    
+
     # Create formatters
     detailed_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s'
     )
-    
+
     # File handler for all logs
     file_handler = RotatingFileHandler(
         'fyers_api.log', maxBytes=10485760, backupCount=5
     )
     file_handler.setFormatter(detailed_formatter)
     file_handler.setLevel(logging.DEBUG)
-    
+
     # Error file handler
     error_handler = RotatingFileHandler(
         'fyers_api_errors.log', maxBytes=10485760, backupCount=5
     )
     error_handler.setFormatter(detailed_formatter)
     error_handler.setLevel(logging.ERROR)
-    
+
     # Configure root logger
     logging.basicConfig(
         level=logging.INFO,
         handlers=[file_handler, error_handler, logging.StreamHandler()]
     )
-    
+
     # Configure specific loggers
     logging.getLogger('fyers_api_config').setLevel(logging.DEBUG)
     logging.getLogger('werkzeug').setLevel(logging.WARNING)
@@ -588,24 +588,25 @@ print(f"Historical data points: {len(historical.get('data', []))}")
 ```javascript
 // Frontend JavaScript for VS Terminal integration
 async function updateDataSourceIndicator() {
-    try {
-        const response = await fetch('/api/data_source_status');
-        const status = await response.json();
-        
-        const indicator = document.getElementById('data-source-indicator');
-        const icon = status.environment === 'production' ? '🏭' : '🧪';
-        const badge = status.environment === 'production' ? 'badge-success' : 'badge-warning';
-        
-        indicator.innerHTML = `${icon} ${status.environment}: ${status.data_source}`;
-        indicator.className = `badge ${badge}`;
-        
-        // Update last refresh time
-        document.getElementById('last-update').textContent = 
-            `Last updated: ${new Date().toLocaleTimeString()}`;
-            
-    } catch (error) {
-        console.error('Failed to update data source indicator:', error);
-    }
+  try {
+    const response = await fetch("/api/data_source_status");
+    const status = await response.json();
+
+    const indicator = document.getElementById("data-source-indicator");
+    const icon = status.environment === "production" ? "🏭" : "🧪";
+    const badge =
+      status.environment === "production" ? "badge-success" : "badge-warning";
+
+    indicator.innerHTML = `${icon} ${status.environment}: ${status.data_source}`;
+    indicator.className = `badge ${badge}`;
+
+    // Update last refresh time
+    document.getElementById(
+      "last-update"
+    ).textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+  } catch (error) {
+    console.error("Failed to update data source indicator:", error);
+  }
 }
 
 // Check data source status every 30 seconds
@@ -635,6 +636,6 @@ updateDataSourceIndicator(); // Initial load
 ✅ **Error Resilience**: Graceful fallback handling with user notifications  
 ✅ **Performance Optimization**: Efficient caching and connection management  
 ✅ **Security Compliance**: Secure credential storage and API protection  
-✅ **Monitoring Capabilities**: Comprehensive logging and usage analytics  
+✅ **Monitoring Capabilities**: Comprehensive logging and usage analytics
 
 **Production-Ready Implementation Complete! 🚀**

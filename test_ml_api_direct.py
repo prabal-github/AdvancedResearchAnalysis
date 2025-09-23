@@ -11,7 +11,7 @@ def test_ml_api():
     print("🧪 Testing ML API Endpoint")
     print("=" * 30)
     
-    url = "http://127.0.0.1:5008/api/admin/ml_models/run_stock_recommender"
+    url = "http://127.0.0.1:80/api/admin/ml_models/run_stock_recommender"
     data = {
         'stock_category': 'NIFTY50',
         'min_confidence': '70'

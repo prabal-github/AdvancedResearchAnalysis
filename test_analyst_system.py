@@ -15,7 +15,7 @@ import sys
 import time
 
 # Configuration
-BASE_URL = "http://localhost:5008"
+BASE_URL = "http://localhost:80"
 ADMIN_KEY = "admin123"
 
 def test_admin_create_analyst():

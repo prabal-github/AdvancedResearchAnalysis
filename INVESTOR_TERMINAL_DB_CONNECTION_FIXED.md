@@ -2,7 +2,7 @@
 
 ## ✅ **Issue Resolution Summary**
 
-The database connection issue for the Investor Terminal at `http://127.0.0.1:5008/investor/terminal` has been **successfully resolved**!
+The database connection issue for the Investor Terminal at `http://127.0.0.1:80/investor/terminal` has been **successfully resolved**!
 
 ### 🔧 **What Was Fixed**
 
@@ -14,38 +14,43 @@ The database connection issue for the Investor Terminal at `http://127.0.0.1:500
 ### 📋 **Implementation Details**
 
 #### 1. **Blueprint Registration**
+
 - Added `investor_terminal_export.blueprint` import to main `app.py`
 - Registered the blueprint with proper URL prefix `/api/investor_terminal/*`
 - Added success logging for blueprint registration
 
-#### 2. **Authentication Fix** 
+#### 2. **Authentication Fix**
+
 - Modified `investor_terminal_export/auth.py` to create demo sessions automatically
 - Demo investor account created with ID: `demo_investor_1`
 - Session automatically populated with `investor_id` and `user_role`
 
 #### 3. **Route Enhancement**
+
 - Updated `/investor/terminal` route to create demo data if none exists
 - Added automatic demo portfolio creation (AAPL, MSFT, GOOGL stocks)
 - Enhanced error handling with detailed debugging information
 
 #### 4. **Template Integration**
+
 - Created new `templates/investor_terminal_export.html` with modern UI
 - Professional financial terminal styling with dark theme
 - Real-time data loading with error handling and refresh functionality
 
 ### 🚀 **Current Status**
 
-✅ **Flask Application**: Running successfully on port 5008  
-✅ **Investor Terminal**: Accessible at http://127.0.0.1:5008/investor/terminal  
+✅ **Flask Application**: Running successfully on port 80  
+✅ **Investor Terminal**: Accessible at http://127.0.0.1:80/investor/terminal  
 ✅ **API Endpoints**: All 5 analytics endpoints working  
 ✅ **Database Connection**: Fully functional with demo data  
-✅ **Session Management**: Automatic demo session creation  
+✅ **Session Management**: Automatic demo session creation
 
 ### 📊 **Available Analytics**
 
 The Investor Terminal now provides:
 
 1. **Risk Analytics**
+
    - Value at Risk (VaR) calculations
    - Sharpe ratio analysis
    - Beta measurements
@@ -53,6 +58,7 @@ The Investor Terminal now provides:
    - Portfolio volatility metrics
 
 2. **Market Analytics**
+
    - VIX volatility index
    - Put/Call ratio analysis
    - Market breadth indicators
@@ -60,6 +66,7 @@ The Investor Terminal now provides:
    - Options flow analysis
 
 3. **Technical Signals**
+
    - RSI (Relative Strength Index)
    - MACD signals
    - Bollinger Bands analysis
@@ -67,6 +74,7 @@ The Investor Terminal now provides:
    - Volume analysis
 
 4. **Economic Events**
+
    - Economic calendar integration
    - High-impact event tracking
    - Market news feed
@@ -82,6 +90,7 @@ The Investor Terminal now provides:
 ### 🔗 **API Endpoints Working**
 
 All endpoints are now functional:
+
 - `/api/investor_terminal/risk_analytics`
 - `/api/investor_terminal/market_analytics`
 - `/api/investor_terminal/technical_signals`
@@ -109,7 +118,7 @@ All endpoints are now functional:
 
 The Investor Terminal is now **fully functional** and ready for use. Users can access comprehensive financial analytics, risk management tools, and market data all in one professional interface.
 
-**Access URL**: http://127.0.0.1:5008/investor/terminal
+**Access URL**: http://127.0.0.1:80/investor/terminal
 
 The database connection issue has been completely resolved, and the terminal provides a rich, interactive experience for financial analysis and portfolio management.
 

@@ -109,7 +109,7 @@ server {
 
     # Main application
     location / {
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -123,7 +123,7 @@ server {
 
     # WebSocket support
     location /socket.io {
-        proxy_pass http://127.0.0.1:5008/socket.io;
+        proxy_pass http://127.0.0.1:80/socket.io;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -168,7 +168,7 @@ Environment=PATH=/var/www/research/venv/bin
 Environment=FLASK_ENV=production
 Environment=PRODUCTION=true
 Environment=FLASK_DEBUG=false
-ExecStart=/var/www/research/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:5008 --timeout 300 --keep-alive 5 --max-requests 1000 --preload app:app
+ExecStart=/var/www/research/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:80 --timeout 300 --keep-alive 5 --max-requests 1000 --preload app:app
 Restart=always
 RestartSec=3
 
@@ -189,7 +189,7 @@ sudo -u research tee /var/www/research/.env << 'ENV'
 FLASK_ENV=production
 FLASK_DEBUG=false
 PRODUCTION=true
-APP_PORT=5008
+APP_PORT=80
 SECRET_KEY=CHANGE_THIS_TO_A_SECURE_RANDOM_KEY
 
 # Database Configuration (will be updated with RDS details)

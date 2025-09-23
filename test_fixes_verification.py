@@ -15,7 +15,7 @@ import json
 os.environ['ANTHROPIC_API_KEY'] = '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'
 
 # Try both common ports
-PORTS_TO_TRY = [5000, 5008]
+PORTS_TO_TRY = [5000, 80]
 
 def find_running_port():
     """Find which port the Flask app is running on"""

@@ -7,7 +7,7 @@ def test_demo_login_direct():
     print("🔍 Testing demo login response directly...")
     
     session = requests.Session()
-    resp = session.get("http://127.0.0.1:5008/demo_investor_login")
+    resp = session.get("http://127.0.0.1:80/demo_investor_login")
     
     print(f"Status: {resp.status_code}")
     print(f"Content-Type: {resp.headers.get('content-type')}")

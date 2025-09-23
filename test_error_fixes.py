@@ -43,7 +43,7 @@ def test_market_dashboard_api():
     print("\n🔍 Testing Market Dashboard API...")
     
     try:
-        response = requests.get('http://127.0.0.1:5008/api/enhanced/market_dashboard', timeout=10)
+        response = requests.get('http://127.0.0.1:80/api/enhanced/market_dashboard', timeout=10)
         
         print(f"   Status Code: {response.status_code}")
         

@@ -14,7 +14,7 @@ from datetime import datetime
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-def test_flask_app_running(base_url="http://localhost:5008"):
+def test_flask_app_running(base_url="http://localhost:80"):
     """Test if the Flask app is running"""
     try:
         response = requests.get(base_url, timeout=5)
@@ -28,7 +28,7 @@ def test_flask_app_running(base_url="http://localhost:5008"):
         print(f"✗ Flask application is not running: {e}")
         return False
 
-def test_research_templates_page(base_url="http://localhost:5008"):
+def test_research_templates_page(base_url="http://localhost:80"):
     """Test the research templates page"""
     try:
         response = requests.get(f"{base_url}/research_templates", timeout=10)
@@ -47,7 +47,7 @@ def test_research_templates_page(base_url="http://localhost:5008"):
         print(f"✗ Failed to access Research Templates page: {e}")
         return False
 
-def test_ai_simulation_page(base_url="http://localhost:5008"):
+def test_ai_simulation_page(base_url="http://localhost:80"):
     """Test the AI simulation page"""
     try:
         response = requests.get(f"{base_url}/ai_simulation", timeout=10)
@@ -72,7 +72,7 @@ def run_quick_test():
     print("TESTING NEW FEATURES")
     print("=" * 50)
     
-    base_url = "http://localhost:5008"
+    base_url = "http://localhost:80"
     
     # Test if app is running
     if not test_flask_app_running(base_url):

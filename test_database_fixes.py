@@ -15,7 +15,7 @@ def test_analyze_submit_with_retry():
     
     # Login as analyst
     login_data = {'email': 'Saiyam Jangada', 'password': 'password'}
-    login_response = session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+    login_response = session.post('http://127.0.0.1:80/analyst_login', data=login_data)
     
     # Test analyze submission
     test_report = {
@@ -25,7 +25,7 @@ def test_analyze_submit_with_retry():
     
     try:
         print("   📊 Submitting test report...")
-        response = session.post('http://127.0.0.1:5008/analyze', 
+        response = session.post('http://127.0.0.1:80/analyze', 
                                json=test_report, 
                                timeout=30)
         
@@ -67,14 +67,14 @@ def test_analyst_permissions():
     
     # Login as analyst
     login_data = {'email': 'Saiyam Jangada', 'password': 'password'}
-    session.post('http://127.0.0.1:5008/analyst_login', data=login_data)
+    session.post('http://127.0.0.1:80/analyst_login', data=login_data)
     
     results = []
     
     # Test 1: Can view own performance
     print("   1. Testing own performance access...")
     try:
-        response = session.get('http://127.0.0.1:5008/analyst/Saiyam%20Jangada/performance')
+        response = session.get('http://127.0.0.1:80/analyst/Saiyam%20Jangada/performance')
         if response.status_code == 200:
             print("   ✅ Can access own performance dashboard")
             results.append(True)
@@ -88,7 +88,7 @@ def test_analyst_permissions():
     # Test 2: Can view other analyst's performance (read-only)
     print("   2. Testing other analyst performance access...")
     try:
-        response = session.get('http://127.0.0.1:5008/analyst/DIKSHA%20JADHAV/performance')
+        response = session.get('http://127.0.0.1:80/analyst/DIKSHA%20JADHAV/performance')
         if response.status_code == 200:
             print("   ✅ Can view other analyst's performance (read-only)")
             results.append(True)
@@ -102,7 +102,7 @@ def test_analyst_permissions():
     # Test 3: Can only edit own profile
     print("   3. Testing profile edit restrictions...")
     try:
-        response = session.get('http://127.0.0.1:5008/analyst/Saiyam%20Jangada/profile/edit')
+        response = session.get('http://127.0.0.1:80/analyst/Saiyam%20Jangada/profile/edit')
         if response.status_code == 200:
             print("   ✅ Can access own profile edit")
             results.append(True)
@@ -116,7 +116,7 @@ def test_analyst_permissions():
     # Test 4: Cannot edit other analyst's profile
     print("   4. Testing other profile edit restriction...")
     try:
-        response = session.get('http://127.0.0.1:5008/analyst/DIKSHA%20JADHAV/profile/edit')
+        response = session.get('http://127.0.0.1:80/analyst/DIKSHA%20JADHAV/profile/edit')
         print(f"      Status code: {response.status_code}")
         print(f"      URL after response: {response.url}")
         
@@ -151,7 +151,7 @@ def test_database_metrics():
     print("=" * 30)
     
     try:
-        response = requests.get('http://127.0.0.1:5008/api/metrics', timeout=10)
+        response = requests.get('http://127.0.0.1:80/api/metrics', timeout=10)
         if response.status_code == 200:
             result = response.json()
             if 'error' in result and 'temporarily unavailable' in result['error']:
@@ -173,7 +173,7 @@ def main():
     
     # Check if server is running
     try:
-        health_check = requests.get('http://127.0.0.1:5008/', timeout=5)
+        health_check = requests.get('http://127.0.0.1:80/', timeout=5)
         if health_check.status_code != 200:
             print("❌ Server is not accessible")
             return

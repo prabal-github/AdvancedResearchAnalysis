@@ -8,7 +8,7 @@ import json
 
 def test_hai_edge_endpoints():
     """Test the hAi-Edge endpoints to ensure they work properly"""
-    base_url = "http://localhost:5008"
+    base_url = "http://localhost:80"
     
     print("Testing hAi-Edge Event Portfolio System...")
     print("=" * 50)
@@ -112,7 +112,7 @@ def test_event_data_normalization():
     for i, event in enumerate(test_events):
         try:
             response = requests.post(
-                "http://localhost:5008/api/analyze_event_for_portfolio",
+                "http://localhost:80/api/analyze_event_for_portfolio",
                 json=event,
                 timeout=5
             )

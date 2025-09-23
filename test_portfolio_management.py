@@ -11,7 +11,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 TEST_INVESTOR_ID = "test_investor_123"
 
 def test_portfolio_management():
@@ -135,7 +135,7 @@ def test_portfolio_management():
     print("\n🚀 Portfolio management is operational!")
     print("\nTo test the full system:")
     print("1. Start the app: python app.py")
-    print("2. Visit: http://127.0.0.1:5008/vs_terminal_MLClass")
+    print("2. Visit: http://127.0.0.1:80/vs_terminal_MLClass")
     print("3. Login and test portfolio creation/stock addition")
 
 if __name__ == "__main__":

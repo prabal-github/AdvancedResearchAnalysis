@@ -52,7 +52,7 @@ def test_topic_functionality():
     # Submit to local Flask app
     try:
         response = requests.post(
-            "http://127.0.0.1:5008/analyze",
+            "http://127.0.0.1:80/analyze",
             json=test_report,
             timeout=30
         )
@@ -64,7 +64,7 @@ def test_topic_functionality():
             
             if 'report_id' in result:
                 report_id = result['report_id']
-                public_url = f"http://127.0.0.1:5008/public/report/{report_id}"
+                public_url = f"http://127.0.0.1:80/public/report/{report_id}"
                 linkedin_url = f"https://www.linkedin.com/sharing/share-offsite/?url={public_url}"
                 
                 print(f"\n🔗 Generated URLs:")

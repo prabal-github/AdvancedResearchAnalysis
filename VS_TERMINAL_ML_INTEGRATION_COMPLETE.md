@@ -2,7 +2,7 @@
 
 ## 🎯 Mission Accomplished: Live ML Models Integration
 
-**User Request**: "Make provision to show subscribed ML models from http://127.0.0.1:5008/published make it active and live"
+**User Request**: "Make provision to show subscribed ML models from http://127.0.0.1:80/published make it active and live"
 
 **Status**: ✅ **SUCCESSFULLY IMPLEMENTED**
 
@@ -11,16 +11,19 @@
 ## 🚀 New Features Implemented
 
 ### 1. Enhanced VS Terminal Subscribed Models Endpoint
+
 **Endpoint**: `GET /api/vs_terminal_AClass/subscribed_models`
 
 **Live Integration Features**:
+
 - ✅ Direct integration with PublishedModel database
-- ✅ Real-time subscription data from PublishedModelSubscription table  
+- ✅ Real-time subscription data from PublishedModelSubscription table
 - ✅ Live ML recommendations from MLStockRecommendation table
 - ✅ Performance metrics from PublishedModelRunHistory
 - ✅ Enhanced fallback with rich demo data
 
 **Enhanced Data Structure**:
+
 ```json
 {
   "subscribed_models": [
@@ -55,9 +58,11 @@
 ```
 
 ### 2. Advanced Model Predictions Endpoint
+
 **Endpoint**: `GET /api/vs_terminal_AClass/model_predictions/<model_id>`
 
 **Live Features**:
+
 - ✅ Subscription verification
 - ✅ Live stock recommendations with technical indicators
 - ✅ Fundamental metrics (PE ratio, debt-to-equity, ROE)
@@ -66,6 +71,7 @@
 - ✅ Enhanced prediction data structure
 
 **Sample Prediction Data**:
+
 ```json
 {
   "predictions": [
@@ -94,9 +100,11 @@
 ```
 
 ### 3. Model Sync & Activation System
+
 **Endpoint**: `POST /api/vs_terminal_AClass/sync_subscribed_models`
 
 **Capabilities**:
+
 - ✅ Syncs subscribed models from published catalog
 - ✅ Activates models with recent activity
 - ✅ Tracks model performance and predictions
@@ -104,9 +112,11 @@
 - ✅ Provides activation status reports
 
 ### 4. Detailed Model Status Tracking
+
 **Endpoint**: `GET /api/vs_terminal_AClass/model_status/<model_id>`
 
 **Status Information**:
+
 - ✅ Model activity metrics
 - ✅ Run history tracking
 - ✅ Recommendation counts
@@ -118,7 +128,7 @@
 ## 🔄 Data Flow Integration
 
 ```
-Published Models Catalog (http://127.0.0.1:5008/published)
+Published Models Catalog (http://127.0.0.1:80/published)
     ↓
 PublishedModel & PublishedModelSubscription Tables
     ↓
@@ -134,6 +144,7 @@ Enhanced VS Terminal Interface
 ## 🧪 Test Results
 
 **Comprehensive Testing Results**:
+
 - ✅ **Subscribed Models**: 3 models successfully retrieved
 - ✅ **Live Predictions**: Working for all model types
 - ✅ **Sync System**: 12 models synced, 4 activated
@@ -141,8 +152,9 @@ Enhanced VS Terminal Interface
 - ✅ **Performance**: Fast response times with fallback support
 
 **Model Types Successfully Integrated**:
+
 1. **Stock Recommender Pro** - Quantitative analysis with buy/sell/hold recommendations
-2. **Risk Assessment AI** - Portfolio risk analysis and volatility alerts  
+2. **Risk Assessment AI** - Portfolio risk analysis and volatility alerts
 3. **Market Sentiment Analyzer** - Real-time sentiment analysis and market mood
 
 ---
@@ -150,18 +162,21 @@ Enhanced VS Terminal Interface
 ## 📊 Enhanced Features
 
 ### Live Data Integration
+
 - **Real-time sync** with published models database
 - **Dynamic activation** based on model activity
 - **Performance tracking** with run history
 - **Subscription management** with user verification
 
 ### Rich Prediction Data
+
 - **Technical indicators** (RSI, MACD, Moving Averages)
 - **Fundamental metrics** (PE ratio, ROE, Debt-to-Equity)
 - **Risk assessment** (Portfolio risk scores, volatility alerts)
 - **Market sentiment** (Bullish/Bearish indicators)
 
 ### Robust Architecture
+
 - **Graceful fallbacks** to demo data when live data unavailable
 - **Error handling** for database connection issues
 - **Authentication integration** with investor accounts
@@ -172,6 +187,7 @@ Enhanced VS Terminal Interface
 ## 🎯 Mission Status: COMPLETE
 
 ### ✅ What Was Achieved
+
 1. **Live Integration**: Published models now actively feed into VS Terminal
 2. **Real-time Data**: Subscribed models show live predictions and status
 3. **Enhanced UX**: Rich model information with performance metrics
@@ -179,6 +195,7 @@ Enhanced VS Terminal Interface
 5. **Robust Fallbacks**: Demo data ensures system always works
 
 ### 🔮 VS Terminal is Now Live & Active
+
 - Models from `/published` page are now **active and live** in VS Terminal
 - Real-time integration with **subscription system**
 - Enhanced predictions with **comprehensive market data**
@@ -190,6 +207,7 @@ Enhanced VS Terminal Interface
 ## 🚀 Ready for Production
 
 The VS Terminal ML Models integration is now **fully operational** and ready for:
+
 - **Live trading environments**
 - **Real-time model predictions**
 - **Enhanced investor experience**
@@ -201,5 +219,5 @@ The VS Terminal now has **live, active integration** with the published ML model
 
 ---
 
-*Integration completed on: September 10, 2025*  
-*Status: Production Ready ✅*
+_Integration completed on: September 10, 2025_  
+_Status: Production Ready ✅_

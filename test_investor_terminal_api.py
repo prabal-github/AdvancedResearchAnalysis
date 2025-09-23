@@ -7,7 +7,7 @@ import json
 
 def test_api_endpoints():
     """Test all investor terminal API endpoints"""
-    base_url = 'http://127.0.0.1:5008'
+    base_url = 'http://127.0.0.1:80'
     endpoints = [
         '/api/investor_terminal/risk_analytics',
         '/api/investor_terminal/market_analytics',

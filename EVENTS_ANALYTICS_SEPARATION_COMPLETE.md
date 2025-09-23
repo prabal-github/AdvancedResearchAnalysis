@@ -1,15 +1,17 @@
 # Events Analytics Pages - Basic and Enhanced Separation
 
 ## Overview
+
 Successfully implemented the user's request to "Keep the previous page as it was earlier and create new link of this new page with Enhanced Predictive Analytics page link."
 
 ## Implementation Summary
 
 ### 1. Original Events Analytics Page
-- **URL**: http://127.0.0.1:5008/events_analytics
+
+- **URL**: http://127.0.0.1:80/events_analytics
 - **Route**: `/events_analytics`
 - **Template**: `templates/events_analytics.html`
-- **Features**: 
+- **Features**:
   - Basic market events display
   - Simple news feed
   - Event calendar with basic information
@@ -17,7 +19,8 @@ Successfully implemented the user's request to "Keep the previous page as it was
   - Call-to-action button to access enhanced version
 
 ### 2. Enhanced Predictive Analytics Page
-- **URL**: http://127.0.0.1:5008/enhanced_events_analytics
+
+- **URL**: http://127.0.0.1:80/enhanced_events_analytics
 - **Route**: `/enhanced_events_analytics`
 - **Template**: `templates/enhanced_events_analytics.html`
 - **Features**:
@@ -33,16 +36,19 @@ Successfully implemented the user's request to "Keep the previous page as it was
 ## Navigation Between Pages
 
 ### From Basic to Enhanced
+
 - Click the "Try Enhanced Predictive Analytics" button on the basic page
 - Provides upgrade path for users wanting advanced features
 
 ### From Enhanced to Basic
+
 - Click the "Basic Events" button in the top navigation
 - Allows users to return to simplified view
 
 ## Technical Implementation
 
 ### Route Structure in `app.py`
+
 ```python
 # Original basic events analytics
 @app.route('/events_analytics')
@@ -57,6 +63,7 @@ def enhanced_events_analytics():
 ```
 
 ### Enhanced System Components
+
 1. **predictive_events_analyzer.py**: Core ML engine with prediction algorithms
 2. **enhanced_events_routes.py**: Advanced API endpoints for enhanced functionality
 3. **enhanced_events_analytics.html**: Professional UI with institutional styling
@@ -67,13 +74,16 @@ def enhanced_events_analytics():
    - `/api/events/market_data` - Real-time market integration
 
 ### ML Models Available
+
 **Alpha Generation Models:**
+
 - News Sentiment Alpha Model
 - Economic Surprise Model
 - Earnings Momentum Strategy
 - Volatility Surface Arbitrage
 
 **Risk Management Models:**
+
 - Event-Driven VaR
 - Scenario Stress Testing
 - Dynamic Correlation Model
@@ -87,19 +97,22 @@ def enhanced_events_analytics():
 4. **Progressive Enhancement**: Natural upgrade path from basic to advanced features
 
 ## Data Sources
+
 - **Sensibull API**: Options and derivatives data
 - **Upstox News API**: Real-time market news
 - **yfinance**: Market data and pricing
 - **Internal ML Models**: Proprietary prediction algorithms
 
 ## Testing Confirmed
+
 ✅ Basic page loads correctly at /events_analytics
 ✅ Enhanced page loads correctly at /enhanced_events_analytics
 ✅ Navigation links work bidirectionally
-✅ Flask app running successfully on port 5008
+✅ Flask app running successfully on port 80
 ✅ All enhanced features operational (predictions, model recommendations, visualizations)
 
 ## Benefits of Separation
+
 1. **User Choice**: Users can select appropriate complexity level
 2. **Performance**: Basic page loads faster for simple needs
 3. **Maintainability**: Clear separation of basic vs advanced features

@@ -58,7 +58,7 @@ def test_enhanced_analyze_new():
     try:
         # Submit the report
         response = requests.post(
-            "http://127.0.0.1:5008/analyze",
+            "http://127.0.0.1:80/analyze",
             json=test_data,
             timeout=30,
             headers={'Content-Type': 'application/json'}
@@ -73,7 +73,7 @@ def test_enhanced_analyze_new():
                 print(f"📄 Report ID: {report_id}")
                 
                 # Test the public report view
-                public_url = f"http://127.0.0.1:5008/public/report/{report_id}"
+                public_url = f"http://127.0.0.1:80/public/report/{report_id}"
                 public_response = requests.get(public_url, timeout=10)
                 
                 if public_response.status_code == 200:
@@ -139,7 +139,7 @@ def test_form_features():
     
     try:
         # Test direct access to the form
-        response = requests.get("http://127.0.0.1:5008/analyze_new", timeout=5)
+        response = requests.get("http://127.0.0.1:80/analyze_new", timeout=5)
         
         if response.status_code == 200:
             content = response.text

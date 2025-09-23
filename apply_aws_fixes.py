@@ -338,8 +338,8 @@ def setup_database():
             print("Database setup completed successfully!")
             print("Next steps:")
             print("   1. Start the application: python app.py")
-            print("   2. Test health check: curl http://localhost:5008/health")
-            print("   3. Test configuration: curl http://localhost:5008/config-check")
+            print("   2. Test health check: curl http://localhost:80/health")
+            print("   3. Test configuration: curl http://localhost:80/config-check")
             
             return True
             

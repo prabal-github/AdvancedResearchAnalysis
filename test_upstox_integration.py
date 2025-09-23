@@ -143,7 +143,7 @@ def main():
         print("\n🎉 All tests passed! Options Analyzer ready with Upstox data.")
         print("\n🚀 Next steps:")
         print("   1. Start Flask app: python app.py")
-        print("   2. Navigate to: http://127.0.0.1:5008/options_analyzer")
+        print("   2. Navigate to: http://127.0.0.1:80/options_analyzer")
         print("   3. Select 'Nifty 50' and click 'Fetch Data'")
         return True
     else:

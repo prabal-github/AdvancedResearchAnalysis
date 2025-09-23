@@ -1,9 +1,11 @@
 # 🚀 AWS EC2 Deployment Guide - 24/7 Production Setup
+
 **Investment Research Platform - Complete AWS EC2 Deployment with Gunicorn**  
 **Date**: September 17, 2025  
 **Target**: 24/7 Production Environment with SQLite Database
 
 ## 📋 Table of Contents
+
 1. [Pre-Deployment Checklist](#pre-deployment-checklist)
 2. [AWS EC2 Instance Setup](#aws-ec2-instance-setup)
 3. [Server Configuration](#server-configuration)
@@ -18,6 +20,7 @@
 ## 🎯 Pre-Deployment Checklist
 
 ### ✅ **Local Preparation**
+
 ```bash
 # 1. Backup your databases
 python database_manager.py
@@ -34,6 +37,7 @@ python app.py
 ```
 
 ### 📦 **Files to Upload to EC2**
+
 ```
 Required Files:
 ├── app.py                    (Main application)
@@ -52,6 +56,7 @@ Required Files:
 ### **Step 1: Launch EC2 Instance**
 
 #### **Recommended Instance Configuration:**
+
 ```yaml
 Instance Type: t3.medium (2 vCPU, 4 GB RAM)
 Operating System: Ubuntu 22.04 LTS
@@ -61,18 +66,20 @@ Key Pair: Create new or use existing
 ```
 
 #### **Security Group Configuration:**
+
 ```yaml
 Inbound Rules:
-- SSH (22): Your IP only
-- HTTP (80): 0.0.0.0/0
-- HTTPS (443): 0.0.0.0/0
-- Custom (5008): 0.0.0.0/0 (Flask app port)
+  - SSH (22): Your IP only
+  - HTTP (80): 0.0.0.0/0
+  - HTTPS (443): 0.0.0.0/0
+  - Custom (80): 0.0.0.0/0 (Flask app port)
 
 Outbound Rules:
-- All traffic: 0.0.0.0/0
+  - All traffic: 0.0.0.0/0
 ```
 
 ### **Step 2: Connect to Instance**
+
 ```bash
 # Connect via SSH
 ssh -i "your-key.pem" ubuntu@your-ec2-public-ip
@@ -84,6 +91,7 @@ sudo apt update && sudo apt upgrade -y
 ## ⚙️ Server Configuration
 
 ### **Step 3: Install System Dependencies**
+
 ```bash
 # Install Python and essential tools
 sudo apt install -y python3.11 python3.11-venv python3.11-dev
@@ -102,6 +110,7 @@ supervisorctl --version
 ```
 
 ### **Step 4: Create Application User**
+
 ```bash
 # Create dedicated user for application
 sudo adduser --system --group --home /opt/flask-app flask-app
@@ -118,6 +127,7 @@ sudo chown -R flask-app:flask-app /var/log/flask-app
 ## 📂 Application Deployment
 
 ### **Step 5: Upload Application Files**
+
 ```bash
 # Method 1: Using SCP (from local machine)
 scp -i "your-key.pem" -r . ubuntu@your-ec2-ip:/tmp/flask-app/
@@ -130,6 +140,7 @@ sudo -u flask-app git clone https://github.com/your-repo/flask-app.git /opt/flas
 ```
 
 ### **Step 6: Setup Application Environment**
+
 ```bash
 # Switch to application user
 sudo -u flask-app -i
@@ -154,6 +165,7 @@ pip install gunicorn gevent eventlet
 ## 🗄️ Database Configuration
 
 ### **Step 7: SQLite Database Setup**
+
 ```bash
 # Create database directory
 sudo mkdir -p /opt/flask-app/data
@@ -181,14 +193,16 @@ conn.close()
 ```
 
 ### **Step 8: Update Database Configuration**
+
 Create `/opt/flask-app/.env.production`:
+
 ```bash
 # Production Environment Variables
 SECRET_KEY=your-super-secure-production-secret-key-here
 FLASK_DEBUG=False
 FLASK_ENV=production
 HOST=0.0.0.0
-PORT=5008
+PORT=80
 
 # SQLite Database Configuration
 DATABASE_URL=sqlite:///data/investment_research.db
@@ -213,14 +227,16 @@ PREFERRED_URL_SCHEME=https
 ## 🦄 Gunicorn Configuration
 
 ### **Step 9: Create Gunicorn Configuration**
+
 Create `/opt/flask-app/gunicorn.conf.py`:
+
 ```python
 # Gunicorn Configuration for 24/7 Production
 import multiprocessing
 import os
 
 # Server socket
-bind = "0.0.0.0:5008"
+bind = "0.0.0.0:80"
 backlog = 2048
 
 # Worker processes
@@ -271,7 +287,9 @@ timeout = 120
 ```
 
 ### **Step 10: Create WSGI Entry Point**
+
 Create `/opt/flask-app/wsgi.py`:
+
 ```python
 #!/usr/bin/env python3
 """
@@ -300,7 +318,9 @@ if __name__ == "__main__":
 ## 🔄 System Services Setup
 
 ### **Step 11: Create Systemd Service**
+
 Create `/etc/systemd/system/flask-investment-app.service`:
+
 ```ini
 [Unit]
 Description=Flask Investment Research Application
@@ -334,11 +354,13 @@ WantedBy=multi-user.target
 ```
 
 ### **Step 12: Configure Nginx Reverse Proxy**
+
 Create `/etc/nginx/sites-available/flask-investment-app`:
+
 ```nginx
 # Nginx Configuration for Flask Investment App
 upstream flask_app {
-    server 127.0.0.1:5008 fail_timeout=0;
+    server 127.0.0.1:80 fail_timeout=0;
 }
 
 # HTTP Server (redirects to HTTPS)
@@ -455,6 +477,7 @@ server {
 ```
 
 ### **Step 13: Start Services**
+
 ```bash
 # Enable and start Nginx
 sudo systemctl enable nginx
@@ -477,6 +500,7 @@ sudo systemctl status nginx
 ## 🔒 SSL/HTTPS Configuration
 
 ### **Step 14: Install Let's Encrypt SSL**
+
 ```bash
 # Install Certbot
 sudo apt install -y certbot python3-certbot-nginx
@@ -496,7 +520,9 @@ sudo crontab -e
 ## 📊 Monitoring & Maintenance
 
 ### **Step 15: Setup Log Rotation**
+
 Create `/etc/logrotate.d/flask-investment-app`:
+
 ```
 /var/log/flask-app/*.log {
     daily
@@ -512,7 +538,9 @@ Create `/etc/logrotate.d/flask-investment-app`:
 ```
 
 ### **Step 16: Create Monitoring Scripts**
+
 Create `/opt/flask-app/scripts/monitor.sh`:
+
 ```bash
 #!/bin/bash
 # Flask App Monitoring Script
@@ -530,7 +558,7 @@ if ! systemctl is-active --quiet $APP_NAME; then
     log_message "ERROR: $APP_NAME is not running. Attempting restart..."
     systemctl restart $APP_NAME
     sleep 10
-    
+
     if systemctl is-active --quiet $APP_NAME; then
         log_message "SUCCESS: $APP_NAME restarted successfully"
     else
@@ -565,7 +593,9 @@ fi
 ```
 
 ### **Step 17: Setup Automated Backups**
+
 Create `/opt/flask-app/scripts/backup.sh`:
+
 ```bash
 #!/bin/bash
 # Automated Database Backup Script
@@ -592,6 +622,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Backup completed: full_backup_$DATE.tar.gz"
 ```
 
 ### **Step 18: Setup Cron Jobs**
+
 ```bash
 # Edit crontab for flask-app user
 sudo -u flask-app crontab -e
@@ -612,6 +643,7 @@ sudo -u flask-app crontab -e
 ### **Common Issues and Solutions**
 
 #### **Application Won't Start**
+
 ```bash
 # Check service status
 sudo systemctl status flask-investment-app
@@ -630,6 +662,7 @@ python wsgi.py
 ```
 
 #### **Database Permission Issues**
+
 ```bash
 # Fix database permissions
 sudo chown -R flask-app:flask-app /opt/flask-app/data/
@@ -640,6 +673,7 @@ sudo -u flask-app sqlite3 /opt/flask-app/data/investment_research.db "PRAGMA int
 ```
 
 #### **Nginx Issues**
+
 ```bash
 # Test Nginx configuration
 sudo nginx -t
@@ -652,6 +686,7 @@ sudo tail -f /var/log/nginx/error.log
 ```
 
 #### **SSL Certificate Issues**
+
 ```bash
 # Check certificate status
 sudo certbot certificates
@@ -666,6 +701,7 @@ openssl s_client -connect your-domain.com:443
 ### **Performance Optimization**
 
 #### **Database Optimization**
+
 ```bash
 # Vacuum databases monthly
 sudo -u flask-app sqlite3 /opt/flask-app/data/investment_research.db "VACUUM;"
@@ -675,6 +711,7 @@ sudo -u flask-app sqlite3 /opt/flask-app/data/investment_research.db "ANALYZE;"
 ```
 
 #### **System Optimization**
+
 ```bash
 # Optimize system for production
 echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
@@ -685,7 +722,9 @@ sudo sysctl -p
 ## 📈 Monitoring Dashboard
 
 ### **Step 19: Basic Health Check Endpoint**
+
 Add to your Flask app:
+
 ```python
 @app.route('/health')
 def health_check():
@@ -698,15 +737,17 @@ def health_check():
 ```
 
 ### **Health Check Script**
+
 ```bash
 #!/bin/bash
 # Health check script
-curl -f http://localhost:5008/health || exit 1
+curl -f http://localhost:80/health || exit 1
 ```
 
 ## 🎯 Final Checklist
 
 ### **Pre-Production**
+
 - [ ] ✅ EC2 instance configured with proper security groups
 - [ ] ✅ System dependencies installed
 - [ ] ✅ Application files uploaded
@@ -720,6 +761,7 @@ curl -f http://localhost:5008/health || exit 1
 - [ ] ✅ Cron jobs configured
 
 ### **Post-Deployment**
+
 - [ ] 🔍 Application accessible via HTTPS
 - [ ] 🔍 Health check endpoint working
 - [ ] 🔍 Logs being written correctly
@@ -730,6 +772,7 @@ curl -f http://localhost:5008/health || exit 1
 ## 📞 Support Commands
 
 ### **Quick Commands Reference**
+
 ```bash
 # Service management
 sudo systemctl start flask-investment-app
@@ -753,6 +796,7 @@ curl https://your-domain.com/health
 ## 🎉 Deployment Complete!
 
 Your Flask Investment Research Platform is now deployed on AWS EC2 with:
+
 - ✅ **24/7 uptime** with Gunicorn and systemd
 - ✅ **SQLite database** properly configured
 - ✅ **HTTPS/SSL** with automatic renewal

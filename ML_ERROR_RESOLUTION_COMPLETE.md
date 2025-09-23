@@ -21,6 +21,7 @@ The error "An error occurred while running the analysis" was caused by **authent
 **Modified `@admin_required` decorator to handle API requests properly:**
 
 **Before:**
+
 ```python
 def admin_required(f):
     @wraps(f)
@@ -33,6 +34,7 @@ def admin_required(f):
 ```
 
 **After:**
+
 ```python
 def admin_required(f):
     @wraps(f)
@@ -61,14 +63,14 @@ Also improved the ML API route with comprehensive logging:
 def run_stock_recommender_api():
     try:
         app.logger.info("Starting stock recommender analysis...")
-        
+
         # Step-by-step logging for each phase:
         # - Parameter validation
-        # - Symbol retrieval  
+        # - Symbol retrieval
         # - Model initialization
         # - Analysis execution
         # - Database saving
-        
+
     except Exception as e:
         app.logger.error(f"Error running stock recommender: {e}")
         import traceback
@@ -82,6 +84,7 @@ def run_stock_recommender_api():
 ## 🧪 **Testing Results:**
 
 ### ❌ **Before Fix:**
+
 ```
 Status Code: 200
 Content-Type: text/html; charset=utf-8
@@ -89,6 +92,7 @@ Raw Response: <!DOCTYPE html>...Admin Login page...
 ```
 
 ### ✅ **After Fix:**
+
 ```
 Status Code: 401
 Content-Type: application/json
@@ -101,11 +105,13 @@ JSON Response: {
 ## 🎯 **User Experience Now:**
 
 ### 🔓 **If Not Logged In:**
+
 - Frontend gets clear JSON error message
 - Shows user-friendly message: "Admin authentication required. Please login as admin first."
 - No more generic "An error occurred" messages
 
 ### 🔐 **If Logged In as Admin:**
+
 - ML models work perfectly with enhanced logging
 - Real-time analysis with live stock data
 - Detailed error messages if any issues occur
@@ -113,26 +119,29 @@ JSON Response: {
 
 ## 🚀 **Next Steps for User:**
 
-1. **Login as Admin**: 
-   - Go to http://127.0.0.1:5008/admin_login
+1. **Login as Admin**:
+
+   - Go to http://127.0.0.1:80/admin_login
    - Enter admin credentials
 
 2. **Access ML Models**:
+
    - Navigate to Admin Dashboard
    - Click "ML Models" button
    - Now works without errors!
 
 3. **Run Analysis**:
    - Select stock category (NIFTY50, etc.)
-   - Adjust confidence sliders  
+   - Adjust confidence sliders
    - Click "Run Analysis"
    - Get real results with live data
 
 ## ✅ **Issue Status: RESOLVED**
 
 The ML Models feature now:
+
 - ✅ **Handles authentication properly**
-- ✅ **Returns clear error messages**  
+- ✅ **Returns clear error messages**
 - ✅ **Works with real stocklist.xlsx data**
 - ✅ **Provides detailed logging for debugging**
 - ✅ **Gives proper user feedback**

@@ -106,7 +106,7 @@ if [ ! -f ".env" ]; then
 FLASK_ENV=production
 FLASK_DEBUG=false
 PRODUCTION=true
-APP_PORT=5008
+APP_PORT=80
 HOST=0.0.0.0
 
 # Generate secure key with: python3 -c "import secrets; print(secrets.token_hex(32))"
@@ -161,7 +161,7 @@ server {
 
     # Main application
     location / {
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -175,7 +175,7 @@ server {
 
     # WebSocket support
     location /socket.io {
-        proxy_pass http://127.0.0.1:5008/socket.io;
+        proxy_pass http://127.0.0.1:80/socket.io;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -217,7 +217,7 @@ Environment=PATH=$APP_DIR/venv/bin
 Environment=FLASK_ENV=production
 Environment=PRODUCTION=true
 Environment=FLASK_DEBUG=false
-ExecStart=$APP_DIR/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:5008 --timeout 300 --keep-alive 5 --max-requests 1000 --preload app:app
+ExecStart=$APP_DIR/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:80 --timeout 300 --keep-alive 5 --max-requests 1000 --preload app:app
 Restart=always
 RestartSec=3
 

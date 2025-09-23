@@ -32,7 +32,7 @@ Deploy your AI-Powered Investment Research Platform to AWS with production-ready
 - SSH (22): Your IP address only
 - HTTP (80): 0.0.0.0/0 (for Let's Encrypt)
 - HTTPS (443): 0.0.0.0/0
-- Custom TCP (5008): 0.0.0.0/0 (temporary for testing)
+- Custom TCP (80): 0.0.0.0/0 (temporary for testing)
 ```
 
 ### 1.3 Elastic IP (Optional but Recommended)
@@ -233,7 +233,7 @@ sudo systemctl status nginx
 
 ```bash
 # Check if application is running
-curl -I http://localhost:5008/
+curl -I http://localhost:80/
 
 # Check SSL certificate
 curl -I https://research.predictram.com/

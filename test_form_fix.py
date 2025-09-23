@@ -5,7 +5,7 @@ def test_manual_form_submission():
     print("🔍 Testing Manual Form Submission (Browser Behavior)")
     print("=" * 60)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     session = requests.Session()
     
     # Test 1: With correct field names (email/password)
@@ -79,6 +79,6 @@ if __name__ == "__main__":
     print("   But the backend expects 'name=\"email\"'")
     print("   ✅ Fixed: Changed form field to 'name=\"email\"'")
     print("\n🔗 Now try manual login again:")
-    print("   URL: http://127.0.0.1:5008/analyst_login")
+    print("   URL: http://127.0.0.1:80/analyst_login")
     print("   Email: analyst@demo.com")
     print("   Password: analyst123")

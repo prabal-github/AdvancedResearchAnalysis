@@ -163,7 +163,7 @@ except Exception as db_error:
 After applying the fix, test with this curl command:
 
 ```bash
-curl -X POST http://your-ec2-ip:5008/api/register/analyst \
+curl -X POST http://your-ec2-ip:80/api/register/analyst \
   -H "Content-Type: application/json" \
   -d '{
     "first_name": "Test",

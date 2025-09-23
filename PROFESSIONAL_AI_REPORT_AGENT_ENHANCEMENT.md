@@ -1,18 +1,22 @@
 # 📈 Professional AI Report Agent Enhancement
 
 ## 🎯 Overview
+
 Enhanced the AI Report Agent in `/vs_terminal` to work like a **professional VS Code AI agent** with comprehensive research capabilities, multi-stage analysis, and professional document generation.
 
 ## ✨ Key Enhancements
 
 ### 🔬 Multi-Stage Research & Analysis
+
 - **Stage 1: Content Extraction & Research**
+
   - Enhanced URL content extraction with newspaper3k and BeautifulSoup
   - PDF document processing with PyPDF2 and pdfplumber
   - Intelligent content classification and analysis
   - Multi-source data synthesis
 
 - **Stage 2: Professional AI Analysis**
+
   - Primary analysis with Claude (Anthropic) using detailed financial prompts
   - Secondary analysis with Ollama (Mistral) for cross-validation
   - Research methodology similar to professional financial analysts
@@ -25,6 +29,7 @@ Enhanced the AI Report Agent in `/vs_terminal` to work like a **professional VS 
   - Multi-format output support
 
 ### 🤖 Enhanced AI Prompting
+
 The system now uses professional-grade prompts like a real VS Code AI agent:
 
 ```python
@@ -94,6 +99,7 @@ Conduct a detailed professional analysis including:
 ### 📊 Professional Report Formatting
 
 #### PDF Reports (ReportLab)
+
 - Professional title page with company branding
 - Enhanced typography with custom styles
 - Tables with professional styling
@@ -102,6 +108,7 @@ Conduct a detailed professional analysis including:
 - Color scheme and professional formatting
 
 #### DOCX Reports (python-docx)
+
 - Corporate document styling
 - Professional margins and spacing
 - Enhanced table formatting
@@ -110,7 +117,9 @@ Conduct a detailed professional analysis including:
 - Professional footer with generation info
 
 ### 🔍 Smart Content Analysis
+
 Added `_analyze_extracted_content()` function that:
+
 - Classifies content type (financial filings, news, research reports)
 - Extracts numerical data and financial metrics
 - Identifies key financial keywords
@@ -118,6 +127,7 @@ Added `_analyze_extracted_content()` function that:
 - Enables targeted analysis based on source type
 
 ### 🌐 Enhanced URL/PDF Processing
+
 - Automatic content type detection
 - Robust error handling for failed extractions
 - Content length optimization for AI models
@@ -127,17 +137,20 @@ Added `_analyze_extracted_content()` function that:
 ## 🚀 Usage Examples
 
 ### Basic Report Generation
+
 ```
 Generate a comprehensive financial analysis report for Tesla Inc based on their latest quarterly results and market performance
 ```
 
 ### URL-Based Analysis
+
 ```
 https://www.tesla.com/investor-relations
 Analyze Tesla's latest investor information and prepare a detailed investment report
 ```
 
 ### PDF Document Analysis
+
 ```
 [Upload PDF] financial_statement.pdf
 Create a comprehensive analysis report based on this financial statement
@@ -146,24 +159,29 @@ Create a comprehensive analysis report based on this financial statement
 ## 📋 Professional Report Structure
 
 ### Generated Report Sections:
+
 1. **📈 Report Overview**
+
    - Analysis date and methodology
    - Research analyst information
    - Client requirements summary
 
 2. **📊 Data Sources & Methodology**
+
    - External sources analyzed
    - Content processing summary
    - AI models utilized
    - Research framework applied
 
 3. **🔬 Research Findings & Data Synthesis**
+
    - Extracted financial metrics
    - Market trends analysis
    - Competitive intelligence
    - Risk/opportunity assessment
 
 4. **📊 Comprehensive Financial Analysis**
+
    - Executive summary with recommendations
    - Company/sector overview
    - Financial performance analysis
@@ -172,6 +190,7 @@ Create a comprehensive analysis report based on this financial statement
    - Investment recommendations
 
 5. **🔄 Cross-Validation Insights**
+
    - Alternative analysis perspectives
    - Risk considerations
    - Validation of findings
@@ -185,6 +204,7 @@ Create a comprehensive analysis report based on this financial statement
 ## 🎨 Visual Enhancements
 
 ### Report Styling:
+
 - 📈 Professional emojis for section headers
 - 🎯 Color-coded information types
 - 📊 Enhanced table formatting
@@ -192,6 +212,7 @@ Create a comprehensive analysis report based on this financial statement
 - ✅ Status indicators and progress tracking
 
 ### Document Features:
+
 - Professional title pages
 - Corporate-style formatting
 - Enhanced typography
@@ -202,6 +223,7 @@ Create a comprehensive analysis report based on this financial statement
 ## 🔧 Technical Implementation
 
 ### Enhanced Functions:
+
 - `_generate_ai_report()` - Multi-stage professional analysis
 - `_analyze_extracted_content()` - Content classification and analysis
 - `_generate_pdf_report()` - Professional PDF creation with ReportLab
@@ -210,6 +232,7 @@ Create a comprehensive analysis report based on this financial statement
 - `_add_professional_table_docx()` - DOCX table styling
 
 ### AI Integration:
+
 - Claude (Anthropic) for primary analysis
 - Ollama (Mistral) for cross-validation
 - Multi-prompt strategy for comprehensive coverage
@@ -219,6 +242,7 @@ Create a comprehensive analysis report based on this financial statement
 ## 📈 Performance Features
 
 ### Research Capabilities:
+
 - ✅ Multi-source content extraction
 - ✅ Professional financial analysis framework
 - ✅ Cross-validation with multiple AI models
@@ -227,6 +251,7 @@ Create a comprehensive analysis report based on this financial statement
 - ✅ Automatic source attribution
 
 ### Output Quality:
+
 - ✅ Investment-grade report structure
 - ✅ Professional formatting and styling
 - ✅ Comprehensive analysis coverage
@@ -247,9 +272,10 @@ Create a comprehensive analysis report based on this financial statement
 
 ## 🎯 Access & Testing
 
-**Enhanced VS Terminal**: http://127.0.0.1:5008/vs_terminal
+**Enhanced VS Terminal**: http://127.0.0.1:80/vs_terminal
 
 ### Testing Scenarios:
+
 1. **Basic Analysis**: Generate report with text requirements
 2. **URL Analysis**: Share website link for automatic processing
 3. **PDF Analysis**: Upload or share PDF document link
@@ -258,4 +284,5 @@ Create a comprehensive analysis report based on this financial statement
 The enhanced AI Report Agent now delivers **professional-grade financial analysis reports** comparable to those produced by institutional research teams, with advanced AI-powered insights and professional document formatting.
 
 ---
-*Generated on August 26, 2025 | Enhanced AI Research Assistant*
+
+_Generated on August 26, 2025 | Enhanced AI Research Assistant_

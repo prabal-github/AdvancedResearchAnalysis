@@ -139,7 +139,7 @@ def main():
     print(f"• Top 100 stocks are now integrated with ML models")
     print(f"• Real-time data integration working via YFinance")
     print(f"• Fyers API mapping ready for activation")
-    print(f"• Published page at http://127.0.0.1:5008/published ready to use")
+    print(f"• Published page at http://127.0.0.1:80/published ready to use")
     
     return True
 

@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 
 def test_subscription_flow():
     """Test the complete subscription flow from catalog to ML Class."""

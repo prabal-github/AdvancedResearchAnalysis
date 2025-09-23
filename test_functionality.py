@@ -81,9 +81,9 @@ def main():
     if profile_ok and admin_ok:
         print("\n🎉 ALL TESTS PASSED!")
         print("\n🌐 Access URLs:")
-        print("   - Analyst Login: http://127.0.0.1:5008/analyst_login")
-        print("   - Admin Login: http://127.0.0.1:5008/admin_login")
-        print("   - Main Dashboard: http://127.0.0.1:5008/")
+        print("   - Analyst Login: http://127.0.0.1:80/analyst_login")
+        print("   - Admin Login: http://127.0.0.1:80/admin_login")
+        print("   - Main Dashboard: http://127.0.0.1:80/")
         return True
     else:
         print("\n❌ SOME TESTS FAILED!")

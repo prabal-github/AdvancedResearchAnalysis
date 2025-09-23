@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 TEST_EMAIL = "test@example.com"
 TEST_NAME = "Test User"
 TEST_PHONE = "9876543210"

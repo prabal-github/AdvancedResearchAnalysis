@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class VSTerminalAPITester:
-    def __init__(self, base_url="http://localhost:5008"):
+    def __init__(self, base_url="http://localhost:80"):
         self.base_url = base_url
         self.session = requests.Session()
         self.test_results = {}
@@ -95,7 +95,7 @@ class VSTerminalAPITester:
                 return False
                 
         except requests.exceptions.ConnectionError:
-            self.print_error("Cannot connect to Flask app. Is it running on port 5008?")
+            self.print_error("Cannot connect to Flask app. Is it running on port 80?")
             return False
         except Exception as e:
             self.print_error(f"Unexpected error: {e}")
@@ -365,10 +365,10 @@ def main():
     
     # Check if Flask app is running
     try:
-        response = requests.get("http://localhost:5008", timeout=5)
+        response = requests.get("http://localhost:80", timeout=5)
         print("✅ Flask app is running")
     except:
-        print("❌ Flask app is not running on port 5008")
+        print("❌ Flask app is not running on port 80")
         print("Please start your Flask app with: python app.py")
         return
     

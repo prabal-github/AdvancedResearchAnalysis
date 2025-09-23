@@ -20,6 +20,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 🎯 Core Features
 
 ### 1. **Report Analysis Engine**
+
 - **Automated Quality Scoring**: Composite quality scores based on multiple metrics
 - **SEBI Compliance Assessment**: Real-time regulatory compliance checking
 - **AI Content Detection**: Identifies AI-generated content with confidence scores
@@ -28,6 +29,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Sentiment Analysis**: News sentiment analysis for mentioned stocks
 
 ### 2. **Multi-Dashboard System**
+
 - **Main Dashboard**: Overview of all reports and metrics
 - **Investor Dashboard**: Enhanced features for investment analysis
 - **Analyst Dashboard**: Personal workspace with assigned topics
@@ -35,6 +37,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Performance Dashboard**: Individual analyst performance tracking
 
 ### 3. **Advanced Analytics**
+
 - **Real-time Metrics**: Live quality and compliance statistics
 - **Trending Stocks Backtesting**: 6-month performance analysis
 - **Improvement Tracking**: Analyst progress over time
@@ -43,6 +46,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 🏠 Dashboard Overview
 
 ### Main Dashboard (`/`)
+
 - **Quick Access Panel**: 4 main feature buttons
 - **Reports Leaderboard**: All reports with quality scores
 - **Real-time Metrics**: Live performance statistics
@@ -50,6 +54,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Top Analysts Ranking**: Performance-based leaderboard
 
 ### Investor Dashboard (`/investor_dashboard`)
+
 - **Real-time SEBI Compliance**: Live compliance assessment
 - **Trending Stocks Backtest**: Performance metrics and recommendations
 - **Enhanced Analysis Features**: Advanced compliance tools
@@ -57,12 +62,14 @@ This platform provides automated quality assessment of research reports using ad
 - **Quick Actions Panel**: Streamlined workflow tools
 
 ### Analyst Dashboard (`/analyst/{name}`)
+
 - **Assigned Topics**: Tasks with deadlines and priorities
 - **Progress Tracking**: In-progress and completed work
 - **Performance Metrics**: Personal quality statistics
 - **Topic Management**: Start/complete task workflow
 
 ### Admin Dashboard (`/admin`)
+
 - **Topic Creation**: Assign research tasks to analysts
 - **Performance Analytics**: System-wide performance metrics
 - **User Management**: Analyst oversight and management
@@ -71,6 +78,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 🔍 Analysis Features
 
 ### Report Quality Assessment
+
 - **Factual Accuracy**: Alignment with verified market data
 - **Predictive Power**: Future price movement accuracy
 - **Bias Detection**: Sentiment vs evidence analysis
@@ -79,6 +87,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Transparency**: Methodology and assumption clarity
 
 ### SEBI Compliance Checking
+
 - **Regulatory Requirements**: Automated compliance verification
 - **Disclosure Standards**: Mandatory information checking
 - **Risk Warnings**: Required risk disclosure validation
@@ -87,6 +96,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Violation Detection**: Major compliance issue identification
 
 ### Technical Analysis Integration
+
 - **Stock Data Integration**: Real-time price and volume data
 - **Technical Indicators**: RSI, MACD, moving averages
 - **Backtesting Engine**: Historical performance validation
@@ -96,6 +106,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 🛡️ Compliance & Detection
 
 ### Plagiarism Detection System
+
 - **BERT Embeddings**: Advanced semantic similarity detection
 - **Text Similarity**: TF-IDF based content comparison
 - **Segment Matching**: Specific text portion identification
@@ -104,6 +115,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Violation Reporting**: Detailed plagiarism analysis
 
 ### AI Content Detection
+
 - **AI Probability Scoring**: Likelihood of AI generation
 - **Confidence Metrics**: Detection reliability scores
 - **Classification Results**: Human vs AI content categorization
@@ -111,6 +123,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Pattern Recognition**: Writing style and structure analysis
 
 ### SEBI Compliance Engine
+
 - **Regulatory Framework**: Complete SEBI guideline coverage
 - **Automated Checking**: Real-time compliance verification
 - **Violation Tracking**: Issue identification and categorization
@@ -120,6 +133,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 👥 User Management
 
 ### Analyst Profiles (`/analysts`)
+
 - **Profile Creation**: Automatic profile generation
 - **Performance Tracking**: Individual analyst metrics
 - **Improvement History**: Progress over time visualization
@@ -127,6 +141,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Specialization Management**: Expertise area tracking
 
 ### Topic Management
+
 - **Admin Assignment**: Task creation and assignment
 - **Deadline Tracking**: Due date monitoring and alerts
 - **Progress Monitoring**: Task completion tracking
@@ -134,6 +149,7 @@ This platform provides automated quality assessment of research reports using ad
 - **Category Organization**: Task categorization system
 
 ### Performance Analytics
+
 - **Quality Trends**: Individual and system-wide trends
 - **Improvement Scoring**: Quantified progress metrics
 - **Comparative Analysis**: Analyst performance comparison
@@ -142,6 +158,7 @@ This platform provides automated quality assessment of research reports using ad
 ## 🔌 API Endpoints
 
 ### Report Management
+
 - `POST /analyze` - Submit new report for analysis
 - `GET /report/{id}` - View detailed report analysis
 - `GET /api/report/{id}/json` - Get report data as JSON
@@ -149,23 +166,27 @@ This platform provides automated quality assessment of research reports using ad
 - `GET /compare_reports` - Multi-report comparison tool
 
 ### Analytics & Metrics
+
 - `GET /api/metrics` - Real-time platform metrics
 - `GET /api/analyst/{name}/improvement_history` - Analyst progress
 - `GET /test_analyst_performance` - Available analysts list
 
 ### Compliance & Detection
+
 - `GET /api/plagiarism_check/{id}` - Plagiarism results
 - `GET /api/ai_detection/{id}` - AI detection results
 - `GET /plagiarism_analysis/{id}` - Detailed plagiarism view
 - `GET /ai_detection_analysis/{id}` - Detailed AI analysis
 
 ### User & Topic Management
+
 - `POST /admin/create_topic` - Create new analyst task
 - `POST /api/topic/{id}/start` - Start assigned topic
 - `POST /api/topic/{id}/complete` - Complete topic
 - `GET /api/admin/topics` - All topics overview
 
 ### Portfolio & Market Data
+
 - `POST /analyze_portfolio` - Generate portfolio commentary
 - `GET /portfolio` - Portfolio analysis dashboard
 - `GET /alerts` - Price and RSI alerts management
@@ -174,6 +195,7 @@ This platform provides automated quality assessment of research reports using ad
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
+
 ```bash
 Python 3.8+
 Flask 2.0+
@@ -185,6 +207,7 @@ ollama (for LLM integration)
 ```
 
 ### Installation Steps
+
 ```bash
 # Clone repository
 git clone [repository-url]
@@ -197,10 +220,11 @@ pip install -r requirements.txt
 python app.py
 
 # Access application
-http://localhost:5008
+http://localhost:80
 ```
 
 ### Configuration
+
 - Update `config.py` with your settings
 - Configure LLM models in `models/llm_integration.py`
 - Set up BERT models for plagiarism detection (optional)
@@ -209,6 +233,7 @@ http://localhost:5008
 ## 📖 Usage Guide
 
 ### For Analysts
+
 1. **Access Dashboard**: Visit `/analyst/{your-name}`
 2. **View Assigned Topics**: See tasks with deadlines
 3. **Submit Reports**: Use "Analyze New Report" feature
@@ -216,6 +241,7 @@ http://localhost:5008
 5. **View Profile**: Check `/analyst/{your-name}/profile`
 
 ### For Investors
+
 1. **Access Dashboard**: Visit `/investor_dashboard`
 2. **Review Compliance**: Check real-time SEBI compliance
 3. **Analyze Trends**: View trending stocks backtesting
@@ -223,6 +249,7 @@ http://localhost:5008
 5. **Access JSON Data**: Use API links for integration
 
 ### For Administrators
+
 1. **Access Admin Panel**: Visit `/admin`
 2. **Create Topics**: Assign tasks to analysts
 3. **Monitor Performance**: Track system-wide metrics
@@ -232,18 +259,21 @@ http://localhost:5008
 ## 🔧 Advanced Features
 
 ### Real-time Capabilities
+
 - **Live Metrics**: Auto-refreshing dashboard statistics
 - **WebSocket Alerts**: Real-time price and RSI notifications
 - **Dynamic Compliance**: Continuous SEBI compliance monitoring
 - **Performance Tracking**: Live analyst performance updates
 
 ### Integration Capabilities
+
 - **JSON API**: Complete report data export
 - **AI Knowledge Base**: Structured data for AI systems
 - **Market Data Integration**: Real-time stock price feeds
 - **News Integration**: Automated news sentiment analysis
 
 ### Customization Options
+
 - **Scoring Weights**: Adjustable quality metric weights
 - **Compliance Rules**: Customizable SEBI compliance checks
 - **Alert Thresholds**: Configurable alert parameters
@@ -252,18 +282,21 @@ http://localhost:5008
 ## 📊 Metrics & KPIs
 
 ### Quality Metrics
+
 - Composite Quality Score (0-100%)
 - SEBI Compliance Score (0-100%)
 - Plagiarism Detection Score (0-100%)
 - AI Detection Probability (0-100%)
 
 ### Performance Metrics
+
 - Analyst Improvement Score
 - Report Processing Time
 - Compliance Trend Analysis
 - Issue Resolution Rate
 
 ### System Metrics
+
 - Total Reports Processed
 - Active Analysts Count
 - Average Quality Score
@@ -272,12 +305,14 @@ http://localhost:5008
 ## 🚨 Alerts & Notifications
 
 ### Price Alerts
+
 - Stock price threshold alerts
 - RSI overbought/oversold notifications
 - Volume spike alerts
 - Custom condition alerts
 
 ### Quality Alerts
+
 - Low quality score warnings
 - Compliance violation alerts
 - Plagiarism detection notifications
@@ -314,6 +349,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Support
 
 For support and questions:
+
 - Create an issue in the repository
 - Contact the development team
 - Check the documentation wiki

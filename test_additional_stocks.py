@@ -3,7 +3,7 @@ import json
 
 # Test the additional stocks API endpoint
 def test_additional_stocks_api():
-    url = "http://127.0.0.1:5008/api/analyze_additional_stocks"
+    url = "http://127.0.0.1:80/api/analyze_additional_stocks"
     
     # Test data
     test_data = {
@@ -45,7 +45,7 @@ def test_additional_stocks_api():
             print(f"Error Response: {response.text}")
             
     except requests.exceptions.ConnectionError:
-        print("ERROR: Could not connect to the Flask server. Make sure it's running on port 5008.")
+        print("ERROR: Could not connect to the Flask server. Make sure it's running on port 80.")
     except requests.exceptions.Timeout:
         print("ERROR: Request timed out. The server might be processing or down.")
     except Exception as e:

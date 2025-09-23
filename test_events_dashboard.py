@@ -73,7 +73,7 @@ def main():
     if analyzer_success:
         print("🎉 SYSTEM OPERATIONAL!")
         print("🌐 Ready to launch enhanced dashboard!")
-        print("🔗 Visit: http://127.0.0.1:5008/events_analytics")
+        print("🔗 Visit: http://127.0.0.1:80/events_analytics")
     else:
         print("⚠️ System needs attention")
         print("📋 Install required packages:")

@@ -3,7 +3,7 @@ import json
 import time
 
 # Test AI Research Assistant API
-base_url = "http://127.0.0.1:5008"
+base_url = "http://127.0.0.1:80"
 
 def test_ai_query_api():
     """Test the AI query processing API"""

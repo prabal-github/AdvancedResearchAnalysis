@@ -14,8 +14,10 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ## ENHANCED FEATURES IMPLEMENTED
 
 ### 1. Details Tab Enhancement (✅ FUNCTIONAL)
+
 **Endpoint**: `/api/vs_terminal_AClass/portfolio_details`
 **Features**:
+
 - Real-time portfolio valuation with YFinance data
 - Comprehensive portfolio metrics (Sharpe ratio, Alpha, Beta, Max Drawdown)
 - Sector allocation analysis
@@ -25,13 +27,16 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - Risk scoring and portfolio beta calculation
 
 **Data Sources**:
+
 - Primary: YFinance (testing) / Fyers (production)
 - Real-time price updates
 - Portfolio database integration
 
 ### 2. ML Predictions Tab Enhancement (✅ FUNCTIONAL)
+
 **Endpoint**: `/api/vs_terminal_AClass/risk_ml_predictions`
 **Features**:
+
 - Enhanced ML predictions using real-time data
 - Individual stock predictions with confidence scores
 - Portfolio-level directional predictions
@@ -41,14 +46,17 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - Volatility regime predictions
 
 **ML Models**:
+
 - Enhanced Random Forest Ensemble
 - Real-time feature engineering
 - Sentiment integration
 - Technical analysis incorporation
 
 ### 3. Greeks Tab Enhancement (✅ FUNCTIONAL)
+
 **Endpoint**: `/api/vs_terminal_AClass/options_greeks`
 **Features**:
+
 - Upstox API integration for real options data
 - Portfolio-relevant options filtering
 - Individual position Greeks calculation (Delta, Gamma, Theta, Vega, Rho)
@@ -59,13 +67,16 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - VIX integration
 
 **Options Data Sources**:
+
 - Primary: Upstox API (`https://service.upstox.com/option-analytics-tool/open/v1/strategy-chains`)
 - Fallback: Demo data with realistic calculations
 - Real-time IV and Greeks computation
 
 ### 4. Heatmap Tab Enhancement (✅ FUNCTIONAL)
+
 **Endpoint**: `/api/vs_terminal_AClass/risk_heatmap`
 **Features**:
+
 - Multiple heatmap types (correlation, volatility, beta)
 - Real-time correlation matrix calculation
 - Risk clustering analysis
@@ -75,14 +86,17 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - Historical data integration with multiple timeframes
 
 **Analysis Types**:
+
 - Correlation heatmap (default)
 - Volatility heatmap
 - Beta analysis
 - Risk clustering
 
 ### 5. Live Data Tab Enhancement (✅ FUNCTIONAL - NEW)
+
 **Endpoint**: `/api/vs_terminal_AClass/live_data`
 **Features**:
+
 - Real-time market quotes streaming
 - Sensibull API integration for market events
 - Live market indicators (Nifty, Bank Nifty, VIX)
@@ -93,6 +107,7 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - Market status with enhanced timing
 
 **Data Sources**:
+
 - Quotes: YFinance (testing) / Fyers (production)
 - Events: Sensibull API (`https://api.sensibull.com/v1/current_events`)
 - Market indicators: Real-time feeds
@@ -101,8 +116,10 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ## TECHNICAL IMPLEMENTATION
 
 ### 1. VSTerminalEnhancer Class
+
 **File**: `vs_terminal_enhancement.py`
 **Features**:
+
 - Centralized data fetching and processing
 - Testing/Production mode switching
 - Real-time data integration
@@ -110,29 +127,35 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 - Performance optimization with caching
 
 ### 2. Enhanced API Endpoints
+
 **Integration**: Direct integration with Flask app.py
 **Authentication**: Session-based with fallback to demo data
 **Error Handling**: Comprehensive error handling with graceful degradation
 **Performance**: Optimized queries and caching
 
 ### 3. Data Source Integration
+
 **YFinance (Testing)**:
+
 - Real-time stock prices
 - Historical data for analysis
 - Market indicators
 - Technical analysis data
 
 **Fyers API (Production)**:
+
 - Professional-grade real-time data
 - Seamless fallback to YFinance
 - Enhanced data accuracy
 
 **Upstox API (Options)**:
+
 - Real options chain data
 - Strategy analysis
 - Implied volatility data
 
 **Sensibull API (Events)**:
+
 - Market events tracking
 - Earnings announcements
 - Dividend declarations
@@ -141,6 +164,7 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ## TESTING RESULTS
 
 ### Application Startup
+
 ✅ Flask application starts successfully
 ✅ VS Terminal Enhancement loaded
 ✅ All endpoints registered
@@ -148,6 +172,7 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ✅ YFinance integration active
 
 ### Endpoint Testing
+
 ✅ Real-time quotes endpoint functional
 ✅ Enhanced portfolio details working
 ✅ ML predictions with real-time data
@@ -156,6 +181,7 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ✅ Live data streaming
 
 ### Performance
+
 ✅ Lazy loading optimization
 ✅ Real-time data fetching
 ✅ Error handling and fallbacks
@@ -163,10 +189,11 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 
 ## ACCESS POINTS
 
-**Main Application**: http://127.0.0.1:5008/
-**VS Terminal Interface**: http://127.0.0.1:5008/vs_terminal_AClass
+**Main Application**: http://127.0.0.1:80/
+**VS Terminal Interface**: http://127.0.0.1:80/vs_terminal_AClass
 
 **Enhanced API Endpoints**:
+
 - Details Tab: `/api/vs_terminal_AClass/portfolio_details`
 - ML Predictions: `/api/vs_terminal_AClass/risk_ml_predictions`
 - Options Greeks: `/api/vs_terminal_AClass/options_greeks`
@@ -177,11 +204,13 @@ OBJECTIVE ACHIEVED: Made all VS Terminal tabs functional with:
 ## CONFIGURATION
 
 ### Testing Mode (Current)
+
 ```python
 VS_TERMINAL_ENHANCER = VSTerminalEnhancer(testing_mode=True)
 ```
 
 ### Production Mode
+
 ```python
 VS_TERMINAL_ENHANCER = VSTerminalEnhancer(testing_mode=False)
 ```
@@ -189,10 +218,12 @@ VS_TERMINAL_ENHANCER = VSTerminalEnhancer(testing_mode=False)
 ## EXTERNAL API INTEGRATION
 
 ### Options Data (Upstox)
+
 **URL**: `https://service.upstox.com/option-analytics-tool/open/v1/strategy-chains?assetKey=NSE_INDEX%7CNifty+50&strategyChainType=PC_CHAIN&expiry=25-09-2025`
 **Status**: ✅ Integrated with fallback handling
 
 ### Events Data (Sensibull)
+
 **URL**: `https://api.sensibull.com/v1/current_events`
 **Status**: ✅ Integrated with mock data fallback
 
@@ -211,6 +242,7 @@ VS_TERMINAL_ENHANCER = VSTerminalEnhancer(testing_mode=False)
 ✅ **OBJECTIVE FULLY ACHIEVED**: All VS Terminal tabs are now functional with comprehensive real-time data integration.
 
 The implementation provides:
+
 - Professional-grade portfolio analytics
 - Real-time market data integration
 - Advanced risk management tools

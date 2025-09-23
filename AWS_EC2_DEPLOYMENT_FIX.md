@@ -1,16 +1,20 @@
 # 🚀 AWS EC2 Deployment Fix Guide
 
 ## ✅ **ISSUES RESOLVED:**
+
 1. **"error normalizing sensibul event : 'str' object has not attribute 'get'"** ✅
 2. **"sqlite3.OperationalError: unable to open database file"** ✅
 
 ### 🔍 **Root Cause Analysis**
 
 #### Issue 1: Sensibull Event Normalization
+
 The error was caused by the `_normalize_events_from_sensibull()` function in `app.py` attempting to call `.get()` method on string objects when the Sensibull API returned non-dictionary data types.
 
 #### Issue 2: SQLite Database File Access
+
 The admin login error occurs because:
+
 - Database file permissions are incorrect on EC2
 - Application directory ownership issues
 - SQLite database path not properly configured for production
@@ -24,16 +28,16 @@ def _normalize_events_from_sensibull(items):
     Normalize events from Sensibull API with robust error handling
     """
     out = []
-    
+
     # Safety check for items parameter
     if not items:
         return out
-    
+
     # Ensure items is iterable
     if not hasattr(items, '__iter__') or isinstance(items, (str, bytes)):
         print(f"Warning: Expected list/array from Sensibull, got {type(items)}")
         return out
-    
+
     for it in items:
         try:
             # Handle case where item might not be a dictionary
@@ -58,10 +62,10 @@ def _normalize_events_from_sensibull(items):
                 else:
                     # Skip other non-dict types (None, numbers, etc.)
                     continue
-        
+
             # Now process dictionary objects safely...
             # [Rest of the function with proper error handling]
-            
+
         except Exception as e:
             print(f"Error normalizing individual Sensibull event: {e}")
             # Create fallback event with safe string conversion
@@ -69,7 +73,7 @@ def _normalize_events_from_sensibull(items):
                 title = str(it) if not isinstance(it, dict) else it.get('title', 'Unknown Event')
             except:
                 title = 'Unknown Event'
-            
+
             out.append({
                 'source': 'Economic Event',
                 'source_code': 'sensibull',
@@ -83,13 +87,14 @@ def _normalize_events_from_sensibull(items):
                 'impact': None,
                 'preview_models': [],
             })
-    
+
     return out
 ```
 
 ## 🔧 **AWS EC2 Deployment Steps**
 
 ### 1. **Pre-Deployment Checklist**
+
 ```bash
 # Test the fixes locally first
 python test_error_fixes.py
@@ -102,6 +107,7 @@ export FLASK_ENV="production"
 ```
 
 ### 2. **EC2 Instance Setup**
+
 ```bash
 # Update system packages
 sudo apt update && sudo apt upgrade -y
@@ -116,6 +122,7 @@ sudo chmod 755 /var/www/financial-dashboard
 ```
 
 ### 3. **Application Deployment**
+
 ```bash
 # Upload/clone your application
 cd /var/www/financial-dashboard
@@ -136,6 +143,7 @@ echo "FLASK_ENV=production" >> .env
 ```
 
 ### 4. **🔧 Database Setup (CRITICAL STEP)**
+
 ```bash
 # Run the database configuration fix
 python fix_ec2_database_config.py
@@ -169,6 +177,7 @@ python add_category_column.py
 ```
 
 ### 5. **Configure Gunicorn**
+
 ```bash
 # Install gunicorn
 pip install gunicorn
@@ -178,6 +187,7 @@ sudo nano /etc/systemd/system/financial-dashboard.service
 ```
 
 **Service file content:**
+
 ```ini
 [Unit]
 Description=Financial Dashboard Flask App
@@ -188,7 +198,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/var/www/financial-dashboard
 Environment="PATH=/var/www/financial-dashboard/venv/bin"
-ExecStart=/var/www/financial-dashboard/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5008 app:app
+ExecStart=/var/www/financial-dashboard/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:80 app:app
 Restart=always
 
 [Install]
@@ -196,19 +206,21 @@ WantedBy=multi-user.target
 ```
 
 ### 6. **Configure Nginx**
+
 ```bash
 # Create nginx configuration
 sudo nano /etc/nginx/sites-available/financial-dashboard
 ```
 
 **Nginx config:**
+
 ```nginx
 server {
     listen 80;
     server_name your-domain.com;
 
     location / {
-        proxy_pass http://127.0.0.1:5008;
+        proxy_pass http://127.0.0.1:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -222,6 +234,7 @@ server {
 ```
 
 ### 7. **Enable and Start Services**
+
 ```bash
 # Enable nginx site
 sudo ln -s /etc/nginx/sites-available/financial-dashboard /etc/nginx/sites-enabled
@@ -235,6 +248,7 @@ sudo systemctl status financial-dashboard
 ```
 
 ### 8. **Security Configuration**
+
 ```bash
 # Configure firewall
 sudo ufw allow 22
@@ -250,11 +264,13 @@ sudo certbot --nginx -d your-domain.com
 ## 🧪 **Verification Tests**
 
 ### Test 1: Sensibull Events API
+
 ```bash
 curl http://your-domain.com/api/enhanced/market_dashboard
 ```
 
 ### Test 2: Skill Learning Analysis
+
 ```bash
 curl -X POST http://your-domain.com/analyze \
   -H "Content-Type: application/json" \
@@ -262,6 +278,7 @@ curl -X POST http://your-domain.com/analyze \
 ```
 
 ### Test 3: Application Health
+
 ```bash
 curl http://your-domain.com/health
 ```
@@ -269,6 +286,7 @@ curl http://your-domain.com/health
 ## 📊 **Monitoring and Logs**
 
 ### View Application Logs
+
 ```bash
 # Gunicorn service logs
 sudo journalctl -u financial-dashboard -f
@@ -279,6 +297,7 @@ sudo tail -f /var/log/nginx/error.log
 ```
 
 ### Monitor Performance
+
 ```bash
 # Check system resources
 htop
@@ -295,17 +314,19 @@ sudo systemctl status nginx
 ### Common Issues and Solutions
 
 1. **"sqlite3.OperationalError: unable to open database file"**
+
    ```bash
    # Fix database permissions
    sudo chown -R ubuntu:www-data /var/www/financial-dashboard
    sudo chmod 775 /var/www/financial-dashboard/instance
    sudo chmod 664 /var/www/financial-dashboard/instance/*.db
-   
+
    # Run the database setup script
    python ec2_database_setup.py
    ```
 
 2. **"Permission denied" errors**
+
    ```bash
    # Fix file permissions
    sudo chown -R ubuntu:www-data /var/www/financial-dashboard
@@ -314,10 +335,11 @@ sudo systemctl status nginx
    ```
 
 3. **Admin login fails**
+
    ```bash
    # Check database file exists and is accessible
    ls -la /var/www/financial-dashboard/instance/
-   
+
    # Test database connection
    python -c "
    import sqlite3
@@ -327,7 +349,7 @@ sudo systemctl status nginx
    print('Tables:', cursor.fetchall())
    conn.close()
    "
-   
+
    # Create admin user manually if needed
    python -c "
    import sys
@@ -341,18 +363,21 @@ sudo systemctl status nginx
    ```
 
 4. **Import Errors**
+
    ```bash
    # Install missing packages
    pip install -r requirements.txt
    ```
 
 5. **Database Connection Issues**
+
    ```bash
    # Check database connectivity
    python -c "from app import app, db; app.app_context().push(); print('DB OK')"
    ```
 
 6. **Working Directory Issues**
+
    ```bash
    # Ensure service runs from correct directory
    sudo systemctl edit financial-dashboard
@@ -373,7 +398,7 @@ sudo systemctl status nginx
 ## ✅ **Success Indicators**
 
 - ✅ No "str object has no attribute 'get'" errors
-- ✅ No "sqlite3.OperationalError: unable to open database file" errors  
+- ✅ No "sqlite3.OperationalError: unable to open database file" errors
 - ✅ Admin login works (admin@demo.com / admin123)
 - ✅ Sensibull events load successfully
 - ✅ Skill Learning Analysis works
@@ -385,17 +410,20 @@ sudo systemctl status nginx
 ## 📝 **Additional Notes**
 
 ### Database Configuration:
+
 - SQLite database now uses absolute path: `/var/www/financial-dashboard/instance/investment_research.db`
 - Automatic directory creation with proper permissions
 - Fallback mechanisms for development vs production environments
 - Proper file ownership: `ubuntu:www-data`
 
 ### Security Improvements:
+
 - Database files have restricted permissions (664)
 - Application directories properly secured (755/775)
 - Secret keys and API keys loaded from environment variables
 
 ### Error Handling:
+
 - The fix handles mixed data types from Sensibull API gracefully
 - Added comprehensive error handling for AWS environment
 - Implemented fallback event creation for malformed data
@@ -403,6 +431,7 @@ sudo systemctl status nginx
 - Database access errors prevented with proper permissions
 
 ### Performance Optimizations:
+
 - Connection pooling configured for AWS/RDS environments
 - Lazy loading of heavy components
 - Proper caching mechanisms

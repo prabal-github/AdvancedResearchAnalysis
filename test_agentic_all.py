@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 
 # Test Configuration
-BASE_URL = "http://127.0.0.1:5008"
+BASE_URL = "http://127.0.0.1:80"
 ENDPOINTS_TO_TEST = [
     {
         'name': 'Agentic Dashboard',

@@ -14,13 +14,13 @@ def test_multifactor_model():
     
     # Step 1: Login as demo investor
     print("1. Logging in as demo investor...")
-    login_response = session.get('http://127.0.0.1:5008/demo_investor_login?investor_id=INV938713')
+    login_response = session.get('http://127.0.0.1:80/demo_investor_login?investor_id=INV938713')
     print(f"   Login status: {login_response.status_code}")
     
     # Step 2: Execute the Multi-Factor Expected Return Model
     print("2. Executing Multi-Factor Expected Return Model...")
     model_id = '28932ddb-84ab-42cc-95c5-606d026491a5'
-    url = f'http://127.0.0.1:5008/api/published_models/{model_id}/run'
+    url = f'http://127.0.0.1:80/api/published_models/{model_id}/run'
     
     payload = {
         'function': 'run_analysis',
@@ -45,7 +45,7 @@ def test_multifactor_model():
             
             # Step 3: Check dashboard to see if results appear
             print("3. Checking dashboard for new results...")
-            dashboard_response = session.get('http://127.0.0.1:5008/subscribed_ml_models?format=json')
+            dashboard_response = session.get('http://127.0.0.1:80/subscribed_ml_models?format=json')
             
             if dashboard_response.status_code == 200:
                 dashboard_data = dashboard_response.json()

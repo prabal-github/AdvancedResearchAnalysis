@@ -6,7 +6,7 @@ import time
 
 def test_authentication_flow():
     """Test the complete authentication and dashboard flow"""
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     print("🔍 Testing Subscribed ML Models Dashboard Authentication Flow\n")
     

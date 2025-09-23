@@ -7,17 +7,20 @@ The **AI Risk Advisor Chat** has been successfully moved from the Risk Managemen
 ## 🔄 Changes Made
 
 ### ✅ Right Panel Integration:
+
 1. **Tab Button Updated**: Changed Q&A tab icon to shield (🛡️) and renamed to "AI Risk Advisor"
 2. **Content Replaced**: Completely replaced grounded Q&A content with AI Risk Advisor interface
 3. **JavaScript Functions**: Implemented new functions specifically for the right panel chat
 
 ### ✅ Features Moved:
+
 - **AI Agent Status Monitoring**: Real-time status of all 5 risk management agents
 - **Interactive Chat Interface**: Direct communication with AI Risk Advisor
 - **Quick Action Buttons**: One-click access to common risk queries
 - **Agent Activation Control**: Ability to activate/monitor risk agents
 
 ### ✅ UI Components:
+
 ```
 🛡️ AI RISK ADVISOR (Right Panel Tab)
 ├── Agent Status Monitor
@@ -43,37 +46,43 @@ The **AI Risk Advisor Chat** has been successfully moved from the Risk Managemen
 ## 🎯 Technical Implementation
 
 ### Frontend Changes:
+
 - **Template**: Updated `vs_terminal_AClass.html` right panel section
 - **JavaScript**: Added dedicated functions for right panel AI advisor
 - **UI Integration**: Seamless integration with existing right panel tabs
 
 ### API Integration:
+
 - **Endpoint**: Uses existing `/api/vs_terminal_AClass/risk_management/advisor_query`
 - **Real-time**: Immediate response display with proper formatting
 - **Error Handling**: Graceful error messages and connection status
 
 ### Key Functions Added:
+
 ```javascript
-loadRiskAdvisorStatus()     // Load agent status
-activateRiskAgents()        // Activate risk agents
-addRightRiskChatMessage()   // Add messages to chat
-sendRightRiskMessage()      // Send user queries
-askQuickRiskQuestion()      // Quick action buttons
+loadRiskAdvisorStatus(); // Load agent status
+activateRiskAgents(); // Activate risk agents
+addRightRiskChatMessage(); // Add messages to chat
+sendRightRiskMessage(); // Send user queries
+askQuickRiskQuestion(); // Quick action buttons
 ```
 
 ## 🌟 User Experience Improvements
 
 ### ✅ Accessibility:
+
 - **Always Available**: Risk advisor accessible from any tab via right panel
 - **Context Preserved**: Chat history maintained during session
 - **Quick Access**: No need to navigate to specific risk management tab
 
 ### ✅ Workflow Integration:
+
 - **Multi-tasking**: Can chat with risk advisor while viewing other tabs
 - **Real-time Monitoring**: Agent status always visible
 - **Instant Queries**: Quick action buttons for common questions
 
 ### ✅ Visual Design:
+
 - **Consistent Styling**: Matches existing VS Code-style interface
 - **Color Coding**: User (green), Agent (blue), System (orange) messages
 - **Responsive Layout**: Adapts to panel resizing
@@ -88,6 +97,7 @@ askQuickRiskQuestion()      // Quick action buttons
 ## 🔧 Integration Status:
 
 ### ✅ Completed:
+
 - Right panel Q&A section replaced with AI Risk Advisor
 - All JavaScript functions implemented and working
 - Agent status monitoring integrated
@@ -96,6 +106,7 @@ askQuickRiskQuestion()      // Quick action buttons
 - Error handling and user feedback implemented
 
 ### ✅ Preserved:
+
 - Risk Management tab still contains comprehensive dashboard
 - All existing functionality maintained
 - API endpoints unchanged
@@ -103,7 +114,7 @@ askQuickRiskQuestion()      // Quick action buttons
 
 ## 🌐 How to Use:
 
-1. **Access**: Open VS Terminal AClass at `http://127.0.0.1:5008/vs_terminal_AClass`
+1. **Access**: Open VS Terminal AClass at `http://127.0.0.1:80/vs_terminal_AClass`
 2. **Navigate**: Click the **"AI Risk Advisor"** tab (🛡️) in the right panel
 3. **Activate**: Click "Activate" button to start risk agents
 4. **Chat**: Type questions or use quick action buttons
@@ -119,6 +130,6 @@ The user's request has been **FULLY COMPLETED**:
 ✅ **REPLACED Q&A SECTION COMPLETELY**  
 ✅ **ALWAYS ACCESSIBLE FROM ANY TAB**  
 ✅ **FULL FUNCTIONALITY PRESERVED**  
-✅ **ENHANCED USER EXPERIENCE**  
+✅ **ENHANCED USER EXPERIENCE**
 
 The AI Risk Advisor is now conveniently located in the right panel, providing instant access to portfolio risk analysis while maintaining full functionality and improving the overall user workflow.

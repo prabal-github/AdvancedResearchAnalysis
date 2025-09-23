@@ -11,7 +11,7 @@ def test_investor_ml_models():
     print("🧪 Testing Investor ML Models Feature")
     print("=" * 40)
     
-    base_url = "http://127.0.0.1:5008"
+    base_url = "http://127.0.0.1:80"
     
     # Test 1: Access ML models page (should redirect to login if not authenticated)
     print("1. Testing ML models page access...")
@@ -63,7 +63,7 @@ def test_investor_ml_models():
     print("   ✅ Dashboard integration completed")
     
     print("\n📋 Next Steps:")
-    print("   1. Login as investor at http://127.0.0.1:5008/investor_login")
+    print("   1. Login as investor at http://127.0.0.1:80/investor_login")
     print("   2. Click 'ML Models' button in investor dashboard")
     print("   3. View latest ML analysis results")
     print("   4. Compare different analysis runs")
